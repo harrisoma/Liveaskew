@@ -1,0 +1,3 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS tier text NOT NULL DEFAULT 'silver';
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_tier_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_tier_check CHECK (tier IN ('silver','gold','platinum','platinum_plus','family'));
