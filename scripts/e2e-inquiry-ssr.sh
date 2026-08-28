@@ -11,7 +11,7 @@ PORT="${PORT:-8799}"
 ARTIFACT_DIR="${ARTIFACT_DIR:-$ROOT/e2e-artifacts}"
 mkdir -p "$ARTIFACT_DIR"
 
-LOG="$ARTIFACT_DIR/wrangler.log"
+LOG="$ARTIFACT_DIR/server.log"
 RESP_HTML="$ARTIFACT_DIR/inquiry.html"
 RUN_LOG="$ARTIFACT_DIR/e2e-run.log"
 
@@ -27,11 +27,11 @@ if [ -f .env ]; then
 fi
 
 echo "[e2e] artifact dir: $ARTIFACT_DIR"
-echo "[e2e] building production bundle…"
-bun run build >"$ARTIFACT_DIR/build.log" 2>&1
+echo "[e2e] building standalone Nitro SSR bundle…"
+NITRO_PRESET=node_server bun run build >"$ARTIFACT_DIR/build.log" 2>&1
 
-echo "[e2e] starting wrangler on :$PORT…"
-bunx wrangler dev --config dist/server/wrangler.json --port "$PORT" --ip 127.0.0.1 --local >"$LOG" 2>&1 &
+echo "[e2e] starting Nitro production preview on :$PORT…"
+HOST=127.0.0.1 PORT="$PORT" node .output/server/index.mjs >"$LOG" 2>&1 &
 WPID=$!
 
 # Wait for ready

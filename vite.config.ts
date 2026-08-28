@@ -8,7 +8,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   // LiveAskew is deployed on Vercel after the Lovable migration.
-  nitro: { preset: "vercel" },
+  // CI uses Nitro's standalone Node server to exercise real SSR. Production
+  // remains Vercel unless an explicit test preset is supplied.
+  nitro: { preset: process.env.NITRO_PRESET ?? "vercel" },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
