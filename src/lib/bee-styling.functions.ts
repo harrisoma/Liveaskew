@@ -3,7 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { getOnixusAiHeaders, getOnixusAiUrl } from "@/lib/ai-gateway.server";
 
 type DB = SupabaseClient<Database>;
 
@@ -182,41 +181,18 @@ async function renderAndStoreLookCover(args: {
   const key = process.env.ONIXUS_AI_API_KEY;
   if (!key) throw new Error("Missing ONIXUS_AI_API_KEY");
 
-  // Non-streaming image generation through the Onixus OpenAI-compatible gateway.
-  const res = await fetch(getOnixusAiUrl("images/generations", key), {
-    method: "POST",
-    headers: {
-      ...getOnixusAiHeaders(key),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-2.5-flash-image",
-      messages: [{ role: "user", content: args.prompt }],
-      modalities: ["image", "text"],
-    }),
+  const { generateIllustrationBytes } = await import("@/lib/generate-illustration.server");
+  const { bytes } = await generateIllustrationBytes({
+    prompt: args.prompt,
+    apiKey: key,
+    logPrefix: "[generate-look-cover]",
   });
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error("Image gen failed", res.status, text);
-    return null;
-  }
-
-  const json = (await res.json()) as { data?: Array<{ b64_json?: string }> };
-  const b64 = json.data?.[0]?.b64_json;
-  if (!b64) {
-    console.error("Image gen returned no b64_json");
-    return null;
-  }
-
-  // Convert base64 → Uint8Array for the storage upload
-  const binary = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 
   const path = `${args.userId}/${args.lookId}-${Date.now()}.png`;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { error: upErr } = await supabaseAdmin.storage
     .from("look-images")
-    .upload(path, binary, { contentType: "image/png", upsert: true });
+    .upload(path, bytes, { contentType: "image/png", upsert: true });
   if (upErr) {
     console.error("Storage upload failed", upErr);
     return null;
