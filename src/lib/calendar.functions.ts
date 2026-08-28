@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { getOnixusAiHeaders, getOnixusAiUrl } from "@/lib/ai-gateway.server";
 
 const CreateEventSchema = z.object({
   title: z.string().trim().min(1).max(160),
@@ -111,8 +112,8 @@ export const generateEventOutfit = createServerFn({ method: "POST" })
         .eq("user_id", userId),
     ]);
 
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const key = process.env.ONIXUS_AI_API_KEY;
+    if (!key) throw new Error("Missing ONIXUS_AI_API_KEY");
 
     const { getStyleFeedbackSummary, buildFeedbackPromptBlock } = await import("@/lib/feedback.functions");
     const feedbackBlock = buildFeedbackPromptBlock(await getStyleFeedbackSummary(supabase, userId));
@@ -141,11 +142,10 @@ Provide a head-to-toe outfit recommendation using the client's saved Fit/Feel/Fa
     let errorMsg: string | null = null;
 
     try {
-      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const res = await fetch(getOnixusAiUrl("chat/completions", key), {
         method: "POST",
         headers: {
-          "Lovable-API-Key": key,
-          "X-Lovable-AIG-SDK": "vercel-ai-sdk",
+          ...getOnixusAiHeaders(key),
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

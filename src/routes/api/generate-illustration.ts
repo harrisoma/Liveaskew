@@ -37,9 +37,9 @@ export const Route = createFileRoute("/api/generate-illustration")({
             headers: { "Content-Type": "application/json" },
           });
         }
-        const key = process.env.LOVABLE_API_KEY;
+        const key = process.env.ONIXUS_AI_API_KEY;
         if (!key) {
-          return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+          return new Response("Missing ONIXUS_AI_API_KEY", { status: 500 });
         }
 
         // Load supabase admin + db logging helpers.

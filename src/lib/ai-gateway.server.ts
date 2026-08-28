@@ -1,50 +1,80 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
-const LOVABLE_AIG_RUN_ID_HEADER = "X-Lovable-AIG-Run-ID";
+const ONIXUS_REQUEST_ID_HEADER = "X-Onixus-Request-ID";
+const ONIXUS_CLIENT = "liveaskew";
 
-export function createLovableAiGatewayProvider(lovableApiKey: string, initialRunId?: string) {
-  let runId = initialRunId?.trim() || undefined;
-  let resolveRunId: (value: string | undefined) => void = () => {};
-  let runIdResolved = false;
-  const runIdReady = new Promise<string | undefined>((resolve) => {
-    resolveRunId = resolve;
+function required(value: string | undefined, name: string): string {
+  const normalized = value?.trim();
+  if (!normalized) throw new Error(`Missing ${name}`);
+  return normalized;
+}
+
+export function getOnixusAiConfig(apiKeyOverride?: string) {
+  return {
+    apiKey: required(apiKeyOverride ?? process.env.ONIXUS_AI_API_KEY, "ONIXUS_AI_API_KEY"),
+    baseURL: required(process.env.ONIXUS_AI_BASE_URL, "ONIXUS_AI_BASE_URL").replace(/\/$/, ""),
+    organizationId: required(
+      process.env.ONIXUS_AI_ORGANIZATION_ID,
+      "ONIXUS_AI_ORGANIZATION_ID",
+    ),
+  };
+}
+
+export function getOnixusAiHeaders(apiKeyOverride?: string): Record<string, string> {
+  const config = getOnixusAiConfig(apiKeyOverride);
+  return {
+    Authorization: `Bearer ${config.apiKey}`,
+    "X-Onixus-Organization-ID": config.organizationId,
+    "X-Onixus-Client": ONIXUS_CLIENT,
+  };
+}
+
+export function getOnixusAiUrl(path: string, apiKeyOverride?: string): string {
+  const { baseURL } = getOnixusAiConfig(apiKeyOverride);
+  return `${baseURL}/${path.replace(/^\//, "")}`;
+}
+
+export function createOnixusAiGatewayProvider(apiKey: string, initialRequestId?: string) {
+  const config = getOnixusAiConfig(apiKey);
+  let requestId = initialRequestId?.trim() || undefined;
+  let resolveRequestId: (value: string | undefined) => void = () => {};
+  let requestIdResolved = false;
+  const requestIdReady = new Promise<string | undefined>((resolve) => {
+    resolveRequestId = resolve;
   });
 
-  const publishRunId = (value?: string) => {
+  const publishRequestId = (value?: string) => {
     const next = value?.trim() || undefined;
-    if (!runId && next) runId = next;
-    if (!runIdResolved) {
-      runIdResolved = true;
-      resolveRunId(runId);
+    if (!requestId && next) requestId = next;
+    if (!requestIdResolved) {
+      requestIdResolved = true;
+      resolveRequestId(requestId);
     }
   };
-  if (runId) publishRunId(runId);
+  if (requestId) publishRequestId(requestId);
 
   const provider = createOpenAICompatible({
-    name: "lovable",
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    headers: {
-      "Lovable-API-Key": lovableApiKey,
-      "X-Lovable-AIG-SDK": "vercel-ai-sdk",
-    },
+    name: "onixus-liveaskew",
+    baseURL: config.baseURL,
+    headers: getOnixusAiHeaders(apiKey),
     fetch: async (input, init) => {
       const headers = new Headers(init?.headers);
-      if (runId && !headers.has(LOVABLE_AIG_RUN_ID_HEADER)) {
-        headers.set(LOVABLE_AIG_RUN_ID_HEADER, runId);
+      if (requestId && !headers.has(ONIXUS_REQUEST_ID_HEADER)) {
+        headers.set(ONIXUS_REQUEST_ID_HEADER, requestId);
       }
       try {
         const response = await fetch(input, { ...init, headers });
-        publishRunId(response.headers.get(LOVABLE_AIG_RUN_ID_HEADER) ?? undefined);
+        publishRequestId(response.headers.get(ONIXUS_REQUEST_ID_HEADER) ?? undefined);
         return response;
       } catch (error) {
-        publishRunId(undefined);
+        publishRequestId(undefined);
         throw error;
       }
     },
   });
 
   return Object.assign(provider, {
-    getRunId: () => runId,
-    waitForRunId: () => (runId ? Promise.resolve(runId) : runIdReady),
+    getRunId: () => requestId,
+    waitForRunId: () => (requestId ? Promise.resolve(requestId) : requestIdReady),
   });
 }

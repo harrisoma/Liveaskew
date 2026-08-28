@@ -104,8 +104,8 @@ export const generatePhotorealHero = createServerFn({ method: "POST" })
     }
     refB64 = btoa(refB64);
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("Missing LOVABLE_API_KEY");
+    const apiKey = process.env.ONIXUS_AI_API_KEY;
+    if (!apiKey) throw new Error("Missing ONIXUS_AI_API_KEY");
 
     const startedAt = Date.now();
     const model = "openai/gpt-image-2";

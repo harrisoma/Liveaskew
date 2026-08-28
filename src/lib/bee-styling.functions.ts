@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { getOnixusAiHeaders, getOnixusAiUrl } from "@/lib/ai-gateway.server";
 
 type DB = SupabaseClient<Database>;
 
@@ -178,14 +179,14 @@ async function renderAndStoreLookCover(args: {
   lookId: string;
   prompt: string;
 }): Promise<string | null> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
+  const key = process.env.ONIXUS_AI_API_KEY;
+  if (!key) throw new Error("Missing ONIXUS_AI_API_KEY");
 
-  // Non-streaming image generation via Lovable AI Gateway → Gemini image model.
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+  // Non-streaming image generation through the Onixus OpenAI-compatible gateway.
+  const res = await fetch(getOnixusAiUrl("images/generations", key), {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
+      ...getOnixusAiHeaders(key),
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

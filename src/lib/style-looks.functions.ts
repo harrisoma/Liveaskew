@@ -9,7 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { generateText } from "ai";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 export type LookIllustration = {
   status: "success" | "failed" | "pending";
@@ -253,7 +253,7 @@ Output STRICT JSON only, no markdown fences:
  "paletteColors": string[] (1–3 names drawn EXACTLY from the palette above),
  "note": string (1–2 short editorial sentences in Bee's voice — no emoji)}`;
 
-  const gateway = createLovableAiGatewayProvider(process.env.LOVABLE_API_KEY!);
+  const gateway = createOnixusAiGatewayProvider(process.env.ONIXUS_AI_API_KEY!);
   const { text } = await generateText({
     model: gateway(TEXT_MODEL),
     system: SYSTEM_VOICE,
@@ -289,7 +289,7 @@ Output STRICT JSON only, no markdown:
   {"name": string (2–4 words), "swap": string (short phrase like "Day → Night"), "note": string (1 short editorial sentence)},
   {"name": string, "swap": string, "note": string}
 ]}`;
-  const gateway = createLovableAiGatewayProvider(process.env.LOVABLE_API_KEY!);
+  const gateway = createOnixusAiGatewayProvider(process.env.ONIXUS_AI_API_KEY!);
   const { text } = await generateText({
     model: gateway(TEXT_MODEL),
     system: SYSTEM_VOICE,
@@ -503,8 +503,8 @@ export const generateOneHero = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    if (!process.env.LOVABLE_API_KEY)
-      return { ok: false as const, error: "Missing LOVABLE_API_KEY" };
+    if (!process.env.ONIXUS_AI_API_KEY)
+      return { ok: false as const, error: "Missing ONIXUS_AI_API_KEY" };
     const ctxRes = await loadStyleCtx(context.supabase as never, context.userId);
     if ("error" in ctxRes) return { ok: false as const, error: ctxRes.error };
     const doc = (await loadDoc(context.supabase as never, context.userId)) ?? emptyDoc();
@@ -527,8 +527,8 @@ export const generateHeroVariations = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    if (!process.env.LOVABLE_API_KEY)
-      return { ok: false as const, error: "Missing LOVABLE_API_KEY" };
+    if (!process.env.ONIXUS_AI_API_KEY)
+      return { ok: false as const, error: "Missing ONIXUS_AI_API_KEY" };
     const ctxRes = await loadStyleCtx(context.supabase as never, context.userId);
     if ("error" in ctxRes) return { ok: false as const, error: ctxRes.error };
     const doc = (await loadDoc(context.supabase as never, context.userId)) ?? emptyDoc();
@@ -562,8 +562,8 @@ export const generateLookIllustration = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    if (!process.env.LOVABLE_API_KEY)
-      return { ok: false as const, error: "Missing LOVABLE_API_KEY" };
+    if (!process.env.ONIXUS_AI_API_KEY)
+      return { ok: false as const, error: "Missing ONIXUS_AI_API_KEY" };
     const ctxRes = await loadStyleCtx(context.supabase as never, context.userId);
     if ("error" in ctxRes) return { ok: false as const, error: ctxRes.error };
     const doc = (await loadDoc(context.supabase as never, context.userId)) ?? emptyDoc();
@@ -575,7 +575,7 @@ export const generateLookIllustration = createServerFn({ method: "POST" })
         context.userId,
         path,
         coverImagePrompt(ctxRes.ctx),
-        process.env.LOVABLE_API_KEY,
+        process.env.ONIXUS_AI_API_KEY,
       );
       await saveDoc(context.supabase as never, context.userId, { ...doc, cover: entry });
       return { ok: entry.status === "success", entry };
@@ -589,7 +589,7 @@ export const generateLookIllustration = createServerFn({ method: "POST" })
       context.userId,
       path,
       heroImagePrompt(ctxRes.ctx, hero),
-      process.env.LOVABLE_API_KEY,
+      process.env.ONIXUS_AI_API_KEY,
     );
     const next: LooksDoc = {
       ...doc,

@@ -16,7 +16,7 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 vi.mock("@/lib/ai-gateway.server", () => ({
-  createLovableAiGatewayProvider: () => (_modelId: string) => ({ modelId: _modelId }),
+  createOnixusAiGatewayProvider: () => (_modelId: string) => ({ modelId: _modelId }),
 }));
 
 import { extractAndPersistBeeSignals } from "./bee-extract.server";
