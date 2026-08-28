@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { streamText } from "ai";
 import type { Database } from "@/integrations/supabase/types";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { getStyleFeedbackSummary, buildFeedbackPromptBlock } from "@/lib/feedback.functions";
 
 const MAGAZINE_MODEL = "google/gemini-2.5-pro";
@@ -42,8 +42,8 @@ export const Route = createFileRoute("/api/bee/magazine-stream")({
 
         const SUPABASE_URL = process.env.SUPABASE_URL;
         const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-        const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !LOVABLE_API_KEY) {
+        const ONIXUS_AI_API_KEY = process.env.ONIXUS_AI_API_KEY;
+        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !ONIXUS_AI_API_KEY) {
           return new Response("Server not configured", { status: 500 });
         }
 
@@ -93,7 +93,7 @@ Generate this month's magazine for this member now. Output only the JSON object.
         const feedbackBlock = buildFeedbackPromptBlock(feedbackSummary);
         const systemPrompt = SYSTEM_PROMPT + feedbackBlock;
 
-        const gateway = createLovableAiGatewayProvider(LOVABLE_API_KEY);
+        const gateway = createOnixusAiGatewayProvider(ONIXUS_AI_API_KEY);
 
         let result;
         try {

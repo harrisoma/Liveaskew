@@ -208,7 +208,7 @@ async function runOnePlate(params: {
 }): Promise<IllustrationEntry> {
   const { supabase, userId, kind, ctx } = params;
   const prompt = KIND_BRIEFS[kind](ctx);
-  const apiKey = process.env.LOVABLE_API_KEY ?? "";
+  const apiKey = process.env.ONIXUS_AI_API_KEY ?? "";
   const startedAt = new Date().toISOString();
 
   let attempts = 0;
@@ -339,7 +339,7 @@ export const generateStylePlate = createServerFn({ method: "POST" })
       context,
     }): Promise<{ ok: boolean; entry: IllustrationEntry } | { ok: false; error: string }> => {
       const { supabase, userId } = context;
-      if (!process.env.LOVABLE_API_KEY) return { ok: false, error: "Missing LOVABLE_API_KEY" };
+      if (!process.env.ONIXUS_AI_API_KEY) return { ok: false, error: "Missing ONIXUS_AI_API_KEY" };
       const ctxResult = await loadPromptContext(supabase as never, userId);
       if ("error" in ctxResult) return { ok: false, error: ctxResult.error };
       const entry = await runOnePlate({
@@ -387,8 +387,8 @@ export const generateMyStyleIllustrations = createServerFn({ method: "POST" })
       error?: string;
     }> => {
       const { supabase, userId } = context;
-      if (!process.env.LOVABLE_API_KEY)
-        return { ok: false, generated: 0, error: "Missing LOVABLE_API_KEY" };
+      if (!process.env.ONIXUS_AI_API_KEY)
+        return { ok: false, generated: 0, error: "Missing ONIXUS_AI_API_KEY" };
       const ctxResult = await loadPromptContext(supabase as never, userId);
       if ("error" in ctxResult) return { ok: false, generated: 0, skipped: ctxResult.error };
       let okCount = 0;

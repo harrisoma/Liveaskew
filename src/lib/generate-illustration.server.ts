@@ -1,3 +1,5 @@
+import { getOnixusAiHeaders, getOnixusAiUrl } from "@/lib/ai-gateway.server";
+
 type ImageGenerationJson = {
   data?: Array<{ b64_json?: string; url?: string }>;
   b64_json?: string;
@@ -112,20 +114,16 @@ export async function generateIllustrationBytes(params: {
       new Blob([new Uint8Array(refBytes)], { type: "image/png" }),
       "reference.png",
     );
-    upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/edits", {
+    upstream = await fetch(getOnixusAiUrl("images/edits", params.apiKey), {
       method: "POST",
-      headers: {
-        "Lovable-API-Key": params.apiKey,
-        "X-Lovable-AIG-SDK": "raw-fetch",
-      },
+      headers: getOnixusAiHeaders(params.apiKey),
       body: form,
     });
   } else {
-    upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+    upstream = await fetch(getOnixusAiUrl("images/generations", params.apiKey), {
       method: "POST",
       headers: {
-        "Lovable-API-Key": params.apiKey,
-        "X-Lovable-AIG-SDK": "raw-fetch",
+        ...getOnixusAiHeaders(params.apiKey),
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

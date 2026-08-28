@@ -13,7 +13,7 @@ import { generateObject, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 const EXTRACT_MODEL = "google/gemini-2.5-flash";
 const EXTRACT_TEMPERATURE = 0.4;
@@ -138,7 +138,7 @@ async function extractSection<T>(opts: {
   label: string;
 }): Promise<T | null> {
   const { apiKey, schema, system, prompt, label } = opts;
-  const gateway = createLovableAiGatewayProvider(apiKey);
+  const gateway = createOnixusAiGatewayProvider(apiKey);
 
   const attempt = async (tryNum: number): Promise<T> => {
     try {

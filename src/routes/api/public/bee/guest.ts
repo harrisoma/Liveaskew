@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { streamText, type ModelMessage } from "ai";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { BEE_GUEST_SYSTEM_PROMPT } from "@/lib/bee-guest-prompt";
 
 const BEE_MODEL = "google/gemini-2.5-pro";
@@ -26,8 +26,8 @@ export const Route = createFileRoute("/api/public/bee/guest")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const LOVABLE_API_KEY = process.env["LOVABLE_API_KEY"];
-        if (!LOVABLE_API_KEY) {
+        const ONIXUS_AI_API_KEY = process.env["ONIXUS_AI_API_KEY"];
+        if (!ONIXUS_AI_API_KEY) {
           return new Response("Server not configured", { status: 500 });
         }
 
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/public/bee/guest")({
           content: m.content,
         }));
 
-        const gateway = createLovableAiGatewayProvider(LOVABLE_API_KEY);
+        const gateway = createOnixusAiGatewayProvider(ONIXUS_AI_API_KEY);
         let result;
         try {
           result = streamText({

@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { streamText, type ModelMessage } from "ai";
 import type { Database } from "@/integrations/supabase/types";
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 const BEE_MODEL = "google/gemini-2.5-pro";
 
@@ -79,8 +79,8 @@ export const Route = createFileRoute("/api/bee/stream")({
 
         const SUPABASE_URL = process.env.SUPABASE_URL;
         const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-        const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !LOVABLE_API_KEY) {
+        const ONIXUS_AI_API_KEY = process.env.ONIXUS_AI_API_KEY;
+        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !ONIXUS_AI_API_KEY) {
           return new Response("Server not configured", { status: 500 });
         }
 
@@ -239,8 +239,8 @@ export const Route = createFileRoute("/api/bee/stream")({
             content: m.content as string,
           }));
 
-        // 6. Stream via Lovable AI Gateway → Gemini
-        const gateway = createLovableAiGatewayProvider(LOVABLE_API_KEY);
+        // 6. Stream through the Onixus AI tenant.
+        const gateway = createOnixusAiGatewayProvider(ONIXUS_AI_API_KEY);
         const startedAt = Date.now();
         let result;
         try {
@@ -326,7 +326,7 @@ export const Route = createFileRoute("/api/bee/stream")({
                 await extractAndPersistBeeSignals({
                   supabase,
                   userId,
-                  apiKey: LOVABLE_API_KEY,
+                  apiKey: ONIXUS_AI_API_KEY,
                   transcript,
                 });
               } catch (err) {

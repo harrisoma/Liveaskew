@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import heroImage from "@/assets/hero-editorial.jpg";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
-import { track, getHeroVariant, trackSignupCompletedOnce } from "@/lib/analytics";
+import { track, getHeroVariant } from "@/lib/analytics";
 import { resolvePostAuthDestination } from "@/lib/post-auth-destination";
 
 const authSearchSchema = z.object({
@@ -62,18 +61,15 @@ function AuthPage() {
       track({ event: "signup_started", variant: getHeroVariant(), method: "google" });
     }
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/verify-email`,
+        },
       });
-      if (result.error) throw result.error;
-      if (result.redirected) {
-        // Browser will redirect to Google — just return
-        return;
-      }
-      // Tokens received and session is already set
-      trackSignupCompletedOnce("google");
-      const to = await resolvePostAuthDestination();
-      navigate({ to });
+      if (error) throw error;
+      // Supabase redirects the browser to Google and then back to /verify-email.
+      return;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Google sign-in failed";
       setError(msg);
