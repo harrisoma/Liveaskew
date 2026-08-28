@@ -4,10 +4,10 @@ import { Menu, X } from "lucide-react";
 import logoAsset from "@/assets/askew-logo.png.asset.json";
 
 const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "Meet Bee", href: "/#bee" },
-  { label: "How It Works", href: "/#process" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Work with Bianca", href: "/bianca" },
+  { label: "Our Brands", href: "/#brands" },
+  { label: "Bee", href: "/#bee" },
+  { label: "Our Standard", href: "/#standard" },
+  { label: "Studio", href: "/bianca" },
 ];
 
 export function Nav() {
@@ -80,7 +80,7 @@ export function Nav() {
             search={{ mode: "signup" }}
             className="bg-ink px-4 py-2.5 text-[0.62rem] font-medium tracking-[0.22em] uppercase text-cream transition hover:bg-gold-deep md:px-5 md:py-3 md:text-[0.65rem]"
           >
-            Start Free Trial
+            Enter Bee
           </Link>
           <button
             type="button"
