@@ -33,7 +33,7 @@ ONIXUS_AI_API_KEY
 ONIXUS_AI_ORGANIZATION_ID
 ```
 
-`ONIXUS_AI_BASE_URL` must include the API version, for example `https://your-onixus-host.example/v1`. The service role key and all Onixus values must never use the `VITE_` prefix.
+For the current Supabase deployment, set `ONIXUS_AI_BASE_URL` to the Edge Function URL without a trailing slash: `https://rjwbfkuzgusaoizcmmgf.supabase.co/functions/v1/onixus-ai-gateway`. LiveAskew appends the OpenAI-compatible route (`chat/completions`, `images/generations`, or `images/edits`). The service role key and all Onixus values must never use the `VITE_` prefix.
 
 ## Verification
 
