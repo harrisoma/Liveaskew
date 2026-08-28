@@ -265,4 +265,12 @@
   }
 }
 
+@theme inline { --color-lime: #dfff4f; }
+.la-hero { isolation: isolate; }
+.la-hero::after { content: ""; position: absolute; width: 42vw; height: 42vw; min-width: 340px; min-height: 340px; right: -18vw; bottom: -26vw; border: 2px solid color-mix(in oklab, var(--ink) 20%, transparent); border-radius: 50%; pointer-events: none; }
+.la-grain { pointer-events: none; opacity: 0.12; mix-blend-mode: multiply; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/></svg>"); }
+.la-magnetic:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid #dfff4f; outline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .la-magnetic:hover { transform: translateY(-2px); } }
+@media (max-width: 700px) { .la-hero h1 { font-size: clamp(4rem, 20vw, 6rem); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } }
 
