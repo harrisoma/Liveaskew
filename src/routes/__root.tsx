@@ -27,26 +27,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LiveAskew — Personal AI Stylist" },
+      { title: "LiveAskew — Style, considered differently" },
       {
         name: "description",
         content:
-          "LiveAskew is your personal AI stylist — conversational, intelligent, deeply personal. A monthly style guide built only for you.",
+          "LiveAskew is a modern style company creating intelligent tools, thoughtful objects and personal styling experiences.",
       },
-      { property: "og:title", content: "LiveAskew — Personal AI Stylist" },
+      { property: "og:title", content: "LiveAskew — Style, considered differently" },
       {
         property: "og:description",
         content:
-          "Conversational AI styling. Monthly looks, colour palette, wardrobe blueprint. Free for 14 days.",
+          "Intelligent style tools, thoughtful objects and deeply personal experiences.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "LiveAskew — Personal AI Stylist" },
-      { name: "description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { property: "og:description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { name: "twitter:description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png" },
+      { name: "twitter:title", content: "LiveAskew — Style, considered differently" },
+      { name: "twitter:description", content: "Intelligent style tools, thoughtful objects and deeply personal experiences." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
