@@ -10,6 +10,7 @@ import {
 } from "@/lib/calendar.functions";
 import { submitLookFeedback } from "@/lib/feedback.functions";
 import { ActingProfileSwitcher, getActingProfileId } from "@/components/ActingProfileSwitcher";
+import { BeeMark } from "@/components/BeeMark";
 import { hasEntitlement, loadResolvedTier } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/calendar")({
@@ -197,13 +198,14 @@ function CalendarPage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+      <header className="flex items-center justify-between px-6 py-5 md:px-10">
+        <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep">
           <ArrowLeft size={14} />
-          <span>Home</span>
+          <span>Dashboard</span>
         </Link>
-        <div className="font-display text-lg tracking-tight">
-          Calendar<span className="text-gold-deep">.</span>
+        <div className="flex items-center gap-2">
+          <BeeMark className="h-5 w-5 text-gold-deep" />
+          <span className="font-display text-base font-semibold">Calendar</span>
         </div>
         <div className="flex items-center gap-3">
           <ActingProfileSwitcher tier={tier} />
@@ -212,15 +214,15 @@ function CalendarPage() {
               setShowForm(true);
               setFormDate(toIsoDate(new Date()));
             }}
-            className="inline-flex items-center gap-2 bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-gold-deep"
+            className="neu-raised inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink transition"
           >
-            <Plus size={12} /> New Event
+            <Plus size={14} /> New Event
           </button>
         </div>
       </header>
 
       <div className="mx-auto max-w-6xl px-6 py-10 md:px-10">
-        <p className="eyebrow">Section 02</p>
+        <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Section 02</p>
         <h1 className="font-display mt-3 text-4xl leading-tight md:text-5xl">
           Your season, one date at a time.
         </h1>
@@ -228,7 +230,6 @@ function CalendarPage() {
           Add what's ahead — galas, dinners, flights, quiet weekends. Bee dresses each one for you, head to toe,
           in your Fit, Feel & Fabric.
         </p>
-        <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
         {/* Calendar grid */}
         <section className="mt-10">
@@ -239,7 +240,7 @@ function CalendarPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
-                className="grid h-9 w-9 place-items-center border border-ink/15 bg-bone hover:bg-ink hover:text-cream"
+                className="neu-raised grid h-9 w-9 place-items-center rounded-full text-ink/60 hover:text-ink"
                 aria-label="Previous month"
               >
                 <ChevronLeft size={16} />
@@ -249,13 +250,13 @@ function CalendarPage() {
                   const d = new Date();
                   setCursor(new Date(d.getFullYear(), d.getMonth(), 1));
                 }}
-                className="border border-ink/15 bg-bone px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream"
+                className="neu-raised rounded-full px-4 py-2 text-sm font-medium text-ink/70 hover:text-ink"
               >
                 Today
               </button>
               <button
                 onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
-                className="grid h-9 w-9 place-items-center border border-ink/15 bg-bone hover:bg-ink hover:text-cream"
+                className="neu-raised grid h-9 w-9 place-items-center rounded-full text-ink/60 hover:text-ink"
                 aria-label="Next month"
               >
                 <ChevronRight size={16} />
@@ -263,11 +264,11 @@ function CalendarPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-7 border-l border-t border-ink/10">
+          <div className="neu-raised grid grid-cols-7 gap-px overflow-hidden rounded-[26px] p-px">
             {WEEKDAYS.map((w) => (
               <div
                 key={w}
-                className="border-b border-r border-ink/10 bg-bone px-2 py-2 text-[0.6rem] uppercase tracking-[0.22em] text-ink/55"
+                className="bg-cream px-2 py-2.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45"
               >
                 {w}
               </div>
@@ -278,15 +279,13 @@ function CalendarPage() {
               return (
                 <div
                   key={i}
-                  className={`min-h-[110px] border-b border-r border-ink/10 p-2 ${
-                    cell.date ? "bg-cream" : "bg-bone/40"
-                  }`}
+                  className={`min-h-[110px] p-2 ${cell.date ? "bg-cream" : "bg-cream/40"}`}
                 >
                   {cell.date && (
                     <>
                       <div
                         className={`mb-1 text-xs ${
-                          isToday ? "inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold-deep text-cream" : "text-ink/60"
+                          isToday ? "inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-gold to-gold-deep text-ink" : "text-ink/60"
                         }`}
                       >
                         {cell.date.getDate()}
@@ -296,10 +295,10 @@ function CalendarPage() {
                           <button
                             key={e.id}
                             onClick={() => setSelectedId(e.id)}
-                            className={`block w-full truncate border-l-2 px-2 py-1 text-left text-[0.7rem] leading-tight transition ${
+                            className={`block w-full truncate rounded-full px-2.5 py-1 text-left text-[0.7rem] leading-tight transition ${
                               selectedId === e.id
-                                ? "border-gold-deep bg-ink text-cream"
-                                : "border-gold-deep bg-bone text-ink hover:bg-ink hover:text-cream"
+                                ? "bg-gradient-to-br from-gold to-gold-deep text-ink"
+                                : "neu-inset text-ink/70 hover:text-ink"
                             }`}
                             title={e.title}
                           >
@@ -335,8 +334,8 @@ function CalendarPage() {
         {/* Upcoming list */}
         {!loading && events.length > 0 && (
           <section className="mt-12">
-            <p className="eyebrow">Upcoming</p>
-            <ul className="mt-4 divide-y divide-ink/10 border-y border-ink/10">
+            <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-ink/45">Upcoming</p>
+            <ul className="mt-4 space-y-2">
               {events
                 .filter((e) => e.event_date >= todayIso)
                 .slice(0, 8)
@@ -344,7 +343,7 @@ function CalendarPage() {
                   <li key={e.id}>
                     <button
                       onClick={() => setSelectedId(e.id)}
-                      className="grid w-full grid-cols-[100px_1fr_auto] items-center gap-4 px-2 py-4 text-left transition hover:bg-bone"
+                      className="neu-raised grid w-full grid-cols-[100px_1fr_auto] items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition"
                     >
                       <span className="font-display text-sm text-gold-deep">
                         {new Date(e.event_date + "T00:00:00").toLocaleDateString(undefined, {
@@ -353,7 +352,7 @@ function CalendarPage() {
                         })}
                       </span>
                       <span className="truncate text-sm text-ink">{e.title}</span>
-                      <span className="text-[0.65rem] uppercase tracking-[0.2em] text-ink/45">
+                      <span className="text-xs font-medium text-ink/45">
                         {e.recommendation_status === "ready"
                           ? "Styled"
                           : e.recommendation_status === "failed"
@@ -373,66 +372,74 @@ function CalendarPage() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 px-4">
           <form
             onSubmit={handleSave}
-            className="w-full max-w-lg border border-ink/15 bg-cream p-6 shadow-lg md:p-8"
+            className="neu-raised w-full max-w-lg rounded-[26px] p-6 md:p-8"
           >
             <div className="mb-5 flex items-start justify-between">
               <div>
-                <p className="eyebrow">Add upcoming event</p>
+                <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Add upcoming event</p>
                 <h3 className="font-display mt-2 text-2xl">Tell Bee what's ahead.</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="text-ink/40 hover:text-ink"
+                className="neu-inset grid h-8 w-8 place-items-center rounded-full text-ink/40 hover:text-ink"
                 aria-label="Close"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            <label className="block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Event title</label>
-            <input
-              value={formTitle}
-              onChange={(e) => setFormTitle(e.target.value)}
-              placeholder="Charity Gala"
-              maxLength={160}
-              required
-              className="mt-2 w-full border border-ink/15 bg-bone px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-            />
+            <div className="space-y-4">
+              <div className="neu-inset rounded-2xl px-4 py-3">
+                <label className="block text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Event title</label>
+                <input
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  placeholder="Charity Gala"
+                  maxLength={160}
+                  required
+                  className="mt-1 w-full bg-transparent text-sm focus:outline-none"
+                />
+              </div>
 
-            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Date</label>
-            <input
-              type="date"
-              value={formDate}
-              onChange={(e) => setFormDate(e.target.value)}
-              required
-              className="mt-2 w-full border border-ink/15 bg-bone px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-            />
+              <div className="neu-inset rounded-2xl px-4 py-3">
+                <label className="block text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Date</label>
+                <input
+                  type="date"
+                  value={formDate}
+                  onChange={(e) => setFormDate(e.target.value)}
+                  required
+                  className="mt-1 w-full bg-transparent text-sm focus:outline-none"
+                />
+              </div>
 
-            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Context</label>
-            <textarea
-              value={formDesc}
-              onChange={(e) => setFormDesc(e.target.value)}
-              rows={3}
-              maxLength={2000}
-              placeholder="Black-tie, October evening in Mayfair, seated dinner…"
-              className="mt-2 w-full resize-none border border-ink/15 bg-bone px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
-            />
+              <div className="neu-inset rounded-2xl px-4 py-3">
+                <label className="block text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Context</label>
+                <textarea
+                  value={formDesc}
+                  onChange={(e) => setFormDesc(e.target.value)}
+                  rows={3}
+                  maxLength={2000}
+                  placeholder="Black-tie, October evening in Mayfair, seated dinner…"
+                  className="mt-1 w-full resize-none bg-transparent text-sm focus:outline-none"
+                />
+              </div>
+            </div>
 
-            {formError && <p className="mt-4 text-xs text-destructive">{formError}</p>}
+            {formError && <p className="mt-4 rounded-full border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-center text-xs text-destructive">{formError}</p>}
 
             <div className="mt-6 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="border border-ink/20 bg-transparent px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-ink hover:bg-ink hover:text-cream"
+                className="rounded-full px-4 py-2.5 text-sm font-medium text-ink/60 hover:text-ink"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving || !formTitle.trim()}
-                className="inline-flex items-center gap-2 bg-gold-deep px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-ink disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold to-gold-deep px-5 py-2.5 text-sm font-semibold text-ink transition disabled:opacity-50"
               >
                 {saving ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                 Save & dress
@@ -464,10 +471,10 @@ function EventCard({
   });
 
   return (
-    <section className="mt-10 border border-ink/15 bg-bone p-6 md:p-10">
+    <section className="neu-raised mt-10 rounded-[26px] p-6 md:p-10">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="eyebrow">{dateLabel}</p>
+          <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-ink/45">{dateLabel}</p>
           <h3 className="font-display mt-3 text-3xl leading-tight md:text-4xl">{event.title}</h3>
           {event.description && (
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/70">{event.description}</p>
@@ -476,14 +483,14 @@ function EventCard({
         <div className="flex items-center gap-2">
           <button
             onClick={onDelete}
-            className="grid h-9 w-9 place-items-center border border-ink/15 text-ink/55 hover:bg-destructive hover:text-cream"
+            className="neu-inset grid h-9 w-9 place-items-center rounded-full text-ink/50 hover:text-destructive"
             aria-label="Delete event"
           >
             <Trash2 size={14} />
           </button>
           <button
             onClick={onClose}
-            className="grid h-9 w-9 place-items-center border border-ink/15 text-ink/55 hover:bg-ink hover:text-cream"
+            className="neu-inset grid h-9 w-9 place-items-center rounded-full text-ink/50 hover:text-ink"
             aria-label="Close"
           >
             <X size={14} />
@@ -491,10 +498,8 @@ function EventCard({
         </div>
       </div>
 
-      <span className="mt-6 block h-px w-12 bg-gold-deep" />
-
-      <div className="mt-6">
-        <p className="eyebrow text-gold-deep">Bee's recommendation</p>
+      <div className="mt-7">
+        <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Bee's recommendation</p>
 
         {event.recommendation_status === "pending" && (
           <div className="mt-4 flex items-center gap-3 text-sm text-ink/55">
@@ -510,7 +515,7 @@ function EventCard({
             </p>
             <button
               onClick={onRetry}
-              className="inline-flex items-center gap-2 border border-ink/20 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-ink hover:bg-ink hover:text-cream"
+              className="neu-raised inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink"
             >
               <Sparkles size={12} /> Ask Bee again
             </button>
@@ -519,7 +524,7 @@ function EventCard({
 
         {event.recommendation_status === "ready" && event.outfit_recommendation && (
           <>
-            <div className="prose prose-sm mt-4 max-w-none whitespace-pre-wrap font-serif text-[0.95rem] leading-relaxed text-ink/85">
+            <div className="prose prose-sm mt-4 max-w-none whitespace-pre-wrap text-[0.95rem] leading-relaxed text-ink/85">
               {event.outfit_recommendation}
             </div>
             <EventFeedbackBar event={event} />
@@ -562,7 +567,7 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
 
   if (collapsed) {
     return (
-      <p className="mt-6 border-t border-ink/10 pt-4 text-xs italic text-gold-deep">
+      <p className="mt-6 text-xs italic text-gold-deep">
         Bee is removing this style pattern from your aesthetic pipeline.
       </p>
     );
@@ -571,11 +576,11 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
   return (
     <div
       className={[
-        "mt-6 flex items-center justify-between border-t border-ink/10 pt-4 transition-all duration-500",
-        reaction === "approved" ? "shadow-[0_0_28px_-6px_var(--gold)] bg-[color-mix(in_oklab,var(--gold)_8%,transparent)] px-3" : "",
+        "mt-6 flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-500",
+        reaction === "approved" ? "bg-gold-soft/40" : "neu-inset",
       ].join(" ")}
     >
-      <span className="text-[0.6rem] uppercase tracking-[0.25em] text-ink/55">
+      <span className="text-sm font-medium text-ink/60">
         {reaction === "approved" ? "Saved to vault" : "Bee's referendum"}
       </span>
       <div className="flex items-center gap-2">
@@ -584,10 +589,8 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
           disabled={!!reaction}
           aria-label="Approve"
           className={[
-            "h-8 w-8 grid place-items-center border transition",
-            reaction === "approved"
-              ? "border-gold-deep bg-gold-deep/10 text-gold-deep"
-              : "border-ink/15 text-ink/65 hover:border-gold-deep hover:text-gold-deep",
+            "h-8 w-8 grid place-items-center rounded-full transition",
+            reaction === "approved" ? "bg-gold-deep/15 text-gold-deep" : "text-ink/50 hover:text-gold-deep",
           ].join(" ")}
         >
           <ThumbsUp size={14} />
@@ -596,7 +599,7 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
           onClick={() => vote("rejected")}
           disabled={!!reaction}
           aria-label="Reject"
-          className="h-8 w-8 grid place-items-center border border-ink/15 text-ink/65 transition hover:border-ink hover:text-ink"
+          className="h-8 w-8 grid place-items-center rounded-full text-ink/50 transition hover:text-ink"
         >
           <ThumbsDown size={14} />
         </button>
@@ -608,15 +611,16 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
 function CalendarUpgradeGate() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+      <header className="flex items-center justify-between px-6 py-5 md:px-10">
+        <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep">
           <ArrowLeft size={14} />
-          <span>Home</span>
+          <span>Dashboard</span>
         </Link>
-        <div className="font-display text-lg tracking-tight">
-          Calendar<span className="text-gold-deep">.</span>
+        <div className="flex items-center gap-2">
+          <BeeMark className="h-5 w-5 text-gold-deep" />
+          <span className="font-display text-base font-semibold">Calendar</span>
         </div>
-        <span className="text-[0.6rem] uppercase tracking-[0.25em] text-gold-deep">Platinum Plus</span>
+        <span className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Platinum Plus</span>
       </header>
 
       {/* Blurred faux-calendar background */}
@@ -624,7 +628,7 @@ function CalendarUpgradeGate() {
         <div className="mx-auto max-w-6xl px-6 py-10 md:px-10">
           <div className="h-8 w-64 bg-ink/10" />
           <div className="mt-6 h-12 w-96 bg-ink/15" />
-          <div className="mt-10 grid grid-cols-7 gap-px border border-ink/10 bg-ink/10">
+          <div className="mt-10 grid grid-cols-7 gap-px rounded-[26px] bg-ink/10 overflow-hidden">
             {Array.from({ length: 42 }).map((_, i) => (
               <div key={i} className="h-24 bg-cream p-2">
                 <div className="h-3 w-6 bg-ink/15" />
@@ -638,12 +642,11 @@ function CalendarUpgradeGate() {
 
       {/* Foreground upgrade card */}
       <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center px-6 py-24 text-center md:py-32">
-        <div className="w-full border border-ink/15 bg-cream/95 px-8 py-12 shadow-xl backdrop-blur md:px-14 md:py-16">
-          <p className="eyebrow text-gold-deep">Platinum Plus</p>
+        <div className="neu-raised w-full rounded-[30px] px-8 py-12 md:px-14 md:py-16">
+          <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Platinum Plus</p>
           <h1 className="font-display mt-5 text-3xl leading-tight md:text-5xl">
             Bee runs your style life.
           </h1>
-          <span className="mt-7 mx-auto block h-px w-12 bg-gold-deep" />
           <p className="mt-7 text-base leading-relaxed text-ink/75 md:text-lg">
             Upgrade to <span className="text-ink">Platinum Plus</span> to unlock your proactive event
             calendar and travel planning tools — every gala, every flight, every quiet weekend,
@@ -652,15 +655,15 @@ function CalendarUpgradeGate() {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/pricing"
-              className="inline-flex items-center gap-2 bg-ink px-6 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-cream transition hover:bg-gold-deep"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold to-gold-deep px-6 py-3 text-sm font-semibold text-ink shadow-lg shadow-gold/30 transition hover:brightness-105"
             >
               See Platinum Plus
             </Link>
             <Link
-              to="/"
-              className="inline-flex items-center gap-2 border border-ink/20 px-6 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-ink transition hover:bg-ink hover:text-cream"
+              to="/dashboard"
+              className="neu-raised inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium text-ink/70 transition hover:text-ink"
             >
-              Back home
+              Back to dashboard
             </Link>
           </div>
         </div>

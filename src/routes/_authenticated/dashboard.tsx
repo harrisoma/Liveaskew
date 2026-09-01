@@ -1,6 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Lock, ArrowUpRight, Loader2, Sparkles } from "lucide-react";
+import {
+  Check,
+  Lock,
+  ArrowUpRight,
+  Loader2,
+  Sparkles,
+  MessageCircle,
+  Shirt,
+  CalendarDays,
+  UserRound,
+  Camera,
+  BookOpen,
+  Mic,
+  ThumbsUp,
+  ShoppingBag,
+  Zap,
+  Users,
+  Star,
+  type LucideIcon,
+} from "lucide-react";
+import { BeeMark } from "@/components/BeeMark";
 import { supabase } from "@/integrations/supabase/client";
 import {
   hasEntitlement,
@@ -35,6 +55,7 @@ type Capability = {
   title: string;
   description: string;
   href: string;
+  icon: LucideIcon;
 };
 
 const TIER_ORDER: PlanSlug[] = [
@@ -47,18 +68,18 @@ const TIER_ORDER: PlanSlug[] = [
 ];
 
 const CAPABILITIES: Capability[] = [
-  { key: "beeChat", title: "Talk to Bee", description: "Your stylist in conversation, day or night.", href: "/chat" },
-  { key: "wardrobe", title: "Your Wardrobe", description: "Every piece you own, catalogued and ready.", href: "/wardrobe" },
-  { key: "calendar", title: "Dressing Calendar", description: "Bee dresses you for what's actually on your week.", href: "/calendar" },
-  { key: "styleProfile", title: "Style Profile", description: "The blueprint Bee styles you from.", href: "/profile" },
-  { key: "selfieAI", title: "Selfie AI", description: "See yourself modeled in every look.", href: "/profile" },
-  { key: "monthlyMagazine", title: "Monthly Magazine", description: "Eight editorial spreads, made for you.", href: "/my-style-guide" },
-  { key: "beeVoice", title: "Bee's Voice", description: "Talk out loud. She talks back.", href: "/chat" },
-  { key: "thumbsFeedback", title: "Thumbs Feedback", description: "Teach Bee your taste, look by look.", href: "/chat" },
-  { key: "shoppableManifests", title: "Shoppable Looks", description: "Every look, buyable end-to-end.", href: "/my-style-guide" },
-  { key: "priorityGeneration", title: "Priority Generation", description: "Front of the queue on every render.", href: "/my-style-guide" },
-  { key: "householdPartnerSeat", title: "Household Seats", description: "Add partner and family. Their Bee, their face.", href: "/household" },
-  { key: "quarterlyStylistSession", title: "Session with Bianca", description: "A quarterly hour with your stylist.", href: "/inquiry" },
+  { key: "beeChat", title: "Talk to Bee", description: "Your stylist in conversation, day or night.", href: "/chat", icon: MessageCircle },
+  { key: "wardrobe", title: "Your Wardrobe", description: "Every piece you own, catalogued and ready.", href: "/wardrobe", icon: Shirt },
+  { key: "calendar", title: "Dressing Calendar", description: "Bee dresses you for what's actually on your week.", href: "/calendar", icon: CalendarDays },
+  { key: "styleProfile", title: "Style Profile", description: "The blueprint Bee styles you from.", href: "/profile", icon: UserRound },
+  { key: "selfieAI", title: "Selfie AI", description: "See yourself modeled in every look.", href: "/profile", icon: Camera },
+  { key: "monthlyMagazine", title: "Monthly Magazine", description: "Eight editorial spreads, made for you.", href: "/my-style-guide", icon: BookOpen },
+  { key: "beeVoice", title: "Bee's Voice", description: "Talk out loud. She talks back.", href: "/chat", icon: Mic },
+  { key: "thumbsFeedback", title: "Thumbs Feedback", description: "Teach Bee your taste, look by look.", href: "/chat", icon: ThumbsUp },
+  { key: "shoppableManifests", title: "Shoppable Looks", description: "Every look, buyable end-to-end.", href: "/my-style-guide", icon: ShoppingBag },
+  { key: "priorityGeneration", title: "Priority Generation", description: "Front of the queue on every render.", href: "/my-style-guide", icon: Zap },
+  { key: "householdPartnerSeat", title: "Household Seats", description: "Add partner and family. Their Bee, their face.", href: "/household", icon: Users },
+  { key: "quarterlyStylistSession", title: "Session with Bianca", description: "A quarterly hour with your stylist.", href: "/inquiry", icon: Star },
 ];
 
 function minUnlockingTier(key: Entitlement): PlanSlug | null {
@@ -203,99 +224,143 @@ function DashboardPage() {
         className="flex items-center justify-between px-6 py-6 md:px-12 dash-rule"
         style={{ borderBottom: `1px solid ${revealed ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)"}` }}
       >
-        <div>
-          <p className="eyebrow" style={{ color: accent }}>
-            Member · {profile?.client_code ?? "LA-————"}
-          </p>
-          <div className="font-display mt-1 text-lg">
-            LiveAskew<span style={{ color: accent }}>.</span>
+        <div className="flex items-center gap-2.5">
+          <BeeMark className="h-6 w-6 shrink-0" style={{ color: accent }} />
+          <div>
+            <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase" style={{ color: accent }}>
+              Member · {profile?.client_code ?? "LA-————"}
+            </p>
+            <div className="font-display text-lg font-semibold leading-tight">
+              Bee <span className="text-[0.5rem] font-semibold tracking-[0.1em] uppercase text-ink/40">by LiveAskew</span>
+            </div>
           </div>
         </div>
-        <nav className="flex items-center gap-6 text-[0.65rem] uppercase tracking-[0.25em]">
+        <nav className="flex items-center gap-5 text-sm font-medium">
           <Link to="/profile" className="hover:opacity-70">Profile</Link>
           <Link to="/pricing" className="hover:opacity-70">Plan</Link>
         </nav>
       </header>
 
-      <section className="mx-auto max-w-[1400px] px-6 py-16 md:px-12 md:py-24">
-        <p className="eyebrow" style={{ color: accent }}>Welcome back</p>
-        <h1 className="font-display mt-4 text-4xl leading-[1.05] md:text-6xl">
-          {profile?.display_name ? (
-            <>
-              {profile.display_name}
-              <span style={{ color: accent }}>.</span>
-            </>
-          ) : (
-            <>Your studio<span style={{ color: accent }}>.</span></>
-          )}
-        </h1>
-        <span className="mt-8 inline-block h-px w-16" style={{ background: accent }} />
-        <p className="mt-6 max-w-xl text-sm" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
-          Every capability of LiveAskew, arranged for you. What's active is yours today. What isn't, is what's ahead.
-        </p>
+      <section className="grid grid-cols-1 lg:grid-cols-[520px_1fr]">
+        {/* Left — dark glass greeting */}
+        <div className="relative overflow-hidden bg-ink px-8 py-14 text-cream md:px-12 lg:py-20">
+          <div aria-hidden className="glass-glow -top-32 right-[-15%] h-[420px] w-[420px]" />
+          <div className="relative">
+            <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-cream/50">
+              {greeting()}{profile?.display_name ? `, ${profile.display_name.split(" ")[0]}` : ""}
+            </p>
+            <h1 className="font-display mt-4 text-4xl leading-[1.1] md:text-5xl">
+              Style that fits <span className="text-gold">your actual life.</span>
+            </h1>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-cream/65">
+              Every capability of LiveAskew, arranged for you — what's active today, and what's ahead.
+            </p>
 
-        {loading ? (
-          <div className="mt-16 flex items-center gap-2 text-sm" style={{ color: "color-mix(in oklab, var(--ink) 55%, transparent)" }}>
-            <Loader2 size={14} className="animate-spin" /> Loading your studio…
-          </div>
-        ) : (
-          <>
-            <RevealControl
-              palette={palette}
-              selfieUploaded={selfieUploaded}
-              theme={theme}
-              saving={saving}
-              onReveal={onReveal}
-              onRevert={onRevert}
-              accent={accent}
-            />
-
-            {revealed && (
-              <div className="mt-8">
-                <Link
-                  to="/my-style-guide"
-                  className="pulse-cta inline-flex items-center gap-3 px-8 py-4 text-[0.7rem] uppercase tracking-[0.3em]"
-                  style={{
-                    border: `1px solid ${accent}`,
-                    color: accent,
-                    background: `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 6%, var(--cream))`,
-                  }}
-                >
-                  <Sparkles size={14} /> View Your Style Guide <ArrowUpRight size={14} />
-                </Link>
-              </div>
-            )}
-
-            <div className="mt-14">
-              <HeroCard
-                capability={heroCap}
-                tier={tier}
-                selfieUploaded={selfieUploaded}
-                accent={accent}
-                accentSoft={accentSoft}
-                revealed={revealed}
-              />
+            <div className="relative mt-12 flex pl-2">
+              {MOODS.map((m, i) => {
+                const rotations = [-9, -2, 4, 10];
+                const shifts = [8, 0, 6, 14];
+                return (
+                  <Link
+                    key={m.label}
+                    to="/chat"
+                    className="glass-card relative h-[180px] w-[118px] shrink-0 rounded-[22px] p-3.5"
+                    style={{
+                      marginLeft: i === 0 ? 0 : -38,
+                      transform: `rotate(${rotations[i]}deg) translateY(${shifts[i]}px)`,
+                      zIndex: 4 - i,
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="text-cream">
+                      {m.icon}
+                    </svg>
+                    <p className="font-display mt-auto pt-8 text-sm text-cream">{m.label}</p>
+                  </Link>
+                );
+              })}
             </div>
+          </div>
+        </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {restCaps.map((cap, i) => (
-                <CapabilityCard
-                  key={cap.key}
-                  capability={cap}
+        {/* Right — capabilities */}
+        <div className="px-6 py-10 md:px-12 md:py-14">
+          {loading ? (
+            <div className="flex items-center gap-2 text-sm" style={{ color: "color-mix(in oklab, var(--ink) 55%, transparent)" }}>
+              <Loader2 size={14} className="animate-spin" /> Loading your studio…
+            </div>
+          ) : (
+            <>
+              <RevealControl
+                palette={palette}
+                selfieUploaded={selfieUploaded}
+                theme={theme}
+                saving={saving}
+                onReveal={onReveal}
+                onRevert={onRevert}
+                accent={accent}
+              />
+
+              {revealed && (
+                <div className="mt-6">
+                  <Link
+                    to="/my-style-guide"
+                    className="pulse-cta inline-flex items-center gap-3 rounded-full px-7 py-3.5 text-sm font-semibold"
+                    style={{
+                      color: accent,
+                      background: `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 12%, var(--cream))`,
+                      boxShadow: `0 10px 24px -12px color-mix(in oklab, ${accent} 45%, transparent)`,
+                    }}
+                  >
+                    <Sparkles size={14} /> View Your Style Guide <ArrowUpRight size={14} />
+                  </Link>
+                </div>
+              )}
+
+              <div className="mt-8">
+                <HeroCard
+                  capability={heroCap}
                   tier={tier}
-                  index={i}
+                  selfieUploaded={selfieUploaded}
                   accent={accent}
                   accentSoft={accentSoft}
                   revealed={revealed}
-                  revealing={revealing}
                 />
-              ))}
-            </div>
-          </>
-        )}
+              </div>
+
+              <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-5">
+                {restCaps.map((cap, i) => (
+                  <CapabilityCard
+                    key={cap.key}
+                    capability={cap}
+                    tier={tier}
+                    index={i}
+                    accent={accent}
+                    accentSoft={accentSoft}
+                    revealed={revealed}
+                    revealing={revealing}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </section>
     </main>
   );
+}
+
+const MOODS: { label: string; icon: React.ReactNode }[] = [
+  { label: "Everyday", icon: <><circle cx="12" cy="12" r="4.5" /><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></> },
+  { label: "Elevated", icon: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /> },
+  { label: "Grounded", icon: <><path d="M20 4c-9 0-15 6-15 14 8 0 14-5 15-14z" /><path d="M6 18c3-4 6-7 12-11" /></> },
+  { label: "Bold", icon: <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" /> },
+];
+
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
 }
 
 function RevealControl({
@@ -375,10 +440,10 @@ function RevealControl({
       <button
         onClick={onReveal}
         disabled={saving}
-        className="inline-flex items-center gap-3 border px-6 py-3 text-[0.7rem] uppercase tracking-[0.3em] transition-colors hover:bg-[color-mix(in_oklab,var(--gold)_6%,var(--cream))] disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{ borderColor: accent, color: accent }}
+        className="neu-raised inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{ color: accent }}
       >
-        ✦ Reveal my palette
+        <Sparkles size={14} /> Reveal my palette
       </button>
       <div className="flex items-center gap-1.5">
         {palette.swatches.slice(0, 5).map((c, i) => (
@@ -433,16 +498,16 @@ function HeroCard({
     return (
       <Link
         to={capability.href}
-        className="flex items-center justify-between border px-8 py-6 transition-colors accent-border"
+        className="flex items-center justify-between rounded-[26px] px-8 py-6 transition-colors accent-border"
         style={{
-          borderColor: accentSoft,
           background: `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 8%, var(--cream))`,
+          boxShadow: `0 16px 32px -18px color-mix(in oklab, ${accentSoft} 70%, transparent)`,
         }}
       >
         <div className="flex items-center gap-4">
           <Check size={18} style={{ color: accent }} />
           <div>
-            <p className="eyebrow" style={{ color: accent }}>Selfie AI</p>
+            <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase" style={{ color: accent }}>Selfie AI</p>
             <p className="font-display mt-1 text-lg">Your face is set.</p>
           </div>
         </div>
@@ -461,24 +526,25 @@ function HeroCard({
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="group relative block overflow-hidden border px-8 py-14 md:px-14 md:py-20 accent-border"
+      className="group relative block overflow-hidden rounded-[30px] px-8 py-14 md:px-14 md:py-20 accent-border"
       style={{
-        borderColor: active ? accent : accentSoft,
         background: active
           ? `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 6%, var(--cream))`
           : "var(--cream)",
+        boxShadow: active
+          ? `0 24px 48px -24px color-mix(in oklab, ${accent} 55%, transparent)`
+          : `0 16px 32px -20px color-mix(in oklab, ${accentSoft} 60%, transparent)`,
       }}
     >
-      <p className="eyebrow" style={{ color: accent }}>{eyebrow}</p>
-      <h2 className="font-display mt-6 text-3xl leading-[1.05] md:text-5xl">
+      <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase" style={{ color: accent }}>{eyebrow}</p>
+      <h2 className="font-display mt-5 text-3xl leading-[1.05] md:text-5xl">
         {capability.title}
         <span style={{ color: accent }}>.</span>
       </h2>
       <p className="mt-6 max-w-xl text-sm md:text-base" style={{ color: "color-mix(in oklab, var(--ink) 65%, transparent)" }}>
         {capability.description}
       </p>
-      <span className="mt-8 inline-block h-px w-12" style={{ background: accent }} />
-      <div className="mt-10 inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.3em]">
+      <div className="mt-9 inline-flex items-center gap-2 text-sm font-semibold">
         {active ? (
           <>Open <ArrowUpRight size={14} /></>
         ) : (
@@ -507,48 +573,39 @@ function CapabilityCard({
   revealing: boolean;
 }) {
   const active = hasEntitlement(tier, capability.key);
-  const unlockTier = minUnlockingTier(capability.key);
+  const Icon = capability.icon;
 
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="card-accent group relative flex h-full flex-col justify-between border p-7 transition-colors"
+      title={active ? capability.description : `Unlock with ${tierDisplayName(minUnlockingTier(capability.key))}`}
+      className="card-accent group relative flex flex-col items-center gap-2.5 rounded-2xl px-3 py-4 text-center transition-colors"
       style={{
-        borderColor: active ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)",
         background: active
           ? `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 4%, var(--cream))`
           : "color-mix(in oklab, var(--ink) 2%, var(--cream))",
-        opacity: active ? 1 : 0.78,
+        boxShadow: active
+          ? `0 10px 20px -14px color-mix(in oklab, ${accentSoft} 65%, transparent)`
+          : "0 8px 16px -14px color-mix(in oklab, var(--ink) 12%, transparent)",
+        opacity: active ? 1 : 0.7,
         animationDelay: revealing ? `${index * 90}ms` : undefined,
       }}
       data-cascade={revealing ? "true" : "false"}
     >
-      <div>
-        <div className="flex items-center justify-between">
-          <p
-            className="eyebrow"
-            style={{ color: active ? accent : "color-mix(in oklab, var(--ink) 45%, transparent)" }}
-          >
-            {active ? "Active" : "Locked"}
-          </p>
-          {active ? (
-            <Check size={14} style={{ color: accent }} />
-          ) : (
-            <Lock size={12} style={{ color: accent }} />
-          )}
-        </div>
-        <h3 className="font-display mt-4 text-xl leading-tight">{capability.title}</h3>
-        <p className="mt-3 text-sm leading-relaxed" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
-          {capability.description}
-        </p>
+      {!active && (
+        <Lock size={10} className="absolute right-2.5 top-2.5" style={{ color: accent }} />
+      )}
+      <div
+        className="flex h-11 w-11 items-center justify-center rounded-xl"
+        style={{
+          background: active
+            ? `color-mix(in oklab, ${accent} 14%, var(--cream))`
+            : "color-mix(in oklab, var(--ink) 6%, var(--cream))",
+        }}
+      >
+        <Icon size={19} style={{ color: active ? accent : "color-mix(in oklab, var(--ink) 40%, transparent)" }} />
       </div>
-      <div className="mt-8 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.28em]">
-        {active ? (
-          <>Open <ArrowUpRight size={12} /></>
-        ) : (
-          <span style={{ color: accent }}>Unlock with {tierDisplayName(unlockTier)}</span>
-        )}
-      </div>
+      <p className="text-xs font-semibold leading-tight text-ink">{capability.title}</p>
     </Link>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Loader2, Plus, Shirt, SlidersHorizontal } from "lucide-react";
 import { listWardrobeItems } from "@/lib/wardrobe.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { BeeMark } from "@/components/BeeMark";
 
 export const Route = createFileRoute("/_authenticated/wardrobe")({
   head: () => ({
@@ -62,68 +63,67 @@ function WardrobePage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
-          <ArrowLeft size={14} /> Home
+      <header className="flex items-center justify-between px-6 py-5 md:px-10">
+        <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep">
+          <ArrowLeft size={14} /> Dashboard
         </Link>
-        <div className="font-display text-lg">
-          Wardrobe<span className="text-gold-deep">.</span>
+        <div className="flex items-center gap-2">
+          <BeeMark className="h-5 w-5 text-gold-deep" />
+          <span className="font-display text-base font-semibold">Wardrobe</span>
         </div>
-        <button className="inline-flex items-center gap-2 bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-gold-deep">
-          <Plus size={12} /> Archive Item
+        <button className="neu-raised inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink transition">
+          <Plus size={14} /> Archive Item
         </button>
       </header>
 
       <div className="mx-auto max-w-7xl px-6 py-10 md:px-10">
-        <p className="eyebrow">Archival Inventory // System 01</p>
+        <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Archival Inventory</p>
         <h1 className="font-display mt-3 text-4xl leading-tight md:text-5xl">
-          The Digital <span className="italic font-normal">Closet</span>
+          The Digital Closet
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink/70">
           Every piece Bee knows about — sorted by category, tagged by season, and ready to style.
         </p>
-        <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
         {/* Stats */}
-        <section className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          <div className="relative overflow-hidden border border-ink/10 bg-bone p-6">
-            <div className="absolute right-4 bottom-4 text-ink/[0.03] pointer-events-none">
+        <section className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="neu-raised relative overflow-hidden rounded-2xl p-6">
+            <div className="absolute right-4 bottom-4 text-ink/[0.05] pointer-events-none">
               <Shirt className="h-20 w-20" />
             </div>
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">Total Curated Pieces</p>
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Total Curated Pieces</p>
             <p className="font-display mt-2 text-3xl text-ink">{stats.total}</p>
           </div>
-          <div className="border border-ink/10 bg-bone p-6">
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">Categories Represented</p>
+          <div className="neu-raised rounded-2xl p-6">
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Categories Represented</p>
             <p className="font-display mt-2 text-3xl text-gold-deep">{stats.categories}</p>
           </div>
-          <div className="border border-ink/10 bg-bone p-6">
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">Photographed</p>
+          <div className="neu-raised rounded-2xl p-6">
+            <p className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/45">Photographed</p>
             <p className="font-display mt-2 text-3xl text-ink">
               {stats.total > 0 ? Math.round((stats.withPhotos / stats.total) * 100) : 0}%
-              <span className="ml-2 text-sm font-sans text-emerald-600">Archived</span>
             </p>
           </div>
         </section>
 
         {/* Filters */}
-        <div className="mt-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-ink/10 pb-4">
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.2em] transition-all border ${
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                   selectedCategory === cat
-                    ? "border-ink bg-ink text-cream"
-                    : "border-transparent text-ink/50 hover:text-ink"
+                    ? "bg-gradient-to-br from-gold to-gold-deep text-ink"
+                    : "neu-inset text-ink/55 hover:text-ink"
                 }`}
               >
                 {cat}
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.2em] text-ink/55 hover:text-ink transition-colors self-end sm:self-auto">
+          <button className="neu-raised flex items-center gap-2 self-end rounded-full px-4 py-2.5 text-sm font-medium text-ink/70 transition hover:text-ink sm:self-auto">
             <SlidersHorizontal className="h-3.5 w-3.5" /> Filter Matrix
           </button>
         </div>
@@ -137,7 +137,7 @@ function WardrobePage() {
 
         {/* Empty */}
         {!loading && items.length === 0 && (
-          <div className="mt-12 border border-dashed border-ink/20 bg-bone p-10 text-center">
+          <div className="neu-raised mt-12 rounded-[26px] p-10 text-center">
             <Shirt className="mx-auto text-ink/30" size={28} />
             <p className="font-display mt-4 text-2xl">Your closet is waiting.</p>
             <p className="mt-2 text-sm text-ink/60">
@@ -148,7 +148,7 @@ function WardrobePage() {
 
         {/* Grid */}
         {!loading && items.length > 0 && (
-          <main className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <main className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {items.map((item) => (
               <WardrobeCard key={item.id} item={item} />
             ))}
@@ -191,13 +191,13 @@ function WardrobeCard({ item }: { item: WardrobeItem }) {
   const subtitle = [item.brand, item.color, item.subcategory].filter(Boolean).join(" · ");
 
   return (
-    <div className="group relative bg-white border border-transparent hover:border-gold-soft p-3 transition-all duration-300">
-      <div className="aspect-[3/4] w-full bg-bone overflow-hidden relative mb-4">
+    <div className="neu-raised group relative rounded-2xl p-3 transition">
+      <div className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-cream relative mb-4">
         {imgSrc ? (
           <img
             src={imgSrc}
             alt={displayName ?? "Wardrobe item"}
-            className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
@@ -205,22 +205,21 @@ function WardrobeCard({ item }: { item: WardrobeItem }) {
             <Shirt size={40} />
           </div>
         )}
-        <div className="absolute inset-0 border border-transparent group-hover:border-gold/30 pointer-events-none transition-all duration-300 m-2" />
       </div>
       <div className="space-y-1 px-1">
         <div className="flex justify-between items-baseline">
           <p className="font-display text-base tracking-tight text-ink truncate">{displayName}</p>
-          <span className="text-[0.6rem] uppercase tracking-[0.2em] text-gold-deep shrink-0 ml-2">{item.category}</span>
+          <span className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-gold-deep shrink-0 ml-2">{item.category}</span>
         </div>
-        {subtitle && <p className="text-xs text-ink/60 font-light">{subtitle}</p>}
-        <div className="flex flex-wrap gap-1 pt-2">
+        {subtitle && <p className="text-xs text-ink/60">{subtitle}</p>}
+        <div className="flex flex-wrap gap-1.5 pt-2">
           {(item.tags ?? []).map((tag, i) => (
-            <span key={i} className="text-[0.6rem] font-sans tracking-wide px-2 py-0.5 bg-bone border border-ink/10 text-ink/70">
+            <span key={i} className="rounded-full bg-cream px-2.5 py-1 text-[0.6rem] font-medium text-ink/70">
               {tag}
             </span>
           ))}
           {item.season && (
-            <span className="text-[0.6rem] font-sans tracking-wide px-2 py-0.5 bg-bone border border-ink/10 text-ink/70">
+            <span className="rounded-full bg-cream px-2.5 py-1 text-[0.6rem] font-medium text-ink/70">
               {item.season}
             </span>
           )}

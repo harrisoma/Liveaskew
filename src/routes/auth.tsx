@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowLeft, Eye, EyeOff, Mail, RefreshCw, Check } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, RefreshCw, Check, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import heroImage from "@/assets/hero-editorial.jpg";
+import { BeeMark } from "@/components/BeeMark";
 import { supabase } from "@/integrations/supabase/client";
 import { track, getHeroVariant } from "@/lib/analytics";
 import { resolvePostAuthDestination } from "@/lib/post-auth-destination";
@@ -37,6 +38,7 @@ function AuthPage() {
   const isSignup = mode === "signup";
 
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -60,22 +62,40 @@ function AuthPage() {
     if (isSignup) {
       track({ event: "signup_started", variant: getHeroVariant(), method: "google" });
     }
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/verify-email`,
-        },
-      });
-      if (error) throw error;
-      // Supabase redirects the browser to Google and then back to /verify-email.
-      return;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Google sign-in failed";
-      setError(msg);
-    } finally {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/verify-email`,
+      },
+    });
+    if (error) {
+      setError(error.message);
       setGoogleLoading(false);
+      return;
     }
+    // Success: Supabase has already redirected the browser to Google.
+    // The round trip completes on /verify-email (PKCE `code` branch).
+  }
+
+  async function handleAppleSignIn() {
+    setError("");
+    setAppleLoading(true);
+    if (isSignup) {
+      track({ event: "signup_started", variant: getHeroVariant(), method: "apple" });
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: {
+        redirectTo: `${window.location.origin}/verify-email`,
+      },
+    });
+    if (error) {
+      setError(error.message);
+      setAppleLoading(false);
+      return;
+    }
+    // Success: Supabase has already redirected the browser to Apple.
+    // The round trip completes on /verify-email (PKCE `code` branch).
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -95,6 +115,23 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+
+        // Fire-and-forget: notify the Onixus acquisition pipeline of a new lead.
+        // Don't await — never let this block or fail the signup flow.
+        fetch("https://n8n-production-abf9f.up.railway.app/webhook/leads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: fullName,
+            email,
+            service_needed: "AI personal styling",
+            source: "website",
+            product_key: "liveaskew",
+          }),
+        }).catch(() => {
+          // Silently ignore — this must never surface to the user or block signup.
+        });
+
         setSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -140,28 +177,7 @@ function AuthPage() {
 
       {/* Form panel */}
       <section className="flex flex-col bg-cream px-6 py-10 md:px-12 lg:px-20 lg:py-16">
-        <div className="flex items-center justify-between lg:hidden">
-          <Link to="/" className="font-display text-xl tracking-tight text-ink">
-            Live<em className="text-gold-deep">Askew</em>
-          </Link>
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
-          >
-            <ArrowLeft size={14} />
-            <span>Back</span>
-          </Link>
-        </div>
-
-        <Link
-          to="/"
-          className="mt-2 hidden items-center gap-2 text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep lg:inline-flex"
-        >
-          <ArrowLeft size={14} />
-          <span>Back to home</span>
-        </Link>
-
-        <div className="my-auto w-full max-w-md self-center pt-14 lg:pt-0">
+        <div className="my-auto w-full max-w-md self-center">
           {sent ? (
             <CheckInbox
               email={email}
@@ -171,108 +187,136 @@ function AuthPage() {
               }}
             />
           ) : (
-            <>
-              <p className="eyebrow">
-                {isSignup ? "Begin your journey" : "Welcome back"}
-              </p>
-              <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
-                {isSignup ? "Create your account." : "Sign in to LiveAskew."}
+            <div className="neu-raised rounded-xl px-7 py-9 sm:px-10 sm:py-11">
+              <div className="flex flex-col items-center text-center">
+                <div className="neu-raised flex h-16 w-16 items-center justify-center rounded-full">
+                  <BeeMark className="h-7 w-7 text-gold-deep" />
+                </div>
+                <p className="font-display mt-4 text-lg font-semibold text-ink">Bee</p>
+                <p className="mt-0.5 text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-ink/45">
+                  by LiveAskew
+                </p>
+              </div>
+
+              <h1 className="font-display mt-7 text-center text-3xl leading-tight text-ink">
+                {isSignup ? "Create your account." : "Let's get you signed in."}
               </h1>
-              <p className="mt-4 text-sm text-ink/65">
+              <p className="mt-3 text-center text-sm text-ink/60">
                 {isSignup
                   ? "Fourteen days free. No card required to meet Bee."
                   : "Your personal style awaits."}
               </p>
-              <span className="mt-7 block h-px w-12 bg-gold" />
 
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={googleLoading}
-                className="mt-10 flex w-full items-center justify-center gap-3 border border-ink/20 bg-cream py-3.5 text-sm font-medium text-ink transition hover:border-ink/40 hover:bg-bone disabled:opacity-60"
-              >
-                {googleLoading ? (
-                  <span className="h-4 w-4 animate-spin rounded-full border border-ink/30 border-t-ink" />
-                ) : (
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1Z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62Z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53Z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                )}
-                <span>Continue with Google</span>
-              </button>
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={googleLoading}
+                  className="neu-raised flex items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-medium text-ink transition active:scale-[0.99] disabled:opacity-60"
+                >
+                  {googleLoading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border border-ink/30 border-t-ink" />
+                  ) : (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24">
+                      <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1Z"
+                        fill="#4285F4"
+                      />
+                      <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z"
+                        fill="#34A853"
+                      />
+                      <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62Z"
+                        fill="#FBBC05"
+                      />
+                      <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53Z"
+                        fill="#EA4335"
+                      />
+                    </svg>
+                  )}
+                  <span>Google</span>
+                </button>
 
-              <div className="mt-8 flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={handleAppleSignIn}
+                  disabled={appleLoading}
+                  className="flex items-center justify-center gap-2.5 rounded-full bg-ink py-3.5 text-sm font-medium text-cream shadow-lg shadow-ink/15 transition hover:bg-ink/90 active:scale-[0.99] disabled:opacity-60"
+                >
+                  {appleLoading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border border-cream/30 border-t-cream" />
+                  ) : (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.9 4.37 2.95 4.39z" />
+                    </svg>
+                  )}
+                  <span>Apple</span>
+                </button>
+              </div>
+
+              <div className="mt-7 flex items-center gap-4">
                 <div className="h-px flex-1 bg-ink/10" />
-                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/40">
+                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/35">
                   or
                 </span>
                 <div className="h-px flex-1 bg-ink/10" />
               </div>
 
-              <form onSubmit={handleSubmit} className="mt-8 space-y-7">
+              <form onSubmit={handleSubmit} className="mt-7 space-y-4">
                 {isSignup && (
-                  <Field label="Full name">
+                  <div className="neu-inset flex items-center gap-3 rounded-full px-5 py-3.5">
+                    <User size={16} className="shrink-0 text-ink/40" />
                     <input
                       type="text"
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Your name"
-                      className={inputCls}
+                      aria-label="Full name"
+                      className="w-full bg-transparent text-sm text-ink placeholder:text-ink/35 focus:outline-none"
                     />
-                  </Field>
+                  </div>
                 )}
 
-                <Field label="Email address">
+                <div className="neu-inset flex items-center gap-3 rounded-full px-5 py-3.5">
+                  <Mail size={16} className="shrink-0 text-ink/40" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className={inputCls}
+                    aria-label="Email address"
+                    className="w-full bg-transparent text-sm text-ink placeholder:text-ink/35 focus:outline-none"
                   />
-                </Field>
+                </div>
 
-                <Field label="Password">
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      minLength={6}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className={`${inputCls} pr-10`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 px-3 text-ink/55 transition hover:text-gold-deep"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </Field>
+                <div className="neu-inset flex items-center gap-3 rounded-full px-5 py-3.5">
+                  <Lock size={16} className="shrink-0 text-ink/40" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    aria-label="Password"
+                    className="w-full bg-transparent text-sm text-ink placeholder:text-ink/35 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="shrink-0 text-ink/40 transition hover:text-gold-deep"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
 
                 {error && (
-                  <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  <p className="rounded-full border border-destructive/30 bg-destructive/10 px-5 py-3 text-center text-sm text-destructive">
                     {error}
                   </p>
                 )}
@@ -280,11 +324,11 @@ function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group flex w-full items-center justify-center gap-3 bg-ink py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-cream transition hover:bg-gold-deep disabled:opacity-60"
+                  className="mt-2 flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-br from-gold to-gold-deep py-4 text-sm font-semibold text-ink shadow-lg shadow-gold/30 transition hover:brightness-105 disabled:opacity-60"
                 >
                   {loading ? (
                     <>
-                      <span className="h-3 w-3 animate-spin rounded-full border border-cream/30 border-t-cream" />
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border border-ink/30 border-t-ink" />
                       <span>{isSignup ? "Creating account" : "Signing in"}</span>
                     </>
                   ) : (
@@ -293,7 +337,7 @@ function AuthPage() {
                 </button>
               </form>
 
-              <p className="mt-10 text-center text-sm text-ink/60">
+              <p className="mt-7 text-center text-sm text-ink/60">
                 {isSignup ? "Already a member?" : "Don't have an account?"}{" "}
                 <Link
                   to="/auth"
@@ -303,7 +347,7 @@ function AuthPage() {
                   {isSignup ? "Sign in" : "Sign up"}
                 </Link>
               </p>
-            </>
+            </div>
           )}
         </div>
       </section>
@@ -351,22 +395,23 @@ function CheckInbox({
   }
 
   return (
-    <div>
-      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center bg-gold/15 text-gold-deep">
-        <Mail size={20} />
+    <div className="neu-raised rounded-xl px-7 py-9 text-center sm:px-10 sm:py-11">
+      <div className="neu-raised mx-auto flex h-16 w-16 items-center justify-center rounded-full text-gold-deep">
+        <Mail size={22} />
       </div>
-      <p className="eyebrow">Light friction filter</p>
-      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
+      <p className="mt-5 text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-ink/45">
+        Light friction filter
+      </p>
+      <h1 className="font-display mt-3 text-3xl leading-tight text-ink">
         Check your inbox.
       </h1>
-      <p className="mt-5 text-sm leading-relaxed text-ink/70">
+      <p className="mt-4 text-sm leading-relaxed text-ink/65">
         We've sent a verification link to{" "}
         <span className="font-medium text-ink">{email}</span>. Open it on this
         device and Bee will be waiting on the other side.
       </p>
-      <span className="mt-7 block h-px w-12 bg-gold" />
 
-      <ul className="mt-8 space-y-3 text-sm text-ink/65">
+      <ul className="mt-7 space-y-3 text-left text-sm text-ink/65">
         {[
           "The link expires in 24 hours.",
           "Look in spam or promotions if you don't see it.",
@@ -380,23 +425,23 @@ function CheckInbox({
       </ul>
 
       {error && (
-        <p className="mt-6 border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <p className="mt-6 rounded-full border border-destructive/30 bg-destructive/10 px-5 py-3 text-sm text-destructive">
           {error}
         </p>
       )}
 
       {resent && !error && (
-        <p className="mt-6 border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-ink/75">
+        <p className="mt-6 rounded-full border border-gold/40 bg-gold/10 px-5 py-3 text-sm text-ink/75">
           Sent again — give it a moment.
         </p>
       )}
 
-      <div className="mt-8 flex flex-col gap-3">
+      <div className="mt-7 flex flex-col gap-3">
         <button
           type="button"
           onClick={resend}
           disabled={resending || cooldown > 0}
-          className="group inline-flex items-center justify-center gap-3 border border-ink/20 py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-ink transition hover:border-gold hover:text-gold-deep disabled:opacity-50"
+          className="neu-raised flex items-center justify-center gap-3 rounded-full py-3.5 text-sm font-medium text-ink transition active:scale-[0.99] disabled:opacity-50"
         >
           <RefreshCw
             size={14}
@@ -413,34 +458,11 @@ function CheckInbox({
         <button
           type="button"
           onClick={onChangeEmail}
-          className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
+          className="text-sm text-ink/55 hover:text-gold-deep"
         >
           Use a different email
         </button>
       </div>
-    </div>
-  );
-}
-
-const inputCls =
-  "w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 transition focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold";
-
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-[0.65rem] tracking-[0.25em] uppercase text-ink/55">
-        {label}
-      </label>
-      {children}
-      {hint && <p className="mt-2 text-xs text-ink/45">{hint}</p>}
     </div>
   );
 }

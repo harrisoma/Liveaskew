@@ -5,14 +5,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * LiveAskew — editorial fashion design system
- * Warm ivory + deep ink + antique gold. Cormorant Garamond display, Inter body.
+ * LiveAskew — warm, inclusive design system
+ * Gallery white + deep ink black + tailored gold, unchanged from the brand's
+ * original palette. Fredoka display, Manrope body — rounded and approachable
+ * in place of the earlier serif-editorial pairing.
  * All colors are oklch. Tokens are defined on :root and surfaced via @theme inline.
  */
 
 @theme inline {
-  --font-serif: "Cormorant Garamond", "Cormorant", ui-serif, Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fredoka", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -57,7 +59,7 @@
 }
 
 :root {
-  --radius: 0.25rem;
+  --radius: 1.25rem;
 
   /* Brand palette — luxury editorial: gallery white, deep ink black, tailored gold */
   --ink:        oklch(0.14 0.004 60);   /* near-pure editorial black */
@@ -143,8 +145,8 @@
 
 @utility font-display {
   font-family: var(--font-serif);
-  font-feature-settings: "lnum", "dlig";
-  letter-spacing: -0.015em;
+  font-feature-settings: "lnum";
+  letter-spacing: normal;
 }
 
 @utility eyebrow {
@@ -166,6 +168,44 @@
 
 @utility hairline {
   border-color: color-mix(in oklab, var(--gold) 35%, transparent);
+}
+
+@utility neu-raised {
+  background: var(--cream);
+  box-shadow: 8px 8px 18px var(--border), -8px -8px 18px var(--bone);
+}
+
+@utility neu-inset {
+  background: var(--cream);
+  box-shadow: inset 4px 4px 9px var(--border), inset -4px -4px 9px var(--bone);
+}
+
+/* Frosted glass — translucent gold-tinted panel over a dark ground, per the
+   glassmorphism reference: blur, glow, a soft light seam along the top edge. */
+@utility glass-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--cream) 16%, transparent);
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--gold) 42%, transparent),
+    color-mix(in oklab, var(--ink) 55%, transparent)
+  );
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow:
+    0 18px 34px -14px color-mix(in oklab, var(--gold) 45%, transparent),
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 25%, transparent);
+}
+
+@utility glass-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(60px);
+  background: var(--gold);
+  opacity: 0.28;
+  pointer-events: none;
+  z-index: 0;
 }
 
 @utility grain {

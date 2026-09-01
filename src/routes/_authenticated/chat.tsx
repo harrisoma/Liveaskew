@@ -418,10 +418,10 @@ function ChatPage() {
               aria-pressed={speakEnabled}
               aria-label={speakEnabled ? "Mute Bee's voice" : "Let Bee speak"}
               title={speakEnabled ? "Mute Bee's voice" : "Let Bee speak"}
-              className={`grid h-8 w-8 place-items-center border transition ${
+              className={`grid h-8 w-8 place-items-center rounded-full transition ${
                 speakEnabled
-                  ? "border-gold-deep bg-gold-deep text-cream"
-                  : "border-ink/15 bg-bone text-ink/55 hover:border-ink/30 hover:text-ink"
+                  ? "bg-gradient-to-br from-gold to-gold-deep text-ink"
+                  : "neu-raised text-ink/55 hover:text-ink"
               }`}
             >
               {speakEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
@@ -457,24 +457,28 @@ function ChatPage() {
                 <li key={m.id ?? i}>
                   {m.role === "user" ? (
                     <div className="flex justify-end">
-                      <div className="max-w-[85%] bg-ink px-5 py-3 text-sm text-cream">
+                      <div className="max-w-[85%] rounded-3xl rounded-br-md bg-gradient-to-br from-gold to-gold-deep px-5 py-3 text-sm text-ink">
                         {m.content}
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      <p className="eyebrow mb-3 text-gold-deep">Bee</p>
-                      {m.content ? (
-                        <div className="prose prose-sm max-w-none text-ink/85 [&_p]:my-2 [&_strong]:text-ink [&_ul]:my-2">
-                          <ReactMarkdown>{m.content}</ReactMarkdown>
-                        </div>
-                      ) : (
-                        <div className="flex gap-1.5 py-2">
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink/40" />
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink/40 [animation-delay:150ms]" />
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink/40 [animation-delay:300ms]" />
-                        </div>
-                      )}
+                    <div className="flex justify-start">
+                      <div className="neu-raised max-w-[85%] rounded-3xl rounded-bl-md px-5 py-4">
+                        <p className="mb-2 text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">
+                          Bee
+                        </p>
+                        {m.content ? (
+                          <div className="prose prose-sm max-w-none text-ink/85 [&_p]:my-2 [&_strong]:text-ink [&_ul]:my-2">
+                            <ReactMarkdown>{m.content}</ReactMarkdown>
+                          </div>
+                        ) : (
+                          <div className="flex gap-1.5 py-2">
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold-deep" />
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold-deep [animation-delay:150ms]" />
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold-deep [animation-delay:300ms]" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </li>
@@ -487,14 +491,14 @@ function ChatPage() {
       <div className="border-t border-ink/10 bg-cream">
         <div className="mx-auto max-w-2xl px-6 py-5 md:px-10">
           {banner && (
-            <div className="mb-3 flex flex-col gap-3 border-l-2 border-gold-deep bg-bone px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="neu-raised mb-3 flex flex-col gap-3 rounded-2xl px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-display text-base leading-snug text-ink">
                 {banner.message}
               </p>
               {banner.link ? (
                 <Link
                   to={banner.link}
-                  className="inline-flex shrink-0 items-center justify-center bg-gold-deep px-4 py-2 font-sans text-[0.7rem] tracking-[0.18em] uppercase text-cream transition hover:bg-ink"
+                  className="inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gold to-gold-deep px-5 py-2.5 text-sm font-semibold text-ink transition hover:brightness-105"
                 >
                   {banner.cta}
                 </Link>
@@ -502,7 +506,7 @@ function ChatPage() {
                 <button
                   type="button"
                   onClick={() => setBanner(null)}
-                  className="inline-flex shrink-0 items-center justify-center border border-ink/30 bg-transparent px-4 py-2 font-sans text-[0.7rem] tracking-[0.18em] uppercase text-ink transition hover:bg-ink hover:text-cream"
+                  className="neu-inset inline-flex shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-ink/70 transition hover:text-ink"
                 >
                   {banner.cta}
                 </button>
@@ -527,7 +531,7 @@ function ChatPage() {
               }}
               placeholder={listening ? "Listening… speak naturally." : "Tell Bee what you're dressing for…"}
               rows={2}
-              className="w-full resize-none border border-ink/15 bg-bone px-4 py-3 pr-24 text-sm text-ink placeholder:text-ink/35 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="neu-inset w-full resize-none rounded-2xl px-5 py-4 pr-24 text-sm text-ink placeholder:text-ink/35 focus:outline-none"
               disabled={sending}
             />
             {voiceSupported.stt && (
@@ -538,10 +542,10 @@ function ChatPage() {
                 aria-pressed={listening}
                 aria-label={listening ? "Stop dictation" : "Dictate to Bee"}
                 title={listening ? "Stop dictation — voice typing is free on every plan" : "Dictate to Bee — voice typing, free on every plan"}
-                className={`absolute bottom-3 right-14 flex h-9 w-9 items-center justify-center border transition disabled:opacity-40 ${
+                className={`absolute bottom-3 right-14 flex h-9 w-9 items-center justify-center rounded-full transition disabled:opacity-40 ${
                   listening
-                    ? "animate-pulse border-gold-deep bg-gold-deep text-cream"
-                    : "border-ink/20 bg-bone text-ink hover:border-ink hover:bg-ink hover:text-cream"
+                    ? "animate-pulse bg-gradient-to-br from-gold to-gold-deep text-ink"
+                    : "neu-raised text-ink/60 hover:text-ink"
                 }`}
               >
                 {listening ? <MicOff size={14} /> : <Mic size={14} />}
@@ -550,7 +554,7 @@ function ChatPage() {
             <button
               type="submit"
               disabled={sending || !input.trim()}
-              className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center bg-ink text-cream transition hover:bg-gold-deep disabled:opacity-40"
+              className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-gold to-gold-deep text-ink transition disabled:opacity-40"
               aria-label="Send"
             >
               {sending ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
@@ -569,23 +573,22 @@ function Welcome() {
       <div className="mb-8 flex justify-center">
         <BeeOrb state="idle" size={220} surface="light" ariaLabel="Bee" />
       </div>
-      <p className="eyebrow text-center">Welcome back</p>
-      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
+      <p className="text-center text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-ink/45">Welcome back</p>
+      <h1 className="font-display mt-4 text-center text-4xl leading-tight md:text-5xl">
         Hello, you.
       </h1>
-      <p className="mt-5 max-w-md text-base leading-relaxed text-ink/70">
+      <p className="mx-auto mt-5 max-w-md text-center text-base leading-relaxed text-ink/70">
         I'm Bee. Tell me what you're dressing for — a week, a wedding, a Wednesday morning — and I'll
         build it around your Fit, Feel, and Fabric.
       </p>
-      <span className="mt-7 block h-px w-12 bg-gold" />
-      <div className="mt-8 grid gap-3 text-sm text-ink/70 sm:grid-cols-2">
+      <div className="mt-9 grid gap-3 text-sm text-ink/70 sm:grid-cols-2">
         {[
           "Build me a five-outfit work week.",
           "What should I wear to a winter wedding?",
           "Help me edit my closet — start with denim.",
           "Suggest a palette for spring.",
         ].map((p) => (
-          <p key={p} className="border border-ink/10 bg-bone px-4 py-3">
+          <p key={p} className="neu-raised rounded-2xl px-5 py-3.5">
             "{p}"
           </p>
         ))}

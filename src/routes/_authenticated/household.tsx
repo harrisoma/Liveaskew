@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2, Lock, Plus, Trash2, Users, X } from "lucide-react";
+import { BeeMark } from "@/components/BeeMark";
 import {
   createFamilyProfile,
   deleteFamilyProfile,
@@ -158,15 +159,18 @@ function HouseholdPage() {
   if (!canSelfie && !canFamily) {
     return (
       <main className="min-h-screen bg-cream text-ink">
-        <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-          <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
-            <ArrowLeft size={14} /> Home
+        <header className="flex items-center justify-between px-6 py-5 md:px-10">
+          <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep">
+            <ArrowLeft size={14} /> Dashboard
           </Link>
-          <div className="font-display text-lg">Household<span className="text-gold-deep">.</span></div>
+          <div className="flex items-center gap-2">
+            <BeeMark className="h-5 w-5 text-gold-deep" />
+            <span className="font-display text-base font-semibold">Household</span>
+          </div>
           <span />
         </header>
-        <div className="mx-auto max-w-2xl px-6 py-24 text-center md:px-10">
-          <p className="eyebrow">Premium</p>
+        <div className="neu-raised mx-auto mt-14 max-w-2xl rounded-[30px] px-6 py-16 text-center md:px-10">
+          <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Premium</p>
           <h1 className="font-display mt-4 text-4xl leading-tight md:text-5xl">
             Selfie AI &amp; Household — Premium.
           </h1>
@@ -176,7 +180,7 @@ function HouseholdPage() {
           </p>
           <Link
             to="/pricing"
-            className="mt-8 inline-flex items-center justify-center bg-ink px-6 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-cream transition hover:bg-gold-deep"
+            className="mt-8 inline-flex items-center justify-center rounded-full bg-gradient-to-br from-gold to-gold-deep px-7 py-3.5 text-sm font-semibold text-ink shadow-lg shadow-gold/30 transition hover:brightness-105"
           >
             See Premium tiers
           </Link>
@@ -187,23 +191,26 @@ function HouseholdPage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
-          <ArrowLeft size={14} /> Home
+      <header className="flex items-center justify-between px-6 py-5 md:px-10">
+        <Link to="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep">
+          <ArrowLeft size={14} /> Dashboard
         </Link>
-        <div className="font-display text-lg">Household<span className="text-gold-deep">.</span></div>
+        <div className="flex items-center gap-2">
+          <BeeMark className="h-5 w-5 text-gold-deep" />
+          <span className="font-display text-base font-semibold">Household</span>
+        </div>
         {canFamily ? (
           <button
             disabled={profiles.length >= 3}
             onClick={() => { setEditing(null); setShowForm(true); }}
-            className="inline-flex items-center gap-2 bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-gold-deep disabled:opacity-40"
+            className="neu-raised inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink transition disabled:opacity-40"
           >
-            <Plus size={12} /> Add member
+            <Plus size={14} /> Add member
           </button>
         ) : (
           <Link
             to="/pricing"
-            className="inline-flex items-center gap-2 border border-ink/20 px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-ink/65 hover:border-gold-deep hover:text-gold-deep"
+            className="neu-inset inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink/60 hover:text-gold-deep"
           >
             <Lock size={12} /> Add household
           </Link>
@@ -211,7 +218,7 @@ function HouseholdPage() {
       </header>
 
       <div className="mx-auto max-w-4xl px-6 py-10 md:px-10">
-        <p className="eyebrow">Section 04</p>
+        <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Section 04</p>
         <h1 className="font-display mt-3 text-4xl leading-tight md:text-5xl">
           Manage your household profiles.
         </h1>
@@ -219,10 +226,9 @@ function HouseholdPage() {
           Up to three sub-profiles. Each has their own sizes, aesthetic territory, and styling
           rules — and Bee shifts her voice the moment you switch.
         </p>
-        <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
-        <section className="mt-10">
-          <p className="eyebrow">Selfie AI · Primary</p>
+        <section className="neu-raised mt-10 rounded-[26px] p-7">
+          <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase text-gold-deep">Selfie AI · Primary</p>
           <h2 className="font-display mt-2 text-2xl">Your face on every cover.</h2>
           <p className="mt-2 max-w-xl text-sm text-ink/60">
             Bee uses your selfie to render lookbook imagery on your own likeness. One clear,
@@ -241,7 +247,7 @@ function HouseholdPage() {
         </section>
 
         {!canFamily ? (
-          <div className="mt-12 border border-dashed border-[var(--gold-soft)] bg-bone p-8 text-center">
+          <div className="neu-raised mt-8 rounded-[26px] p-8 text-center">
             <Users className="mx-auto text-ink/40" size={24} />
             <p className="font-display mt-3 text-xl">Add the rest of your household.</p>
             <p className="mt-2 text-sm text-ink/60">
@@ -249,7 +255,7 @@ function HouseholdPage() {
             </p>
             <Link
               to="/pricing"
-              className="mt-5 inline-flex items-center justify-center bg-ink px-5 py-2.5 text-[0.6rem] uppercase tracking-[0.22em] text-cream hover:bg-gold-deep"
+              className="mt-5 inline-flex items-center justify-center rounded-full bg-gradient-to-br from-gold to-gold-deep px-5 py-2.5 text-sm font-semibold text-ink"
             >
               See Premium Plus
             </Link>
@@ -259,30 +265,30 @@ function HouseholdPage() {
             <Loader2 size={14} className="animate-spin" /> Loading household…
           </div>
         ) : profiles.length === 0 ? (
-          <div className="mt-12 border border-dashed border-ink/20 bg-bone p-10 text-center">
+          <div className="neu-raised mt-8 rounded-[26px] p-10 text-center">
             <Users className="mx-auto text-ink/40" size={28} />
             <p className="font-display mt-4 text-2xl">No family profiles yet.</p>
             <p className="mt-2 text-sm text-ink/60">Add your first member to begin.</p>
           </div>
         ) : (
-          <ul className="mt-10 grid gap-5 md:grid-cols-2">
+          <ul className="mt-8 grid gap-5 md:grid-cols-2">
             {profiles.map((p) => (
-              <li key={p.id} className="border border-ink/15 bg-bone p-6">
+              <li key={p.id} className="neu-raised rounded-2xl p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="eyebrow text-gold-deep">{p.relationship}</p>
+                    <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase text-gold-deep">{p.relationship}</p>
                     <h3 className="font-display mt-2 text-2xl">{p.name}</h3>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => { setEditing(p); setShowForm(true); }}
-                      className="border border-ink/20 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream"
+                      className="neu-inset rounded-full px-3.5 py-1.5 text-xs font-medium text-ink/70 hover:text-ink"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(p.id)}
-                      className="grid h-8 w-8 place-items-center border border-ink/15 text-ink/55 hover:bg-destructive hover:text-cream"
+                      className="neu-inset grid h-8 w-8 place-items-center rounded-full text-ink/50 hover:text-destructive"
                       aria-label="Delete"
                     >
                       <Trash2 size={12} />
@@ -292,19 +298,19 @@ function HouseholdPage() {
                 <dl className="mt-5 space-y-2 text-sm text-ink/70">
                   {p.aesthetic_territory && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Aesthetic</dt>
+                      <dt className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/40">Aesthetic</dt>
                       <dd className="mt-1">{p.aesthetic_territory}</dd>
                     </div>
                   )}
                   {Object.keys(p.sizes ?? {}).length > 0 && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Sizes</dt>
+                      <dt className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/40">Sizes</dt>
                       <dd className="mt-1 text-xs">{JSON.stringify(p.sizes)}</dd>
                     </div>
                   )}
                   {p.notes && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Notes</dt>
+                      <dt className="text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/40">Notes</dt>
                       <dd className="mt-1 italic text-ink/55">{p.notes}</dd>
                     </div>
                   )}
@@ -386,15 +392,15 @@ function ProfileForm({
           if (dress) sizes.dress = dress;
           onSubmit({ name: name.trim(), relationship, sizes, aesthetic_territory: aesthetic.trim(), notes: notes.trim() });
         }}
-        className="w-full max-w-xl border border-ink/15 bg-bone p-6 shadow-2xl md:p-8"
+        className="neu-raised w-full max-w-xl rounded-[26px] p-6 md:p-8"
       >
         <div className="mb-5 flex items-start justify-between">
           <div>
-            <p className="eyebrow">{initial ? "Edit member" : "Add member"}</p>
+            <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">{initial ? "Edit member" : "Add member"}</p>
             <h3 className="font-display mt-2 text-2xl">Household profile</h3>
           </div>
-          <button type="button" onClick={onClose} className="text-ink/40 hover:text-ink" aria-label="Close">
-            <X size={18} />
+          <button type="button" onClick={onClose} className="neu-inset grid h-8 w-8 place-items-center rounded-full text-ink/40 hover:text-ink" aria-label="Close">
+            <X size={16} />
           </button>
         </div>
 
@@ -425,14 +431,14 @@ function ProfileForm({
         {error && <p className="mt-4 text-xs text-destructive">{error}</p>}
 
         <div className="mt-6 flex items-center justify-end gap-3">
-          <button type="button" onClick={onClose} className="border border-ink/20 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream">Cancel</button>
-          <button type="submit" disabled={saving || !name.trim()} className="inline-flex items-center gap-2 bg-gold-deep px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-ink disabled:opacity-50">
+          <button type="button" onClick={onClose} className="rounded-full px-4 py-2.5 text-sm font-medium text-ink/60 hover:text-ink">Cancel</button>
+          <button type="submit" disabled={saving || !name.trim()} className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-gold to-gold-deep px-5 py-2.5 text-sm font-semibold text-ink transition disabled:opacity-50">
             {saving && <Loader2 size={12} className="animate-spin" />}
             Save profile
           </button>
         </div>
 
-        <style>{`.input{width:100%;border:1px solid color-mix(in oklab,var(--ink) 15%, transparent);background:var(--cream);padding:0.5rem 0.75rem;font-size:0.875rem;outline:none}.input:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}`}</style>
+        <style>{`.input{width:100%;border-radius:18px;border:none;background:var(--cream);box-shadow:inset 3px 3px 7px var(--border), inset -3px -3px 7px var(--bone);padding:0.65rem 1rem;font-size:0.875rem;outline:none}.input:focus{box-shadow:inset 3px 3px 7px var(--border), inset -3px -3px 7px var(--bone), 0 0 0 2px var(--gold)}`}</style>
       </form>
     </div>
   );
@@ -441,7 +447,7 @@ function ProfileForm({
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <label className={`block ${className ?? ""}`}>
-      <span className="block text-[0.6rem] uppercase tracking-[0.22em] text-ink/55">{label}</span>
+      <span className="block text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-ink/50">{label}</span>
       <span className="mt-2 block">{children}</span>
     </label>
   );

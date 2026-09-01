@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { SelfieUploader } from "@/components/SelfieUploader";
+import { BeeMark } from "@/components/BeeMark";
 import { getMySelfies } from "@/lib/selfies.functions";
 import { listFamilyProfiles } from "@/lib/family.functions";
 import { hasEntitlement, loadResolvedTier } from "@/lib/plans";
@@ -58,26 +59,27 @@ function ProfilePage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
+      <header className="flex items-center justify-between px-6 py-5 md:px-10">
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+          className="flex items-center gap-2 text-sm font-medium text-ink/55 hover:text-gold-deep"
         >
-          <ArrowLeft size={14} /> Back to Dashboard
+          <ArrowLeft size={14} /> Dashboard
         </Link>
-        <div className="font-display text-lg">
-          Profile<span className="text-gold-deep">.</span>
+        <div className="flex items-center gap-2">
+          <BeeMark className="h-5 w-5 text-gold-deep" />
+          <span className="font-display text-base font-semibold">Profile</span>
         </div>
         <Link
           to="/chat"
-          className="text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+          className="text-sm font-medium text-ink/55 hover:text-gold-deep"
         >
           Bee →
         </Link>
       </header>
 
       <div className="mx-auto max-w-3xl px-6 py-14 md:px-10">
-        <p className="eyebrow">Section 01</p>
+        <p className="text-[0.6rem] font-semibold tracking-[0.14em] uppercase text-gold-deep">Section 01</p>
         <h1 className="font-display mt-3 text-4xl leading-tight md:text-5xl">
           Your face, your looks.
         </h1>
@@ -85,7 +87,6 @@ function ProfilePage() {
           Upload one clear, front-facing photo so Bee can render every look on your own
           likeness. Used only for your private lookbook imagery.
         </p>
-        <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
         {loading ? (
           <div className="mt-10 flex items-center gap-2 text-sm text-ink/55">
@@ -93,8 +94,8 @@ function ProfilePage() {
           </div>
         ) : (
           <>
-            <section className="mt-10">
-              <p className="eyebrow">Selfie AI · Primary</p>
+            <section className="neu-raised mt-10 rounded-[26px] p-7">
+              <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase text-gold-deep">Selfie AI · Primary</p>
               <h2 className="font-display mt-2 text-2xl">Your primary selfie.</h2>
               <div className="mt-5">
                 <SelfieUploader
@@ -110,7 +111,7 @@ function ProfilePage() {
                 <div className="mt-6">
                   <Link
                     to="/dashboard"
-                    className="inline-flex items-center gap-2 border border-gold-deep px-5 py-3 text-[0.65rem] uppercase tracking-[0.28em] text-gold-deep hover:bg-gold-deep/5"
+                    className="neu-inset inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-gold-deep"
                   >
                     Back to your dashboard →
                   </Link>
@@ -119,12 +120,12 @@ function ProfilePage() {
             </section>
 
             {hasEntitlement(tier, "householdPartnerSeat") && (
-              <section className="mt-14">
-                <p className="eyebrow">Household</p>
+              <section className="mt-8">
+                <p className="text-[0.6rem] font-semibold tracking-[0.1em] uppercase text-ink/45">Household</p>
                 <h2 className="font-display mt-2 text-2xl">Selfies for the rest of your household.</h2>
                 <p className="mt-2 max-w-xl text-sm text-ink/60">
                   Add or edit household members in{" "}
-                  <Link to="/household" className="underline decoration-gold-deep underline-offset-4">
+                  <Link to="/household" className="text-gold-deep underline-offset-4 hover:underline">
                     Household settings
                   </Link>
                   . Each member gets their own Selfie AI slot.
@@ -134,7 +135,7 @@ function ProfilePage() {
                 ) : (
                   <ul className="mt-6 grid gap-5 md:grid-cols-2">
                     {family.map((m) => (
-                      <li key={m.id}>
+                      <li key={m.id} className="neu-raised rounded-2xl p-5">
                         <SelfieUploader
                           scope={{ kind: "family", id: m.id }}
                           tier={tier}

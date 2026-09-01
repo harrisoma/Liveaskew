@@ -4,8 +4,8 @@
 
 export type AnalyticsEvent =
   | { event: "hero_cta_click"; variant: 1 | 2 | 3; label: string }
-  | { event: "signup_started"; variant: 1 | 2 | 3 | null; method: "email" | "google" }
-  | { event: "signup_completed"; variant: 1 | 2 | 3 | null; method: "email" | "google" };
+  | { event: "signup_started"; variant: 1 | 2 | 3 | null; method: "email" | "google" | "apple" }
+  | { event: "signup_completed"; variant: 1 | 2 | 3 | null; method: "email" | "google" | "apple" };
 
 const STORAGE_KEY = "la_events";
 const VARIANT_KEY = "la_ab_cta";
@@ -44,7 +44,7 @@ export function track(payload: AnalyticsEvent) {
 }
 
 // Fire signup_completed exactly once per browser, after email verification or OAuth.
-export function trackSignupCompletedOnce(method: "email" | "google") {
+export function trackSignupCompletedOnce(method: "email" | "google" | "apple") {
   if (typeof window === "undefined") return;
   if (window.localStorage.getItem(COMPLETED_KEY)) return;
   window.localStorage.setItem(COMPLETED_KEY, "1");
