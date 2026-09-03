@@ -68,16 +68,16 @@
   --radius: 1.5rem;
 
   /* Clay canvas — mid-luminance so both light and dark shadows read */
-  --ink:        oklch(0.24 0.018 58);   /* warm readable ink, not pure black */
-  --ink-soft:   oklch(0.32 0.016 58);
-  --cream:      oklch(0.90 0.018 82);   /* neo page canvas */
-  --bone:       oklch(0.90 0.018 82);   /* same as canvas — true neomorphism */
-  --gold:       oklch(0.72 0.112 78);
-  --gold-deep:  oklch(0.50 0.112 72);   /* deep enough for text on clay */
-  --gold-soft:  oklch(0.82 0.055 82);
+  --ink: oklch(0.24 0.018 58); /* warm readable ink, not pure black */
+  --ink-soft: oklch(0.32 0.016 58);
+  --cream: oklch(0.9 0.018 82); /* neo page canvas */
+  --bone: oklch(0.9 0.018 82); /* same as canvas — true neomorphism */
+  --gold: oklch(0.72 0.112 78);
+  --gold-deep: oklch(0.5 0.112 72); /* deep enough for text on clay */
+  --gold-soft: oklch(0.82 0.055 82);
 
-  --neo-dark-bg:     oklch(0.28 0.014 62);
-  --neo-dark-light:  oklch(0.36 0.014 62);
+  --neo-dark-bg: oklch(0.28 0.014 62);
+  --neo-dark-light: oklch(0.36 0.014 62);
   --neo-dark-shadow: oklch(0.18 0.012 60);
 
   --neo-raised:
@@ -98,18 +98,16 @@
     inset 4px 4px 8px color-mix(in oklab, var(--ink) 14%, transparent),
     inset -3px -3px 6px color-mix(in oklab, white 65%, var(--cream));
   --neo-raised-dark:
-    10px 10px 20px var(--neo-dark-shadow),
-    -7px -7px 16px var(--neo-dark-light),
+    10px 10px 20px var(--neo-dark-shadow), -7px -7px 16px var(--neo-dark-light),
     inset 0 1px 0 color-mix(in oklab, white 12%, transparent);
   --neo-inset-dark:
-    inset 8px 8px 16px var(--neo-dark-shadow),
-    inset -6px -6px 12px var(--neo-dark-light);
+    inset 8px 8px 16px var(--neo-dark-shadow), inset -6px -6px 12px var(--neo-dark-light);
 
   /* Illustration palette — editorial fashion-sketch references */
-  --illus-kraft: oklch(0.60 0.078 65);
+  --illus-kraft: oklch(0.6 0.078 65);
   --illus-peach: oklch(0.91 0.035 50);
   --illus-olive: oklch(0.58 0.048 95);
-  --illus-jewel: oklch(0.40 0.135 18);
+  --illus-jewel: oklch(0.4 0.135 18);
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -125,7 +123,7 @@
   --muted-foreground: oklch(0.42 0.02 58);
   --accent: var(--gold);
   --accent-foreground: var(--ink);
-  --destructive: oklch(0.50 0.18 25);
+  --destructive: oklch(0.5 0.18 25);
   --destructive-foreground: var(--cream);
   --border: color-mix(in oklab, var(--ink) 10%, transparent);
   --input: color-mix(in oklab, var(--ink) 10%, transparent);
@@ -300,7 +298,10 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   padding: 1rem 1.85rem;
-  transition: box-shadow 180ms ease, transform 180ms ease, color 180ms ease;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    color 180ms ease;
   cursor: pointer;
 }
 @utility neo-btn-hover {
@@ -328,7 +329,10 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   padding: 1rem 1.85rem;
-  transition: box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
   cursor: pointer;
 }
 
@@ -347,7 +351,9 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   padding: 1rem 1.85rem;
-  transition: box-shadow 180ms ease, transform 180ms ease;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
   cursor: pointer;
 }
 
@@ -447,7 +453,8 @@
 }
 
 @keyframes gold-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.15;
     transform: scale(0.92);
   }
@@ -458,7 +465,8 @@
 }
 
 @keyframes float-edge {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(-50%);
   }
   50% {
@@ -467,7 +475,8 @@
 }
 
 @keyframes float-center {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%);
   }
   50% {
@@ -491,7 +500,8 @@
     margin: 14mm 12mm;
   }
 
-  html, body {
+  html,
+  body {
     background: #ffffff !important;
     color: #0d0d0d !important;
     -webkit-print-color-adjust: exact;
@@ -526,7 +536,8 @@
     box-shadow: none !important;
   }
 
-  aside, button[aria-label="Open section index"] {
+  aside,
+  button[aria-label="Open section index"] {
     display: none !important;
   }
 

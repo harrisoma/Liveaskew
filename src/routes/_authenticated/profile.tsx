@@ -9,10 +9,7 @@ import { hasEntitlement, loadResolvedTier } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
-    meta: [
-      { title: "Profile & Selfie — LiveAskew" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Profile & Selfie — LiveAskew" }, { name: "robots", content: "noindex" }],
   }),
   component: ProfilePage,
 });
@@ -82,8 +79,8 @@ function ProfilePage() {
           Your face, your looks.
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink/65">
-          Upload one clear, front-facing photo so Bee can render every look on your own
-          likeness. Used only for your private lookbook imagery.
+          Upload one clear, front-facing photo so Bee can render every look on your own likeness.
+          Used only for your private lookbook imagery.
         </p>
         <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
@@ -121,10 +118,15 @@ function ProfilePage() {
             {hasEntitlement(tier, "householdPartnerSeat") && (
               <section className="mt-14">
                 <p className="eyebrow">Household</p>
-                <h2 className="font-display mt-2 text-2xl">Selfies for the rest of your household.</h2>
+                <h2 className="font-display mt-2 text-2xl">
+                  Selfies for the rest of your household.
+                </h2>
                 <p className="mt-2 max-w-xl text-sm text-ink/60">
                   Add or edit household members in{" "}
-                  <Link to="/household" className="underline decoration-gold-deep underline-offset-4">
+                  <Link
+                    to="/household"
+                    className="underline decoration-gold-deep underline-offset-4"
+                  >
                     Household settings
                   </Link>
                   . Each member gets their own Selfie AI slot.

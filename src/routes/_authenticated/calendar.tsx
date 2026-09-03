@@ -1,7 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, Plus, Sparkles, ThumbsDown, ThumbsUp, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Plus,
+  Sparkles,
+  ThumbsDown,
+  ThumbsUp,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   createCalendarEvent,
   deleteCalendarEvent,
@@ -16,7 +27,10 @@ export const Route = createFileRoute("/_authenticated/calendar")({
   head: () => ({
     meta: [
       { title: "Event Calendar — LiveAskew" },
-      { name: "description", content: "Plan upcoming events and let Bee style each one — head to toe." },
+      {
+        name: "description",
+        content: "Plan upcoming events and let Bee style each one — head to toe.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -35,8 +49,18 @@ type CalendarEvent = {
 };
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -77,7 +101,9 @@ function CalendarPage() {
       setTier(resolved);
       setTierLoading(false);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   const allowed = hasEntitlement(tier, "calendar");
@@ -134,7 +160,9 @@ function CalendarPage() {
         data: { title, event_date: formDate, description: formDesc.trim() || null },
       });
       const created = event as CalendarEvent;
-      setEvents((prev) => [...prev, created].sort((a, b) => a.event_date.localeCompare(b.event_date)));
+      setEvents((prev) =>
+        [...prev, created].sort((a, b) => a.event_date.localeCompare(b.event_date)),
+      );
       setShowForm(false);
       setFormTitle("");
       setFormDesc("");
@@ -143,14 +171,20 @@ function CalendarPage() {
       // Kick off Bee's outfit recommendation in the background.
       generate({ data: { id: created.id, acting_profile_id: getActingProfileId() } })
         .then(({ event: updated }) => {
-          setEvents((prev) => prev.map((e) => (e.id === updated.id ? (updated as CalendarEvent) : e)));
+          setEvents((prev) =>
+            prev.map((e) => (e.id === updated.id ? (updated as CalendarEvent) : e)),
+          );
         })
         .catch((err) => {
           console.error("Bee styling failed", err);
           setEvents((prev) =>
             prev.map((e) =>
               e.id === created.id
-                ? { ...e, recommendation_status: "failed", recommendation_error: String(err?.message ?? err) }
+                ? {
+                    ...e,
+                    recommendation_status: "failed",
+                    recommendation_error: String(err?.message ?? err),
+                  }
                 : e,
             ),
           );
@@ -175,7 +209,9 @@ function CalendarPage() {
 
   async function handleRetry(id: string) {
     setEvents((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, recommendation_status: "pending", recommendation_error: null } : e)),
+      prev.map((e) =>
+        e.id === id ? { ...e, recommendation_status: "pending", recommendation_error: null } : e,
+      ),
     );
     try {
       const { event } = await generate({ data: { id, acting_profile_id: getActingProfileId() } });
@@ -184,7 +220,11 @@ function CalendarPage() {
       setEvents((prev) =>
         prev.map((e) =>
           e.id === id
-            ? { ...e, recommendation_status: "failed", recommendation_error: String((err as Error)?.message ?? err) }
+            ? {
+                ...e,
+                recommendation_status: "failed",
+                recommendation_error: String((err as Error)?.message ?? err),
+              }
             : e,
         ),
       );
@@ -198,7 +238,10 @@ function CalendarPage() {
   return (
     <main className="min-h-screen bg-cream text-ink">
       <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+        >
           <ArrowLeft size={14} />
           <span>Home</span>
         </Link>
@@ -225,8 +268,8 @@ function CalendarPage() {
           Your season, one date at a time.
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink/70">
-          Add what's ahead — galas, dinners, flights, quiet weekends. Bee dresses each one for you, head to toe,
-          in your Fit, Feel & Fabric.
+          Add what's ahead — galas, dinners, flights, quiet weekends. Bee dresses each one for you,
+          head to toe, in your Fit, Feel & Fabric.
         </p>
         <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
@@ -273,7 +316,7 @@ function CalendarPage() {
               </div>
             ))}
             {monthDays.map((cell, i) => {
-              const dayEvents = cell.iso ? eventsByDate.get(cell.iso) ?? [] : [];
+              const dayEvents = cell.iso ? (eventsByDate.get(cell.iso) ?? []) : [];
               const isToday = cell.iso === todayIso;
               return (
                 <div
@@ -286,7 +329,9 @@ function CalendarPage() {
                     <>
                       <div
                         className={`mb-1 text-xs ${
-                          isToday ? "inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold-deep text-cream" : "text-ink/60"
+                          isToday
+                            ? "inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold-deep text-cream"
+                            : "text-ink/60"
                         }`}
                       >
                         {cell.date.getDate()}
@@ -357,8 +402,8 @@ function CalendarPage() {
                         {e.recommendation_status === "ready"
                           ? "Styled"
                           : e.recommendation_status === "failed"
-                          ? "Retry"
-                          : "Styling…"}
+                            ? "Retry"
+                            : "Styling…"}
                       </span>
                     </button>
                   </li>
@@ -390,7 +435,9 @@ function CalendarPage() {
               </button>
             </div>
 
-            <label className="block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Event title</label>
+            <label className="block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">
+              Event title
+            </label>
             <input
               value={formTitle}
               onChange={(e) => setFormTitle(e.target.value)}
@@ -400,7 +447,9 @@ function CalendarPage() {
               className="mt-2 w-full border border-ink/15 bg-bone px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
             />
 
-            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Date</label>
+            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">
+              Date
+            </label>
             <input
               type="date"
               value={formDate}
@@ -409,7 +458,9 @@ function CalendarPage() {
               className="mt-2 w-full border border-ink/15 bg-bone px-3 py-2 text-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
             />
 
-            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">Context</label>
+            <label className="mt-5 block text-[0.65rem] uppercase tracking-[0.22em] text-ink/55">
+              Context
+            </label>
             <textarea
               value={formDesc}
               onChange={(e) => setFormDesc(e.target.value)}
@@ -470,7 +521,9 @@ function EventCard({
           <p className="eyebrow">{dateLabel}</p>
           <h3 className="font-display mt-3 text-3xl leading-tight md:text-4xl">{event.title}</h3>
           {event.description && (
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/70">{event.description}</p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/70">
+              {event.description}
+            </p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -572,7 +625,9 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
     <div
       className={[
         "mt-6 flex items-center justify-between border-t border-ink/10 pt-4 transition-all duration-500",
-        reaction === "approved" ? "shadow-[0_0_28px_-6px_var(--gold)] bg-[color-mix(in_oklab,var(--gold)_8%,transparent)] px-3" : "",
+        reaction === "approved"
+          ? "shadow-[0_0_28px_-6px_var(--gold)] bg-[color-mix(in_oklab,var(--gold)_8%,transparent)] px-3"
+          : "",
       ].join(" ")}
     >
       <span className="text-[0.6rem] uppercase tracking-[0.25em] text-ink/55">
@@ -609,18 +664,26 @@ function CalendarUpgradeGate() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-cream text-ink">
       <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+        >
           <ArrowLeft size={14} />
           <span>Home</span>
         </Link>
         <div className="font-display text-lg tracking-tight">
           Calendar<span className="text-gold-deep">.</span>
         </div>
-        <span className="text-[0.6rem] uppercase tracking-[0.25em] text-gold-deep">Platinum Plus</span>
+        <span className="text-[0.6rem] uppercase tracking-[0.25em] text-gold-deep">
+          Platinum Plus
+        </span>
       </header>
 
       {/* Blurred faux-calendar background */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 top-[72px] select-none opacity-50 blur-[10px]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 top-[72px] select-none opacity-50 blur-[10px]"
+      >
         <div className="mx-auto max-w-6xl px-6 py-10 md:px-10">
           <div className="h-8 w-64 bg-ink/10" />
           <div className="mt-6 h-12 w-96 bg-ink/15" />
@@ -645,9 +708,9 @@ function CalendarUpgradeGate() {
           </h1>
           <span className="mt-7 mx-auto block h-px w-12 bg-gold-deep" />
           <p className="mt-7 text-base leading-relaxed text-ink/75 md:text-lg">
-            Upgrade to <span className="text-ink">Platinum Plus</span> to unlock your proactive event
-            calendar and travel planning tools — every gala, every flight, every quiet weekend,
-            dressed head to toe.
+            Upgrade to <span className="text-ink">Platinum Plus</span> to unlock your proactive
+            event calendar and travel planning tools — every gala, every flight, every quiet
+            weekend, dressed head to toe.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

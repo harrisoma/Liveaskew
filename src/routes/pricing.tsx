@@ -49,7 +49,10 @@ function PricingPage() {
               <em style={{ color: "var(--gold-deep)" }}>show up</em>.
             </h2>
             <span className="mt-8 inline-block h-px w-16" style={{ background: "var(--gold)" }} />
-            <p className="mt-6 text-sm" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
+            <p
+              className="mt-6 text-sm"
+              style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}
+            >
               Cancel any time. Upgrade or downgrade as your life shifts.
             </p>
 
@@ -112,7 +115,10 @@ function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
       )}
 
       <header>
-        <p className="text-[0.65rem] tracking-[0.3em] uppercase" style={{ color: "var(--gold-deep)" }}>
+        <p
+          className="text-[0.65rem] tracking-[0.3em] uppercase"
+          style={{ color: "var(--gold-deep)" }}
+        >
           {plan.name}
         </p>
         <p
@@ -193,10 +199,7 @@ function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
       </ul>
 
       {plan.inquiry ? (
-        <Link
-          to="/inquiry"
-          className="neo-btn-ink mt-10"
-        >
+        <Link to="/inquiry" className="neo-btn-ink mt-10">
           Inquire for Atelier Access
           <ArrowUpRight size={14} />
         </Link>

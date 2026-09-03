@@ -30,7 +30,6 @@ import formulaModestChic from "@/assets/formulas/formula-modest-chic.jpg";
 import formulaAndrogyne from "@/assets/formulas/formula-androgyne.jpg";
 import formulaSportLuxe from "@/assets/formulas/formula-sport-luxe.jpg";
 
-
 // Outfit formulas — no photography, no AI-generated faces.
 // Each card is a styling recipe: a named aesthetic and the exact pieces that build it.
 const OUTFIT_FORMULAS = [
@@ -38,52 +37,99 @@ const OUTFIT_FORMULAS = [
     label: "Maximalist",
     illustration: formulaMaximalist,
     palette: ["#3d2418", "#8a4a2b", "#c9a84c"],
-    formula: ["Leopard-print coat", "Amber silk blouse", "Layered gold chains", "Tailored wide-leg trouser", "Pointed leather boot"],
+    formula: [
+      "Leopard-print coat",
+      "Amber silk blouse",
+      "Layered gold chains",
+      "Tailored wide-leg trouser",
+      "Pointed leather boot",
+    ],
   },
   {
     label: "Quiet Luxury",
     illustration: formulaQuietLuxury,
     palette: ["#f1ece2", "#d8cfbe", "#8a7e68"],
-    formula: ["Ivory silk shirt", "Camel high-waist trouser", "Slim leather belt", "Almond suede mule", "Single pearl stud"],
+    formula: [
+      "Ivory silk shirt",
+      "Camel high-waist trouser",
+      "Slim leather belt",
+      "Almond suede mule",
+      "Single pearl stud",
+    ],
   },
   {
     label: "Refined Classic",
     illustration: formulaRefinedClassic,
     palette: ["#c9a87c", "#e8dcc4", "#2d2418"],
-    formula: ["Camel cashmere overcoat", "Cream cashmere crew", "Pearl strand", "Pleated wool trouser", "Leather loafer"],
+    formula: [
+      "Camel cashmere overcoat",
+      "Cream cashmere crew",
+      "Pearl strand",
+      "Pleated wool trouser",
+      "Leather loafer",
+    ],
   },
   {
     label: "Heritage Modern",
     illustration: formulaHeritageModern,
     palette: ["#0f4a3a", "#7a2b3a", "#c9a84c"],
-    formula: ["Jewel-toned silk dress", "Structured shoulder", "Heritage textile scarf", "Gold cuff", "Sculptural heel"],
+    formula: [
+      "Jewel-toned silk dress",
+      "Structured shoulder",
+      "Heritage textile scarf",
+      "Gold cuff",
+      "Sculptural heel",
+    ],
   },
   {
     label: "Curve Confident",
     illustration: formulaCurveConfident,
     palette: ["#5a1820", "#8a2a3a", "#e8c8a8"],
-    formula: ["Burgundy wrap dress", "Defined waist tie", "Three-quarter sleeve", "Nude pointed pump", "Gold hoop"],
+    formula: [
+      "Burgundy wrap dress",
+      "Defined waist tie",
+      "Three-quarter sleeve",
+      "Nude pointed pump",
+      "Gold hoop",
+    ],
   },
   {
     label: "Modest Chic",
     illustration: formulaModestChic,
     palette: ["#f5ede0", "#d8c8a8", "#c9a84c"],
-    formula: ["Cream silk hijab", "Long-sleeve column dress", "Gold cuff embroidery", "Wide leather belt", "Leather flat"],
+    formula: [
+      "Cream silk hijab",
+      "Long-sleeve column dress",
+      "Gold cuff embroidery",
+      "Wide leather belt",
+      "Leather flat",
+    ],
   },
   {
     label: "Androgyne",
     illustration: formulaAndrogyne,
     palette: ["#2a2a2e", "#5a5a5e", "#f1ece2"],
-    formula: ["Oversized charcoal blazer", "Crisp white shirt, collar open", "Tailored black trouser", "Black leather derby", "Silver signet"],
+    formula: [
+      "Oversized charcoal blazer",
+      "Crisp white shirt, collar open",
+      "Tailored black trouser",
+      "Black leather derby",
+      "Silver signet",
+    ],
   },
   {
     label: "Sport Luxe",
     illustration: formulaSportLuxe,
     palette: ["#4a5a2a", "#8a9a6a", "#e8dcc4"],
-    formula: ["Olive fine-knit turtleneck", "Cream wide-leg trouser", "Slim trench", "White leather sneaker", "Gold hoop"],
+    formula: [
+      "Olive fine-knit turtleneck",
+      "Cream wide-leg trouser",
+      "Slim trench",
+      "White leather sneaker",
+      "Gold hoop",
+    ],
   },
 ];
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -95,13 +141,15 @@ export const Route = createFileRoute("/")({
           "Bee is an inclusive conversational AI stylist that builds a monthly style guide only for you. Free for 14 days.",
       },
       { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
-      { property: "og:description", content: "An inclusive conversational AI stylist that builds a monthly style guide only for you. Free for 14 days." },
+      {
+        property: "og:description",
+        content:
+          "An inclusive conversational AI stylist that builds a monthly style guide only for you. Free for 14 days.",
+      },
       { property: "og:url", content: "https://liveaskew.com/" },
       { property: "og:type", content: "website" },
     ],
-    links: [
-      { rel: "canonical", href: "https://liveaskew.com/" },
-    ],
+    links: [{ rel: "canonical", href: "https://liveaskew.com/" }],
   }),
   component: LandingPage,
 });
@@ -133,7 +181,6 @@ const STEPS = [
     body: "Today's look. A voice you can talk to. The magazine. Your wardrobe, always close — and a quarterly Closet Reset to keep it honest.",
   },
 ];
-
 
 const PROMISES = [
   {
@@ -236,9 +283,7 @@ function HeroCTA() {
           className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
         />
       </span>
-      <span className="text-[0.6rem] tracking-[0.18em] text-cream/70 normal-case">
-        {v.sub}
-      </span>
+      <span className="text-[0.6rem] tracking-[0.18em] text-cream/70 normal-case">{v.sub}</span>
     </Link>
   );
 }
@@ -287,7 +332,6 @@ function LandingPage() {
     <main className="min-h-screen bg-cream text-ink">
       <Nav />
 
-
       {/* ───────── Hero — dark clay neomorphism, gold orb ───────── */}
       <section className="relative overflow-hidden text-cream neo-dark pt-8">
         {/* radial gold glow */}
@@ -323,9 +367,26 @@ function LandingPage() {
               <stop offset="100%" stopColor="var(--gold)" stopOpacity="0" />
             </linearGradient>
           </defs>
-          <path d="M 0 300 Q 350 180 700 360 T 1400 320" fill="none" stroke="url(#goldLine)" strokeWidth="1.2" />
-          <path d="M 0 560 Q 400 700 800 520 T 1400 600" fill="none" stroke="url(#goldLine)" strokeWidth="1" opacity="0.7" />
-          <path d="M 0 720 Q 500 600 900 760 T 1400 700" fill="none" stroke="url(#goldLine)" strokeWidth="0.8" opacity="0.5" />
+          <path
+            d="M 0 300 Q 350 180 700 360 T 1400 320"
+            fill="none"
+            stroke="url(#goldLine)"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M 0 560 Q 400 700 800 520 T 1400 600"
+            fill="none"
+            stroke="url(#goldLine)"
+            strokeWidth="1"
+            opacity="0.7"
+          />
+          <path
+            d="M 0 720 Q 500 600 900 760 T 1400 700"
+            fill="none"
+            stroke="url(#goldLine)"
+            strokeWidth="0.8"
+            opacity="0.5"
+          />
         </svg>
 
         <div className="relative mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-6 pt-28 pb-20 md:px-10 lg:grid-cols-12 lg:gap-10 lg:pt-32 lg:pb-28">
@@ -360,10 +421,9 @@ function LandingPage() {
             <div className="mt-10 flex items-start gap-5 max-w-md">
               <span className="mt-3 h-1 w-10 shrink-0 rounded-full bg-gold" />
               <p className="text-base leading-relaxed text-cream/75">
-                Bee by LiveAskew is an inclusive personal AI stylist —
-                conversational, intelligent, and built for every body, heritage,
-                and way of dressing. From assessment to wardrobe, we do the
-                quiet work so you can simply get dressed.
+                Bee by LiveAskew is an inclusive personal AI stylist — conversational, intelligent,
+                and built for every body, heritage, and way of dressing. From assessment to
+                wardrobe, we do the quiet work so you can simply get dressed.
               </p>
             </div>
 
@@ -424,21 +484,65 @@ function LandingPage() {
 
                 {/* Animated gold icon callouts — orbiting around the orb */}
                 {[
-                  { Icon: HangerIcon, title: "Wardrobe",  desc: "Your closet, decoded",     top: "6%",  left: "-14%",  align: "left"   as const, delay: "0s"   },
-                  { Icon: Building2, title: "Shop",      desc: "Curated just for you",     top: "10%", right: "-14%", align: "right"  as const, delay: "0.8s" },
-                  { Icon: Gem,       title: "Your Look", desc: "Looks made for you",       top: "40%", left: "-16%",  align: "left"   as const, delay: "1.6s" },
-                  { Icon: Palette,   title: "Palette",   desc: "Colors that complement",   top: "46%", right: "-16%", align: "right"  as const, delay: "2.2s" },
-                  { Icon: Sparkles,  title: "Bee AI",    desc: "Your personal stylist",    top: "-12%", left: "50%", align: "center" as const, delay: "1.2s" },
+                  {
+                    Icon: HangerIcon,
+                    title: "Wardrobe",
+                    desc: "Your closet, decoded",
+                    top: "6%",
+                    left: "-14%",
+                    align: "left" as const,
+                    delay: "0s",
+                  },
+                  {
+                    Icon: Building2,
+                    title: "Shop",
+                    desc: "Curated just for you",
+                    top: "10%",
+                    right: "-14%",
+                    align: "right" as const,
+                    delay: "0.8s",
+                  },
+                  {
+                    Icon: Gem,
+                    title: "Your Look",
+                    desc: "Looks made for you",
+                    top: "40%",
+                    left: "-16%",
+                    align: "left" as const,
+                    delay: "1.6s",
+                  },
+                  {
+                    Icon: Palette,
+                    title: "Palette",
+                    desc: "Colors that complement",
+                    top: "46%",
+                    right: "-16%",
+                    align: "right" as const,
+                    delay: "2.2s",
+                  },
+                  {
+                    Icon: Sparkles,
+                    title: "Bee AI",
+                    desc: "Your personal stylist",
+                    top: "-12%",
+                    left: "50%",
+                    align: "center" as const,
+                    delay: "1.2s",
+                  },
                 ].map(({ Icon, title, desc, top, left, right, align, delay }, i) => {
                   const isCenter = align === "center";
-                  const isLeft   = align === "left";
+                  const isLeft = align === "left";
                   const posStyle: React.CSSProperties = isCenter
                     ? { top, left: left ?? "50%", transform: "translateX(-50%) translateY(-50%)" }
                     : isLeft
                       ? { top, left: left ?? "0%", transform: "translateY(-50%)" }
                       : { top, right: right ?? "0%", transform: "translateY(-50%)" };
                   const textAlign = isCenter ? "text-center" : isLeft ? "text-left" : "text-right";
-                  const itemsAlign = isCenter ? "items-center" : isLeft ? "items-start" : "items-end";
+                  const itemsAlign = isCenter
+                    ? "items-center"
+                    : isLeft
+                      ? "items-start"
+                      : "items-end";
                   const animName = isCenter ? "float-center" : "float-edge";
 
                   return (
@@ -446,7 +550,10 @@ function LandingPage() {
                       key={i}
                       aria-hidden
                       className={`absolute flex flex-col gap-1.5 ${itemsAlign}`}
-                      style={{ ...posStyle, animation: `${animName} 4s ease-in-out ${delay} infinite` }}
+                      style={{
+                        ...posStyle,
+                        animation: `${animName} 4s ease-in-out ${delay} infinite`,
+                      }}
                     >
                       {/* pulsing halo */}
                       <span className="relative">
@@ -460,7 +567,9 @@ function LandingPage() {
                       </span>
                       {/* label */}
                       <div className={`whitespace-nowrap ${textAlign}`}>
-                        <p className="text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-gold">{title}</p>
+                        <p className="text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-gold">
+                          {title}
+                        </p>
                         <p className="text-[0.6rem] tracking-[0.12em] text-cream/60">{desc}</p>
                       </div>
                     </span>
@@ -479,7 +588,6 @@ function LandingPage() {
             </figure>
           </div>
         </div>
-
 
         {/* Marquee strip */}
         <div className="relative px-6 py-8 md:px-10">
@@ -506,11 +614,11 @@ function LandingPage() {
       {/* ───────── Talk to Bee — live chat, no account needed ───────── */}
       <HomeBeeChat />
 
-
-
-
       {/* ───────── Meet Bee ───────── */}
-      <section id="bee" className="neo-dark px-6 py-24 sm:px-8 md:px-10 md:py-32 lg:px-12 lg:py-36 xl:px-16">
+      <section
+        id="bee"
+        className="neo-dark px-6 py-24 sm:px-8 md:px-10 md:py-32 lg:px-12 lg:py-36 xl:px-16"
+      >
         <div className="mx-auto grid max-w-[1400px] grid-cols-12 items-start gap-10 sm:gap-12 md:gap-10 lg:gap-16 xl:gap-24">
           <div className="order-2 col-span-12 min-w-0 md:order-1 md:col-span-7 md:pr-4 lg:col-span-8 lg:pr-6 xl:pr-10">
             <p className="eyebrow">Plate I · Meet Bee</p>
@@ -519,21 +627,21 @@ function LandingPage() {
             </h2>
             <span className="gold-rule mt-8 !mx-0" />
             <p className="mt-8 max-w-xl text-base leading-relaxed text-cream/70">
-              The AI stylist inside LiveAskew. I don't recommend algorithms;
-              I have conversations. I ask, I listen, I remember, and I build a
-              wardrobe language that is unmistakably yours.
+              The AI stylist inside LiveAskew. I don't recommend algorithms; I have conversations. I
+              ask, I listen, I remember, and I build a wardrobe language that is unmistakably yours.
             </p>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/70">
               My story began in <em className="text-cream/90">Miami</em> — where color, heat, and
-              unapologetic confidence taught me that style is a language you wear.
-              But I don't have a single signature. Minimal or maximal, quiet or bold,
-              classic or street — I build across every aesthetic, because the only
-              one that matters is yours. My craft rests on three things:
-              <em className="text-cream/90"> fit</em>, <em className="text-cream/90">feel</em>, and <em className="text-cream/90">fabric</em>.
+              unapologetic confidence taught me that style is a language you wear. But I don't have
+              a single signature. Minimal or maximal, quiet or bold, classic or street — I build
+              across every aesthetic, because the only one that matters is yours. My craft rests on
+              three things:
+              <em className="text-cream/90"> fit</em>, <em className="text-cream/90">feel</em>, and{" "}
+              <em className="text-cream/90">fabric</em>.
             </p>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/70">
-              We'll talk like friends. I'll listen more than I speak. And when the
-              moment is right, I'll <em className="text-cream/90">expand</em> what you imagined for yourself,
+              We'll talk like friends. I'll listen more than I speak. And when the moment is right,
+              I'll <em className="text-cream/90">expand</em> what you imagined for yourself,
               <em className="text-cream/90"> explore</em> what suits the life you actually lead, and{" "}
               <em className="text-cream/90">execute</em> a wardrobe that finally feels like home.
             </p>
@@ -596,14 +704,10 @@ function LandingPage() {
                   <p className="text-[0.55rem] tracking-[0.25em] uppercase text-gold">
                     {card.title}
                   </p>
-                  <p className="mt-2 text-xs leading-relaxed text-cream/70">
-                    {card.body}
-                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-cream/70">{card.body}</p>
 
                   <div className="mt-auto pt-4">
-                    <span className="font-display text-2xl text-gold">
-                      {card.stat}
-                    </span>
+                    <span className="font-display text-2xl text-gold">{card.stat}</span>
                     <span className="ml-1.5 text-[0.55rem] tracking-[0.15em] uppercase text-cream/50">
                       {card.statLabel}
                     </span>
@@ -613,11 +717,7 @@ function LandingPage() {
             </div>
 
             <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
-              <Link
-                to="/auth"
-                search={{ mode: "signup" }}
-                className="neo-btn-gold group"
-              >
+              <Link to="/auth" search={{ mode: "signup" }} className="neo-btn-gold group">
                 Meet Bee — free
                 <ArrowUpRight
                   size={14}
@@ -665,22 +765,22 @@ function LandingPage() {
 
       {/* ───────── Styled for every woman ───────── */}
       <section className="bg-cream py-24 md:py-32">
-
         <div className="mx-auto max-w-[1400px] px-6 md:px-10">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-7">
               <p className="eyebrow">The Spectrum</p>
               <h2 className="font-display mt-6 text-5xl leading-[0.98] tracking-tight md:text-6xl lg:text-7xl">
-                Styled for<br />
+                Styled for
+                <br />
                 <em className="text-gold-deep">every</em>&nbsp;body.
               </h2>
             </div>
             <div className="lg:col-span-5">
               <span className="gold-rule !mx-0" />
               <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/65">
-                Twenty-five. Sixty-five. Curve, petite, tall. Hijabi, modest,
-                maximalist, sport. Heritage cloth or sharp suiting. LiveAskew
-                listens, then dresses the woman in front of it — never a type.
+                Twenty-five. Sixty-five. Curve, petite, tall. Hijabi, modest, maximalist, sport.
+                Heritage cloth or sharp suiting. LiveAskew listens, then dresses the woman in front
+                of it — never a type.
               </p>
             </div>
           </div>
@@ -722,17 +822,12 @@ function LandingPage() {
                   />
                 </div>
 
-                <h3 className="font-display mt-6 text-2xl leading-tight md:text-3xl">
-                  {o.label}
-                </h3>
+                <h3 className="font-display mt-6 text-2xl leading-tight md:text-3xl">{o.label}</h3>
                 <span className="mt-3 block h-1 w-8 rounded-full bg-gold" />
 
                 <ul className="mt-5 space-y-1.5">
                   {o.formula.map((piece, idx) => (
-                    <li
-                      key={piece}
-                      className="flex gap-3 text-sm leading-relaxed text-ink/75"
-                    >
+                    <li key={piece} className="flex gap-3 text-sm leading-relaxed text-ink/75">
                       <span className="font-display text-gold-deep tabular-nums">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
@@ -746,24 +841,24 @@ function LandingPage() {
         </div>
       </section>
 
-
       {/* ───────── Process ───────── */}
       <section id="process" className="px-6 py-28 md:px-10 md:py-36">
-
         <div className="mx-auto max-w-[1400px]">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
               <p className="eyebrow">The Process</p>
               <h2 className="font-display mt-6 text-5xl leading-[1] tracking-tight md:text-6xl">
-                Five quiet<br />
+                Five quiet
+                <br />
                 steps to a<br />
-                considered<br />
+                considered
+                <br />
                 wardrobe.
               </h2>
               <span className="gold-rule mt-8 !mx-0" />
               <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/65">
-                We move slowly, deliberately, and with care. Nothing rushed —
-                because the way you dress is rarely an emergency.
+                We move slowly, deliberately, and with care. Nothing rushed — because the way you
+                dress is rarely an emergency.
               </p>
             </div>
 
@@ -777,12 +872,8 @@ function LandingPage() {
                     {s.n}
                   </span>
                   <div className="col-span-10 md:col-span-7">
-                    <h3 className="font-display text-2xl md:text-3xl">
-                      {s.title}
-                    </h3>
-                    <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/65">
-                      {s.body}
-                    </p>
+                    <h3 className="font-display text-2xl md:text-3xl">{s.title}</h3>
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/65">{s.body}</p>
                   </div>
                   <div className="hidden md:col-span-3 md:flex md:justify-end">
                     <span className="text-[0.6rem] tracking-[0.3em] uppercase text-ink/35">
@@ -816,9 +907,7 @@ function LandingPage() {
             </blockquote>
             <figcaption className="mt-8 flex items-center gap-3 text-cream/70">
               <span className="h-px w-10 bg-gold" />
-              <span className="text-[0.65rem] tracking-[0.3em] uppercase">
-                Founder, LiveAskew
-              </span>
+              <span className="text-[0.65rem] tracking-[0.3em] uppercase">Founder, LiveAskew</span>
             </figcaption>
           </figure>
         </div>
@@ -842,7 +931,8 @@ function LandingPage() {
                 </p>
               </div>
               <h2 className="font-display mt-8 max-w-3xl text-4xl leading-[1.05] text-cream md:text-5xl lg:text-[3.4rem]">
-                Bee revitalizes<br />
+                Bee revitalizes
+                <br />
                 <em className="text-gold not-italic font-normal italic">your closet.</em>
               </h2>
             </div>
@@ -854,7 +944,10 @@ function LandingPage() {
                 { src: philosophyWomens, label: "Quiet Luxury", tag: "Hers · Daily" },
                 { src: philosophyPair, label: "His & Hers", tag: "Weekend Pairing" },
               ].map((look, i) => (
-                <figure key={look.label} className="group relative overflow-hidden rounded-3xl neo-dark-inset">
+                <figure
+                  key={look.label}
+                  className="group relative overflow-hidden rounded-3xl neo-dark-inset"
+                >
                   <img
                     src={look.src}
                     alt={`${look.label} flatlay styled by Bee`}
@@ -866,7 +959,7 @@ function LandingPage() {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                   <figcaption className="absolute inset-x-0 bottom-0 p-4 md:p-5">
                     <p className="font-display text-[0.55rem] tracking-[0.35em] uppercase text-gold/80">
-                      Plate {["I","II","III","IV"][i]}
+                      Plate {["I", "II", "III", "IV"][i]}
                     </p>
                     <p className="font-display mt-2 text-lg text-cream md:text-xl">{look.label}</p>
                     <p className="mt-1 text-[0.6rem] tracking-[0.25em] uppercase text-cream/55">
@@ -886,8 +979,6 @@ function LandingPage() {
         </div>
       </section>
 
-
-
       {/* ───────── The Promise ───────── */}
       <section className="neo-dark mx-6 my-8 rounded-[2.5rem] px-6 py-28 shadow-neo-lg md:mx-10 md:px-10 md:py-32">
         <div className="mx-auto max-w-[1400px]">
@@ -895,17 +986,18 @@ function LandingPage() {
             <div className="lg:col-span-7">
               <p className="eyebrow">The Promise</p>
               <h2 className="font-display mt-6 text-5xl leading-[1] tracking-tight text-cream md:text-6xl">
-                Real bodies.<br />
-                <em className="text-gold">Beautiful light.</em><br />
+                Real bodies.
+                <br />
+                <em className="text-gold">Beautiful light.</em>
+                <br />
                 Never altered.
               </h2>
             </div>
             <div className="lg:col-span-5">
               <span className="gold-rule !mx-0" />
               <p className="mt-6 max-w-md text-sm leading-relaxed text-cream/65">
-                Other tools slim, smooth and edit you into someone else.
-                Bee does the opposite — she lights you well and dresses you
-                truthfully. That is the entire foundation.
+                Other tools slim, smooth and edit you into someone else. Bee does the opposite — she
+                lights you well and dresses you truthfully. That is the entire foundation.
               </p>
             </div>
           </div>
@@ -935,15 +1027,15 @@ function LandingPage() {
           <div className="lg:col-span-5">
             <p className="eyebrow">Quarterly · The Closet Reset</p>
             <h2 className="font-display mt-6 text-5xl leading-[1] tracking-tight md:text-6xl">
-              Four questions.<br />
+              Four questions.
+              <br />
               <em className="text-gold-deep">Four answers.</em>
             </h2>
             <span className="gold-rule mt-8 !mx-0" />
             <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/65">
-              Once a season, Bee walks your wardrobe with you. Piece by
-              piece. She asks four quiet questions, and every garment finds
-              one of four homes — so your closet keeps pace with the woman
-              you're becoming.
+              Once a season, Bee walks your wardrobe with you. Piece by piece. She asks four quiet
+              questions, and every garment finds one of four homes — so your closet keeps pace with
+              the woman you're becoming.
             </p>
           </div>
 
@@ -958,9 +1050,7 @@ function LandingPage() {
                 </span>
                 <div className="col-span-7 md:col-span-7">
                   <h3 className="font-display text-2xl md:text-3xl">{o.tag}</h3>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/65">
-                    {o.body}
-                  </p>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/65">{o.body}</p>
                 </div>
                 <div className="col-span-3 hidden md:flex md:justify-end">
                   <span className="text-[0.6rem] tracking-[0.3em] uppercase text-ink/35">
@@ -973,27 +1063,22 @@ function LandingPage() {
         </div>
       </section>
 
-
       {/* ───────── Testimonials ───────── */}
       <section className="px-6 py-28 md:px-10 md:py-36">
         <div className="mx-auto max-w-[1400px]">
           <div className="max-w-2xl">
             <p className="eyebrow">Letters from Members</p>
             <h2 className="font-display mt-6 text-4xl leading-[1.05] md:text-5xl">
-              Wardrobes transformed.<br />
+              Wardrobes transformed.
+              <br />
               <em className="text-gold-deep">Confidence, restored.</em>
             </h2>
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
             {TESTIMONIALS.map((t) => (
-              <figure
-                key={t.name}
-                className="rounded-[2rem] bg-cream p-10 shadow-neo"
-              >
-                <p className="font-display text-xl italic leading-snug text-ink/85">
-                  "{t.quote}"
-                </p>
+              <figure key={t.name} className="rounded-[2rem] bg-cream p-10 shadow-neo">
+                <p className="font-display text-xl italic leading-snug text-ink/85">"{t.quote}"</p>
                 <figcaption className="mt-10 flex items-center gap-3">
                   <span className="h-px w-6 bg-gold" />
                   <div>
@@ -1014,21 +1099,21 @@ function LandingPage() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow text-gold-soft">An Invitation</p>
           <h2 className="font-display mt-8 text-5xl leading-[1] md:text-7xl">
-            Ready to meet<br />
+            Ready to meet
+            <br />
             <em className="text-gold-soft">your style</em>?
           </h2>
           <span className="gold-rule mt-10" />
           <p className="mt-10 text-base leading-relaxed text-cream/65">
-            Fourteen days, on us. No card required. Your inclusive AI stylist is waiting —
-            and so, quietly, is the version of you that's already there.
+            Fourteen days, on us. No card required. Your inclusive AI stylist is waiting — and so,
+            quietly, is the version of you that's already there.
           </p>
-          <Link
-            to="/auth"
-            search={{ mode: "signup" }}
-            className="neo-btn-gold mt-12 group"
-          >
+          <Link to="/auth" search={{ mode: "signup" }} className="neo-btn-gold mt-12 group">
             Begin today
-            <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <ArrowUpRight
+              size={14}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
       </section>
@@ -1038,4 +1123,3 @@ function LandingPage() {
     </main>
   );
 }
-

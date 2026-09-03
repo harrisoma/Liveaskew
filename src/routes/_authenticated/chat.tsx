@@ -51,19 +51,20 @@ function cleanForSpeech(text: string): string {
     .trim();
 }
 
-
 export const Route = createFileRoute("/_authenticated/chat")({
   head: () => ({
-    meta: [
-      { title: "Talk to Bee — LiveAskew" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Talk to Bee — LiveAskew" }, { name: "robots", content: "noindex" }],
   }),
   component: ChatPage,
 });
 
 type Msg = { id?: string; role: "user" | "assistant"; content: string };
-type BannerReason = "trial_expired" | "no_subscription" | "credits_exhausted" | "rate_limit" | "generic";
+type BannerReason =
+  | "trial_expired"
+  | "no_subscription"
+  | "credits_exhausted"
+  | "rate_limit"
+  | "generic";
 type Banner = { reason: BannerReason; message: string; cta: string; link: string | null };
 
 function buildBanner(reason: BannerReason): Banner {
@@ -128,7 +129,9 @@ function ChatPage() {
       const resolved = await loadResolvedTier();
       if (active) setTier(resolved);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Voice: Speech-to-Text + Text-to-Speech state.
@@ -245,7 +248,6 @@ function ChatPage() {
     spokenIndexRef.current = lastIdx;
   }, [messages, streaming, sending, speakEnabled]);
 
-
   useEffect(() => {
     let active = true;
     load({ data: { conversationId: null } })
@@ -277,8 +279,11 @@ function ChatPage() {
     setBanner(null);
     setSending(true);
 
-
-    setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: text },
+      { role: "assistant", content: "" },
+    ]);
 
     try {
       const { data: sessionData } = await supabase.auth.getSession();
@@ -291,7 +296,11 @@ function ChatPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ conversationId, message: text, actingProfileId: getActingProfileId() }),
+        body: JSON.stringify({
+          conversationId,
+          message: text,
+          actingProfileId: getActingProfileId(),
+        }),
       });
 
       if (!res.ok || !res.body) {
@@ -310,7 +319,6 @@ function ChatPage() {
         setBanner(buildBanner("generic"));
         throw new Error(body || "Bee could not respond.");
       }
-
 
       setStreaming(true);
       const reader = res.body.getReader();
@@ -368,38 +376,49 @@ function ChatPage() {
       }
       setMessages((prev) => {
         const next = prev.slice();
-        if (next.length && next[next.length - 1].role === "assistant" && !next[next.length - 1].content) {
+        if (
+          next.length &&
+          next[next.length - 1].role === "assistant" &&
+          !next[next.length - 1].content
+        ) {
           next.pop();
         }
-        if (next.length && next[next.length - 1].role === "user" && next[next.length - 1].content === text) {
+        if (
+          next.length &&
+          next[next.length - 1].role === "user" &&
+          next[next.length - 1].content === text
+        ) {
           next.pop();
         }
         return next;
       });
       setInput(text);
-
     } finally {
       setSending(false);
       setStreaming(false);
     }
   }
 
-  const orbState: BeeOrbState = inputFocused && input.trim().length > 0
-    ? "listening"
-    : streaming
-      ? "speaking"
-      : sending
-        ? "thinking"
-        : listening
-          ? "listening"
-          : speaking
-            ? "speaking"
-            : "idle";
+  const orbState: BeeOrbState =
+    inputFocused && input.trim().length > 0
+      ? "listening"
+      : streaming
+        ? "speaking"
+        : sending
+          ? "thinking"
+          : listening
+            ? "listening"
+            : speaking
+              ? "speaking"
+              : "idle";
 
   return (
     <main className="flex h-screen flex-col bg-cream text-ink">
       <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
+        >
           <ArrowLeft size={14} />
           <span>Home</span>
         </Link>
@@ -438,7 +457,6 @@ function ChatPage() {
             Dashboard
           </Link>
         </div>
-
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
@@ -486,14 +504,9 @@ function ChatPage() {
         <div className="mx-auto max-w-2xl rounded-[1.75rem] bg-cream px-6 py-5 shadow-neo">
           {banner && (
             <div className="mb-3 flex flex-col gap-3 rounded-3xl bg-cream px-5 py-4 shadow-neo-inset sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-display text-base leading-snug text-ink">
-                {banner.message}
-              </p>
+              <p className="font-display text-base leading-snug text-ink">{banner.message}</p>
               {banner.link ? (
-                <Link
-                  to={banner.link}
-                  className="neo-btn-ink !px-4 !py-2 text-[0.7rem]"
-                >
+                <Link to={banner.link} className="neo-btn-ink !px-4 !py-2 text-[0.7rem]">
                   {banner.cta}
                 </Link>
               ) : (
@@ -523,7 +536,9 @@ function ChatPage() {
                   handleSend(e);
                 }
               }}
-              placeholder={listening ? "Listening… speak naturally." : "Tell Bee what you're dressing for…"}
+              placeholder={
+                listening ? "Listening… speak naturally." : "Tell Bee what you're dressing for…"
+              }
               rows={2}
               className="w-full resize-none rounded-2xl border-0 bg-cream px-4 py-3 pr-24 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
               disabled={sending}
@@ -535,7 +550,11 @@ function ChatPage() {
                 disabled={sending}
                 aria-pressed={listening}
                 aria-label={listening ? "Stop dictation" : "Dictate to Bee"}
-                title={listening ? "Stop dictation — voice typing is free on every plan" : "Dictate to Bee — voice typing, free on every plan"}
+                title={
+                  listening
+                    ? "Stop dictation — voice typing is free on every plan"
+                    : "Dictate to Bee — voice typing, free on every plan"
+                }
                 className={`absolute right-14 bottom-3 flex h-9 w-9 items-center justify-center rounded-full shadow-neo-sm transition disabled:opacity-40 ${
                   listening
                     ? "animate-pulse bg-gold-deep text-cream"
@@ -553,7 +572,6 @@ function ChatPage() {
             >
               {sending ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
             </button>
-
           </form>
         </div>
       </div>
@@ -568,12 +586,10 @@ function Welcome() {
         <BeeOrb state="idle" size={220} surface="light" ariaLabel="Bee" />
       </div>
       <p className="eyebrow text-center">Welcome back</p>
-      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
-        Hello, you.
-      </h1>
+      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">Hello, you.</h1>
       <p className="mt-5 max-w-md text-base leading-relaxed text-ink/70">
-        I'm Bee. Tell me what you're dressing for — a week, a wedding, a Wednesday morning — and I'll
-        build it around your Fit, Feel, and Fabric.
+        I'm Bee. Tell me what you're dressing for — a week, a wedding, a Wednesday morning — and
+        I'll build it around your Fit, Feel, and Fabric.
       </p>
       <span className="mt-7 block h-px w-12 bg-gold" />
       <div className="mt-8 grid gap-3 text-sm text-ink/70 sm:grid-cols-2">

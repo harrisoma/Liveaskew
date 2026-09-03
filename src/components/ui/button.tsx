@@ -13,10 +13,8 @@ const buttonVariants = cva(
           "rounded-full bg-ink text-cream shadow-[8px_8px_16px_color-mix(in_oklab,var(--ink)_28%,transparent),-4px_-4px_10px_color-mix(in_oklab,white_35%,var(--cream)),inset_0_1px_0_color-mix(in_oklab,white_18%,transparent)] hover:bg-[color-mix(in_oklab,var(--gold-deep)_70%,var(--ink))]",
         destructive:
           "rounded-full bg-destructive text-destructive-foreground shadow-[6px_6px_12px_color-mix(in_oklab,var(--ink)_18%,transparent)] hover:opacity-90",
-        outline:
-          "rounded-full bg-cream text-ink shadow-neo hover:shadow-neo-sm",
-        secondary:
-          "rounded-full bg-cream text-ink shadow-neo hover:shadow-neo-sm",
+        outline: "rounded-full bg-cream text-ink shadow-neo hover:shadow-neo-sm",
+        secondary: "rounded-full bg-cream text-ink shadow-neo hover:shadow-neo-sm",
         ghost: "rounded-full hover:shadow-neo-sm hover:text-gold-deep",
         link: "rounded-full text-gold-deep underline-offset-4 hover:underline",
       },

@@ -172,9 +172,7 @@ function AuthPage() {
             />
           ) : (
             <>
-              <p className="eyebrow">
-                {isSignup ? "Begin your journey" : "Welcome back"}
-              </p>
+              <p className="eyebrow">{isSignup ? "Begin your journey" : "Welcome back"}</p>
               <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
                 {isSignup ? "Create your account." : "Sign in to LiveAskew."}
               </h1>
@@ -218,9 +216,7 @@ function AuthPage() {
 
               <div className="mt-8 flex items-center gap-4">
                 <div className="h-px flex-1 bg-ink/10" />
-                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/40">
-                  or
-                </span>
+                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/40">or</span>
                 <div className="h-px flex-1 bg-ink/10" />
               </div>
 
@@ -311,13 +307,7 @@ function AuthPage() {
   );
 }
 
-function CheckInbox({
-  email,
-  onChangeEmail,
-}: {
-  email: string;
-  onChangeEmail: () => void;
-}) {
+function CheckInbox({ email, onChangeEmail }: { email: string; onChangeEmail: () => void }) {
   const [cooldown, setCooldown] = useState(0);
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
@@ -356,13 +346,10 @@ function CheckInbox({
         <Mail size={20} />
       </div>
       <p className="eyebrow">Light friction filter</p>
-      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
-        Check your inbox.
-      </h1>
+      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">Check your inbox.</h1>
       <p className="mt-5 text-sm leading-relaxed text-ink/70">
-        We've sent a verification link to{" "}
-        <span className="font-medium text-ink">{email}</span>. Open it on this
-        device and Bee will be waiting on the other side.
+        We've sent a verification link to <span className="font-medium text-ink">{email}</span>.
+        Open it on this device and Bee will be waiting on the other side.
       </p>
       <span className="mt-7 block h-px w-12 bg-gold" />
 
@@ -398,16 +385,9 @@ function CheckInbox({
           disabled={resending || cooldown > 0}
           className="neo-btn w-full disabled:opacity-50"
         >
-          <RefreshCw
-            size={14}
-            className={resending ? "animate-spin" : ""}
-          />
+          <RefreshCw size={14} className={resending ? "animate-spin" : ""} />
           <span>
-            {cooldown > 0
-              ? `Resend in ${cooldown}s`
-              : resending
-                ? "Sending"
-                : "Resend the link"}
+            {cooldown > 0 ? `Resend in ${cooldown}s` : resending ? "Sending" : "Resend the link"}
           </span>
         </button>
         <button

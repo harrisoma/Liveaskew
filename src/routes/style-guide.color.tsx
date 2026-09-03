@@ -13,12 +13,48 @@ export const Route = createFileRoute("/style-guide/color")({
 });
 
 const BRAND = [
-  { name: "--ink", hex: "#3A342C", label: "Warm ink", dark: true, role: "Primary text, wordmark, high-contrast CTAs." },
-  { name: "--cream", hex: "#E6DDD0", label: "Clay canvas", dark: false, role: "Page background and raised neo surfaces." },
-  { name: "--bone", hex: "#E6DDD0", label: "Clay (same)", dark: false, role: "Matches cream so dual shadows can form." },
-  { name: "--gold", hex: "#C9A24A", label: "Tailored gold", dark: false, role: "Accent rules, focus rings, key marks." },
-  { name: "--gold-deep", hex: "#8A6424", label: "Deep gold", dark: true, role: "Eyebrow text — contrast-safe on clay." },
-  { name: "--gold-soft", hex: "#E4D0A8", label: "Soft gold", dark: false, role: "Washes, hover tints, inner highlights." },
+  {
+    name: "--ink",
+    hex: "#3A342C",
+    label: "Warm ink",
+    dark: true,
+    role: "Primary text, wordmark, high-contrast CTAs.",
+  },
+  {
+    name: "--cream",
+    hex: "#E6DDD0",
+    label: "Clay canvas",
+    dark: false,
+    role: "Page background and raised neo surfaces.",
+  },
+  {
+    name: "--bone",
+    hex: "#E6DDD0",
+    label: "Clay (same)",
+    dark: false,
+    role: "Matches cream so dual shadows can form.",
+  },
+  {
+    name: "--gold",
+    hex: "#C9A24A",
+    label: "Tailored gold",
+    dark: false,
+    role: "Accent rules, focus rings, key marks.",
+  },
+  {
+    name: "--gold-deep",
+    hex: "#8A6424",
+    label: "Deep gold",
+    dark: true,
+    role: "Eyebrow text — contrast-safe on clay.",
+  },
+  {
+    name: "--gold-soft",
+    hex: "#E4D0A8",
+    label: "Soft gold",
+    dark: false,
+    role: "Washes, hover tints, inner highlights.",
+  },
 ];
 
 const ILLUS = [
@@ -29,7 +65,19 @@ const ILLUS = [
   { name: "--ink", hex: "#161514", label: "Linework ink", dark: true },
 ];
 
-function Swatch({ name, hex, label, dark, role }: { name: string; hex: string; label: string; dark: boolean; role?: string }) {
+function Swatch({
+  name,
+  hex,
+  label,
+  dark,
+  role,
+}: {
+  name: string;
+  hex: string;
+  label: string;
+  dark: boolean;
+  role?: string;
+}) {
   return (
     <div className="flex flex-col">
       <div
@@ -64,14 +112,18 @@ function ColorPage() {
       <section className="mb-28">
         <SectionHeader eyebrow="01.01 — Brand palette" title="The page chrome." />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {BRAND.map((s) => <Swatch key={s.name} {...s} />)}
+          {BRAND.map((s) => (
+            <Swatch key={s.name} {...s} />
+          ))}
         </div>
       </section>
 
       <section className="mb-28">
         <SectionHeader eyebrow="01.02 — Illustration palette" title="Warm paper, jewel ink." />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {ILLUS.map((s) => <Swatch key={s.name + s.label} {...s} />)}
+          {ILLUS.map((s) => (
+            <Swatch key={s.name + s.label} {...s} />
+          ))}
         </div>
       </section>
 
@@ -86,7 +138,10 @@ function ColorPage() {
             "Ink text stays high-contrast on clay. Never rely on shadow alone to signal a control.",
           ].map((r, i) => (
             <li key={i} className="flex gap-5 items-start">
-              <span className="font-display text-2xl leading-none mt-1 shrink-0" style={{ color: "var(--illus-jewel)" }}>
+              <span
+                className="font-display text-2xl leading-none mt-1 shrink-0"
+                style={{ color: "var(--illus-jewel)" }}
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="text-lg text-ink/80 leading-[1.6]">{r}</span>

@@ -159,10 +159,15 @@ function HouseholdPage() {
     return (
       <main className="min-h-screen bg-cream text-ink">
         <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
-          <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+          >
             <ArrowLeft size={14} /> Home
           </Link>
-          <div className="font-display text-lg">Household<span className="text-gold-deep">.</span></div>
+          <div className="font-display text-lg">
+            Household<span className="text-gold-deep">.</span>
+          </div>
           <span />
         </header>
         <div className="mx-auto max-w-2xl px-6 py-24 text-center md:px-10">
@@ -188,14 +193,22 @@ function HouseholdPage() {
   return (
     <main className="min-h-screen bg-cream text-ink">
       <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+        >
           <ArrowLeft size={14} /> Home
         </Link>
-        <div className="font-display text-lg">Household<span className="text-gold-deep">.</span></div>
+        <div className="font-display text-lg">
+          Household<span className="text-gold-deep">.</span>
+        </div>
         {canFamily ? (
           <button
             disabled={profiles.length >= 3}
-            onClick={() => { setEditing(null); setShowForm(true); }}
+            onClick={() => {
+              setEditing(null);
+              setShowForm(true);
+            }}
             className="neo-btn-ink !px-3 !py-2 text-[0.65rem] disabled:opacity-40"
           >
             <Plus size={12} /> Add member
@@ -216,8 +229,8 @@ function HouseholdPage() {
           Manage your household profiles.
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink/65">
-          Up to three sub-profiles. Each has their own sizes, aesthetic territory, and styling
-          rules — and Bee shifts her voice the moment you switch.
+          Up to three sub-profiles. Each has their own sizes, aesthetic territory, and styling rules
+          — and Bee shifts her voice the moment you switch.
         </p>
         <span className="mt-6 block h-px w-12 bg-gold-deep" />
 
@@ -275,7 +288,10 @@ function HouseholdPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => { setEditing(p); setShowForm(true); }}
+                      onClick={() => {
+                        setEditing(p);
+                        setShowForm(true);
+                      }}
                       className="border border-ink/20 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream"
                     >
                       Edit
@@ -292,19 +308,25 @@ function HouseholdPage() {
                 <dl className="mt-5 space-y-2 text-sm text-ink/70">
                   {p.aesthetic_territory && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Aesthetic</dt>
+                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">
+                        Aesthetic
+                      </dt>
                       <dd className="mt-1">{p.aesthetic_territory}</dd>
                     </div>
                   )}
                   {Object.keys(p.sizes ?? {}).length > 0 && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Sizes</dt>
+                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">
+                        Sizes
+                      </dt>
                       <dd className="mt-1 text-xs">{JSON.stringify(p.sizes)}</dd>
                     </div>
                   )}
                   {p.notes && (
                     <div>
-                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">Notes</dt>
+                      <dt className="text-[0.6rem] uppercase tracking-[0.2em] text-ink/40">
+                        Notes
+                      </dt>
                       <dd className="mt-1 italic text-ink/55">{p.notes}</dd>
                     </div>
                   )}
@@ -314,7 +336,11 @@ function HouseholdPage() {
                     scope={{ kind: "family", id: p.id }}
                     tier={tier}
                     label={`${p.name} — ${p.relationship}`}
-                    sublabel={p.relationship === "child" ? "Used for child lookbook renders." : "Used on this profile's looks."}
+                    sublabel={
+                      p.relationship === "child"
+                        ? "Used for child lookbook renders."
+                        : "Used on this profile's looks."
+                    }
                     path={familySelfies[p.id] ?? null}
                     onChange={(path) => setFamilySelfies((m) => ({ ...m, [p.id]: path }))}
                   />
@@ -336,7 +362,11 @@ function HouseholdPage() {
           initial={editing}
           saving={saving}
           error={error}
-          onClose={() => { setShowForm(false); setEditing(null); setError(null); }}
+          onClose={() => {
+            setShowForm(false);
+            setEditing(null);
+            setError(null);
+          }}
           onSubmit={handleSubmit}
         />
       )}
@@ -384,7 +414,13 @@ function ProfileForm({
           if (bottom) sizes.bottom = bottom;
           if (shoe) sizes.shoe = shoe;
           if (dress) sizes.dress = dress;
-          onSubmit({ name: name.trim(), relationship, sizes, aesthetic_territory: aesthetic.trim(), notes: notes.trim() });
+          onSubmit({
+            name: name.trim(),
+            relationship,
+            sizes,
+            aesthetic_territory: aesthetic.trim(),
+            notes: notes.trim(),
+          });
         }}
         className="w-full max-w-xl border border-ink/15 bg-bone p-6 shadow-2xl md:p-8"
       >
@@ -393,40 +429,88 @@ function ProfileForm({
             <p className="eyebrow">{initial ? "Edit member" : "Add member"}</p>
             <h3 className="font-display mt-2 text-2xl">Household profile</h3>
           </div>
-          <button type="button" onClick={onClose} className="text-ink/40 hover:text-ink" aria-label="Close">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-ink/40 hover:text-ink"
+            aria-label="Close"
+          >
             <X size={18} />
           </button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Name">
-            <input value={name} onChange={(e) => setName(e.target.value)} required maxLength={80} className="input" />
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              maxLength={80}
+              className="input"
+            />
           </Field>
           <Field label="Relationship">
-            <select value={relationship} onChange={(e) => setRelationship(e.target.value as Profile["relationship"])} className="input">
+            <select
+              value={relationship}
+              onChange={(e) => setRelationship(e.target.value as Profile["relationship"])}
+              className="input"
+            >
               {RELATIONSHIPS.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
               ))}
             </select>
           </Field>
-          <Field label="Top size"><input value={top} onChange={(e) => setTop(e.target.value)} className="input" /></Field>
-          <Field label="Bottom size"><input value={bottom} onChange={(e) => setBottom(e.target.value)} className="input" /></Field>
-          <Field label="Shoe size"><input value={shoe} onChange={(e) => setShoe(e.target.value)} className="input" /></Field>
-          <Field label="Dress size"><input value={dress} onChange={(e) => setDress(e.target.value)} className="input" /></Field>
+          <Field label="Top size">
+            <input value={top} onChange={(e) => setTop(e.target.value)} className="input" />
+          </Field>
+          <Field label="Bottom size">
+            <input value={bottom} onChange={(e) => setBottom(e.target.value)} className="input" />
+          </Field>
+          <Field label="Shoe size">
+            <input value={shoe} onChange={(e) => setShoe(e.target.value)} className="input" />
+          </Field>
+          <Field label="Dress size">
+            <input value={dress} onChange={(e) => setDress(e.target.value)} className="input" />
+          </Field>
         </div>
 
         <Field className="mt-4" label="Aesthetic territory">
-          <input value={aesthetic} onChange={(e) => setAesthetic(e.target.value)} placeholder="Quiet luxury, downtown tailored, sporty heritage…" maxLength={280} className="input" />
+          <input
+            value={aesthetic}
+            onChange={(e) => setAesthetic(e.target.value)}
+            placeholder="Quiet luxury, downtown tailored, sporty heritage…"
+            maxLength={280}
+            className="input"
+          />
         </Field>
         <Field className="mt-4" label="Notes for Bee">
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={600} placeholder="Avoids loud prints. Prefers natural fibres. Cold-runs." className="input resize-none" />
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            maxLength={600}
+            placeholder="Avoids loud prints. Prefers natural fibres. Cold-runs."
+            className="input resize-none"
+          />
         </Field>
 
         {error && <p className="mt-4 text-xs text-destructive">{error}</p>}
 
         <div className="mt-6 flex items-center justify-end gap-3">
-          <button type="button" onClick={onClose} className="border border-ink/20 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream">Cancel</button>
-          <button type="submit" disabled={saving || !name.trim()} className="inline-flex items-center gap-2 bg-gold-deep px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-ink disabled:opacity-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="border border-ink/20 px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] hover:bg-ink hover:text-cream"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving || !name.trim()}
+            className="inline-flex items-center gap-2 bg-gold-deep px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-ink disabled:opacity-50"
+          >
             {saving && <Loader2 size={12} className="animate-spin" />}
             Save profile
           </button>
@@ -438,7 +522,15 @@ function ProfileForm({
   );
 }
 
-function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({
+  label,
+  children,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <label className={`block ${className ?? ""}`}>
       <span className="block text-[0.6rem] uppercase tracking-[0.22em] text-ink/55">{label}</span>

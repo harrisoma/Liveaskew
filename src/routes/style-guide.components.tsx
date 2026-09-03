@@ -69,7 +69,9 @@ function ComponentsPage() {
             <p className="text-xs text-ink/55 font-mono">.gold-rule utility</p>
           </div>
           <div className="rounded-3xl bg-cream p-10 shadow-neo">
-            <div className="rounded-2xl p-4 text-xs text-ink/55 font-mono shadow-neo-inset">.neo-inset well</div>
+            <div className="rounded-2xl p-4 text-xs text-ink/55 font-mono shadow-neo-inset">
+              .neo-inset well
+            </div>
           </div>
         </div>
       </section>
@@ -83,22 +85,26 @@ function ComponentsPage() {
               The <em>Romina</em> in deep jewel
             </h3>
             <p className="mt-4 text-ink/70 leading-[1.7]">
-              A column dress drawn in for evenings that begin late — soft tailoring,
-              sand-washed silk.
+              A column dress drawn in for evenings that begin late — soft tailoring, sand-washed
+              silk.
             </p>
             <div className="mt-6 flex gap-3">
               <Button size="sm">Shop the look</Button>
-              <Button size="sm" variant="outline">Save</Button>
+              <Button size="sm" variant="outline">
+                Save
+              </Button>
             </div>
           </article>
           <article className="neo-dark-raised text-cream rounded-[2rem] p-10">
-            <p className="eyebrow mb-4" style={{ color: "var(--gold)" }}>Bee · Editorial</p>
+            <p className="eyebrow mb-4" style={{ color: "var(--gold)" }}>
+              Bee · Editorial
+            </p>
             <h3 className="font-display text-3xl leading-tight">
               How to <em>break</em> a uniform
             </h3>
             <p className="mt-4 text-cream/70 leading-[1.7]">
-              One unexpected element is enough. Three is a costume. The rule is the
-              same as styling silk: less, slower, on purpose.
+              One unexpected element is enough. Three is a costume. The rule is the same as styling
+              silk: less, slower, on purpose.
             </p>
           </article>
         </div>

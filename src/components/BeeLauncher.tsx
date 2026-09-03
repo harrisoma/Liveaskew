@@ -34,9 +34,7 @@ export function BeeLauncher() {
         className="neo-btn-ink fixed right-5 bottom-5 z-50 !gap-2.5 !py-3 !pr-5 !pl-3 md:right-8 md:bottom-8"
       >
         <span className="relative grid h-8 w-8 place-items-center">
-          {pulse && (
-            <span className="absolute inset-0 animate-ping rounded-full bg-gold/40" />
-          )}
+          {pulse && <span className="absolute inset-0 animate-ping rounded-full bg-gold/40" />}
           <BeeOrb state="idle" size={32} minimal surface="dark" ariaLabel="Bee idle" />
         </span>
         <span className="font-sans text-[0.68rem] font-medium tracking-[0.22em] uppercase">
@@ -58,7 +56,8 @@ export function BeeLauncher() {
                 <span
                   className="h-8 w-8 rounded-full"
                   style={{
-                    background: "linear-gradient(135deg, var(--gold-soft), var(--gold), var(--gold-deep))",
+                    background:
+                      "linear-gradient(135deg, var(--gold-soft), var(--gold), var(--gold-deep))",
                     boxShadow: "var(--neo-raised-sm)",
                   }}
                 />
@@ -78,14 +77,12 @@ export function BeeLauncher() {
 
             <div className="flex-1 overflow-y-auto px-6 py-8">
               <p className="eyebrow text-gold-deep">Your inclusive AI stylist</p>
-              <h2 className="font-display mt-4 text-3xl leading-tight">
-                Hello. I'm Bee.
-              </h2>
+              <h2 className="font-display mt-4 text-3xl leading-tight">Hello. I'm Bee.</h2>
               <span className="gold-rule mt-5 !mx-0" />
               <p className="mt-5 text-sm leading-relaxed text-ink/75">
-                I don't recommend algorithms — I have conversations. Tell me what
-                you're dressing for and I'll build it around your Fit, Feel and Fabric —
-                for every body, heritage, and way of dressing.
+                I don't recommend algorithms — I have conversations. Tell me what you're dressing
+                for and I'll build it around your Fit, Feel and Fabric — for every body, heritage,
+                and way of dressing.
               </p>
 
               <div className="mt-8 space-y-3">

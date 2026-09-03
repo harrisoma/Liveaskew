@@ -163,7 +163,11 @@ export function HomeBeeChat() {
         setError("Something went wrong reaching Bee. Please try again.");
         setMessages((prev) => {
           const next = prev.slice();
-          if (next.length && next[next.length - 1].role === "assistant" && !next[next.length - 1].content) {
+          if (
+            next.length &&
+            next[next.length - 1].role === "assistant" &&
+            !next[next.length - 1].content
+          ) {
             next.pop();
           }
           return next;
@@ -239,9 +243,8 @@ export function HomeBeeChat() {
           <div className="lg:col-span-5">
             <span className="block h-px w-12 bg-gold" />
             <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/65">
-              No account, no card. Start the interview now — when Bee has enough to
-              build with, create your account in this same conversation and your
-              14-day free trial begins.
+              No account, no card. Start the interview now — when Bee has enough to build with,
+              create your account in this same conversation and your 14-day free trial begins.
             </p>
           </div>
         </div>
@@ -274,8 +277,8 @@ export function HomeBeeChat() {
                 <div>
                   <p className="eyebrow text-gold-deep">Bee</p>
                   <p className="mt-4 max-w-md text-base leading-relaxed text-ink/75">
-                    Hello. I'm Bee. Before I dress you, I'd like to listen. Tell me
-                    what's on your mind — or pick one of these to begin.
+                    Hello. I'm Bee. Before I dress you, I'd like to listen. Tell me what's on your
+                    mind — or pick one of these to begin.
                   </p>
                   <div className="mt-8 grid gap-3 sm:grid-cols-2">
                     {OPENERS.map((o) => (
@@ -330,8 +333,8 @@ export function HomeBeeChat() {
               {trialStarted && (
                 <div className="mt-8 rounded-3xl bg-cream px-5 py-4 shadow-neo-inset">
                   <p className="font-display text-base leading-snug text-ink">
-                    You're in. Your 14-day free trial is ready to activate — Bee keeps
-                    talking either way.
+                    You're in. Your 14-day free trial is ready to activate — Bee keeps talking
+                    either way.
                   </p>
                   <div className="mt-4 flex flex-wrap items-center gap-4">
                     <Link
@@ -340,7 +343,10 @@ export function HomeBeeChat() {
                       className="neo-btn-ink !px-5 !py-3 text-[0.7rem]"
                     >
                       Activate 14-day trial
-                      <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5" />
+                      <ArrowUpRight
+                        size={14}
+                        className="transition-transform group-hover:-translate-y-0.5"
+                      />
                     </Link>
                     <Link
                       to="/chat"
@@ -425,8 +431,8 @@ function InlineSignup({
         <p className="eyebrow text-gold-deep">Almost</p>
         <p className="font-display mt-3 text-xl leading-snug">Check your email.</p>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
-          Confirm your address and Bee will pick this conversation up exactly where
-          you left it — with your 14-day free trial waiting.
+          Confirm your address and Bee will pick this conversation up exactly where you left it —
+          with your 14-day free trial waiting.
         </p>
       </div>
     );
@@ -468,8 +474,8 @@ function InlineSignup({
         {mode === "signup" ? "Create your account to continue." : "Welcome back."}
       </p>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
-        Bee has enough to start building. Save this conversation and your 14-day free
-        trial begins — no charge today.
+        Bee has enough to start building. Save this conversation and your 14-day free trial begins —
+        no charge today.
       </p>
       <form onSubmit={submit} className="mt-5 grid gap-3 sm:grid-cols-2">
         <input
@@ -492,11 +498,7 @@ function InlineSignup({
           className="rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
         />
         <div className="sm:col-span-2 flex flex-wrap items-center gap-4">
-          <button
-            type="submit"
-            disabled={busy}
-            className="neo-btn-ink !px-6 !py-3 text-[0.7rem]"
-          >
+          <button type="submit" disabled={busy} className="neo-btn-ink !px-6 !py-3 text-[0.7rem]">
             {busy && <Loader2 size={14} className="animate-spin" />}
             {mode === "signup" ? "Create account · 14 days free" : "Sign in"}
           </button>
