@@ -417,7 +417,7 @@ function Onboarding({
               aria-hidden
               className="grid h-6 w-6 place-items-center rounded-[6px] neo-inset text-xs"
             >
-              {screen.value === opt.id ? "●" : ""}
+              {screen.value === opt.id ? "✓" : ""}
             </span>
             {opt.label}
           </button>
@@ -480,6 +480,17 @@ function HomeChat({
           onAction={onSave}
         />
       )}
+      {!hasAccount && messages.length > 0 && (
+        <div className="mt-4 neo-raised p-4">
+          <p className="text-sm leading-relaxed">
+            Your look is already here. Create an account to keep the conversation and the save — not
+            before.
+          </p>
+          <NeoButton className="mt-3" variant="gold" onClick={onCreateAccount}>
+            Save my account
+          </NeoButton>
+        </div>
+      )}
       <ul className="mt-5 space-y-3">
         {messages.map((m) => (
           <li
@@ -500,17 +511,6 @@ function HomeChat({
           </li>
         )}
       </ul>
-      {!hasAccount && messages.length > 0 && (
-        <div className="mt-5 neo-raised p-4">
-          <p className="text-sm leading-relaxed">
-            Your look is already here. Create an account to keep the conversation and the save — not
-            before.
-          </p>
-          <NeoButton className="mt-3" variant="gold" onClick={onCreateAccount}>
-            Save my account
-          </NeoButton>
-        </div>
-      )}
     </Screen>
   );
 }
@@ -833,9 +833,17 @@ function RatingSheet({ onClose }: { onClose: () => void }) {
           We only ask after you save a look — never on open. A rating helps other people find an AI
           stylist that doesn't flatten their body.
         </p>
-        <div className="mt-4 flex justify-center gap-2" aria-hidden>
+        <div className="mt-4 grid grid-cols-5 gap-2" role="group" aria-label="Rate LiveAskew">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} size={22} />
+            <button
+              key={i}
+              type="button"
+              className="neo-icon-btn w-full"
+              aria-label={`${i + 1} star${i === 0 ? "" : "s"}`}
+              onClick={onClose}
+            >
+              <Star size={18} aria-hidden />
+            </button>
           ))}
         </div>
         <NeoButton className="mt-4" variant="gold" onClick={onClose}>
