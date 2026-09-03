@@ -31,7 +31,16 @@ type WardrobeItem = {
   created_at: string;
 };
 
-const CATEGORIES = ["All", "Outerwear", "Dresses", "Tailoring", "Footwear", "Tops", "Bottoms", "Accessories"];
+const CATEGORIES = [
+  "All",
+  "Outerwear",
+  "Dresses",
+  "Tailoring",
+  "Footwear",
+  "Tops",
+  "Bottoms",
+  "Accessories",
+];
 
 function WardrobePage() {
   const fetchItems = useServerFn(listWardrobeItems);
@@ -49,9 +58,10 @@ function WardrobePage() {
         setItems((res.items ?? []) as WardrobeItem[]);
       })
       .finally(() => active && setLoading(false));
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [fetchItems, selectedCategory]);
-
 
   const stats = useMemo(() => {
     const total = items.length;
@@ -62,14 +72,17 @@ function WardrobePage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
+      <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep"
+        >
           <ArrowLeft size={14} /> Home
         </Link>
         <div className="font-display text-lg">
           Wardrobe<span className="text-gold-deep">.</span>
         </div>
-        <button className="inline-flex items-center gap-2 bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-gold-deep">
+        <button className="neo-btn-ink !px-3 !py-2 text-[0.65rem]">
           <Plus size={12} /> Archive Item
         </button>
       </header>
@@ -90,11 +103,15 @@ function WardrobePage() {
             <div className="absolute right-4 bottom-4 text-ink/[0.03] pointer-events-none">
               <Shirt className="h-20 w-20" />
             </div>
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">Total Curated Pieces</p>
+            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">
+              Total Curated Pieces
+            </p>
             <p className="font-display mt-2 text-3xl text-ink">{stats.total}</p>
           </div>
           <div className="border border-ink/10 bg-bone p-6">
-            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">Categories Represented</p>
+            <p className="text-[0.65rem] uppercase tracking-[0.22em] text-ink/50">
+              Categories Represented
+            </p>
             <p className="font-display mt-2 text-3xl text-gold-deep">{stats.categories}</p>
           </div>
           <div className="border border-ink/10 bg-bone p-6">
@@ -191,8 +208,8 @@ function WardrobeCard({ item }: { item: WardrobeItem }) {
   const subtitle = [item.brand, item.color, item.subcategory].filter(Boolean).join(" · ");
 
   return (
-    <div className="group relative bg-white border border-transparent hover:border-gold-soft p-3 transition-all duration-300">
-      <div className="aspect-[3/4] w-full bg-bone overflow-hidden relative mb-4">
+    <div className="group relative rounded-[1.5rem] bg-cream p-3 shadow-neo transition-shadow duration-300">
+      <div className="relative mb-4 aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-neo-inset">
         {imgSrc ? (
           <img
             src={imgSrc}
@@ -210,12 +227,17 @@ function WardrobeCard({ item }: { item: WardrobeItem }) {
       <div className="space-y-1 px-1">
         <div className="flex justify-between items-baseline">
           <p className="font-display text-base tracking-tight text-ink truncate">{displayName}</p>
-          <span className="text-[0.6rem] uppercase tracking-[0.2em] text-gold-deep shrink-0 ml-2">{item.category}</span>
+          <span className="text-[0.6rem] uppercase tracking-[0.2em] text-gold-deep shrink-0 ml-2">
+            {item.category}
+          </span>
         </div>
         {subtitle && <p className="text-xs text-ink/60 font-light">{subtitle}</p>}
         <div className="flex flex-wrap gap-1 pt-2">
           {(item.tags ?? []).map((tag, i) => (
-            <span key={i} className="text-[0.6rem] font-sans tracking-wide px-2 py-0.5 bg-bone border border-ink/10 text-ink/70">
+            <span
+              key={i}
+              className="text-[0.6rem] font-sans tracking-wide px-2 py-0.5 bg-bone border border-ink/10 text-ink/70"
+            >
               {tag}
             </span>
           ))}

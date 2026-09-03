@@ -37,7 +37,7 @@ function PricingPage() {
     <main className="min-h-screen" style={{ background: "var(--cream)", color: "var(--ink)" }}>
       <Nav />
 
-      <section className="px-6 py-28 md:px-10 md:py-36">
+      <section className="px-6 pt-32 pb-28 md:px-10 md:pt-40 md:pb-36">
         <div className="mx-auto max-w-[1400px]">
           <div className="text-center">
             <p className="eyebrow" style={{ color: "var(--gold-deep)" }}>
@@ -49,7 +49,10 @@ function PricingPage() {
               <em style={{ color: "var(--gold-deep)" }}>show up</em>.
             </h2>
             <span className="mt-8 inline-block h-px w-16" style={{ background: "var(--gold)" }} />
-            <p className="mt-6 text-sm" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
+            <p
+              className="mt-6 text-sm"
+              style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}
+            >
               Cancel any time. Upgrade or downgrade as your life shifts.
             </p>
 
@@ -71,7 +74,7 @@ function PricingPage() {
 
 function CadenceToggle({ value, onChange }: { value: Cadence; onChange: (c: Cadence) => void }) {
   return (
-    <div className="mt-10 inline-flex items-center border border-[var(--gold-soft)] bg-bone p-1">
+    <div className="mt-10 inline-flex items-center rounded-full bg-cream p-1.5 shadow-neo-inset">
       {(["monthly", "annual"] as const).map((c) => {
         const active = value === c;
         return (
@@ -79,7 +82,7 @@ function CadenceToggle({ value, onChange }: { value: Cadence; onChange: (c: Cade
             key={c}
             type="button"
             onClick={() => onChange(c)}
-            className="px-5 py-2 text-[0.65rem] uppercase tracking-[0.25em] transition"
+            className="rounded-full px-5 py-2 text-[0.65rem] uppercase tracking-[0.25em] transition"
             style={
               active
                 ? { background: "var(--ink)", color: "var(--cream)" }
@@ -95,23 +98,16 @@ function CadenceToggle({ value, onChange }: { value: Cadence; onChange: (c: Cade
 }
 
 function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
-  const wireframe: React.CSSProperties = {
-    border: "1px solid var(--gold-soft)",
-    background: "var(--cream)",
-    color: "var(--ink)",
-  };
-
   const showAnnual = cadence === "annual" && !plan.inquiry;
   const monthlyEq = showAnnual ? Math.round(plan.priceAnnual / 12) : plan.priceMonthly;
 
   return (
     <article
-      className="relative flex flex-col p-8 transition-shadow hover:shadow-[0_24px_60px_-30px_color-mix(in_oklab,var(--gold)_60%,transparent)]"
-      style={wireframe}
+      className={`relative flex flex-col rounded-[2rem] bg-cream p-8 shadow-neo ${plan.flagship ? "shadow-neo-lg" : ""}`}
     >
       {plan.flagship && (
         <span
-          className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-4 py-1 text-[0.6rem] font-medium tracking-[0.3em] uppercase"
+          className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-1 text-[0.6rem] font-medium tracking-[0.3em] uppercase shadow-neo-sm"
           style={{ background: "var(--gold)", color: "var(--ink)" }}
         >
           Flagship Experience
@@ -119,7 +115,10 @@ function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
       )}
 
       <header>
-        <p className="text-[0.65rem] tracking-[0.3em] uppercase" style={{ color: "var(--gold-deep)" }}>
+        <p
+          className="text-[0.65rem] tracking-[0.3em] uppercase"
+          style={{ color: "var(--gold-deep)" }}
+        >
           {plan.name}
         </p>
         <p
@@ -200,11 +199,7 @@ function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
       </ul>
 
       {plan.inquiry ? (
-        <Link
-          to="/inquiry"
-          className="mt-10 inline-flex items-center justify-center gap-3 py-4 text-center text-[0.7rem] font-medium tracking-[0.25em] uppercase transition"
-          style={{ background: "var(--ink)", color: "var(--cream)" }}
-        >
+        <Link to="/inquiry" className="neo-btn-ink mt-10">
           Inquire for Atelier Access
           <ArrowUpRight size={14} />
         </Link>
@@ -212,12 +207,9 @@ function TierCard({ plan, cadence }: { plan: Plan; cadence: Cadence }) {
         <Link
           to="/checkout/$tier"
           params={{ tier: plan.slug }}
-          className="mt-10 block py-4 text-center text-[0.7rem] font-medium tracking-[0.25em] uppercase transition"
-          style={
-            plan.flagship
-              ? { background: "var(--ink)", color: "var(--cream)" }
-              : { border: "1px solid var(--gold)", color: "var(--gold-deep)", background: "transparent" }
-          }
+          className={`mt-10 block rounded-full py-4 text-center text-[0.7rem] font-medium tracking-[0.25em] uppercase ${
+            plan.flagship ? "neo-btn-ink" : "neo-btn"
+          }`}
         >
           Begin with {plan.name}
         </Link>

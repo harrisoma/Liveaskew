@@ -14,10 +14,7 @@ import { parsePalette, type PaletteAccents } from "@/lib/palette";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   ssr: false,
   head: () => ({
-    meta: [
-      { title: "Your Dashboard — LiveAskew" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Your Dashboard — LiveAskew" }, { name: "robots", content: "noindex" }],
   }),
   component: DashboardPage,
 });
@@ -47,18 +44,78 @@ const TIER_ORDER: PlanSlug[] = [
 ];
 
 const CAPABILITIES: Capability[] = [
-  { key: "beeChat", title: "Talk to Bee", description: "Your stylist in conversation, day or night.", href: "/chat" },
-  { key: "wardrobe", title: "Your Wardrobe", description: "Every piece you own, catalogued and ready.", href: "/wardrobe" },
-  { key: "calendar", title: "Dressing Calendar", description: "Bee dresses you for what's actually on your week.", href: "/calendar" },
-  { key: "styleProfile", title: "Style Profile", description: "The blueprint Bee styles you from.", href: "/profile" },
-  { key: "selfieAI", title: "Selfie AI", description: "See yourself modeled in every look.", href: "/profile" },
-  { key: "monthlyMagazine", title: "Monthly Magazine", description: "Eight editorial spreads, made for you.", href: "/my-style-guide" },
-  { key: "beeVoice", title: "Bee's Voice", description: "Talk out loud. She talks back.", href: "/chat" },
-  { key: "thumbsFeedback", title: "Thumbs Feedback", description: "Teach Bee your taste, look by look.", href: "/chat" },
-  { key: "shoppableManifests", title: "Shoppable Looks", description: "Every look, buyable end-to-end.", href: "/my-style-guide" },
-  { key: "priorityGeneration", title: "Priority Generation", description: "Front of the queue on every render.", href: "/my-style-guide" },
-  { key: "householdPartnerSeat", title: "Household Seats", description: "Add partner and family. Their Bee, their face.", href: "/household" },
-  { key: "quarterlyStylistSession", title: "Session with Bianca", description: "A quarterly hour with your stylist.", href: "/inquiry" },
+  {
+    key: "beeChat",
+    title: "Talk to Bee",
+    description: "Your stylist in conversation, day or night.",
+    href: "/chat",
+  },
+  {
+    key: "wardrobe",
+    title: "Your Wardrobe",
+    description: "Every piece you own, catalogued and ready.",
+    href: "/wardrobe",
+  },
+  {
+    key: "calendar",
+    title: "Dressing Calendar",
+    description: "Bee dresses you for what's actually on your week.",
+    href: "/calendar",
+  },
+  {
+    key: "styleProfile",
+    title: "Style Profile",
+    description: "The blueprint Bee styles you from.",
+    href: "/profile",
+  },
+  {
+    key: "selfieAI",
+    title: "Selfie AI",
+    description: "See yourself modeled in every look.",
+    href: "/profile",
+  },
+  {
+    key: "monthlyMagazine",
+    title: "Monthly Magazine",
+    description: "Eight editorial spreads, made for you.",
+    href: "/my-style-guide",
+  },
+  {
+    key: "beeVoice",
+    title: "Bee's Voice",
+    description: "Talk out loud. She talks back.",
+    href: "/chat",
+  },
+  {
+    key: "thumbsFeedback",
+    title: "Thumbs Feedback",
+    description: "Teach Bee your taste, look by look.",
+    href: "/chat",
+  },
+  {
+    key: "shoppableManifests",
+    title: "Shoppable Looks",
+    description: "Every look, buyable end-to-end.",
+    href: "/my-style-guide",
+  },
+  {
+    key: "priorityGeneration",
+    title: "Priority Generation",
+    description: "Front of the queue on every render.",
+    href: "/my-style-guide",
+  },
+  {
+    key: "householdPartnerSeat",
+    title: "Household Seats",
+    description: "Add partner and family. Their Bee, their face.",
+    href: "/household",
+  },
+  {
+    key: "quarterlyStylistSession",
+    title: "Session with Bianca",
+    description: "A quarterly hour with your stylist.",
+    href: "/inquiry",
+  },
 ];
 
 function minUnlockingTier(key: Entitlement): PlanSlug | null {
@@ -144,10 +201,7 @@ function DashboardPage() {
     if (!userIdRef.current) return;
     setSaving(true);
     try {
-      await supabase
-        .from("profiles")
-        .update({ dashboard_theme: next })
-        .eq("id", userIdRef.current);
+      await supabase.from("profiles").update({ dashboard_theme: next }).eq("id", userIdRef.current);
     } finally {
       setSaving(false);
     }
@@ -199,10 +253,7 @@ function DashboardPage() {
       data-revealing={revealing ? "true" : "false"}
     >
       <style>{revealCss}</style>
-      <header
-        className="flex items-center justify-between px-6 py-6 md:px-12 dash-rule"
-        style={{ borderBottom: `1px solid ${revealed ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)"}` }}
-      >
+      <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-4 shadow-neo md:mx-8 md:px-8">
         <div>
           <p className="eyebrow" style={{ color: accent }}>
             Member · {profile?.client_code ?? "LA-————"}
@@ -212,13 +263,19 @@ function DashboardPage() {
           </div>
         </div>
         <nav className="flex items-center gap-6 text-[0.65rem] uppercase tracking-[0.25em]">
-          <Link to="/profile" className="hover:opacity-70">Profile</Link>
-          <Link to="/pricing" className="hover:opacity-70">Plan</Link>
+          <Link to="/profile" className="hover:opacity-70">
+            Profile
+          </Link>
+          <Link to="/pricing" className="hover:opacity-70">
+            Plan
+          </Link>
         </nav>
       </header>
 
       <section className="mx-auto max-w-[1400px] px-6 py-16 md:px-12 md:py-24">
-        <p className="eyebrow" style={{ color: accent }}>Welcome back</p>
+        <p className="eyebrow" style={{ color: accent }}>
+          Welcome back
+        </p>
         <h1 className="font-display mt-4 text-4xl leading-[1.05] md:text-6xl">
           {profile?.display_name ? (
             <>
@@ -226,16 +283,25 @@ function DashboardPage() {
               <span style={{ color: accent }}>.</span>
             </>
           ) : (
-            <>Your studio<span style={{ color: accent }}>.</span></>
+            <>
+              Your studio<span style={{ color: accent }}>.</span>
+            </>
           )}
         </h1>
         <span className="mt-8 inline-block h-px w-16" style={{ background: accent }} />
-        <p className="mt-6 max-w-xl text-sm" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
-          Every capability of LiveAskew, arranged for you. What's active is yours today. What isn't, is what's ahead.
+        <p
+          className="mt-6 max-w-xl text-sm"
+          style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}
+        >
+          Every capability of LiveAskew, arranged for you. What's active is yours today. What isn't,
+          is what's ahead.
         </p>
 
         {loading ? (
-          <div className="mt-16 flex items-center gap-2 text-sm" style={{ color: "color-mix(in oklab, var(--ink) 55%, transparent)" }}>
+          <div
+            className="mt-16 flex items-center gap-2 text-sm"
+            style={{ color: "color-mix(in oklab, var(--ink) 55%, transparent)" }}
+          >
             <Loader2 size={14} className="animate-spin" /> Loading your studio…
           </div>
         ) : (
@@ -254,7 +320,7 @@ function DashboardPage() {
               <div className="mt-8">
                 <Link
                   to="/my-style-guide"
-                  className="pulse-cta inline-flex items-center gap-3 px-8 py-4 text-[0.7rem] uppercase tracking-[0.3em]"
+                  className="pulse-cta inline-flex items-center gap-3 rounded-full px-8 py-4 text-[0.7rem] uppercase tracking-[0.3em] shadow-neo"
                   style={{
                     border: `1px solid ${accent}`,
                     color: accent,
@@ -353,7 +419,10 @@ function RevealControl({
             <span
               key={i}
               className="inline-block h-3 w-3 rounded-full"
-              style={{ background: c, boxShadow: "0 0 0 1px color-mix(in oklab, var(--ink) 15%, transparent)" }}
+              style={{
+                background: c,
+                boxShadow: "0 0 0 1px color-mix(in oklab, var(--ink) 15%, transparent)",
+              }}
             />
           ))}
         </div>
@@ -375,7 +444,7 @@ function RevealControl({
       <button
         onClick={onReveal}
         disabled={saving}
-        className="inline-flex items-center gap-3 border px-6 py-3 text-[0.7rem] uppercase tracking-[0.3em] transition-colors hover:bg-[color-mix(in_oklab,var(--gold)_6%,var(--cream))] disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-3 rounded-full bg-cream px-6 py-3 text-[0.7rem] uppercase tracking-[0.3em] shadow-neo transition-shadow hover:shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ borderColor: accent, color: accent }}
       >
         ✦ Reveal my palette
@@ -433,7 +502,7 @@ function HeroCard({
     return (
       <Link
         to={capability.href}
-        className="flex items-center justify-between border px-8 py-6 transition-colors accent-border"
+        className="flex items-center justify-between rounded-[1.75rem] bg-cream px-8 py-6 shadow-neo accent-border"
         style={{
           borderColor: accentSoft,
           background: `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 8%, var(--cream))`,
@@ -442,7 +511,9 @@ function HeroCard({
         <div className="flex items-center gap-4">
           <Check size={18} style={{ color: accent }} />
           <div>
-            <p className="eyebrow" style={{ color: accent }}>Selfie AI</p>
+            <p className="eyebrow" style={{ color: accent }}>
+              Selfie AI
+            </p>
             <p className="font-display mt-1 text-lg">Your face is set.</p>
           </div>
         </div>
@@ -461,7 +532,7 @@ function HeroCard({
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="group relative block overflow-hidden border px-8 py-14 md:px-14 md:py-20 accent-border"
+      className="group relative block overflow-hidden rounded-[2rem] bg-cream px-8 py-14 shadow-neo md:px-14 md:py-20 accent-border"
       style={{
         borderColor: active ? accent : accentSoft,
         background: active
@@ -469,20 +540,29 @@ function HeroCard({
           : "var(--cream)",
       }}
     >
-      <p className="eyebrow" style={{ color: accent }}>{eyebrow}</p>
+      <p className="eyebrow" style={{ color: accent }}>
+        {eyebrow}
+      </p>
       <h2 className="font-display mt-6 text-3xl leading-[1.05] md:text-5xl">
         {capability.title}
         <span style={{ color: accent }}>.</span>
       </h2>
-      <p className="mt-6 max-w-xl text-sm md:text-base" style={{ color: "color-mix(in oklab, var(--ink) 65%, transparent)" }}>
+      <p
+        className="mt-6 max-w-xl text-sm md:text-base"
+        style={{ color: "color-mix(in oklab, var(--ink) 65%, transparent)" }}
+      >
         {capability.description}
       </p>
       <span className="mt-8 inline-block h-px w-12" style={{ background: accent }} />
       <div className="mt-10 inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.3em]">
         {active ? (
-          <>Open <ArrowUpRight size={14} /></>
+          <>
+            Open <ArrowUpRight size={14} />
+          </>
         ) : (
-          <><Lock size={12} style={{ color: accent }} /> See {tierDisplayName(unlockTier)}</>
+          <>
+            <Lock size={12} style={{ color: accent }} /> See {tierDisplayName(unlockTier)}
+          </>
         )}
       </div>
     </Link>
@@ -512,7 +592,7 @@ function CapabilityCard({
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="card-accent group relative flex h-full flex-col justify-between border p-7 transition-colors"
+      className="card-accent group relative flex h-full flex-col justify-between rounded-[1.75rem] bg-cream p-7 shadow-neo"
       style={{
         borderColor: active ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)",
         background: active
@@ -538,13 +618,18 @@ function CapabilityCard({
           )}
         </div>
         <h3 className="font-display mt-4 text-xl leading-tight">{capability.title}</h3>
-        <p className="mt-3 text-sm leading-relaxed" style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}>
+        <p
+          className="mt-3 text-sm leading-relaxed"
+          style={{ color: "color-mix(in oklab, var(--ink) 60%, transparent)" }}
+        >
           {capability.description}
         </p>
       </div>
       <div className="mt-8 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.28em]">
         {active ? (
-          <>Open <ArrowUpRight size={12} /></>
+          <>
+            Open <ArrowUpRight size={12} />
+          </>
         ) : (
           <span style={{ color: accent }}>Unlock with {tierDisplayName(unlockTier)}</span>
         )}

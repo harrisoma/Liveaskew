@@ -14,6 +14,7 @@ export function Nav() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [logoOk, setLogoOk] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -27,25 +28,22 @@ export function Nav() {
   }, [location.pathname]);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-40 border-b transition-all duration-300 ${
-        scrolled
-          ? "border-ink/10 bg-cream/75 backdrop-blur-xl"
-          : "border-transparent bg-cream/40 backdrop-blur-md"
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 md:px-6 md:pt-4">
       <div
-        className={`mx-auto flex max-w-[1400px] items-center justify-between px-6 transition-all duration-300 md:px-10 ${
-          scrolled ? "py-3" : "py-5"
+        className={`mx-auto flex max-w-[1400px] items-center justify-between rounded-full bg-cream px-4 transition-all duration-300 md:px-6 ${
+          scrolled ? "py-2 shadow-neo" : "py-3 shadow-neo-lg"
         }`}
       >
         <Link to="/" className="flex items-center gap-3">
-          <img
-            src={logoAsset.url}
-            alt=""
-            aria-hidden
-            className={`w-auto transition-all duration-300 ${scrolled ? "h-7" : "h-9"}`}
-          />
+          {logoOk && (
+            <img
+              src={logoAsset.url}
+              alt=""
+              aria-hidden
+              onError={() => setLogoOk(false)}
+              className={`w-auto transition-all duration-300 ${scrolled ? "h-7" : "h-8"}`}
+            />
+          )}
           <span
             className={`font-display tracking-tight text-ink transition-all duration-300 ${
               scrolled ? "text-xl" : "text-2xl"
@@ -55,11 +53,11 @@ export function Nav() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
           {NAV_LINKS.map(({ label, href }) => {
             const isRoute = href.startsWith("/") && !href.includes("#");
             const isActive = isRoute ? location.pathname === href : false;
-            const classes = `text-[0.7rem] font-medium tracking-[0.25em] uppercase transition ${
+            const classes = `text-[0.68rem] font-medium tracking-[0.22em] uppercase transition ${
               isActive ? "text-gold-deep" : "text-ink/70 hover:text-gold-deep"
             }`;
             return isRoute ? (
@@ -74,18 +72,18 @@ export function Nav() {
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link
             to="/auth"
             search={{ mode: "signup" }}
-            className="bg-ink px-4 py-2.5 text-[0.62rem] font-medium tracking-[0.22em] uppercase text-cream transition hover:bg-gold-deep md:px-5 md:py-3 md:text-[0.65rem]"
+            className="neo-btn-ink !px-4 !py-2.5 text-[0.62rem] md:!px-5 md:!py-3 md:text-[0.65rem]"
           >
             Start Free Trial
           </Link>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="grid h-10 w-10 place-items-center border border-ink/15 bg-cream text-ink md:hidden"
+            className="neo-icon md:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >
@@ -95,12 +93,15 @@ export function Nav() {
       </div>
 
       {open && (
-        <nav className="border-t border-ink/10 bg-cream/95 backdrop-blur-xl md:hidden">
-          <div className="mx-auto flex max-w-[1400px] flex-col px-6 py-4">
+        <nav
+          className="mx-auto mt-3 max-w-[1400px] rounded-[1.75rem] bg-cream px-6 py-4 shadow-neo md:hidden"
+          aria-label="Mobile"
+        >
+          <div className="flex flex-col">
             {NAV_LINKS.map(({ label, href }) => {
               const isRoute = href.startsWith("/") && !href.includes("#");
               const classes =
-                "py-3 text-[0.75rem] font-medium tracking-[0.25em] uppercase text-ink/80 hover:text-gold-deep border-b border-ink/5 last:border-b-0";
+                "py-3 text-[0.75rem] font-medium tracking-[0.25em] uppercase text-ink/80 hover:text-gold-deep";
               return isRoute ? (
                 <Link key={label} to={href} className={classes} onClick={() => setOpen(false)}>
                   {label}

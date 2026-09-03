@@ -16,8 +16,7 @@ export const Route = createFileRoute("/inquiry")({
       { property: "og:title", content: "Personal Styling — LiveAskew" },
       {
         property: "og:description",
-        content:
-          "Bespoke styling with our founder. Request a private consultation.",
+        content: "Bespoke styling with our founder. Request a private consultation.",
       },
     ],
   }),
@@ -67,18 +66,16 @@ function InquiryPage() {
     }
     setError("");
     setSubmitting(true);
-    const { error: insertError } = await supabase
-      .from("personal_styling_inquiries")
-      .insert({
-        full_name: form.full_name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        city: form.city.trim() || null,
-        preferred_contact: form.preferred_contact,
-        best_time_to_call: form.best_time_to_call || null,
-        what_she_needs: form.what_she_needs.trim(),
-        budget_range: form.budget_range || null,
-      });
+    const { error: insertError } = await supabase.from("personal_styling_inquiries").insert({
+      full_name: form.full_name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      city: form.city.trim() || null,
+      preferred_contact: form.preferred_contact,
+      best_time_to_call: form.best_time_to_call || null,
+      what_she_needs: form.what_she_needs.trim(),
+      budget_range: form.budget_range || null,
+    });
     setSubmitting(false);
     if (insertError) {
       setError("Something went wrong sending your inquiry. Please try again.");
@@ -98,9 +95,8 @@ function InquiryPage() {
           <h1 className="font-display mt-4 text-5xl leading-tight">Thank you.</h1>
           <span className="mt-7 inline-block h-px w-12 bg-gold" />
           <p className="mt-8 text-base leading-relaxed text-cream/75">
-            Your inquiry is with the founder. A stylist will reach out within
-            48 hours to schedule a private consultation. All conversations are
-            confidential.
+            Your inquiry is with the founder. A stylist will reach out within 48 hours to schedule a
+            private consultation. All conversations are confidential.
           </p>
           <Link
             to="/"
@@ -157,13 +153,14 @@ function InquiryPage() {
           <div className="max-w-xl">
             <p className="eyebrow">Personal Styling</p>
             <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
-              Request a private<br />
+              Request a private
+              <br />
               <em className="text-gold-deep">consultation</em>.
             </h1>
             <span className="mt-7 block h-px w-12 bg-gold" />
             <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/65">
-              Tell us a little about you. Your stylist will be in touch within
-              48 hours to schedule a private consultation.
+              Tell us a little about you. Your stylist will be in touch within 48 hours to schedule
+              a private consultation.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-12 space-y-8">
@@ -215,15 +212,12 @@ function InquiryPage() {
                 <ChipRow
                   options={CONTACT_OPTIONS as unknown as readonly string[]}
                   value={form.preferred_contact}
-                  onSelect={(v) =>
-                    set("preferred_contact", v as (typeof CONTACT_OPTIONS)[number])
-                  }
+                  onSelect={(v) => set("preferred_contact", v as (typeof CONTACT_OPTIONS)[number])}
                   single
                 />
               </Field>
 
-              {(form.preferred_contact === "Phone call" ||
-                form.preferred_contact === "Both") && (
+              {(form.preferred_contact === "Phone call" || form.preferred_contact === "Both") && (
                 <Field label="Best time to call">
                   <ChipRow
                     options={TIME_CHIPS as unknown as readonly string[]}
@@ -250,9 +244,7 @@ function InquiryPage() {
                 <ChipRow
                   options={BUDGET_CHIPS as unknown as readonly string[]}
                   value={form.budget_range}
-                  onSelect={(v) =>
-                    set("budget_range", form.budget_range === v ? "" : v)
-                  }
+                  onSelect={(v) => set("budget_range", form.budget_range === v ? "" : v)}
                 />
               </Field>
 
@@ -271,8 +263,7 @@ function InquiryPage() {
                   {submitting ? "Submitting…" : "Submit inquiry"}
                 </button>
                 <p className="mt-4 text-center text-xs leading-relaxed text-ink/45">
-                  Your inquiry goes directly to the founder. All conversations
-                  are confidential.
+                  Your inquiry goes directly to the founder. All conversations are confidential.
                 </p>
               </div>
             </form>
@@ -326,11 +317,9 @@ function ChipRow({
             key={opt}
             type="button"
             onClick={() => onSelect(opt)}
-            className={`border px-4 py-2 text-xs tracking-wide transition ${
-              active
-                ? "border-gold bg-gold/10 text-gold-deep"
-                : "border-ink/15 text-ink/65 hover:border-gold hover:text-gold-deep"
-            } ${single ? "" : ""}`}
+            className={`rounded-full px-4 py-2 text-xs tracking-wide shadow-neo-sm transition ${
+              active ? "bg-gold/30 text-gold-deep" : "bg-cream text-ink/65 hover:text-gold-deep"
+            }`}
           >
             {opt}
           </button>

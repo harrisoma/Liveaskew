@@ -163,7 +163,11 @@ export function HomeBeeChat() {
         setError("Something went wrong reaching Bee. Please try again.");
         setMessages((prev) => {
           const next = prev.slice();
-          if (next.length && next[next.length - 1].role === "assistant" && !next[next.length - 1].content) {
+          if (
+            next.length &&
+            next[next.length - 1].role === "assistant" &&
+            !next[next.length - 1].content
+          ) {
             next.pop();
           }
           return next;
@@ -225,7 +229,7 @@ export function HomeBeeChat() {
   );
 
   return (
-    <section id="talk-to-bee" className="border-t hairline bg-bone px-6 py-20 md:px-10 md:py-28">
+    <section id="talk-to-bee" className="bg-cream px-6 py-20 md:px-10 md:py-28">
       <div className="mx-auto max-w-[1400px]">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
@@ -239,16 +243,15 @@ export function HomeBeeChat() {
           <div className="lg:col-span-5">
             <span className="block h-px w-12 bg-gold" />
             <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/65">
-              No account, no card. Start the interview now — when Bee has enough to
-              build with, create your account in this same conversation and your
-              14-day free trial begins.
+              No account, no card. Start the interview now — when Bee has enough to build with,
+              create your account in this same conversation and your 14-day free trial begins.
             </p>
           </div>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-px bg-ink/10 lg:grid-cols-12">
+        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Orb column */}
-          <div className="flex flex-col items-center justify-center gap-6 bg-ink px-8 py-12 lg:col-span-4">
+          <div className="flex flex-col items-center justify-center gap-6 rounded-[2rem] px-8 py-12 neo-dark-raised lg:col-span-4">
             <BeeOrb
               state={orbState}
               size={260}
@@ -256,7 +259,7 @@ export function HomeBeeChat() {
               showOuterGlow={false}
               ariaLabel={`Bee — ${orbState}`}
             />
-            <div className="flex items-center gap-2 bg-ink-soft/80 px-4 py-2.5">
+            <div className="flex items-center gap-2 rounded-full neo-dark-raised px-4 py-2.5">
               <span className="relative flex h-2 w-2 shrink-0">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-70" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
@@ -268,14 +271,14 @@ export function HomeBeeChat() {
           </div>
 
           {/* Chat column */}
-          <div className="flex min-h-[520px] flex-col bg-cream lg:col-span-8">
+          <div className="flex min-h-[520px] flex-col rounded-[2rem] bg-cream shadow-neo lg:col-span-8">
             <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-8 md:px-10">
               {messages.length === 0 ? (
                 <div>
                   <p className="eyebrow text-gold-deep">Bee</p>
                   <p className="mt-4 max-w-md text-base leading-relaxed text-ink/75">
-                    Hello. I'm Bee. Before I dress you, I'd like to listen. Tell me
-                    what's on your mind — or pick one of these to begin.
+                    Hello. I'm Bee. Before I dress you, I'd like to listen. Tell me what's on your
+                    mind — or pick one of these to begin.
                   </p>
                   <div className="mt-8 grid gap-3 sm:grid-cols-2">
                     {OPENERS.map((o) => (
@@ -283,7 +286,7 @@ export function HomeBeeChat() {
                         key={o}
                         type="button"
                         onClick={() => void send(o)}
-                        className="border border-ink/10 bg-bone px-4 py-3 text-left text-sm text-ink/70 transition hover:border-gold hover:text-ink"
+                        className="rounded-2xl bg-cream px-4 py-3 text-left text-sm text-ink/70 shadow-neo-sm transition hover:shadow-neo"
                       >
                         "{o}"
                       </button>
@@ -296,7 +299,7 @@ export function HomeBeeChat() {
                     <li key={i}>
                       {m.role === "user" ? (
                         <div className="flex justify-end">
-                          <div className="max-w-[85%] bg-ink px-5 py-3 text-sm text-cream">
+                          <div className="neo-bubble-user max-w-[85%] px-5 py-3 text-sm">
                             {m.content}
                           </div>
                         </div>
@@ -328,19 +331,22 @@ export function HomeBeeChat() {
               )}
 
               {trialStarted && (
-                <div className="mt-8 border-l-2 border-gold-deep bg-bone px-5 py-4">
+                <div className="mt-8 rounded-3xl bg-cream px-5 py-4 shadow-neo-inset">
                   <p className="font-display text-base leading-snug text-ink">
-                    You're in. Your 14-day free trial is ready to activate — Bee keeps
-                    talking either way.
+                    You're in. Your 14-day free trial is ready to activate — Bee keeps talking
+                    either way.
                   </p>
                   <div className="mt-4 flex flex-wrap items-center gap-4">
                     <Link
                       to="/checkout/$tier"
                       params={{ tier: "gold" }}
-                      className="group inline-flex items-center gap-3 bg-gold-deep px-5 py-3 text-[0.7rem] tracking-[0.18em] uppercase text-cream transition hover:bg-ink"
+                      className="neo-btn-ink !px-5 !py-3 text-[0.7rem]"
                     >
                       Activate 14-day trial
-                      <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5" />
+                      <ArrowUpRight
+                        size={14}
+                        className="transition-transform group-hover:-translate-y-0.5"
+                      />
                     </Link>
                     <Link
                       to="/chat"
@@ -353,9 +359,9 @@ export function HomeBeeChat() {
               )}
             </div>
 
-            <div className="border-t border-ink/10 px-6 py-5 md:px-10">
+            <div className="px-6 py-5 md:px-10">
               {error && (
-                <p className="mb-3 border-l-2 border-gold-deep bg-bone px-4 py-3 text-sm text-ink/75">
+                <p className="mb-3 rounded-2xl bg-cream px-4 py-3 text-sm text-ink/75 shadow-neo-inset">
                   {error}
                 </p>
               )}
@@ -387,13 +393,13 @@ export function HomeBeeChat() {
                   }
                   rows={2}
                   disabled={sending || gated}
-                  className="w-full resize-none border border-ink/15 bg-bone px-4 py-3 pr-14 text-sm text-ink placeholder:text-ink/35 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold disabled:opacity-60"
+                  className="w-full resize-none rounded-2xl border-0 bg-cream px-4 py-3 pr-14 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep disabled:opacity-60"
                 />
                 <button
                   type="submit"
                   disabled={sending || gated || !input.trim()}
                   aria-label="Send"
-                  className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center bg-ink text-cream transition hover:bg-gold-deep disabled:opacity-40"
+                  className="neo-icon absolute right-3 bottom-3 h-9 w-9 bg-ink text-cream disabled:opacity-40"
                 >
                   {sending ? <Loader2 size={14} className="animate-spin" /> : <ArrowUp size={14} />}
                 </button>
@@ -421,12 +427,12 @@ function InlineSignup({
 
   if (confirmSent) {
     return (
-      <div className="border-l-2 border-gold-deep bg-bone px-5 py-5">
+      <div className="rounded-3xl bg-cream px-5 py-5 shadow-neo-inset">
         <p className="eyebrow text-gold-deep">Almost</p>
         <p className="font-display mt-3 text-xl leading-snug">Check your email.</p>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
-          Confirm your address and Bee will pick this conversation up exactly where
-          you left it — with your 14-day free trial waiting.
+          Confirm your address and Bee will pick this conversation up exactly where you left it —
+          with your 14-day free trial waiting.
         </p>
       </div>
     );
@@ -462,14 +468,14 @@ function InlineSignup({
   }
 
   return (
-    <div className="border-l-2 border-gold-deep bg-bone px-5 py-5">
+    <div className="rounded-3xl bg-cream px-5 py-5 shadow-neo">
       <p className="eyebrow text-gold-deep">Keep going</p>
       <p className="font-display mt-3 text-xl leading-snug">
         {mode === "signup" ? "Create your account to continue." : "Welcome back."}
       </p>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
-        Bee has enough to start building. Save this conversation and your 14-day free
-        trial begins — no charge today.
+        Bee has enough to start building. Save this conversation and your 14-day free trial begins —
+        no charge today.
       </p>
       <form onSubmit={submit} className="mt-5 grid gap-3 sm:grid-cols-2">
         <input
@@ -479,7 +485,7 @@ function InlineSignup({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
-          className="border border-ink/15 bg-cream px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold focus:outline-none"
+          className="rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
         />
         <input
           type="password"
@@ -489,14 +495,10 @@ function InlineSignup({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="border border-ink/15 bg-cream px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold focus:outline-none"
+          className="rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
         />
         <div className="sm:col-span-2 flex flex-wrap items-center gap-4">
-          <button
-            type="submit"
-            disabled={busy}
-            className="inline-flex items-center gap-3 bg-ink px-6 py-3 text-[0.7rem] tracking-[0.2em] uppercase text-cream transition hover:bg-gold-deep disabled:opacity-50"
-          >
+          <button type="submit" disabled={busy} className="neo-btn-ink !px-6 !py-3 text-[0.7rem]">
             {busy && <Loader2 size={14} className="animate-spin" />}
             {mode === "signup" ? "Create account · 14 days free" : "Sign in"}
           </button>

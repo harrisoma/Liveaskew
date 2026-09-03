@@ -17,8 +17,7 @@ export const Route = createFileRoute("/bianca")({
       { property: "og:title", content: "Work with Bianca — LiveAskew" },
       {
         property: "og:description",
-        content:
-          "A private, human styling relationship with LiveAskew's founder. By inquiry only.",
+        content: "A private, human styling relationship with LiveAskew's founder. By inquiry only.",
       },
     ],
   }),
@@ -44,15 +43,13 @@ function BiancaPage() {
       return;
     }
     setSubmitting(true);
-    const { error: insertError } = await supabase
-      .from("personal_styling_inquiries")
-      .insert({
-        full_name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        preferred_contact: "Phone call",
-        what_she_needs: form.looking_for.trim(),
-      });
+    const { error: insertError } = await supabase.from("personal_styling_inquiries").insert({
+      full_name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      preferred_contact: "Phone call",
+      what_she_needs: form.looking_for.trim(),
+    });
     setSubmitting(false);
     if (insertError) {
       setError("Something went wrong sending your inquiry. Please try again.");
@@ -67,7 +64,7 @@ function BiancaPage() {
 
       <main className="pt-28">
         {/* HERO */}
-        <section className="border-b hairline px-6 py-20 md:px-10 md:py-28">
+        <section className="px-6 py-20 md:px-10 md:py-28">
           <div className="mx-auto max-w-4xl">
             <p className="eyebrow text-gold-deep">The Personal Path</p>
             <h1 className="font-display mt-6 text-5xl leading-[1.05] md:text-7xl">
@@ -75,9 +72,9 @@ function BiancaPage() {
             </h1>
             <span className="mt-8 block h-px w-16 bg-gold" />
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink/75 md:text-xl">
-              Some women want a conversation with software. Others want a person —
-              someone who learns the way they move through the world and dresses
-              them, season after season. This is that relationship.
+              Some women want a conversation with software. Others want a person — someone who
+              learns the way they move through the world and dresses them, season after season. This
+              is that relationship.
             </p>
           </div>
         </section>
@@ -93,19 +90,16 @@ function BiancaPage() {
             </div>
             <div className="space-y-5 text-base leading-relaxed text-ink/75">
               <p>
-                Bianca is the founder of LiveAskew. Before building Bee, she spent
-                twenty years inside multinational retail — buying, merchandising,
-                and personally styling clients who wanted more than a trend cycle.
+                Bianca is the founder of LiveAskew. Before building Bee, she spent twenty years
+                inside multinational retail — buying, merchandising, and personally styling clients
+                who wanted more than a trend cycle.
               </p>
               <p>
-                Her approach is quiet and exacting. She listens before she
-                suggests. She studies how you actually live — the meetings, the
-                school runs, the rooms you walk into and the women you sit beside
-                — and then she builds a wardrobe that does that work for you.
+                Her approach is quiet and exacting. She listens before she suggests. She studies how
+                you actually live — the meetings, the school runs, the rooms you walk into and the
+                women you sit beside — and then she builds a wardrobe that does that work for you.
               </p>
-              <p>
-                She takes on a small number of private clients each season.
-              </p>
+              <p>She takes on a small number of private clients each season.</p>
             </div>
           </div>
         </section>
@@ -144,9 +138,8 @@ function BiancaPage() {
               Begin the conversation.
             </h2>
             <p className="mt-5 text-base leading-relaxed text-ink/70">
-              Tell Bianca a little about yourself. She personally reviews every
-              inquiry and will be in touch within two business days to discuss
-              fit, scope and pricing.
+              Tell Bianca a little about yourself. She personally reviews every inquiry and will be
+              in touch within two business days to discuss fit, scope and pricing.
             </p>
             <span className="mt-7 block h-px w-12 bg-gold" />
 
@@ -158,8 +151,7 @@ function BiancaPage() {
                 <p className="eyebrow mt-6 text-gold-deep">Received</p>
                 <h3 className="font-display mt-3 text-2xl">Thank you.</h3>
                 <p className="mt-4 text-sm leading-relaxed text-ink/70">
-                  Your inquiry is with Bianca. Expect a personal note within two
-                  business days.
+                  Your inquiry is with Bianca. Expect a personal note within two business days.
                 </p>
               </div>
             ) : (
@@ -188,13 +180,11 @@ function BiancaPage() {
                   <label className="eyebrow text-ink/60">What you're looking for</label>
                   <textarea
                     value={form.looking_for}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, looking_for: e.target.value }))
-                    }
+                    onChange={(e) => setForm((f) => ({ ...f, looking_for: e.target.value }))}
                     rows={5}
                     required
                     placeholder="A few sentences about the season ahead, the wardrobe gaps, the moments you're dressing for…"
-                    className="mt-3 w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold-deep focus:outline-none focus:ring-1 focus:ring-gold-deep"
+                    className="mt-3 w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
                   />
                 </div>
 
@@ -246,7 +236,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="mt-3 w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold-deep focus:outline-none focus:ring-1 focus:ring-gold-deep"
+        className="mt-3 w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
       />
     </div>
   );

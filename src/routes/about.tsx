@@ -10,9 +10,17 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About LiveAskew — Who We Are" },
-      { name: "description", content: "LiveAskew is a personal AI stylist for women. Meet Bee, your conversational wardrobe architect." },
+      {
+        name: "description",
+        content:
+          "LiveAskew is a personal AI stylist for women. Meet Bee, your conversational wardrobe architect.",
+      },
       { property: "og:title", content: "About LiveAskew — Who We Are" },
-      { property: "og:description", content: "LiveAskew is a personal AI stylist for women. Meet Bee, your conversational wardrobe architect." },
+      {
+        property: "og:description",
+        content:
+          "LiveAskew is a personal AI stylist for women. Meet Bee, your conversational wardrobe architect.",
+      },
     ],
   }),
   component: AboutPage,
@@ -33,7 +41,7 @@ function AboutPage() {
               "radial-gradient(800px 400px at 80% 20%, hsl(var(--gold) / 0.15), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-[1400px] px-6 pt-16 pb-12 md:px-10 md:pt-24 md:pb-20">
+        <div className="relative mx-auto max-w-[1400px] px-6 pt-28 pb-12 md:px-10 md:pt-36 md:pb-20">
           <div className="mx-auto max-w-3xl text-center">
             <p className="eyebrow">Our Story</p>
             <h1 className="font-display mt-8 text-[3.2rem] leading-[0.95] tracking-tight md:text-[5.5rem]">
@@ -42,9 +50,8 @@ function AboutPage() {
               <em className="text-gold-deep">every pocket</em>.
             </h1>
             <p className="mt-10 text-lg leading-relaxed text-ink/70">
-              LiveAskew was built for the woman who knows style matters — but
-              doesn't have hours to spend curating it. Bee is your personal AI
-              stylist: warm, sharp, and always listening.
+              LiveAskew was built for the woman who knows style matters — but doesn't have hours to
+              spend curating it. Bee is your personal AI stylist: warm, sharp, and always listening.
             </p>
           </div>
         </div>
@@ -57,31 +64,33 @@ function AboutPage() {
             <div>
               <span className="eyebrow">The Studio</span>
               <h2 className="font-display mt-5 text-4xl leading-tight md:text-[3.2rem]">
-                We dress the woman,<br />not the trend.
+                We dress the woman,
+                <br />
+                not the trend.
               </h2>
             </div>
             <div className="space-y-6 text-base leading-relaxed text-ink/75">
               <p>
-                LiveAskew began with a simple observation: most women have wardrobes
-                full of beautiful things they never wear — and closets full of gaps
-                they can't name. The problem isn't taste. It's translation.
+                LiveAskew began with a simple observation: most women have wardrobes full of
+                beautiful things they never wear — and closets full of gaps they can't name. The
+                problem isn't taste. It's translation.
               </p>
               <p>
-                We believe every woman deserves a wardrobe that feels like home —
-                curated, intentional, and unmistakably her. LiveAskew was built to
-                bridge the gap between aspiration and reality: the clothes you own,
-                the life you lead, and the style you imagine for yourself.
+                We believe every woman deserves a wardrobe that feels like home — curated,
+                intentional, and unmistakably her. LiveAskew was built to bridge the gap between
+                aspiration and reality: the clothes you own, the life you lead, and the style you
+                imagine for yourself.
               </p>
               <p>
-                Our approach combines fashion editorial sensibility with AI-powered
-                conversation. Bee, the stylist at the heart of LiveAskew, draws on
-                cultural fluency, fabric knowledge, and real human understanding
-                to build looks that match your body, your calendar, and your world.
+                Our approach combines fashion editorial sensibility with AI-powered conversation.
+                Bee, the stylist at the heart of LiveAskew, draws on cultural fluency, fabric
+                knowledge, and real human understanding to build looks that match your body, your
+                calendar, and your world.
               </p>
               <p>
-                Every look Bee builds is drawn from your interview, your body, your
-                cultural context, and your week. Nothing is generic. Nothing is
-                algorithmic guesswork. It's conversation, distilled into dressing.
+                Every look Bee builds is drawn from your interview, your body, your cultural
+                context, and your week. Nothing is generic. Nothing is algorithmic guesswork. It's
+                conversation, distilled into dressing.
               </p>
             </div>
 
@@ -92,7 +101,7 @@ function AboutPage() {
                 { n: "30", l: "Days of rotation" },
                 { n: "∞", l: "Conversations with Bee" },
               ].map((s) => (
-                <div key={s.l} className="border border-ink/10 bg-bone p-5">
+                <div key={s.l} className="rounded-3xl bg-cream p-5 shadow-neo">
                   <span className="font-display text-3xl text-gold-deep">{s.n}</span>
                   <p className="mt-1 text-[0.65rem] font-medium tracking-[0.22em] uppercase text-ink/55">
                     {s.l}
@@ -113,8 +122,8 @@ function AboutPage() {
             </figure>
             <blockquote className="border-l border-gold pl-6">
               <p className="font-display text-2xl leading-snug text-ink/85 md:text-[1.6rem]">
-                "Style is not about clothes. It's about the woman who puts them on —
-                and whether she feels at home in herself."
+                "Style is not about clothes. It's about the woman who puts them on — and whether she
+                feels at home in herself."
               </p>
               <footer className="mt-4 text-sm text-ink/50">
                 — The LiveAskew founding principle
@@ -125,7 +134,7 @@ function AboutPage() {
       </section>
 
       {/* ─────── What Bee Does ─────── */}
-      <section className="border-y border-ink/10 bg-bone">
+      <section className="bg-cream">
         <div className="mx-auto max-w-[1400px] px-6 py-20 md:px-10 md:py-28">
           <div className="grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
             <figure className="mx-auto md:mx-0">
@@ -149,28 +158,28 @@ function AboutPage() {
                 Hello. I'm <em className="text-gold-deep">Bee</em>.
               </h2>
               <p className="mt-6 text-base leading-relaxed text-ink/70">
-                The AI stylist inside LiveAskew. I don't recommend algorithms;
-                I have conversations. I ask, I listen, I remember, and I build a
-                wardrobe language that is unmistakably yours.
+                The AI stylist inside LiveAskew. I don't recommend algorithms; I have conversations.
+                I ask, I listen, I remember, and I build a wardrobe language that is unmistakably
+                yours.
               </p>
               <p className="mt-4 text-base leading-relaxed text-ink/70">
-                My story began in <em>Miami</em> — where color, heat, and
-                unapologetic confidence taught me that style is a language you wear.
-                But I don't have a single signature. Minimal or maximal, quiet or bold,
-                classic or street — I build across every aesthetic, because the only
-                one that matters is yours. My craft rests on three things:
+                My story began in <em>Miami</em> — where color, heat, and unapologetic confidence
+                taught me that style is a language you wear. But I don't have a single signature.
+                Minimal or maximal, quiet or bold, classic or street — I build across every
+                aesthetic, because the only one that matters is yours. My craft rests on three
+                things:
                 <em>fit</em>, <em>feel</em>, and <em>fabric</em>.
               </p>
               <p className="mt-4 text-base leading-relaxed text-ink/70">
-                We'll talk like friends. I'll listen more than I speak. And when the
-                moment is right, I'll <em>expand</em> what you imagined for yourself,
-                <em>explore</em> what suits the life you actually lead, and{" "}
-                <em>execute</em> a wardrobe that finally feels like home.
+                We'll talk like friends. I'll listen more than I speak. And when the moment is
+                right, I'll <em>expand</em> what you imagined for yourself,
+                <em>explore</em> what suits the life you actually lead, and <em>execute</em> a
+                wardrobe that finally feels like home.
               </p>
             </div>
           </div>
 
-          <div className="mt-16 grid gap-px bg-ink/10 sm:grid-cols-3">
+          <div className="mt-16 grid gap-6 sm:grid-cols-3">
             {[
               {
                 title: "Fit",
@@ -185,7 +194,7 @@ function AboutPage() {
                 body: "Cloth chosen for season, climate and culture.",
               },
             ].map((f) => (
-              <div key={f.title} className="bg-cream p-8 md:p-10">
+              <div key={f.title} className="rounded-[1.75rem] bg-cream p-8 shadow-neo md:p-10">
                 <p className="text-[0.6rem] tracking-[0.3em] uppercase text-gold-deep">{f.title}</p>
                 <p className="mt-3 text-sm leading-relaxed text-ink/70">{f.body}</p>
               </div>
@@ -244,13 +253,15 @@ function AboutPage() {
       </section>
 
       {/* ─────── Values ─────── */}
-      <section className="border-t border-ink/10 bg-bone">
+      <section className="bg-cream">
         <div className="mx-auto max-w-[1400px] px-6 py-20 md:px-10 md:py-28">
           <div className="grid gap-16 md:grid-cols-2 md:gap-20">
             <div>
               <p className="eyebrow">Our Principles</p>
               <h2 className="font-display mt-6 text-4xl leading-tight md:text-[3.2rem]">
-                The four things<br />we never bend.
+                The four things
+                <br />
+                we never bend.
               </h2>
             </div>
             <div className="grid gap-8 sm:grid-cols-2">
@@ -276,7 +287,7 @@ function AboutPage() {
                   body: "Your body, budget, and wardrobe stay between you and Bee. Always.",
                 },
               ].map((v) => (
-                <div key={v.title}>
+                <div key={v.title} className="rounded-[1.75rem] bg-cream p-6 shadow-neo">
                   <v.icon size={18} strokeWidth={1.5} className="text-gold-deep" />
                   <h3 className="font-display mt-4 text-xl leading-tight">{v.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink/65">{v.body}</p>
@@ -299,18 +310,15 @@ function AboutPage() {
         </figure>
         <p className="eyebrow mt-10">Ready?</p>
         <h2 className="font-display mt-6 text-4xl leading-tight md:text-[3.5rem]">
-          The woman you are<br />
+          The woman you are
+          <br />
           <em className="text-gold-deep">is already there</em>.
         </h2>
         <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-ink/70">
-          Fourteen days free on Gold. No card required. Bee is waiting — and so,
-          quietly, is the version of you that feels at home in her own clothes.
+          Fourteen days free on Gold. No card required. Bee is waiting — and so, quietly, is the
+          version of you that feels at home in her own clothes.
         </p>
-        <Link
-          to="/auth"
-          search={{ mode: "signup" }}
-          className="group mt-10 inline-flex items-center gap-3 bg-ink px-9 py-4 text-[0.72rem] font-medium tracking-[0.22em] uppercase text-cream transition hover:bg-gold-deep"
-        >
+        <Link to="/auth" search={{ mode: "signup" }} className="neo-btn-ink mt-10 group">
           Begin your 14-day trial
           <ArrowUpRight
             size={14}

@@ -172,9 +172,7 @@ function AuthPage() {
             />
           ) : (
             <>
-              <p className="eyebrow">
-                {isSignup ? "Begin your journey" : "Welcome back"}
-              </p>
+              <p className="eyebrow">{isSignup ? "Begin your journey" : "Welcome back"}</p>
               <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
                 {isSignup ? "Create your account." : "Sign in to LiveAskew."}
               </h1>
@@ -189,7 +187,7 @@ function AuthPage() {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={googleLoading}
-                className="mt-10 flex w-full items-center justify-center gap-3 border border-ink/20 bg-cream py-3.5 text-sm font-medium text-ink transition hover:border-ink/40 hover:bg-bone disabled:opacity-60"
+                className="mt-10 flex w-full items-center justify-center gap-3 rounded-full bg-cream py-3.5 text-sm font-medium text-ink shadow-neo neo-press disabled:opacity-60"
               >
                 {googleLoading ? (
                   <span className="h-4 w-4 animate-spin rounded-full border border-ink/30 border-t-ink" />
@@ -218,9 +216,7 @@ function AuthPage() {
 
               <div className="mt-8 flex items-center gap-4">
                 <div className="h-px flex-1 bg-ink/10" />
-                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/40">
-                  or
-                </span>
+                <span className="text-[0.65rem] tracking-[0.2em] uppercase text-ink/40">or</span>
                 <div className="h-px flex-1 bg-ink/10" />
               </div>
 
@@ -272,7 +268,7 @@ function AuthPage() {
                 </Field>
 
                 {error && (
-                  <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  <p className="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive shadow-neo-sm">
                     {error}
                   </p>
                 )}
@@ -280,7 +276,7 @@ function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group flex w-full items-center justify-center gap-3 bg-ink py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-cream transition hover:bg-gold-deep disabled:opacity-60"
+                  className="neo-btn-ink mt-2 w-full disabled:opacity-60"
                 >
                   {loading ? (
                     <>
@@ -311,13 +307,7 @@ function AuthPage() {
   );
 }
 
-function CheckInbox({
-  email,
-  onChangeEmail,
-}: {
-  email: string;
-  onChangeEmail: () => void;
-}) {
+function CheckInbox({ email, onChangeEmail }: { email: string; onChangeEmail: () => void }) {
   const [cooldown, setCooldown] = useState(0);
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
@@ -352,17 +342,14 @@ function CheckInbox({
 
   return (
     <div>
-      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center bg-gold/15 text-gold-deep">
+      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full bg-cream text-gold-deep shadow-neo-sm">
         <Mail size={20} />
       </div>
       <p className="eyebrow">Light friction filter</p>
-      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">
-        Check your inbox.
-      </h1>
+      <h1 className="font-display mt-5 text-4xl leading-tight md:text-5xl">Check your inbox.</h1>
       <p className="mt-5 text-sm leading-relaxed text-ink/70">
-        We've sent a verification link to{" "}
-        <span className="font-medium text-ink">{email}</span>. Open it on this
-        device and Bee will be waiting on the other side.
+        We've sent a verification link to <span className="font-medium text-ink">{email}</span>.
+        Open it on this device and Bee will be waiting on the other side.
       </p>
       <span className="mt-7 block h-px w-12 bg-gold" />
 
@@ -396,18 +383,11 @@ function CheckInbox({
           type="button"
           onClick={resend}
           disabled={resending || cooldown > 0}
-          className="group inline-flex items-center justify-center gap-3 border border-ink/20 py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-ink transition hover:border-gold hover:text-gold-deep disabled:opacity-50"
+          className="neo-btn w-full disabled:opacity-50"
         >
-          <RefreshCw
-            size={14}
-            className={resending ? "animate-spin" : ""}
-          />
+          <RefreshCw size={14} className={resending ? "animate-spin" : ""} />
           <span>
-            {cooldown > 0
-              ? `Resend in ${cooldown}s`
-              : resending
-                ? "Sending"
-                : "Resend the link"}
+            {cooldown > 0 ? `Resend in ${cooldown}s` : resending ? "Sending" : "Resend the link"}
           </span>
         </button>
         <button
@@ -423,7 +403,7 @@ function CheckInbox({
 }
 
 const inputCls =
-  "w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 transition focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold";
+  "w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 transition focus:outline-none focus:ring-2 focus:ring-gold-deep";
 
 function Field({
   label,

@@ -13,13 +13,11 @@ export function BeeLauncher() {
   const [open, setOpen] = useState(false);
   const [pulse, setPulse] = useState(true);
 
-  // Settle the attention pulse after a few seconds.
   useEffect(() => {
     const t = setTimeout(() => setPulse(false), 6000);
     return () => clearTimeout(t);
   }, []);
 
-  // Routes where the launcher should not appear.
   const path = location.pathname;
   const HIDDEN_PREFIXES = ["/chat", "/auth", "/onboarding", "/verify-email", "/checkout"];
   if (HIDDEN_PREFIXES.some((p) => path.startsWith(p))) return null;
@@ -33,12 +31,10 @@ export function BeeLauncher() {
           setPulse(false);
         }}
         aria-label="Meet Bee — open conversation"
-        className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 rounded-full border border-ink/10 bg-ink py-3 pl-3 pr-5 text-cream shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)] transition hover:bg-gold-deep md:bottom-8 md:right-8"
+        className="neo-btn-ink fixed right-5 bottom-5 z-50 !gap-2.5 !py-3 !pr-5 !pl-3 md:right-8 md:bottom-8"
       >
         <span className="relative grid h-8 w-8 place-items-center">
-          {pulse && (
-            <span className="absolute inset-0 animate-ping rounded-full bg-gold/40" />
-          )}
+          {pulse && <span className="absolute inset-0 animate-ping rounded-full bg-gold/40" />}
           <BeeOrb state="idle" size={32} minimal surface="dark" ariaLabel="Bee idle" />
         </span>
         <span className="font-sans text-[0.68rem] font-medium tracking-[0.22em] uppercase">
@@ -54,12 +50,17 @@ export function BeeLauncher() {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-fade-in"
           />
-          <aside
-            className="absolute bottom-0 right-0 flex h-full w-full flex-col bg-cream text-ink shadow-2xl animate-slide-in-right sm:max-w-md sm:border-l sm:border-ink/10"
-          >
-            <header className="flex items-center justify-between border-b border-ink/10 px-6 py-5">
+          <aside className="absolute right-0 bottom-0 flex h-full w-full flex-col bg-cream text-ink shadow-neo-lg animate-slide-in-right sm:max-w-md">
+            <header className="flex items-center justify-between px-6 py-5">
               <div className="flex items-center gap-3">
-                <span className="h-6 w-6 rounded-full bg-gradient-to-br from-gold-soft via-gold to-gold-deep shadow-[0_0_10px_1px_rgba(212,175,55,0.5)]" />
+                <span
+                  className="h-8 w-8 rounded-full"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, var(--gold-soft), var(--gold), var(--gold-deep))",
+                    boxShadow: "var(--neo-raised-sm)",
+                  }}
+                />
                 <p className="font-display text-xl tracking-tight">
                   Bee<span className="text-gold-deep">.</span>
                 </p>
@@ -68,24 +69,23 @@ export function BeeLauncher() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="grid h-9 w-9 place-items-center border border-ink/15 text-ink/60 transition hover:border-ink/40 hover:text-ink"
+                className="neo-icon h-9 w-9"
               >
                 <X size={16} />
               </button>
             </header>
 
             <div className="flex-1 overflow-y-auto px-6 py-8">
-              <p className="eyebrow text-gold-deep">Your AI stylist</p>
-              <h2 className="font-display mt-4 text-3xl leading-tight">
-                Hello. I'm Bee.
-              </h2>
-              <span className="mt-5 block h-px w-10 bg-gold" />
+              <p className="eyebrow text-gold-deep">Your inclusive AI stylist</p>
+              <h2 className="font-display mt-4 text-3xl leading-tight">Hello. I'm Bee.</h2>
+              <span className="gold-rule mt-5 !mx-0" />
               <p className="mt-5 text-sm leading-relaxed text-ink/75">
-                I don't recommend algorithms — I have conversations. Tell me what
-                you're dressing for and I'll build it around your Fit, Feel and Fabric.
+                I don't recommend algorithms — I have conversations. Tell me what you're dressing
+                for and I'll build it around your Fit, Feel and Fabric — for every body, heritage,
+                and way of dressing.
               </p>
 
-              <div className="mt-8 space-y-2">
+              <div className="mt-8 space-y-3">
                 {[
                   "Build me a five-outfit work week.",
                   "What should I wear to a winter wedding?",
@@ -93,7 +93,7 @@ export function BeeLauncher() {
                 ].map((p) => (
                   <p
                     key={p}
-                    className="border border-ink/10 bg-bone px-4 py-3 text-sm text-ink/70"
+                    className="rounded-2xl bg-cream px-4 py-3 text-sm text-ink/70 shadow-neo-sm"
                   >
                     "{p}"
                   </p>
@@ -101,12 +101,12 @@ export function BeeLauncher() {
               </div>
             </div>
 
-            <footer className="border-t border-ink/10 bg-cream px-6 py-5">
+            <footer className="px-6 py-5">
               <Link
                 to="/auth"
                 search={{ mode: "signup" }}
                 onClick={() => setOpen(false)}
-                className="block w-full bg-ink px-5 py-3.5 text-center font-sans text-[0.7rem] tracking-[0.22em] uppercase text-cream transition hover:bg-gold-deep"
+                className="neo-btn-ink w-full"
               >
                 Start a conversation
               </Link>
