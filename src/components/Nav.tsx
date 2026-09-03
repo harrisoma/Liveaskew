@@ -14,6 +14,7 @@ export function Nav() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [logoOk, setLogoOk] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -34,12 +35,15 @@ export function Nav() {
         }`}
       >
         <Link to="/" className="flex items-center gap-3">
-          <img
-            src={logoAsset.url}
-            alt=""
-            aria-hidden
-            className={`w-auto transition-all duration-300 ${scrolled ? "h-7" : "h-8"}`}
-          />
+          {logoOk && (
+            <img
+              src={logoAsset.url}
+              alt=""
+              aria-hidden
+              onError={() => setLogoOk(false)}
+              className={`w-auto transition-all duration-300 ${scrolled ? "h-7" : "h-8"}`}
+            />
+          )}
           <span
             className={`font-display tracking-tight text-ink transition-all duration-300 ${
               scrolled ? "text-xl" : "text-2xl"

@@ -293,6 +293,7 @@ function LandingPage() {
   // idle → listening → thinking → speaking → presenting(with palette) → idle…
   const [beeState, setBeeState] = useState<BeeOrbState>("idle");
   const [beePalette, setBeePalette] = useState<string[] | undefined>(undefined);
+  const [heroOrbFailed, setHeroOrbFailed] = useState(false);
 
   useEffect(() => {
     const PALETTES: string[][] = [
@@ -474,13 +475,27 @@ function LandingPage() {
           <div className="relative flex items-center lg:col-span-7">
             <figure className="relative mx-auto w-full max-w-[520px]">
               <div className="relative neo-dark-inset rounded-[3rem] p-8 md:p-12">
-                <img
-                  src={heroOrb.url}
-                  alt="The LiveAskew AI Stylist orb — a gold woven sphere projecting wardrobe analysis, outfit recommendations, style insights, color guide and curated shopping"
-                  className="relative mx-auto w-full max-w-[400px] select-none drop-shadow-[0_0_24px_color-mix(in_oklab,var(--gold)_55%,transparent)]"
-                  draggable={false}
-                  loading="eager"
-                />
+                {heroOrbFailed ? (
+                  <div className="relative mx-auto grid max-w-[400px] place-items-center py-6">
+                    <BeeOrb
+                      state={beeState}
+                      palette={beePalette}
+                      size={360}
+                      surface="dark"
+                      showOuterGlow
+                      ariaLabel="Bee — your AI stylist"
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={heroOrb.url}
+                    alt="The LiveAskew AI Stylist orb — a gold woven sphere projecting wardrobe analysis, outfit recommendations, style insights, color guide and curated shopping"
+                    className="relative mx-auto w-full max-w-[400px] select-none drop-shadow-[0_0_24px_color-mix(in_oklab,var(--gold)_55%,transparent)]"
+                    draggable={false}
+                    loading="eager"
+                    onError={() => setHeroOrbFailed(true)}
+                  />
+                )}
 
                 {/* Animated gold icon callouts — orbiting around the orb */}
                 {[
