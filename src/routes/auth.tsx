@@ -189,7 +189,7 @@ function AuthPage() {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={googleLoading}
-                className="mt-10 flex w-full items-center justify-center gap-3 border border-ink/20 bg-cream py-3.5 text-sm font-medium text-ink transition hover:border-ink/40 hover:bg-bone disabled:opacity-60"
+                className="mt-10 flex w-full items-center justify-center gap-3 rounded-full bg-cream py-3.5 text-sm font-medium text-ink shadow-neo neo-press disabled:opacity-60"
               >
                 {googleLoading ? (
                   <span className="h-4 w-4 animate-spin rounded-full border border-ink/30 border-t-ink" />
@@ -272,7 +272,7 @@ function AuthPage() {
                 </Field>
 
                 {error && (
-                  <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  <p className="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive shadow-neo-sm">
                     {error}
                   </p>
                 )}
@@ -280,7 +280,7 @@ function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group flex w-full items-center justify-center gap-3 bg-ink py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-cream transition hover:bg-gold-deep disabled:opacity-60"
+                  className="neo-btn-ink mt-2 w-full disabled:opacity-60"
                 >
                   {loading ? (
                     <>
@@ -352,7 +352,7 @@ function CheckInbox({
 
   return (
     <div>
-      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center bg-gold/15 text-gold-deep">
+      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-full bg-cream text-gold-deep shadow-neo-sm">
         <Mail size={20} />
       </div>
       <p className="eyebrow">Light friction filter</p>
@@ -396,7 +396,7 @@ function CheckInbox({
           type="button"
           onClick={resend}
           disabled={resending || cooldown > 0}
-          className="group inline-flex items-center justify-center gap-3 border border-ink/20 py-4 text-[0.7rem] font-medium tracking-[0.25em] uppercase text-ink transition hover:border-gold hover:text-gold-deep disabled:opacity-50"
+          className="neo-btn w-full disabled:opacity-50"
         >
           <RefreshCw
             size={14}
@@ -423,7 +423,7 @@ function CheckInbox({
 }
 
 const inputCls =
-  "w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 transition focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold";
+  "w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 transition focus:outline-none focus:ring-2 focus:ring-gold-deep";
 
 function Field({
   label,

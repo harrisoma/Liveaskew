@@ -5,19 +5,22 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * LiveAskew — editorial fashion design system
- * Warm ivory + deep ink + antique gold. Cormorant Garamond display, Inter body.
- * All colors are oklch. Tokens are defined on :root and surfaced via @theme inline.
+ * LiveAskew — neomorphic inclusive fashion design system
+ * Warm clay canvas + readable ink + tailored gold.
+ * Soft dual-shadow surfaces (raised / inset) instead of hairline chrome.
+ * All colors are oklch. Tokens live on :root and surface via @theme inline.
  */
 
 @theme inline {
   --font-serif: "Cormorant Garamond", "Cormorant", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
+  --radius-2xl: calc(var(--radius) + 16px);
+  --radius-3xl: calc(var(--radius) + 24px);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -54,66 +57,101 @@
   --color-illus-ink: var(--ink);
 
   --font-hand: "Caveat", "Comic Sans MS", cursive;
+
+  --shadow-neo: var(--neo-raised);
+  --shadow-neo-sm: var(--neo-raised-sm);
+  --shadow-neo-lg: var(--neo-raised-lg);
+  --shadow-neo-inset: var(--neo-inset);
 }
 
 :root {
-  --radius: 0.25rem;
+  --radius: 1.5rem;
 
-  /* Brand palette — luxury editorial: gallery white, deep ink black, tailored gold */
-  --ink:        oklch(0.14 0.004 60);   /* near-pure editorial black */
-  --ink-soft:   oklch(0.22 0.004 60);
-  --cream:      oklch(0.99 0.004 90);   /* gallery white */
-  --bone:       oklch(1 0 0);           /* pure white card */
-  --gold:       oklch(0.74 0.118 78);   /* tailored metallic gold */
-  --gold-deep:  oklch(0.58 0.118 72);
-  --gold-soft:  oklch(0.87 0.06 82);
+  /* Clay canvas — mid-luminance so both light and dark shadows read */
+  --ink:        oklch(0.24 0.018 58);   /* warm readable ink, not pure black */
+  --ink-soft:   oklch(0.32 0.016 58);
+  --cream:      oklch(0.90 0.018 82);   /* neo page canvas */
+  --bone:       oklch(0.90 0.018 82);   /* same as canvas — true neomorphism */
+  --gold:       oklch(0.72 0.112 78);
+  --gold-deep:  oklch(0.50 0.112 72);   /* deep enough for text on clay */
+  --gold-soft:  oklch(0.82 0.055 82);
+
+  --neo-dark-bg:     oklch(0.28 0.014 62);
+  --neo-dark-light:  oklch(0.36 0.014 62);
+  --neo-dark-shadow: oklch(0.18 0.012 60);
+
+  --neo-raised:
+    9px 9px 18px color-mix(in oklab, var(--ink) 16%, transparent),
+    -8px -8px 16px color-mix(in oklab, white 78%, var(--cream)),
+    inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+  --neo-raised-sm:
+    4px 4px 10px color-mix(in oklab, var(--ink) 14%, transparent),
+    -4px -4px 10px color-mix(in oklab, white 72%, var(--cream));
+  --neo-raised-lg:
+    16px 16px 32px color-mix(in oklab, var(--ink) 16%, transparent),
+    -12px -12px 24px color-mix(in oklab, white 80%, var(--cream)),
+    inset 0 1px 0 color-mix(in oklab, white 50%, transparent);
+  --neo-inset:
+    inset 7px 7px 14px color-mix(in oklab, var(--ink) 16%, transparent),
+    inset -6px -6px 12px color-mix(in oklab, white 70%, var(--cream));
+  --neo-inset-sm:
+    inset 4px 4px 8px color-mix(in oklab, var(--ink) 14%, transparent),
+    inset -3px -3px 6px color-mix(in oklab, white 65%, var(--cream));
+  --neo-raised-dark:
+    10px 10px 20px var(--neo-dark-shadow),
+    -7px -7px 16px var(--neo-dark-light),
+    inset 0 1px 0 color-mix(in oklab, white 12%, transparent);
+  --neo-inset-dark:
+    inset 8px 8px 16px var(--neo-dark-shadow),
+    inset -6px -6px 12px var(--neo-dark-light);
 
   /* Illustration palette — editorial fashion-sketch references */
-  --illus-kraft: oklch(0.60 0.078 65);   /* #A8824E warm kraft paper */
-  --illus-peach: oklch(0.91 0.035 50);   /* #F6DDCB soft editorial peach */
-  --illus-olive: oklch(0.58 0.048 95);   /* #8A8453 olive-taupe */
-  --illus-jewel: oklch(0.40 0.135 18);   /* #7E1F2B deep jewel red */
+  --illus-kraft: oklch(0.60 0.078 65);
+  --illus-peach: oklch(0.91 0.035 50);
+  --illus-olive: oklch(0.58 0.048 95);
+  --illus-jewel: oklch(0.40 0.135 18);
 
-  /* Semantic mappings (light = gallery white world) */
   --background: var(--cream);
   --foreground: var(--ink);
-  --card: var(--bone);
+  --card: var(--cream);
   --card-foreground: var(--ink);
-  --popover: var(--bone);
+  --popover: var(--cream);
   --popover-foreground: var(--ink);
   --primary: var(--ink);
   --primary-foreground: var(--cream);
-  --secondary: oklch(0.92 0.018 80);
+  --secondary: color-mix(in oklab, var(--cream) 92%, var(--ink));
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.92 0.018 80);
-  --muted-foreground: oklch(0.48 0.018 70);
+  --muted: color-mix(in oklab, var(--cream) 88%, var(--ink));
+  --muted-foreground: oklch(0.42 0.02 58);
   --accent: var(--gold);
   --accent-foreground: var(--ink);
-  --destructive: oklch(0.55 0.20 25);
+  --destructive: oklch(0.50 0.18 25);
   --destructive-foreground: var(--cream);
-  --border: oklch(0.86 0.018 78);
-  --input: oklch(0.86 0.018 78);
-  --ring: var(--gold);
+  --border: color-mix(in oklab, var(--ink) 10%, transparent);
+  --input: color-mix(in oklab, var(--ink) 10%, transparent);
+  --ring: var(--gold-deep);
 }
 
 .dark {
-  --background: var(--ink);
+  --background: var(--neo-dark-bg);
   --foreground: var(--cream);
-  --card: var(--ink-soft);
+  --card: var(--neo-dark-bg);
   --card-foreground: var(--cream);
-  --popover: var(--ink-soft);
+  --popover: var(--neo-dark-bg);
   --popover-foreground: var(--cream);
   --primary: var(--cream);
   --primary-foreground: var(--ink);
   --secondary: var(--ink-soft);
   --secondary-foreground: var(--cream);
   --muted: var(--ink-soft);
-  --muted-foreground: oklch(0.72 0.02 80);
+  --muted-foreground: oklch(0.78 0.02 80);
   --accent: var(--gold);
   --accent-foreground: var(--ink);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
   --ring: var(--gold);
+  --cream: var(--neo-dark-bg);
+  --bone: var(--neo-dark-bg);
 }
 
 @layer base {
@@ -131,6 +169,11 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--gold-deep);
+    outline-offset: 3px;
   }
 
   ::selection {
@@ -159,13 +202,15 @@
 @utility gold-rule {
   display: block;
   width: 56px;
-  height: 1px;
+  height: 3px;
+  border-radius: 999px;
   background: var(--gold);
   margin-inline: auto;
+  box-shadow: var(--neo-inset-sm);
 }
 
 @utility hairline {
-  border-color: color-mix(in oklab, var(--gold) 35%, transparent);
+  border-color: color-mix(in oklab, var(--gold) 28%, transparent);
 }
 
 @utility grain {
@@ -175,9 +220,230 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.12;
+  opacity: 0.08;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+}
+
+/* ——— neomorphic surfaces ——— */
+
+@utility neo-raised {
+  background: var(--cream);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--neo-raised);
+}
+
+@utility neo-raised-sm {
+  background: var(--cream);
+  border: 0;
+  border-radius: calc(var(--radius) - 4px);
+  box-shadow: var(--neo-raised-sm);
+}
+
+@utility neo-raised-lg {
+  background: var(--cream);
+  border: 0;
+  border-radius: calc(var(--radius) + 8px);
+  box-shadow: var(--neo-raised-lg);
+}
+
+@utility neo-inset {
+  background: var(--cream);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--neo-inset);
+}
+
+@utility neo-inset-sm {
+  background: var(--cream);
+  border: 0;
+  border-radius: calc(var(--radius) - 4px);
+  box-shadow: var(--neo-inset-sm);
+}
+
+@utility neo-pill {
+  border-radius: 999px;
+}
+
+@utility neo-dark {
+  background: var(--neo-dark-bg);
+  color: var(--cream);
+}
+
+@utility neo-dark-raised {
+  background: var(--neo-dark-bg);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--neo-raised-dark);
+}
+
+@utility neo-dark-inset {
+  background: var(--neo-dark-bg);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--neo-inset-dark);
+}
+
+@utility neo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: var(--neo-raised);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 1rem 1.85rem;
+  transition: box-shadow 180ms ease, transform 180ms ease, color 180ms ease;
+  cursor: pointer;
+}
+@utility neo-btn-hover {
+  box-shadow: var(--neo-raised-sm);
+}
+@utility neo-btn-active {
+  box-shadow: var(--neo-inset);
+}
+
+@utility neo-btn-ink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  box-shadow:
+    8px 8px 16px color-mix(in oklab, var(--ink) 28%, transparent),
+    -4px -4px 10px color-mix(in oklab, white 35%, var(--cream)),
+    inset 0 1px 0 color-mix(in oklab, white 18%, transparent);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 1rem 1.85rem;
+  transition: box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+  cursor: pointer;
+}
+
+@utility neo-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gold) 55%, var(--cream));
+  color: var(--ink);
+  box-shadow: var(--neo-raised);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 1rem 1.85rem;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+  cursor: pointer;
+}
+
+@utility neo-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: var(--neo-raised-sm);
+  transition: box-shadow 160ms ease;
+  cursor: pointer;
+}
+
+@utility neo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cream);
+  box-shadow: var(--neo-raised-sm);
+  padding: 0.45rem 0.9rem;
+}
+
+@utility neo-input {
+  width: 100%;
+  border: 0;
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--cream);
+  box-shadow: var(--neo-inset);
+  color: var(--ink);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.9rem;
+}
+@utility neo-input-focus {
+  outline: 2px solid var(--gold-deep);
+  outline-offset: 2px;
+}
+
+@utility neo-bubble {
+  border-radius: 1.35rem 1.35rem 0.4rem 1.35rem;
+  background: var(--cream);
+  box-shadow: var(--neo-raised-sm);
+}
+
+@utility neo-bubble-user {
+  border-radius: 1.35rem 1.35rem 1.35rem 0.4rem;
+  background: var(--ink);
+  color: var(--cream);
+  box-shadow:
+    6px 6px 12px color-mix(in oklab, var(--ink) 22%, transparent),
+    -3px -3px 8px color-mix(in oklab, white 40%, var(--cream));
+}
+
+@layer components {
+  .neo-press:active:not(:disabled) {
+    box-shadow: var(--neo-inset) !important;
+    transform: translateY(1px);
+  }
+
+  .neo-dark .eyebrow {
+    color: var(--gold);
+  }
+
+  a.neo-btn-ink:hover,
+  button.neo-btn-ink:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--gold-deep) 70%, var(--ink));
+  }
+
+  a.neo-btn:hover,
+  button.neo-btn:hover:not(:disabled) {
+    box-shadow: var(--neo-raised-sm);
+  }
+
+  a.neo-btn-gold:hover,
+  button.neo-btn-gold:hover:not(:disabled) {
+    box-shadow: var(--neo-raised-sm);
+  }
+
+  .neo-icon:hover:not(:disabled) {
+    color: var(--gold-deep);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neo-btn,
+  .neo-btn-ink,
+  .neo-btn-gold,
+  .neo-icon,
+  .neo-press {
+    transition: none !important;
+  }
 }
 
 @keyframes gold-pulse {
@@ -190,62 +456,6 @@
     transform: scale(1.1);
   }
 }
-
-/* ───────────────────────── Print / PDF export ───────────────────────── */
-@media print {
-  @page {
-    size: A4;
-    margin: 14mm 12mm;
-  }
-
-  html, body {
-    background: #ffffff !important;
-    color: #0d0d0d !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Hide chrome and any explicit no-print element */
-  .no-print,
-  nav.sticky,
-  header.sticky,
-  [data-bee-launcher],
-  .magazine-root > div.no-print {
-    display: none !important;
-  }
-
-  /* Each magazine section starts on a fresh printed page */
-  .mag-section {
-    page-break-before: always;
-    break-before: page;
-    page-break-inside: avoid;
-    min-height: auto !important;
-  }
-  .mag-section:first-of-type {
-    page-break-before: auto;
-    break-before: auto;
-  }
-
-  .break-inside-avoid {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-
-  /* Pull oversized hero/colophon backgrounds to printable area */
-  .magazine-root .mag-section {
-    box-shadow: none !important;
-  }
-
-  /* Anchor scroll dock & launchers off the page */
-  aside, button[aria-label="Open section index"] {
-    display: none !important;
-  }
-
-  a[href]::after {
-    content: "";
-  }
-}
-
 
 @keyframes float-edge {
   0%, 100% {
@@ -265,4 +475,62 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping,
+  [style*="float-edge"],
+  [style*="float-center"],
+  [style*="gold-pulse"] {
+    animation: none !important;
+  }
+}
 
+/* ───────────────────────── Print / PDF export ───────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #0d0d0d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  nav.sticky,
+  header.sticky,
+  [data-bee-launcher],
+  .magazine-root > div.no-print {
+    display: none !important;
+  }
+
+  .mag-section {
+    page-break-before: always;
+    break-before: page;
+    page-break-inside: avoid;
+    min-height: auto !important;
+  }
+  .mag-section:first-of-type {
+    page-break-before: auto;
+    break-before: auto;
+  }
+
+  .break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .magazine-root .mag-section {
+    box-shadow: none !important;
+  }
+
+  aside, button[aria-label="Open section index"] {
+    display: none !important;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+}

@@ -62,14 +62,14 @@ function WardrobePage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
+      <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
         <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
           <ArrowLeft size={14} /> Home
         </Link>
         <div className="font-display text-lg">
           Wardrobe<span className="text-gold-deep">.</span>
         </div>
-        <button className="inline-flex items-center gap-2 bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-cream transition hover:bg-gold-deep">
+        <button className="neo-btn-ink !px-3 !py-2 text-[0.65rem]">
           <Plus size={12} /> Archive Item
         </button>
       </header>
@@ -191,8 +191,8 @@ function WardrobeCard({ item }: { item: WardrobeItem }) {
   const subtitle = [item.brand, item.color, item.subcategory].filter(Boolean).join(" · ");
 
   return (
-    <div className="group relative bg-white border border-transparent hover:border-gold-soft p-3 transition-all duration-300">
-      <div className="aspect-[3/4] w-full bg-bone overflow-hidden relative mb-4">
+    <div className="group relative rounded-[1.5rem] bg-cream p-3 shadow-neo transition-shadow duration-300">
+      <div className="relative mb-4 aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-neo-inset">
         {imgSrc ? (
           <img
             src={imgSrc}

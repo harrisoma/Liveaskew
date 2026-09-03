@@ -16,7 +16,7 @@ export const Route = createFileRoute("/style-guide/components")({
 
 function Spec({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="border hairline bg-bone p-8 md:p-10">
+    <div className="rounded-3xl bg-cream p-8 shadow-neo md:p-10">
       <p className="eyebrow mb-6">{label}</p>
       <div className="flex flex-wrap gap-4 items-center">{children}</div>
     </div>
@@ -31,11 +31,11 @@ function ComponentsPage() {
         eyebrow="Tailwind v4 + shadcn"
         title="UI"
         italic="Components."
-        intro="The functional vocabulary — buttons, inputs, cards, and the editorial detail elements that hold them together."
+        intro="The functional vocabulary — soft raised buttons, inset inputs, and clay cards that feel tactile without losing contrast."
       />
 
       <section className="mb-20 grid gap-6">
-        <SectionHeader eyebrow="06.01 — Buttons" title="Ink primary. Outline secondary." />
+        <SectionHeader eyebrow="06.01 — Buttons" title="Raised clay. Pressed inset." />
         <Spec label="Variants">
           <Button>Primary action</Button>
           <Button variant="secondary">Secondary</Button>
@@ -50,7 +50,7 @@ function ComponentsPage() {
       </section>
 
       <section className="mb-20 grid gap-6">
-        <SectionHeader eyebrow="06.02 — Inputs" title="Hairline border. Gold ring on focus." />
+        <SectionHeader eyebrow="06.02 — Inputs" title="Inset well. Gold ring on focus." />
         <Spec label="Text input">
           <Input placeholder="your@email.com" className="max-w-sm" />
           <Button>Subscribe</Button>
@@ -60,24 +60,24 @@ function ComponentsPage() {
       <section className="mb-20">
         <SectionHeader eyebrow="06.03 — Editorial detail" title="Eyebrows, rules, hairlines." />
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="border hairline bg-bone p-10">
+          <div className="rounded-3xl bg-cream p-10 shadow-neo">
             <p className="eyebrow mb-2">Eyebrow</p>
             <p className="text-xs text-ink/55 font-mono">.eyebrow utility</p>
           </div>
-          <div className="border hairline bg-bone p-10 flex flex-col items-start">
+          <div className="flex flex-col items-start rounded-3xl bg-cream p-10 shadow-neo">
             <span className="gold-rule !mx-0 mb-3" />
             <p className="text-xs text-ink/55 font-mono">.gold-rule utility</p>
           </div>
-          <div className="border hairline bg-bone p-10">
-            <div className="border hairline p-4 text-xs text-ink/55 font-mono">.hairline border</div>
+          <div className="rounded-3xl bg-cream p-10 shadow-neo">
+            <div className="rounded-2xl p-4 text-xs text-ink/55 font-mono shadow-neo-inset">.neo-inset well</div>
           </div>
         </div>
       </section>
 
       <section className="mb-12">
-        <SectionHeader eyebrow="06.04 — Cards" title="Bone surface, hairline border." />
+        <SectionHeader eyebrow="06.04 — Cards" title="Clay surface, dual shadow." />
         <div className="grid md:grid-cols-2 gap-6">
-          <article className="bg-bone border hairline p-10">
+          <article className="bg-cream rounded-[2rem] p-10 shadow-neo">
             <p className="eyebrow mb-4">Look 04 · Summer</p>
             <h3 className="font-display text-3xl leading-tight">
               The <em>Romina</em> in deep jewel
@@ -91,7 +91,7 @@ function ComponentsPage() {
               <Button size="sm" variant="outline">Save</Button>
             </div>
           </article>
-          <article className="bg-ink text-cream p-10">
+          <article className="neo-dark-raised text-cream rounded-[2rem] p-10">
             <p className="eyebrow mb-4" style={{ color: "var(--gold)" }}>Bee · Editorial</p>
             <h3 className="font-display text-3xl leading-tight">
               How to <em>break</em> a uniform

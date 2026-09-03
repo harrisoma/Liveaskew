@@ -197,7 +197,7 @@ function CalendarPage() {
 
   return (
     <main className="min-h-screen bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
+      <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
         <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
           <ArrowLeft size={14} />
           <span>Home</span>
@@ -608,7 +608,7 @@ function EventFeedbackBar({ event }: { event: CalendarEvent }) {
 function CalendarUpgradeGate() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-cream text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-6 py-4 md:px-10">
+      <header className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-3 shadow-neo md:mx-8 md:px-8">
         <Link to="/" className="flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-ink/55 hover:text-gold-deep">
           <ArrowLeft size={14} />
           <span>Home</span>

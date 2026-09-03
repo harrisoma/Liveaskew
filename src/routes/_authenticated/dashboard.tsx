@@ -200,8 +200,7 @@ function DashboardPage() {
     >
       <style>{revealCss}</style>
       <header
-        className="flex items-center justify-between px-6 py-6 md:px-12 dash-rule"
-        style={{ borderBottom: `1px solid ${revealed ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)"}` }}
+        className="mx-4 mt-4 flex items-center justify-between rounded-full bg-cream px-6 py-4 shadow-neo md:mx-8 md:px-8"
       >
         <div>
           <p className="eyebrow" style={{ color: accent }}>
@@ -254,7 +253,7 @@ function DashboardPage() {
               <div className="mt-8">
                 <Link
                   to="/my-style-guide"
-                  className="pulse-cta inline-flex items-center gap-3 px-8 py-4 text-[0.7rem] uppercase tracking-[0.3em]"
+                  className="pulse-cta inline-flex items-center gap-3 rounded-full px-8 py-4 text-[0.7rem] uppercase tracking-[0.3em] shadow-neo"
                   style={{
                     border: `1px solid ${accent}`,
                     color: accent,
@@ -375,7 +374,7 @@ function RevealControl({
       <button
         onClick={onReveal}
         disabled={saving}
-        className="inline-flex items-center gap-3 border px-6 py-3 text-[0.7rem] uppercase tracking-[0.3em] transition-colors hover:bg-[color-mix(in_oklab,var(--gold)_6%,var(--cream))] disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-3 rounded-full bg-cream px-6 py-3 text-[0.7rem] uppercase tracking-[0.3em] shadow-neo transition-shadow hover:shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ borderColor: accent, color: accent }}
       >
         ✦ Reveal my palette
@@ -433,7 +432,7 @@ function HeroCard({
     return (
       <Link
         to={capability.href}
-        className="flex items-center justify-between border px-8 py-6 transition-colors accent-border"
+        className="flex items-center justify-between rounded-[1.75rem] bg-cream px-8 py-6 shadow-neo accent-border"
         style={{
           borderColor: accentSoft,
           background: `color-mix(in oklab, ${revealed ? "var(--client-accent, var(--gold))" : "var(--gold)"} 8%, var(--cream))`,
@@ -461,7 +460,7 @@ function HeroCard({
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="group relative block overflow-hidden border px-8 py-14 md:px-14 md:py-20 accent-border"
+      className="group relative block overflow-hidden rounded-[2rem] bg-cream px-8 py-14 shadow-neo md:px-14 md:py-20 accent-border"
       style={{
         borderColor: active ? accent : accentSoft,
         background: active
@@ -512,7 +511,7 @@ function CapabilityCard({
   return (
     <Link
       to={active ? capability.href : "/pricing"}
-      className="card-accent group relative flex h-full flex-col justify-between border p-7 transition-colors"
+      className="card-accent group relative flex h-full flex-col justify-between rounded-[1.75rem] bg-cream p-7 shadow-neo"
       style={{
         borderColor: active ? accentSoft : "color-mix(in oklab, var(--ink) 10%, transparent)",
         background: active

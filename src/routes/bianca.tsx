@@ -67,7 +67,7 @@ function BiancaPage() {
 
       <main className="pt-28">
         {/* HERO */}
-        <section className="border-b hairline px-6 py-20 md:px-10 md:py-28">
+        <section className="px-6 py-20 md:px-10 md:py-28">
           <div className="mx-auto max-w-4xl">
             <p className="eyebrow text-gold-deep">The Personal Path</p>
             <h1 className="font-display mt-6 text-5xl leading-[1.05] md:text-7xl">
@@ -194,7 +194,7 @@ function BiancaPage() {
                     rows={5}
                     required
                     placeholder="A few sentences about the season ahead, the wardrobe gaps, the moments you're dressing for…"
-                    className="mt-3 w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold-deep focus:outline-none focus:ring-1 focus:ring-gold-deep"
+                    className="mt-3 w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="mt-3 w-full border border-ink/15 bg-bone px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-gold-deep focus:outline-none focus:ring-1 focus:ring-gold-deep"
+        className="mt-3 w-full rounded-2xl border-0 bg-cream px-4 py-3 text-sm text-ink shadow-neo-inset placeholder:text-ink/35 focus:outline-none focus:ring-2 focus:ring-gold-deep"
       />
     </div>
   );

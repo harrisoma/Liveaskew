@@ -326,11 +326,11 @@ function ChipRow({
             key={opt}
             type="button"
             onClick={() => onSelect(opt)}
-            className={`border px-4 py-2 text-xs tracking-wide transition ${
+            className={`rounded-full px-4 py-2 text-xs tracking-wide shadow-neo-sm transition ${
               active
-                ? "border-gold bg-gold/10 text-gold-deep"
-                : "border-ink/15 text-ink/65 hover:border-gold hover:text-gold-deep"
-            } ${single ? "" : ""}`}
+                ? "bg-gold/30 text-gold-deep"
+                : "bg-cream text-ink/65 hover:text-gold-deep"
+            }`}
           >
             {opt}
           </button>

@@ -27,13 +27,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LiveAskew — Personal AI Stylist" },
+      { title: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
       {
         name: "description",
         content:
-          "LiveAskew is your personal AI stylist — conversational, intelligent, deeply personal. A monthly style guide built only for you.",
+          "Bee by LiveAskew is your inclusive personal AI stylist — conversational, intelligent, deeply personal. A monthly style guide built only for you.",
       },
-      { property: "og:title", content: "LiveAskew — Personal AI Stylist" },
+      { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
       {
         property: "og:description",
         content:

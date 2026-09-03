@@ -126,7 +126,7 @@ export function SocialNavigator() {
 
   return (
     <div className="fixed bottom-5 left-5 z-40 md:bottom-8 md:left-8">
-      <div className="flex items-center gap-2 rounded-full border border-ink/10 bg-ink/95 py-2 pl-4 pr-2 text-cream shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)] backdrop-blur">
+      <div className="flex items-center gap-2 rounded-full bg-ink py-2 pr-2 pl-4 text-cream shadow-neo">
         <span className="hidden font-sans text-[0.6rem] font-medium tracking-[0.22em] uppercase text-cream/70 sm:inline">
           Follow
         </span>

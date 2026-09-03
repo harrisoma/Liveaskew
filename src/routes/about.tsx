@@ -33,7 +33,7 @@ function AboutPage() {
               "radial-gradient(800px 400px at 80% 20%, hsl(var(--gold) / 0.15), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-[1400px] px-6 pt-16 pb-12 md:px-10 md:pt-24 md:pb-20">
+        <div className="relative mx-auto max-w-[1400px] px-6 pt-28 pb-12 md:px-10 md:pt-36 md:pb-20">
           <div className="mx-auto max-w-3xl text-center">
             <p className="eyebrow">Our Story</p>
             <h1 className="font-display mt-8 text-[3.2rem] leading-[0.95] tracking-tight md:text-[5.5rem]">
@@ -92,7 +92,7 @@ function AboutPage() {
                 { n: "30", l: "Days of rotation" },
                 { n: "∞", l: "Conversations with Bee" },
               ].map((s) => (
-                <div key={s.l} className="border border-ink/10 bg-bone p-5">
+                <div key={s.l} className="rounded-3xl bg-cream p-5 shadow-neo">
                   <span className="font-display text-3xl text-gold-deep">{s.n}</span>
                   <p className="mt-1 text-[0.65rem] font-medium tracking-[0.22em] uppercase text-ink/55">
                     {s.l}
@@ -125,7 +125,7 @@ function AboutPage() {
       </section>
 
       {/* ─────── What Bee Does ─────── */}
-      <section className="border-y border-ink/10 bg-bone">
+      <section className="bg-cream">
         <div className="mx-auto max-w-[1400px] px-6 py-20 md:px-10 md:py-28">
           <div className="grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
             <figure className="mx-auto md:mx-0">
@@ -170,7 +170,7 @@ function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-16 grid gap-px bg-ink/10 sm:grid-cols-3">
+          <div className="mt-16 grid gap-6 sm:grid-cols-3">
             {[
               {
                 title: "Fit",
@@ -185,7 +185,7 @@ function AboutPage() {
                 body: "Cloth chosen for season, climate and culture.",
               },
             ].map((f) => (
-              <div key={f.title} className="bg-cream p-8 md:p-10">
+              <div key={f.title} className="rounded-[1.75rem] bg-cream p-8 shadow-neo md:p-10">
                 <p className="text-[0.6rem] tracking-[0.3em] uppercase text-gold-deep">{f.title}</p>
                 <p className="mt-3 text-sm leading-relaxed text-ink/70">{f.body}</p>
               </div>
@@ -244,7 +244,7 @@ function AboutPage() {
       </section>
 
       {/* ─────── Values ─────── */}
-      <section className="border-t border-ink/10 bg-bone">
+      <section className="bg-cream">
         <div className="mx-auto max-w-[1400px] px-6 py-20 md:px-10 md:py-28">
           <div className="grid gap-16 md:grid-cols-2 md:gap-20">
             <div>
@@ -276,7 +276,7 @@ function AboutPage() {
                   body: "Your body, budget, and wardrobe stay between you and Bee. Always.",
                 },
               ].map((v) => (
-                <div key={v.title}>
+                <div key={v.title} className="rounded-[1.75rem] bg-cream p-6 shadow-neo">
                   <v.icon size={18} strokeWidth={1.5} className="text-gold-deep" />
                   <h3 className="font-display mt-4 text-xl leading-tight">{v.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink/65">{v.body}</p>
@@ -309,7 +309,7 @@ function AboutPage() {
         <Link
           to="/auth"
           search={{ mode: "signup" }}
-          className="group mt-10 inline-flex items-center gap-3 bg-ink px-9 py-4 text-[0.72rem] font-medium tracking-[0.22em] uppercase text-cream transition hover:bg-gold-deep"
+          className="neo-btn-ink mt-10 group"
         >
           Begin your 14-day trial
           <ArrowUpRight

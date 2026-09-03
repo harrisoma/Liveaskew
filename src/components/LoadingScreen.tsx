@@ -17,7 +17,7 @@ export function LoadingScreen({ label = "Loading", fullscreen = true }: Props) {
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-6 rounded-[2rem] bg-cream px-12 py-10 shadow-neo">
         <img
           src={logoAsset.url}
           alt="LiveAskew"

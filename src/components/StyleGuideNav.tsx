@@ -21,7 +21,7 @@ export function StyleGuideBanner() {
 
 export function StyleGuideNav({ current }: { current: string }) {
   return (
-    <nav className="border-b hairline bg-cream/80 backdrop-blur sticky top-0 z-30">
+    <nav className="sticky top-3 z-30 mx-4 rounded-full bg-cream/90 shadow-neo backdrop-blur md:mx-8">
       <div className="max-w-6xl mx-auto px-6 md:px-10 py-4 flex flex-wrap gap-x-6 gap-y-2 items-baseline">
         <Link to="/" className="eyebrow hover:text-ink transition-colors">
           ← LiveAskew
