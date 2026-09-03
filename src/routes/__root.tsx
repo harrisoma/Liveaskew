@@ -9,7 +9,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RouteError, RouteNotFound } from "@/components/RouteError";
-import { BeeLauncher } from "@/components/BeeLauncher";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -26,12 +25,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#e0e5ec" },
+      { title: "Bee — AI stylist by LiveAskew" },
       {
         name: "description",
         content:
-          "Bee by LiveAskew is your inclusive personal AI stylist — conversational, intelligent, deeply personal. A monthly style guide built only for you.",
+          "Bee by LiveAskew is a personal styling app and AI stylist built on Fit, Feel, and Fabric.",
       },
       { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
       {
@@ -73,7 +73,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
     ],
@@ -106,7 +106,6 @@ function RootComponent() {
       <AuthSync />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <BeeLauncher />
     </QueryClientProvider>
   );
 }
