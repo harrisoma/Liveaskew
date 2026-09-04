@@ -36,3 +36,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Capacitor / native signing — never commit a Play keystore
+*.keystore
+*.jks
+android/local.properties
+android/.gradle
+android/app/build
+android/build
+ios/App/Pods
+ios/App/App/public
+ios/DerivedData

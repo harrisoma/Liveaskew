@@ -1,10 +1,24 @@
-# LiveAskew
+# LiveAskew — Bee (mobile app)
 
-LiveAskew is a TanStack Start application deployed in its own Vercel project, with its own Supabase project for data, authentication, and generated-image storage. AI requests are routed through an Onixus tenant connection.
+Bee is a native iOS/Android app (Capacitor) for personal styling. The product UI is the phone app: onboarding, Bee chat, saved looks, metal tiers, and profile. A marketing website is a separate later project that shares only this Supabase backend.
+
+- App ID: `co.liveaskew.app` (permanent)
+- Design: neumorphic `#e0e5ec`, rounded rectangles only, Poppins / Nunito
+- Native notes: `docs/CAPACITOR.md`
+- Store copy: `STORE_LISTING.md`
+
+```bash
+npm run dev          # phone UI + Bee API in this repo
+npm run dev:app      # Capacitor web bundle (Vite SPA)
+npm run build:app && npx cap sync
+npm test
+```
 
 ## Service boundaries
 
-- **Vercel:** hosts the LiveAskew web application and server routes.
+- **GitHub:** source of truth for this app (`harrisoma/Liveaskew`).
+- **Capacitor:** iOS and Android shells (`ios/`, `android/`).
+- **Vercel:** hosts the app preview and Bee API routes used by this repo.
 - **Supabase:** owns LiveAskew authentication, database, and storage.
 - **Onixus AI:** exposes an OpenAI-compatible `/v1` endpoint and handles model routing for LiveAskew.
 

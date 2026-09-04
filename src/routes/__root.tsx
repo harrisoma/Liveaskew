@@ -9,16 +9,11 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RouteError, RouteNotFound } from "@/components/RouteError";
-import { BeeLauncher } from "@/components/BeeLauncher";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
   return <RouteError error={error} reset={reset} />;
 }
 
@@ -26,14 +21,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LiveAskew — Personal AI Stylist" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#e0e5ec" },
+      { title: "Bee — AI stylist by LiveAskew" },
       {
         name: "description",
         content:
-          "LiveAskew is your personal AI stylist — conversational, intelligent, deeply personal. A monthly style guide built only for you.",
+          "Bee by LiveAskew is a personal styling app and AI stylist built on Fit, Feel, and Fabric.",
       },
-      { property: "og:title", content: "LiveAskew — Personal AI Stylist" },
+      { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
       {
         property: "og:description",
         content:
@@ -42,18 +38,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "LiveAskew — Personal AI Stylist" },
-      { name: "description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { property: "og:description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { name: "twitter:description", content: "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png" },
+      {
+        name: "twitter:description",
+        content:
+          "Conversational AI styling. Monthly looks, colour palette, wardrobe blueprint. Free for 14 days.",
+      },
+      { property: "og:image", content: "/og.png" },
+      { name: "twitter:image", content: "/og.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
     ],
@@ -86,7 +84,6 @@ function RootComponent() {
       <AuthSync />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <BeeLauncher />
     </QueryClientProvider>
   );
 }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bee</string>
+    <string name="title_activity_main">Bee</string>
+    <string name="package_name">co.liveaskew.app</string>
+    <string name="custom_url_scheme">co.liveaskew.app</string>
+</resources>

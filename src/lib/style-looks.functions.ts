@@ -10,6 +10,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { generateText } from "ai";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { notifyBeeRecommendation } from "@/lib/push.server";
 
 export type LookIllustration = {
   status: "success" | "failed" | "pending";
@@ -452,6 +453,11 @@ async function saveDoc(
   await supabase
     .from("style_profiles")
     .upsert({ user_id: userId, looks: doc as unknown as never }, { onConflict: "user_id" });
+  if (doc.heroes.length > 0) {
+    void notifyBeeRecommendation(userId).catch((err) =>
+      console.error("[push] recommendation notify", err),
+    );
+  }
 }
 
 function emptyDoc(): LooksDoc {

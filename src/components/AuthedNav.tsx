@@ -19,27 +19,23 @@ export function AuthedNav() {
   return (
     <nav
       aria-label="Member navigation"
-      className="fixed bottom-5 left-5 z-40 hidden md:flex items-center gap-1 border border-ink/15 bg-cream/95 px-1.5 py-1.5 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.25)] backdrop-blur"
+      className="fixed bottom-5 left-5 z-40 hidden items-center gap-1 rounded-full bg-cream px-1.5 py-1.5 shadow-neo md:flex"
     >
       <Link
-        to="/dashboard"
+        to="/"
         aria-current={onDashboard ? "page" : undefined}
-        className={`inline-flex items-center gap-2 px-3 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
-          onDashboard
-            ? "bg-ink text-cream"
-            : "text-ink/70 hover:text-gold-deep"
+        className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
+          onDashboard ? "bg-ink text-cream shadow-neo-sm" : "text-ink/70 hover:text-gold-deep"
         }`}
       >
         <LayoutGrid size={12} />
         Dashboard
       </Link>
       <Link
-        to="/chat"
+        to="/"
         aria-current={onChat ? "page" : undefined}
-        className={`inline-flex items-center gap-2 px-3 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
-          onChat
-            ? "bg-ink text-cream"
-            : "text-ink/70 hover:text-gold-deep"
+        className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
+          onChat ? "bg-ink text-cream shadow-neo-sm" : "text-ink/70 hover:text-gold-deep"
         }`}
       >
         <MessageCircle size={12} />
