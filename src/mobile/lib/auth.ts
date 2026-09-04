@@ -13,6 +13,15 @@ async function supabaseOrNull() {
   }
 }
 
+function oauthUrlIsLive(url: string): boolean {
+  try {
+    const host = new URL(url).hostname;
+    return !host.includes("dummy") && !host.endsWith(".supabase.local");
+  } catch {
+    return false;
+  }
+}
+
 export async function signInWithProvider(provider: AuthProvider): Promise<{
   redirected: boolean;
   email: string | null;
@@ -28,7 +37,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
           skipBrowserRedirect: true,
         },
       });
-      if (!error && data.url) {
+      if (!error && data.url && oauthUrlIsLive(data.url)) {
         window.location.assign(data.url);
         return { redirected: true, email: null };
       }
