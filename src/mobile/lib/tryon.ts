@@ -1,5 +1,6 @@
 import type { GuideLook } from "./storage";
 import { cacheKey } from "./storage";
+import { apiUrl } from "./api";
 
 export type TryOnResult = {
   url: string;
@@ -19,7 +20,7 @@ export async function requestTryOn(opts: {
   }
 
   try {
-    const res = await fetch("/api/tryon", {
+    const res = await fetch(apiUrl("/api/tryon"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

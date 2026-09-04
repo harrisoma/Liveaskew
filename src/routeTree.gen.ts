@@ -9,148 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as TrustRouteImport } from './routes/trust'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as InquiryRouteImport } from './routes/inquiry'
-import { Route as DnsMigrationRouteImport } from './routes/dns-migration'
-import { Route as BiancaRouteImport } from './routes/bianca'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StyleGuideIndexRouteImport } from './routes/style-guide.index'
-import { Route as StyleGuideVoiceRouteImport } from './routes/style-guide.voice'
-import { Route as StyleGuideTypographyRouteImport } from './routes/style-guide.typography'
-import { Route as StyleGuidePhotographyRouteImport } from './routes/style-guide.photography'
-import { Route as StyleGuideLogoRouteImport } from './routes/style-guide.logo'
-import { Route as StyleGuideIllustrationRouteImport } from './routes/style-guide.illustration'
-import { Route as StyleGuideComponentsRouteImport } from './routes/style-guide.components'
-import { Route as StyleGuideColorRouteImport } from './routes/style-guide.color'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
 import { Route as ApiGenerateIllustrationRouteImport } from './routes/api/generate-illustration'
-import { Route as AuthenticatedWardrobeRouteImport } from './routes/_authenticated/wardrobe'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
-import { Route as AuthenticatedMyStyleGuideRouteImport } from './routes/_authenticated/my-style-guide'
-import { Route as AuthenticatedMagazineRouteImport } from './routes/_authenticated/magazine'
-import { Route as AuthenticatedHouseholdRouteImport } from './routes/_authenticated/household'
-import { Route as AuthenticatedDnsCheckRouteImport } from './routes/_authenticated/dns-check'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
-import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
-import { Route as ShareStyleGuideTokenRouteImport } from './routes/share/style-guide.$token'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
+import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiBeeStreamRouteImport } from './routes/api/bee/stream'
 import { Route as ApiBeeMagazineStreamRouteImport } from './routes/api/bee/magazine-stream'
-import { Route as AuthenticatedCheckoutTierRouteImport } from './routes/_authenticated/checkout.$tier'
+import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/guest'
 
-const VerifyEmailRoute = VerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrustRoute = TrustRouteImport.update({
-  id: '/trust',
-  path: '/trust',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InquiryRoute = InquiryRouteImport.update({
-  id: '/inquiry',
-  path: '/inquiry',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DnsMigrationRoute = DnsMigrationRouteImport.update({
-  id: '/dns-migration',
-  path: '/dns-migration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BiancaRoute = BiancaRouteImport.update({
-  id: '/bianca',
-  path: '/bianca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideIndexRoute = StyleGuideIndexRouteImport.update({
-  id: '/style-guide/',
-  path: '/style-guide/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideVoiceRoute = StyleGuideVoiceRouteImport.update({
-  id: '/style-guide/voice',
-  path: '/style-guide/voice',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideTypographyRoute = StyleGuideTypographyRouteImport.update({
-  id: '/style-guide/typography',
-  path: '/style-guide/typography',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuidePhotographyRoute = StyleGuidePhotographyRouteImport.update({
-  id: '/style-guide/photography',
-  path: '/style-guide/photography',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideLogoRoute = StyleGuideLogoRouteImport.update({
-  id: '/style-guide/logo',
-  path: '/style-guide/logo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideIllustrationRoute = StyleGuideIllustrationRouteImport.update({
-  id: '/style-guide/illustration',
-  path: '/style-guide/illustration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideComponentsRoute = StyleGuideComponentsRouteImport.update({
-  id: '/style-guide/components',
-  path: '/style-guide/components',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StyleGuideColorRoute = StyleGuideColorRouteImport.update({
-  id: '/style-guide/color',
-  path: '/style-guide/color',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTryonRoute = ApiTryonRouteImport.update({
@@ -163,57 +47,6 @@ const ApiGenerateIllustrationRoute = ApiGenerateIllustrationRouteImport.update({
   path: '/api/generate-illustration',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedWardrobeRoute = AuthenticatedWardrobeRouteImport.update({
-  id: '/wardrobe',
-  path: '/wardrobe',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMyStyleGuideRoute =
-  AuthenticatedMyStyleGuideRouteImport.update({
-    id: '/my-style-guide',
-    path: '/my-style-guide',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedMagazineRoute = AuthenticatedMagazineRouteImport.update({
-  id: '/magazine',
-  path: '/magazine',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedHouseholdRoute = AuthenticatedHouseholdRouteImport.update({
-  id: '/household',
-  path: '/household',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedDnsCheckRoute = AuthenticatedDnsCheckRouteImport.update({
-  id: '/dns-check',
-  path: '/dns-check',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const ShareStyleGuideTokenRoute = ShareStyleGuideTokenRouteImport.update({
-  id: '/share/style-guide/$token',
-  path: '/share/style-guide/$token',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
   id: '/api/wardrobe/analyze',
   path: '/api/wardrobe/analyze',
@@ -222,6 +55,11 @@ const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
 const ApiPushRegisterRoute = ApiPushRegisterRouteImport.update({
   id: '/api/push/register',
   path: '/api/push/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPushRecommendRoute = ApiPushRecommendRouteImport.update({
+  id: '/api/push/recommend',
+  path: '/api/push/recommend',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
@@ -244,12 +82,11 @@ const ApiBeeMagazineStreamRoute = ApiBeeMagazineStreamRouteImport.update({
   path: '/api/bee/magazine-stream',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedCheckoutTierRoute =
-  AuthenticatedCheckoutTierRouteImport.update({
-    id: '/checkout/$tier',
-    path: '/checkout/$tier',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
+const ApiBeeAppRoute = ApiBeeAppRouteImport.update({
+  id: '/api/bee/app',
+  path: '/api/bee/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -280,43 +117,17 @@ const ApiPublicBeeGuestRoute = ApiPublicBeeGuestRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
-  '/bianca': typeof BiancaRoute
-  '/dns-migration': typeof DnsMigrationRoute
-  '/inquiry': typeof InquiryRoute
-  '/onboarding': typeof OnboardingRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/trust': typeof TrustRoute
-  '/verify-email': typeof VerifyEmailRoute
-  '/calendar': typeof AuthenticatedCalendarRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/dns-check': typeof AuthenticatedDnsCheckRoute
-  '/household': typeof AuthenticatedHouseholdRoute
-  '/magazine': typeof AuthenticatedMagazineRoute
-  '/my-style-guide': typeof AuthenticatedMyStyleGuideRoute
-  '/profile': typeof AuthenticatedProfileRoute
-  '/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
-  '/style-guide/color': typeof StyleGuideColorRoute
-  '/style-guide/components': typeof StyleGuideComponentsRoute
-  '/style-guide/illustration': typeof StyleGuideIllustrationRoute
-  '/style-guide/logo': typeof StyleGuideLogoRoute
-  '/style-guide/photography': typeof StyleGuidePhotographyRoute
-  '/style-guide/typography': typeof StyleGuideTypographyRoute
-  '/style-guide/voice': typeof StyleGuideVoiceRoute
-  '/style-guide/': typeof StyleGuideIndexRoute
-  '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
+  '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
-  '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -325,43 +136,17 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
-  '/bianca': typeof BiancaRoute
-  '/dns-migration': typeof DnsMigrationRoute
-  '/inquiry': typeof InquiryRoute
-  '/onboarding': typeof OnboardingRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/trust': typeof TrustRoute
-  '/verify-email': typeof VerifyEmailRoute
-  '/calendar': typeof AuthenticatedCalendarRoute
-  '/chat': typeof AuthenticatedChatRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/dns-check': typeof AuthenticatedDnsCheckRoute
-  '/household': typeof AuthenticatedHouseholdRoute
-  '/magazine': typeof AuthenticatedMagazineRoute
-  '/my-style-guide': typeof AuthenticatedMyStyleGuideRoute
-  '/profile': typeof AuthenticatedProfileRoute
-  '/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
-  '/style-guide/color': typeof StyleGuideColorRoute
-  '/style-guide/components': typeof StyleGuideComponentsRoute
-  '/style-guide/illustration': typeof StyleGuideIllustrationRoute
-  '/style-guide/logo': typeof StyleGuideLogoRoute
-  '/style-guide/photography': typeof StyleGuidePhotographyRoute
-  '/style-guide/typography': typeof StyleGuideTypographyRoute
-  '/style-guide/voice': typeof StyleGuideVoiceRoute
-  '/style-guide': typeof StyleGuideIndexRoute
-  '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
+  '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
-  '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -371,44 +156,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/auth': typeof AuthRoute
-  '/bianca': typeof BiancaRoute
-  '/dns-migration': typeof DnsMigrationRoute
-  '/inquiry': typeof InquiryRoute
-  '/onboarding': typeof OnboardingRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/trust': typeof TrustRoute
-  '/verify-email': typeof VerifyEmailRoute
-  '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
-  '/_authenticated/chat': typeof AuthenticatedChatRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/dns-check': typeof AuthenticatedDnsCheckRoute
-  '/_authenticated/household': typeof AuthenticatedHouseholdRoute
-  '/_authenticated/magazine': typeof AuthenticatedMagazineRoute
-  '/_authenticated/my-style-guide': typeof AuthenticatedMyStyleGuideRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
-  '/_authenticated/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
-  '/style-guide/color': typeof StyleGuideColorRoute
-  '/style-guide/components': typeof StyleGuideComponentsRoute
-  '/style-guide/illustration': typeof StyleGuideIllustrationRoute
-  '/style-guide/logo': typeof StyleGuideLogoRoute
-  '/style-guide/photography': typeof StyleGuidePhotographyRoute
-  '/style-guide/typography': typeof StyleGuideTypographyRoute
-  '/style-guide/voice': typeof StyleGuideVoiceRoute
-  '/style-guide/': typeof StyleGuideIndexRoute
-  '/_authenticated/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
+  '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
-  '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -419,43 +177,17 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/auth'
-    | '/bianca'
-    | '/dns-migration'
-    | '/inquiry'
-    | '/onboarding'
-    | '/pricing'
     | '/privacy'
-    | '/trust'
-    | '/verify-email'
-    | '/calendar'
-    | '/chat'
-    | '/dashboard'
-    | '/dns-check'
-    | '/household'
-    | '/magazine'
-    | '/my-style-guide'
-    | '/profile'
-    | '/wardrobe'
     | '/api/generate-illustration'
     | '/api/tryon'
-    | '/style-guide/color'
-    | '/style-guide/components'
-    | '/style-guide/illustration'
-    | '/style-guide/logo'
-    | '/style-guide/photography'
-    | '/style-guide/typography'
-    | '/style-guide/voice'
-    | '/style-guide/'
-    | '/checkout/$tier'
+    | '/api/bee/app'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
     | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
-    | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -464,43 +196,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/auth'
-    | '/bianca'
-    | '/dns-migration'
-    | '/inquiry'
-    | '/onboarding'
-    | '/pricing'
     | '/privacy'
-    | '/trust'
-    | '/verify-email'
-    | '/calendar'
-    | '/chat'
-    | '/dashboard'
-    | '/dns-check'
-    | '/household'
-    | '/magazine'
-    | '/my-style-guide'
-    | '/profile'
-    | '/wardrobe'
     | '/api/generate-illustration'
     | '/api/tryon'
-    | '/style-guide/color'
-    | '/style-guide/components'
-    | '/style-guide/illustration'
-    | '/style-guide/logo'
-    | '/style-guide/photography'
-    | '/style-guide/typography'
-    | '/style-guide/voice'
-    | '/style-guide'
-    | '/checkout/$tier'
+    | '/api/bee/app'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
     | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
-    | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -509,44 +215,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_authenticated'
-    | '/about'
-    | '/auth'
-    | '/bianca'
-    | '/dns-migration'
-    | '/inquiry'
-    | '/onboarding'
-    | '/pricing'
     | '/privacy'
-    | '/trust'
-    | '/verify-email'
-    | '/_authenticated/calendar'
-    | '/_authenticated/chat'
-    | '/_authenticated/dashboard'
-    | '/_authenticated/dns-check'
-    | '/_authenticated/household'
-    | '/_authenticated/magazine'
-    | '/_authenticated/my-style-guide'
-    | '/_authenticated/profile'
-    | '/_authenticated/wardrobe'
     | '/api/generate-illustration'
     | '/api/tryon'
-    | '/style-guide/color'
-    | '/style-guide/components'
-    | '/style-guide/illustration'
-    | '/style-guide/logo'
-    | '/style-guide/photography'
-    | '/style-guide/typography'
-    | '/style-guide/voice'
-    | '/style-guide/'
-    | '/_authenticated/checkout/$tier'
+    | '/api/bee/app'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
     | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
-    | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
     | '/lovable/email/auth/preview'
@@ -556,34 +235,17 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  AuthRoute: typeof AuthRoute
-  BiancaRoute: typeof BiancaRoute
-  DnsMigrationRoute: typeof DnsMigrationRoute
-  InquiryRoute: typeof InquiryRoute
-  OnboardingRoute: typeof OnboardingRoute
-  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
-  TrustRoute: typeof TrustRoute
-  VerifyEmailRoute: typeof VerifyEmailRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
   ApiTryonRoute: typeof ApiTryonRoute
-  StyleGuideColorRoute: typeof StyleGuideColorRoute
-  StyleGuideComponentsRoute: typeof StyleGuideComponentsRoute
-  StyleGuideIllustrationRoute: typeof StyleGuideIllustrationRoute
-  StyleGuideLogoRoute: typeof StyleGuideLogoRoute
-  StyleGuidePhotographyRoute: typeof StyleGuidePhotographyRoute
-  StyleGuideTypographyRoute: typeof StyleGuideTypographyRoute
-  StyleGuideVoiceRoute: typeof StyleGuideVoiceRoute
-  StyleGuideIndexRoute: typeof StyleGuideIndexRoute
+  ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeMagazineStreamRoute: typeof ApiBeeMagazineStreamRoute
   ApiBeeStreamRoute: typeof ApiBeeStreamRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
+  ApiPushRecommendRoute: typeof ApiPushRecommendRoute
   ApiPushRegisterRoute: typeof ApiPushRegisterRoute
   ApiWardrobeAnalyzeRoute: typeof ApiWardrobeAnalyzeRoute
-  ShareStyleGuideTokenRoute: typeof ShareStyleGuideTokenRoute
   ApiPublicBeeGuestRoute: typeof ApiPublicBeeGuestRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -593,20 +255,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-email': {
-      id: '/verify-email'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trust': {
-      id: '/trust'
-      path: '/trust'
-      fullPath: '/trust'
-      preLoaderRoute: typeof TrustRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -614,123 +262,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inquiry': {
-      id: '/inquiry'
-      path: '/inquiry'
-      fullPath: '/inquiry'
-      preLoaderRoute: typeof InquiryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dns-migration': {
-      id: '/dns-migration'
-      path: '/dns-migration'
-      fullPath: '/dns-migration'
-      preLoaderRoute: typeof DnsMigrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bianca': {
-      id: '/bianca'
-      path: '/bianca'
-      fullPath: '/bianca'
-      preLoaderRoute: typeof BiancaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/': {
-      id: '/style-guide/'
-      path: '/style-guide'
-      fullPath: '/style-guide/'
-      preLoaderRoute: typeof StyleGuideIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/voice': {
-      id: '/style-guide/voice'
-      path: '/style-guide/voice'
-      fullPath: '/style-guide/voice'
-      preLoaderRoute: typeof StyleGuideVoiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/typography': {
-      id: '/style-guide/typography'
-      path: '/style-guide/typography'
-      fullPath: '/style-guide/typography'
-      preLoaderRoute: typeof StyleGuideTypographyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/photography': {
-      id: '/style-guide/photography'
-      path: '/style-guide/photography'
-      fullPath: '/style-guide/photography'
-      preLoaderRoute: typeof StyleGuidePhotographyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/logo': {
-      id: '/style-guide/logo'
-      path: '/style-guide/logo'
-      fullPath: '/style-guide/logo'
-      preLoaderRoute: typeof StyleGuideLogoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/illustration': {
-      id: '/style-guide/illustration'
-      path: '/style-guide/illustration'
-      fullPath: '/style-guide/illustration'
-      preLoaderRoute: typeof StyleGuideIllustrationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/components': {
-      id: '/style-guide/components'
-      path: '/style-guide/components'
-      fullPath: '/style-guide/components'
-      preLoaderRoute: typeof StyleGuideComponentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-guide/color': {
-      id: '/style-guide/color'
-      path: '/style-guide/color'
-      fullPath: '/style-guide/color'
-      preLoaderRoute: typeof StyleGuideColorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/tryon': {
@@ -747,76 +283,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateIllustrationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/wardrobe': {
-      id: '/_authenticated/wardrobe'
-      path: '/wardrobe'
-      fullPath: '/wardrobe'
-      preLoaderRoute: typeof AuthenticatedWardrobeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/my-style-guide': {
-      id: '/_authenticated/my-style-guide'
-      path: '/my-style-guide'
-      fullPath: '/my-style-guide'
-      preLoaderRoute: typeof AuthenticatedMyStyleGuideRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/magazine': {
-      id: '/_authenticated/magazine'
-      path: '/magazine'
-      fullPath: '/magazine'
-      preLoaderRoute: typeof AuthenticatedMagazineRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/household': {
-      id: '/_authenticated/household'
-      path: '/household'
-      fullPath: '/household'
-      preLoaderRoute: typeof AuthenticatedHouseholdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dns-check': {
-      id: '/_authenticated/dns-check'
-      path: '/dns-check'
-      fullPath: '/dns-check'
-      preLoaderRoute: typeof AuthenticatedDnsCheckRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/chat': {
-      id: '/_authenticated/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof AuthenticatedChatRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/calendar': {
-      id: '/_authenticated/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof AuthenticatedCalendarRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/share/style-guide/$token': {
-      id: '/share/style-guide/$token'
-      path: '/share/style-guide/$token'
-      fullPath: '/share/style-guide/$token'
-      preLoaderRoute: typeof ShareStyleGuideTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/wardrobe/analyze': {
       id: '/api/wardrobe/analyze'
       path: '/api/wardrobe/analyze'
@@ -829,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/api/push/register'
       fullPath: '/api/push/register'
       preLoaderRoute: typeof ApiPushRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/push/recommend': {
+      id: '/api/push/recommend'
+      path: '/api/push/recommend'
+      fullPath: '/api/push/recommend'
+      preLoaderRoute: typeof ApiPushRecommendRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/verify': {
@@ -859,12 +332,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBeeMagazineStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/checkout/$tier': {
-      id: '/_authenticated/checkout/$tier'
-      path: '/checkout/$tier'
-      fullPath: '/checkout/$tier'
-      preLoaderRoute: typeof AuthenticatedCheckoutTierRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/api/bee/app': {
+      id: '/api/bee/app'
+      path: '/api/bee/app'
+      fullPath: '/api/bee/app'
+      preLoaderRoute: typeof ApiBeeAppRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -904,65 +377,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedCalendarRoute: typeof AuthenticatedCalendarRoute
-  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedDnsCheckRoute: typeof AuthenticatedDnsCheckRoute
-  AuthenticatedHouseholdRoute: typeof AuthenticatedHouseholdRoute
-  AuthenticatedMagazineRoute: typeof AuthenticatedMagazineRoute
-  AuthenticatedMyStyleGuideRoute: typeof AuthenticatedMyStyleGuideRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
-  AuthenticatedWardrobeRoute: typeof AuthenticatedWardrobeRoute
-  AuthenticatedCheckoutTierRoute: typeof AuthenticatedCheckoutTierRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedCalendarRoute: AuthenticatedCalendarRoute,
-  AuthenticatedChatRoute: AuthenticatedChatRoute,
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedDnsCheckRoute: AuthenticatedDnsCheckRoute,
-  AuthenticatedHouseholdRoute: AuthenticatedHouseholdRoute,
-  AuthenticatedMagazineRoute: AuthenticatedMagazineRoute,
-  AuthenticatedMyStyleGuideRoute: AuthenticatedMyStyleGuideRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
-  AuthenticatedWardrobeRoute: AuthenticatedWardrobeRoute,
-  AuthenticatedCheckoutTierRoute: AuthenticatedCheckoutTierRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  AuthRoute: AuthRoute,
-  BiancaRoute: BiancaRoute,
-  DnsMigrationRoute: DnsMigrationRoute,
-  InquiryRoute: InquiryRoute,
-  OnboardingRoute: OnboardingRoute,
-  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
-  TrustRoute: TrustRoute,
-  VerifyEmailRoute: VerifyEmailRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
   ApiTryonRoute: ApiTryonRoute,
-  StyleGuideColorRoute: StyleGuideColorRoute,
-  StyleGuideComponentsRoute: StyleGuideComponentsRoute,
-  StyleGuideIllustrationRoute: StyleGuideIllustrationRoute,
-  StyleGuideLogoRoute: StyleGuideLogoRoute,
-  StyleGuidePhotographyRoute: StyleGuidePhotographyRoute,
-  StyleGuideTypographyRoute: StyleGuideTypographyRoute,
-  StyleGuideVoiceRoute: StyleGuideVoiceRoute,
-  StyleGuideIndexRoute: StyleGuideIndexRoute,
+  ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeMagazineStreamRoute: ApiBeeMagazineStreamRoute,
   ApiBeeStreamRoute: ApiBeeStreamRoute,
   ApiCronPushRoute: ApiCronPushRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
+  ApiPushRecommendRoute: ApiPushRecommendRoute,
   ApiPushRegisterRoute: ApiPushRegisterRoute,
   ApiWardrobeAnalyzeRoute: ApiWardrobeAnalyzeRoute,
-  ShareStyleGuideTokenRoute: ShareStyleGuideTokenRoute,
   ApiPublicBeeGuestRoute: ApiPublicBeeGuestRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

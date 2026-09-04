@@ -1,4 +1,5 @@
 import type { AuthProvider } from "./storage";
+import { apiUrl } from "./api";
 
 export type VerifyChannel = "email" | "sms";
 
@@ -22,6 +23,16 @@ function oauthUrlIsLive(url: string): boolean {
   }
 }
 
+async function oauthRedirect(): Promise<string> {
+  try {
+    const { Capacitor } = await import("@capacitor/core");
+    if (Capacitor.isNativePlatform()) return "co.liveaskew.app://";
+  } catch {
+    /* web */
+  }
+  return `${window.location.origin}/`;
+}
+
 export async function signInWithProvider(provider: AuthProvider): Promise<{
   redirected: boolean;
   email: string | null;
@@ -29,7 +40,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
   const supabase = await supabaseOrNull();
   if (supabase) {
     try {
-      const redirectTo = `${window.location.origin}/`;
+      const redirectTo = await oauthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -54,7 +65,7 @@ export async function sendVerifyCode(
 ): Promise<{ ok: boolean; preview: boolean; error?: string }> {
   if (!destination.trim()) return { ok: false, preview: false, error: "Add a destination first." };
   try {
-    const res = await fetch("/api/public/verify?action=send", {
+    const res = await fetch(apiUrl("/api/public/verify?action=send"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ channel, destination: destination.trim() }),
@@ -76,7 +87,7 @@ export async function confirmVerifyCode(
 ): Promise<boolean> {
   const trimmed = code.replace(/\s/g, "");
   try {
-    const res = await fetch("/api/public/verify?action=confirm", {
+    const res = await fetch(apiUrl("/api/public/verify?action=confirm"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ channel, destination: destination.trim(), code: trimmed }),

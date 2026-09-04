@@ -9,7 +9,6 @@ import {
   looksFromInterview,
   reflectOnAnswer,
 } from "./lib/interview";
-import { localBeeReply } from "./lib/recommend";
 import {
   cacheKey,
   emptySnapshot,
@@ -24,7 +23,8 @@ import {
 import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
-import { persistTrialStartedAt } from "./lib/account";
+import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
+import { askBee } from "./lib/bee-chat";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
 import {
@@ -55,6 +55,7 @@ export function MobileApp() {
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
   const [gateOpen, setGateOpen] = useState(false);
+  const [rateOpen, setRateOpen] = useState(false);
 
   useEffect(() => {
     setSnap(loadSnapshot());
@@ -296,22 +297,23 @@ export function MobileApp() {
               sending={sending}
               input={input}
               setInput={setInput}
-              onSend={() => {
+              onSend={async () => {
                 const value = input.trim();
                 if (!value || sending) return;
                 setInput("");
                 const user: ChatMsg = { id: nid("m"), role: "user", content: value };
                 patch((s) => ({ ...s, messages: [...s.messages, user] }));
                 setSending(true);
-                window.setTimeout(() => {
-                  const reply = localBeeReply(value, snap.onboarding);
-                  patch((s) => ({
-                    ...s,
-                    messages: [...s.messages, { id: nid("m"), role: "assistant", content: reply }],
-                  }));
-                  setSending(false);
-                  void haptic("impact");
-                }, 400);
+                const reply = await askBee({
+                  messages: [...snap.messages, user],
+                  profile: snap.onboarding,
+                });
+                patch((s) => ({
+                  ...s,
+                  messages: [...s.messages, { id: nid("m"), role: "assistant", content: reply }],
+                }));
+                setSending(false);
+                void haptic("impact");
               }}
             />
           )}
@@ -321,6 +323,8 @@ export function MobileApp() {
               selfie={snap.selfie}
               renderingId={renderingId}
               locked={!looksUnlocked}
+              rateOpen={rateOpen}
+              onDismissRate={() => setRateOpen(false)}
               onSelect={async (look) => {
                 if (!snap.selfie) return;
                 const key = cacheKey(snap.selfie, look.id);
@@ -349,10 +353,14 @@ export function MobileApp() {
               }}
               onSave={(look) => {
                 void haptic("success");
+                const firstSave = !snap.ratingAsked;
                 patch((s) => ({
                   ...s,
                   looks: s.looks.map((l) => (l.id === look.id ? { ...l, saved: true } : l)),
+                  ratingAsked: true,
                 }));
+                void notifyRecommendationReady();
+                if (firstSave) setRateOpen(true);
               }}
             />
           )}
@@ -723,6 +731,8 @@ function StyleGuide({
   selfie,
   renderingId,
   locked,
+  rateOpen,
+  onDismissRate,
   onSelect,
   onSave,
 }: {
@@ -730,6 +740,8 @@ function StyleGuide({
   selfie: string | null;
   renderingId: string | null;
   locked: boolean;
+  rateOpen: boolean;
+  onDismissRate: () => void;
   onSelect: (look: GuideLook) => void;
   onSave: (look: GuideLook) => void;
 }) {
@@ -745,6 +757,16 @@ function StyleGuide({
   }
   return (
     <Screen kicker="Style Guide" title="Looks on you">
+      {rateOpen && (
+        <div className="mb-4 neo-inset px-3 py-3 text-sm leading-relaxed">
+          <p>
+            If this look feels like you, that is when Bee asks for a rating — never on cold start.
+          </p>
+          <NeoButton className="mt-3" onClick={onDismissRate}>
+            Got it
+          </NeoButton>
+        </div>
+      )}
       {locked && (
         <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
           Trial ended. Choose a metal tier to render further looks. Saved try-ons stay.

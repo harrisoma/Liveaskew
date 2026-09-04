@@ -1,4 +1,4 @@
-name: E2E Inquiry SSR
+name: E2E Privacy SSR
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  e2e-inquiry-ssr:
+  e2e-privacy-ssr:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -27,13 +27,13 @@ jobs:
       - name: Run E2E SSR test
         env:
           ARTIFACT_DIR: ${{ github.workspace }}/e2e-artifacts
-        run: ./scripts/e2e-inquiry-ssr.sh
+        run: ./scripts/e2e-privacy-ssr.sh
 
       - name: Upload failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: inquiry-ssr-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          name: privacy-ssr-failure-${{ github.run_id }}-${{ github.run_attempt }}
           path: e2e-artifacts/
           if-no-files-found: warn
           retention-days: 14

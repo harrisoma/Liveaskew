@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# E2E: build production app, serve via wrangler, assert /inquiry SSR.
-# Reloads .env first to simulate post-Lovable-Cloud-reload conditions.
-# On failure, copies response HTML and server log into $ARTIFACT_DIR for CI upload.
+# E2E: build production app, serve via Nitro, assert /privacy SSR (Play Console URL).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -12,15 +10,13 @@ ARTIFACT_DIR="${ARTIFACT_DIR:-$ROOT/e2e-artifacts}"
 mkdir -p "$ARTIFACT_DIR"
 
 LOG="$ARTIFACT_DIR/server.log"
-RESP_HTML="$ARTIFACT_DIR/inquiry.html"
+RESP_HTML="$ARTIFACT_DIR/privacy.html"
 RUN_LOG="$ARTIFACT_DIR/e2e-run.log"
 
-# Tee all script output to a run log
 exec > >(tee -a "$RUN_LOG") 2>&1
 
 trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
 
-# Reload .env
 if [ -f .env ]; then
   set -a; . ./.env; set +a
   echo "[e2e] .env reloaded"
@@ -34,14 +30,13 @@ echo "[e2e] starting Nitro production preview on :$PORT…"
 HOST=127.0.0.1 PORT="$PORT" node .output/server/index.mjs >"$LOG" 2>&1 &
 WPID=$!
 
-# Wait for ready
 for i in $(seq 1 60); do
   curl -sf "http://127.0.0.1:$PORT/" >/dev/null 2>&1 && break
   sleep 1
 done
 
-echo "[e2e] fetching /inquiry…"
-RESP="$(curl -sS -o "$RESP_HTML" -w '%{http_code}' "http://127.0.0.1:$PORT/inquiry")"
+echo "[e2e] fetching /privacy…"
+RESP="$(curl -sS -o "$RESP_HTML" -w '%{http_code}' "http://127.0.0.1:$PORT/privacy")"
 echo "[e2e] HTTP status: $RESP"
 
 fail() {
@@ -55,15 +50,15 @@ fail() {
 [ "$RESP" = "200" ] || fail "expected HTTP 200, got $RESP"
 
 for needle in \
-  "Request a private" \
-  "Personal Styling" \
-  "Submit inquiry" \
-  "Full name"; do
+  "Privacy policy" \
+  "Bee stores fit answers" \
+  "never used to alter body proportions" \
+  "Play Console"; do
   grep -q "$needle" "$RESP_HTML" || fail "missing server HTML: $needle"
 done
 
 SIZE=$(wc -c <"$RESP_HTML")
-[ "$SIZE" -gt 5000 ] || fail "response suspiciously small ($SIZE bytes)"
+[ "$SIZE" -gt 2000 ] || fail "response suspiciously small ($SIZE bytes)"
 
 kill $WPID 2>/dev/null || true
-echo "[e2e] PASS — /inquiry SSR HTTP 200, all assertions matched ($SIZE bytes)"
+echo "[e2e] PASS — /privacy SSR HTTP 200, all assertions matched ($SIZE bytes)"

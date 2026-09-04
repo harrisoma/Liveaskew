@@ -60,12 +60,8 @@ export function Nav() {
             const classes = `text-[0.68rem] font-medium tracking-[0.22em] uppercase transition ${
               isActive ? "text-gold-deep" : "text-ink/70 hover:text-gold-deep"
             }`;
-            return isRoute ? (
-              <Link key={label} to={href} className={classes}>
-                {label}
-              </Link>
-            ) : (
-              <a key={label} href={href} className={classes}>
+            return (
+              <a key={label} href={href === "/pricing" || href === "/bianca" ? "/" : href} className={classes}>
                 {label}
               </a>
             );
@@ -74,8 +70,7 @@ export function Nav() {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/auth"
-            search={{ mode: "signup" }}
+            to="/"
             className="neo-btn-ink !px-4 !py-2.5 text-[0.62rem] md:!px-5 md:!py-3 md:text-[0.65rem]"
           >
             Start Free Trial
@@ -99,15 +94,11 @@ export function Nav() {
         >
           <div className="flex flex-col">
             {NAV_LINKS.map(({ label, href }) => {
-              const isRoute = href.startsWith("/") && !href.includes("#");
+              const dest = href === "/pricing" || href === "/bianca" ? "/" : href;
               const classes =
                 "py-3 text-[0.75rem] font-medium tracking-[0.25em] uppercase text-ink/80 hover:text-gold-deep";
-              return isRoute ? (
-                <Link key={label} to={href} className={classes} onClick={() => setOpen(false)}>
-                  {label}
-                </Link>
-              ) : (
-                <a key={label} href={href} className={classes} onClick={() => setOpen(false)}>
+              return (
+                <a key={label} href={dest} className={classes} onClick={() => setOpen(false)}>
                   {label}
                 </a>
               );

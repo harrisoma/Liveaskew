@@ -1,3 +1,5 @@
+import { apiUrl } from "./api";
+
 export async function persistTrialStartedAt(startedAt: string): Promise<void> {
   try {
     const { supabase } = await import("@/integrations/supabase/client");
@@ -31,7 +33,7 @@ export async function registerPushToken(opts: {
   try {
     const bearer = await authBearer();
     if (!bearer) return false;
-    const res = await fetch("/api/push/register", {
+    const res = await fetch(apiUrl("/api/push/register"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,5 +48,21 @@ export async function registerPushToken(opts: {
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+export async function notifyRecommendationReady(): Promise<void> {
+  try {
+    const bearer = await authBearer();
+    if (!bearer) return;
+    await fetch(apiUrl("/api/push/recommend"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${bearer}`,
+      },
+    });
+  } catch {
+    /* no session / preview */
   }
 }

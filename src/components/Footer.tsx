@@ -15,21 +15,6 @@ export function Footer() {
           >
             Privacy
           </a>
-          <a
-            href="/trust"
-            className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
-          >
-            Trust
-          </a>
-          {["Terms", "Contact"].map((l) => (
-            <a
-              key={l}
-              href="#"
-              className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
-            >
-              {l}
-            </a>
-          ))}
         </div>
       </div>
     </footer>

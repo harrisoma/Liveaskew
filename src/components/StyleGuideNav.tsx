@@ -30,16 +30,16 @@ export function StyleGuideNav({ current }: { current: string }) {
         {SECTIONS.map((s) => {
           const active = s.to === current;
           return (
-            <Link
+            <a
               key={s.to}
-              to={s.to}
+              href="/"
               className={`text-xs tracking-[0.18em] uppercase transition-colors ${
                 active ? "text-ink font-medium" : "text-ink/45 hover:text-ink"
               }`}
             >
               <span className="text-ink/30 mr-1.5 font-mono">{s.num}</span>
               {s.label}
-            </Link>
+            </a>
           );
         })}
       </div>

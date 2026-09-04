@@ -103,8 +103,7 @@ export function BeeLauncher() {
 
             <footer className="px-6 py-5">
               <Link
-                to="/auth"
-                search={{ mode: "signup" }}
+                to="/"
                 onClick={() => setOpen(false)}
                 className="neo-btn-ink w-full"
               >

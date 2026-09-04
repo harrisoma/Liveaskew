@@ -22,7 +22,7 @@ export function AuthedNav() {
       className="fixed bottom-5 left-5 z-40 hidden items-center gap-1 rounded-full bg-cream px-1.5 py-1.5 shadow-neo md:flex"
     >
       <Link
-        to="/dashboard"
+        to="/"
         aria-current={onDashboard ? "page" : undefined}
         className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
           onDashboard ? "bg-ink text-cream shadow-neo-sm" : "text-ink/70 hover:text-gold-deep"
@@ -32,7 +32,7 @@ export function AuthedNav() {
         Dashboard
       </Link>
       <Link
-        to="/chat"
+        to="/"
         aria-current={onChat ? "page" : undefined}
         className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.62rem] font-medium tracking-[0.24em] uppercase transition ${
           onChat ? "bg-ink text-cream shadow-neo-sm" : "text-ink/70 hover:text-gold-deep"

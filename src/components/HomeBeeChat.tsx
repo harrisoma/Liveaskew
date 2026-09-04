@@ -338,8 +338,7 @@ export function HomeBeeChat() {
                   </p>
                   <div className="mt-4 flex flex-wrap items-center gap-4">
                     <Link
-                      to="/checkout/$tier"
-                      params={{ tier: "gold" }}
+                      to="/"
                       className="neo-btn-ink !px-5 !py-3 text-[0.7rem]"
                     >
                       Activate 14-day trial
@@ -349,7 +348,7 @@ export function HomeBeeChat() {
                       />
                     </Link>
                     <Link
-                      to="/chat"
+                      to="/"
                       className="text-[0.65rem] tracking-[0.22em] uppercase text-ink/55 hover:text-gold-deep"
                     >
                       Continue in full chat

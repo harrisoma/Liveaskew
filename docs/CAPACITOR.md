@@ -30,6 +30,15 @@ Bundle identifier must stay `co.liveaskew.app`.
 
 Safe-area insets use `env(safe-area-inset-*)` (there is no published `@capacitor/safe-area` package).
 
+## API host (native builds)
+
+Store binaries load local `dist/` assets. Point them at the hosted Bee API with:
+
+- `VITE_API_BASE=https://<your-vercel-host>` at `build:app` time, and/or
+- `CAPACITOR_SERVER_URL=https://<your-vercel-host>` so the WebView loads the live app (relative `/api` then works).
+
+Leave both unset for `npm run dev`.
+
 ## Auth (Google / Apple)
 
 Supabase OAuth. Redirect URI: `co.liveaskew.app://` (native) and the preview origin (web). After Google, the app sends an email OTP. After Apple, collect a phone number and send a 6-digit SMS (private relay hides the real inbox).

@@ -113,7 +113,7 @@ export function ActingProfileSwitcher({ tier }: { tier: string | null }) {
             </button>
           ))}
           <Link
-            to="/household"
+            to="/"
             onClick={() => setOpen(false)}
             className="block border-t border-ink/10 bg-ink px-4 py-3 text-center text-[0.6rem] uppercase tracking-[0.22em] text-cream transition hover:bg-gold-deep"
           >

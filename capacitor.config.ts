@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   webDir: "dist",
   server: {
     androidScheme: "https",
+    ...(process.env.CAPACITOR_SERVER_URL
+      ? { url: process.env.CAPACITOR_SERVER_URL }
+      : {}),
   },
   plugins: {
     StatusBar: {

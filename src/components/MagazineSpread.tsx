@@ -611,14 +611,14 @@ export function MagazineSpread({
           </div>
           <div className="md:col-span-5 flex flex-wrap gap-3 no-print">
             <Link
-              to="/magazine"
+              to="/"
               className="inline-flex items-center px-5 py-3 text-xs tracking-[0.22em] uppercase border"
               style={{ borderColor: accentColor, color: accentColor }}
             >
               See this month's looks →
             </Link>
             <Link
-              to="/chat"
+              to="/"
               className="inline-flex items-center px-5 py-3 text-xs tracking-[0.22em] uppercase opacity-80 hover:opacity-100"
             >
               Talk to Bee

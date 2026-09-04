@@ -1,5 +1,6 @@
 import type { OnboardingAnswers } from "./recommend";
 import type { WardrobeVerdict } from "./storage";
+import { apiUrl } from "./api";
 
 export type WardrobeAnalyzeOk = {
   label: string;
@@ -18,7 +19,7 @@ export async function analyzeWardrobePhoto(opts: {
   profile: OnboardingAnswers;
 }): Promise<WardrobeAnalyzeResult> {
   try {
-    const res = await fetch("/api/wardrobe/analyze", {
+    const res = await fetch(apiUrl("/api/wardrobe/analyze"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

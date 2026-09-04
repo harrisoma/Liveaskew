@@ -289,7 +289,7 @@ function UpgradeHero() {
             illustration.
           </p>
           <Link
-            to="/pricing"
+            to="/"
             className="mt-3 inline-flex items-center self-start bg-gold px-8 py-4 text-sm tracking-[0.22em] text-ink uppercase transition-colors hover:bg-gold/90"
           >
             Unlock with Gold →
