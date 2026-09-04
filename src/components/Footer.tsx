@@ -10,10 +10,16 @@ export function Footer() {
         </p>
         <div className="flex gap-8">
           <a
+            href="/privacy"
+            className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
+          >
+            Privacy
+          </a>
+          <a
             href="/trust"
             className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
           >
-            Trust & Privacy
+            Trust
           </a>
           {["Terms", "Contact"].map((l) => (
             <a

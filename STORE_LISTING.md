@@ -26,9 +26,9 @@ Fourteen days to stay with Bee. Clothes follow your life — climate, covering, 
 
 ## Privacy policy (Play Console URL)
 
-Until the marketing site ships (a separate repo), publish this text at a stable URL or host the in-app Privacy section from Profile:
+Stable URL: **`/privacy`** on this deployment (for example `https://<host>/privacy`). Copy hosted from this listing:
 
-Bee stores fit answers, saved looks, and your last chat on device so an offline session still opens. Account email is saved when you create one. Push is only for a new Bee recommendation or a tier upgrade. Styling photos are never used to alter body proportions.
+Bee stores fit answers, saved looks, and your last chat on device so an offline session still opens. Account email is saved when you create one. Push is only for a new Bee recommendation, a trial countdown reminder, or a tier upgrade. Styling photos are never used to alter body proportions.
 
 ## Data safety (Play)
 

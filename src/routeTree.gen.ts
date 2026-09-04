@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as TrustRouteImport } from './routes/trust'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as InquiryRouteImport } from './routes/inquiry'
@@ -40,7 +41,10 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as ShareStyleGuideTokenRouteImport } from './routes/share/style-guide.$token'
+import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
+import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
+import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiBeeStreamRouteImport } from './routes/api/bee/stream'
 import { Route as ApiBeeMagazineStreamRouteImport } from './routes/api/bee/magazine-stream'
 import { Route as AuthenticatedCheckoutTierRouteImport } from './routes/_authenticated/checkout.$tier'
@@ -58,6 +62,11 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -205,9 +214,24 @@ const ShareStyleGuideTokenRoute = ShareStyleGuideTokenRouteImport.update({
   path: '/share/style-guide/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
+  id: '/api/wardrobe/analyze',
+  path: '/api/wardrobe/analyze',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPushRegisterRoute = ApiPushRegisterRouteImport.update({
+  id: '/api/push/register',
+  path: '/api/push/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
   id: '/api/public/verify',
   path: '/api/public/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronPushRoute = ApiCronPushRouteImport.update({
+  id: '/api/cron/push',
+  path: '/api/cron/push',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBeeStreamRoute = ApiBeeStreamRouteImport.update({
@@ -263,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/inquiry': typeof InquiryRoute
   '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/trust': typeof TrustRoute
   '/verify-email': typeof VerifyEmailRoute
   '/calendar': typeof AuthenticatedCalendarRoute
@@ -287,7 +312,10 @@ export interface FileRoutesByFullPath {
   '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/register': typeof ApiPushRegisterRoute
+  '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -304,6 +332,7 @@ export interface FileRoutesByTo {
   '/inquiry': typeof InquiryRoute
   '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/trust': typeof TrustRoute
   '/verify-email': typeof VerifyEmailRoute
   '/calendar': typeof AuthenticatedCalendarRoute
@@ -328,7 +357,10 @@ export interface FileRoutesByTo {
   '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/register': typeof ApiPushRegisterRoute
+  '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -347,6 +379,7 @@ export interface FileRoutesById {
   '/inquiry': typeof InquiryRoute
   '/onboarding': typeof OnboardingRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/trust': typeof TrustRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_authenticated/calendar': typeof AuthenticatedCalendarRoute
@@ -371,7 +404,10 @@ export interface FileRoutesById {
   '/_authenticated/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/cron/push': typeof ApiCronPushRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
+  '/api/push/register': typeof ApiPushRegisterRoute
+  '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -390,6 +426,7 @@ export interface FileRouteTypes {
     | '/inquiry'
     | '/onboarding'
     | '/pricing'
+    | '/privacy'
     | '/trust'
     | '/verify-email'
     | '/calendar'
@@ -414,7 +451,10 @@ export interface FileRouteTypes {
     | '/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/register'
+    | '/api/wardrobe/analyze'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -431,6 +471,7 @@ export interface FileRouteTypes {
     | '/inquiry'
     | '/onboarding'
     | '/pricing'
+    | '/privacy'
     | '/trust'
     | '/verify-email'
     | '/calendar'
@@ -455,7 +496,10 @@ export interface FileRouteTypes {
     | '/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/register'
+    | '/api/wardrobe/analyze'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -473,6 +517,7 @@ export interface FileRouteTypes {
     | '/inquiry'
     | '/onboarding'
     | '/pricing'
+    | '/privacy'
     | '/trust'
     | '/verify-email'
     | '/_authenticated/calendar'
@@ -497,7 +542,10 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/cron/push'
     | '/api/public/verify'
+    | '/api/push/register'
+    | '/api/wardrobe/analyze'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -516,6 +564,7 @@ export interface RootRouteChildren {
   InquiryRoute: typeof InquiryRoute
   OnboardingRoute: typeof OnboardingRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   TrustRoute: typeof TrustRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
@@ -530,7 +579,10 @@ export interface RootRouteChildren {
   StyleGuideIndexRoute: typeof StyleGuideIndexRoute
   ApiBeeMagazineStreamRoute: typeof ApiBeeMagazineStreamRoute
   ApiBeeStreamRoute: typeof ApiBeeStreamRoute
+  ApiCronPushRoute: typeof ApiCronPushRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
+  ApiPushRegisterRoute: typeof ApiPushRegisterRoute
+  ApiWardrobeAnalyzeRoute: typeof ApiWardrobeAnalyzeRoute
   ShareStyleGuideTokenRoute: typeof ShareStyleGuideTokenRoute
   ApiPublicBeeGuestRoute: typeof ApiPublicBeeGuestRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -553,6 +605,13 @@ declare module '@tanstack/react-router' {
       path: '/trust'
       fullPath: '/trust'
       preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -758,11 +817,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareStyleGuideTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/wardrobe/analyze': {
+      id: '/api/wardrobe/analyze'
+      path: '/api/wardrobe/analyze'
+      fullPath: '/api/wardrobe/analyze'
+      preLoaderRoute: typeof ApiWardrobeAnalyzeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/push/register': {
+      id: '/api/push/register'
+      path: '/api/push/register'
+      fullPath: '/api/push/register'
+      preLoaderRoute: typeof ApiPushRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/verify': {
       id: '/api/public/verify'
       path: '/api/public/verify'
       fullPath: '/api/public/verify'
       preLoaderRoute: typeof ApiPublicVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/push': {
+      id: '/api/cron/push'
+      path: '/api/cron/push'
+      fullPath: '/api/cron/push'
+      preLoaderRoute: typeof ApiCronPushRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bee/stream': {
@@ -863,6 +943,7 @@ const rootRouteChildren: RootRouteChildren = {
   InquiryRoute: InquiryRoute,
   OnboardingRoute: OnboardingRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   TrustRoute: TrustRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
@@ -877,7 +958,10 @@ const rootRouteChildren: RootRouteChildren = {
   StyleGuideIndexRoute: StyleGuideIndexRoute,
   ApiBeeMagazineStreamRoute: ApiBeeMagazineStreamRoute,
   ApiBeeStreamRoute: ApiBeeStreamRoute,
+  ApiCronPushRoute: ApiCronPushRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
+  ApiPushRegisterRoute: ApiPushRegisterRoute,
+  ApiWardrobeAnalyzeRoute: ApiWardrobeAnalyzeRoute,
   ShareStyleGuideTokenRoute: ShareStyleGuideTokenRoute,
   ApiPublicBeeGuestRoute: ApiPublicBeeGuestRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

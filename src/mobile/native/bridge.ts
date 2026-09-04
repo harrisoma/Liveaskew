@@ -66,10 +66,27 @@ function pickFileFallback(): Promise<string | null> {
   });
 }
 
+let pushRegistrationBound = false;
+
+async function bindPushRegistration(): Promise<void> {
+  if (pushRegistrationBound) return;
+  pushRegistrationBound = true;
+  const { PushNotifications } = await import("@capacitor/push-notifications");
+  const { Capacitor } = await import("@capacitor/core");
+  await PushNotifications.addListener("registration", (event) => {
+    const raw = Capacitor.getPlatform();
+    const platform = raw === "ios" || raw === "android" ? raw : "web";
+    void import("../lib/account").then(({ registerPushToken }) =>
+      registerPushToken({ token: event.value, platform }),
+    );
+  });
+}
+
 export async function setPushEnabled(enabled: boolean): Promise<boolean> {
   if (!enabled) return false;
   try {
     const { PushNotifications } = await import("@capacitor/push-notifications");
+    await bindPushRegistration();
     let perm = await PushNotifications.checkPermissions();
     if (perm.receive !== "granted") {
       perm = await PushNotifications.requestPermissions();

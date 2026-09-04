@@ -24,7 +24,9 @@ import {
 import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
-import { guessLabel, wardrobeVerdict } from "./lib/wardrobe-reset";
+import { persistTrialStartedAt } from "./lib/account";
+import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
+import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
 import {
   configureNativeChrome,
   haptic,
@@ -48,6 +50,7 @@ export function MobileApp() {
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyErr, setVerifyErr] = useState<string | null>(null);
   const [previewOtp, setPreviewOtp] = useState(false);
+  const [youView, setYouView] = useState<"profile" | "privacy">("profile");
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
@@ -72,6 +75,12 @@ export function MobileApp() {
     if (ready) saveSnapshot(snap);
   }, [snap, ready]);
 
+  useEffect(() => {
+    if (snap.phase === "app" && snap.notifications.beeReady) {
+      void setPushEnabled(true);
+    }
+  }, [snap.phase, snap.notifications.beeReady]);
+
   const patch = useCallback((fn: (s: AppSnapshot) => AppSnapshot) => {
     setSnap((s) => fn(s));
   }, []);
@@ -86,11 +95,12 @@ export function MobileApp() {
   });
 
   const startTrial = (looks: GuideLook[]) => {
+    const startedAt = snap.trialStartedAt ?? new Date().toISOString();
     patch((s) => ({
       ...s,
       phase: "app",
       looks,
-      trialStartedAt: s.trialStartedAt ?? new Date().toISOString(),
+      trialStartedAt: s.trialStartedAt ?? startedAt,
       messages: [
         {
           id: nid("m"),
@@ -102,6 +112,7 @@ export function MobileApp() {
     }));
     setTab("guide");
     void haptic("success");
+    void persistTrialStartedAt(startedAt);
   };
 
   if (!ready) {
@@ -351,25 +362,42 @@ export function MobileApp() {
               onUpload={async () => {
                 const photos = await pickWardrobeBatch();
                 if (photos.length === 0) return;
-                const items = photos.map((photo, i) => ({
+                const profile = snap.onboarding;
+                const items: AppSnapshot["wardrobe"] = photos.map((photo) => ({
                   id: nid("w"),
                   photo,
-                  label: guessLabel(snap.wardrobe.length + i),
-                  verdict: null as const,
+                  label: "Looking at the cloth",
+                  verdict: null,
                   reason: null,
+                  error: null,
                 }));
                 patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe] }));
-                window.setTimeout(() => {
+                for (const item of items) {
+                  const result = await analyzeWardrobePhoto({ photo: item.photo, profile });
                   patch((s) => ({
                     ...s,
-                    wardrobe: s.wardrobe.map((item) => {
-                      if (item.verdict) return item;
-                      const v = wardrobeVerdict(item.label, s.onboarding);
-                      return { ...item, verdict: v.verdict, reason: v.reason };
+                    wardrobe: s.wardrobe.map((row) => {
+                      if (row.id !== item.id) return row;
+                      if ("error" in result) {
+                        return {
+                          ...row,
+                          label: "Could not read this piece",
+                          error: result.error,
+                          reason: null,
+                          verdict: null,
+                        };
+                      }
+                      return {
+                        ...row,
+                        label: result.label,
+                        verdict: result.verdict,
+                        reason: result.reason,
+                        error: null,
+                      };
                     }),
                   }));
-                  void haptic("success");
-                }, 700);
+                }
+                void haptic(items.length > 0 ? "success" : "impact");
               }}
             />
           )}
@@ -388,7 +416,10 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "you" && (
+          {tab === "you" && youView === "privacy" && (
+            <PrivacyPolicy onBack={() => setYouView("profile")} />
+          )}
+          {tab === "you" && youView === "profile" && (
             <Profile
               snap={snap}
               onSelfie={async () => {
@@ -402,14 +433,22 @@ export function MobileApp() {
                 if (key === "beeReady" && value) await setPushEnabled(true);
                 patch((s) => ({ ...s, notifications: { ...s.notifications, [key]: value } }));
               }}
+              onPrivacy={() => setYouView("privacy")}
               onReset={() => {
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
                 setTab("guide");
+                setYouView("profile");
               }}
             />
           )}
-          <TabBar tab={tab} onChange={setTab} />
+          <TabBar
+            tab={tab}
+            onChange={(next) => {
+              setTab(next);
+              if (next !== "you") setYouView("profile");
+            }}
+          />
         </>
       )}
     </div>
@@ -825,11 +864,13 @@ function Profile({
   snap,
   onSelfie,
   onNotify,
+  onPrivacy,
   onReset,
 }: {
   snap: AppSnapshot;
   onSelfie: () => void;
   onNotify: (key: "beeReady" | "tierUpgrade", value: boolean) => void;
+  onPrivacy: () => void;
   onReset: () => void;
 }) {
   return (
@@ -870,9 +911,39 @@ function Profile({
           {snap.phone ? ` · ${snap.phone}` : ""}
         </p>
       </div>
-      <NeoButton className="mt-4" onClick={onReset}>
+      <NeoButton className="mt-4" onClick={onPrivacy}>
+        Privacy policy
+      </NeoButton>
+      <NeoButton className="mt-3" onClick={onReset}>
         Sign out
       </NeoButton>
+    </Screen>
+  );
+}
+
+function PrivacyPolicy({ onBack }: { onBack: () => void }) {
+  return (
+    <Screen
+      kicker="Legal"
+      title="Privacy policy"
+      footer={
+        <NeoButton onClick={onBack} variant="ink">
+          Back to You
+        </NeoButton>
+      }
+    >
+      <p className="mb-4 text-sm leading-relaxed">{PRIVACY_INTRO}</p>
+      {PRIVACY_SECTIONS.map((section) => (
+        <div key={section.title} className="mb-4 neo-raised p-4 text-sm leading-relaxed">
+          <p className="la-kicker">{section.title}</p>
+          {section.paragraphs.map((p) => (
+            <p key={p} className="mt-2">
+              {p}
+            </p>
+          ))}
+        </div>
+      ))}
+      <p className="text-sm opacity-70">Last updated {PRIVACY_UPDATED}. Public URL: /privacy</p>
     </Screen>
   );
 }

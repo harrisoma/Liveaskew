@@ -12,6 +12,7 @@ export type WardrobeItem = {
   label: string;
   verdict: WardrobeVerdict | null;
   reason: string | null;
+  error?: string | null;
 };
 
 export type GuideLook = LookCard & {

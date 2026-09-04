@@ -1,11 +1,46 @@
 import type { OnboardingAnswers } from "./recommend";
 import type { WardrobeVerdict } from "./storage";
 
+/** What vision actually saw in the uploaded photo — never a canned label. */
+export type GarmentSight = {
+  label: string;
+  type: string;
+  fabric: string;
+  fit: string;
+  notes: string;
+};
+
+export function sightHaystack(sight: GarmentSight): string {
+  return [sight.label, sight.type, sight.fabric, sight.fit, sight.notes]
+    .filter((part) => part.trim().length > 0)
+    .join(" ")
+    .toLowerCase();
+}
+
+export function parseGarmentSight(raw: unknown): GarmentSight | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  const nested = o.sight && typeof o.sight === "object" ? (o.sight as Record<string, unknown>) : o;
+  const label = str(nested.label) || str(nested.garment) || str(nested.name);
+  if (!label) return null;
+  return {
+    label,
+    type: str(nested.type) || str(nested.category),
+    fabric: str(nested.fabric) || str(nested.cloth),
+    fit: str(nested.fit) || str(nested.silhouette),
+    notes: str(nested.notes) || str(nested.signals) || str(nested.detail),
+  };
+}
+
+function str(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 export function wardrobeVerdict(
-  label: string,
+  sight: GarmentSight,
   profile: OnboardingAnswers,
 ): { verdict: WardrobeVerdict; reason: string } {
-  const t = label.toLowerCase();
+  const t = sightHaystack(sight);
   const fit = profile.fit ?? "soft";
 
   if (t.includes("stretch") && t.includes("logo")) {
@@ -50,18 +85,4 @@ export function wardrobeVerdict(
     reason:
       "Hold it against your Fit/Feel/Fabric — if the cloth is honest and the line is yours, keep.",
   };
-}
-
-export function guessLabel(index: number): string {
-  const labels = [
-    "Ivory silk shirt",
-    "Stiff logo tee",
-    "Navy wool trouser",
-    "Oversized hoodie",
-    "Linen wrap",
-    "Tight stretch jean",
-    "Charcoal knit",
-    "Polyester shine blouse",
-  ];
-  return labels[index % labels.length] ?? `Piece ${index + 1}`;
 }

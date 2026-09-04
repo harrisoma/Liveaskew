@@ -60,8 +60,9 @@ export function LookCard({
 }
 
 export function WardrobeCard({ item }: { item: WardrobeItem }) {
-  const tone =
-    item.verdict === "keep"
+  const tone = item.error
+    ? "Could not read"
+    : item.verdict === "keep"
       ? "Keep"
       : item.verdict === "toss"
         ? "Toss"
@@ -78,7 +79,9 @@ export function WardrobeCard({ item }: { item: WardrobeItem }) {
       />
       <p className="la-kicker">{tone}</p>
       <h2 className="la-display mt-1 text-xl font-semibold">{item.label}</h2>
-      {item.reason ? (
+      {item.error ? (
+        <p className="mt-2 text-sm leading-relaxed">{item.error}</p>
+      ) : item.reason ? (
         <p className="mt-2 text-sm leading-relaxed">{item.reason}</p>
       ) : (
         <Skeleton className="mt-3 h-12" />
