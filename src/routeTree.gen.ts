@@ -28,6 +28,7 @@ import { Route as StyleGuideLogoRouteImport } from './routes/style-guide.logo'
 import { Route as StyleGuideIllustrationRouteImport } from './routes/style-guide.illustration'
 import { Route as StyleGuideComponentsRouteImport } from './routes/style-guide.components'
 import { Route as StyleGuideColorRouteImport } from './routes/style-guide.color'
+import { Route as ApiTryonRouteImport } from './routes/api/tryon'
 import { Route as ApiGenerateIllustrationRouteImport } from './routes/api/generate-illustration'
 import { Route as AuthenticatedWardrobeRouteImport } from './routes/_authenticated/wardrobe'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -39,6 +40,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedCalendarRouteImport } from './routes/_authenticated/calendar'
 import { Route as ShareStyleGuideTokenRouteImport } from './routes/share/style-guide.$token'
+import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiBeeStreamRouteImport } from './routes/api/bee/stream'
 import { Route as ApiBeeMagazineStreamRouteImport } from './routes/api/bee/magazine-stream'
 import { Route as AuthenticatedCheckoutTierRouteImport } from './routes/_authenticated/checkout.$tier'
@@ -142,6 +144,11 @@ const StyleGuideColorRoute = StyleGuideColorRouteImport.update({
   path: '/style-guide/color',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTryonRoute = ApiTryonRouteImport.update({
+  id: '/api/tryon',
+  path: '/api/tryon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGenerateIllustrationRoute = ApiGenerateIllustrationRouteImport.update({
   id: '/api/generate-illustration',
   path: '/api/generate-illustration',
@@ -196,6 +203,11 @@ const AuthenticatedCalendarRoute = AuthenticatedCalendarRouteImport.update({
 const ShareStyleGuideTokenRoute = ShareStyleGuideTokenRouteImport.update({
   id: '/share/style-guide/$token',
   path: '/share/style-guide/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
+  id: '/api/public/verify',
+  path: '/api/public/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBeeStreamRoute = ApiBeeStreamRouteImport.update({
@@ -263,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
+  '/api/tryon': typeof ApiTryonRoute
   '/style-guide/color': typeof StyleGuideColorRoute
   '/style-guide/components': typeof StyleGuideComponentsRoute
   '/style-guide/illustration': typeof StyleGuideIllustrationRoute
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/public/verify': typeof ApiPublicVerifyRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -302,6 +316,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
+  '/api/tryon': typeof ApiTryonRoute
   '/style-guide/color': typeof StyleGuideColorRoute
   '/style-guide/components': typeof StyleGuideComponentsRoute
   '/style-guide/illustration': typeof StyleGuideIllustrationRoute
@@ -313,6 +328,7 @@ export interface FileRoutesByTo {
   '/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/public/verify': typeof ApiPublicVerifyRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -343,6 +359,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/wardrobe': typeof AuthenticatedWardrobeRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
+  '/api/tryon': typeof ApiTryonRoute
   '/style-guide/color': typeof StyleGuideColorRoute
   '/style-guide/components': typeof StyleGuideComponentsRoute
   '/style-guide/illustration': typeof StyleGuideIllustrationRoute
@@ -354,6 +371,7 @@ export interface FileRoutesById {
   '/_authenticated/checkout/$tier': typeof AuthenticatedCheckoutTierRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/public/verify': typeof ApiPublicVerifyRoute
   '/share/style-guide/$token': typeof ShareStyleGuideTokenRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -384,6 +402,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/wardrobe'
     | '/api/generate-illustration'
+    | '/api/tryon'
     | '/style-guide/color'
     | '/style-guide/components'
     | '/style-guide/illustration'
@@ -395,6 +414,7 @@ export interface FileRouteTypes {
     | '/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/public/verify'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -423,6 +443,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/wardrobe'
     | '/api/generate-illustration'
+    | '/api/tryon'
     | '/style-guide/color'
     | '/style-guide/components'
     | '/style-guide/illustration'
@@ -434,6 +455,7 @@ export interface FileRouteTypes {
     | '/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/public/verify'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -463,6 +485,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/wardrobe'
     | '/api/generate-illustration'
+    | '/api/tryon'
     | '/style-guide/color'
     | '/style-guide/components'
     | '/style-guide/illustration'
@@ -474,6 +497,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout/$tier'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/public/verify'
     | '/share/style-guide/$token'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
@@ -495,6 +519,7 @@ export interface RootRouteChildren {
   TrustRoute: typeof TrustRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
+  ApiTryonRoute: typeof ApiTryonRoute
   StyleGuideColorRoute: typeof StyleGuideColorRoute
   StyleGuideComponentsRoute: typeof StyleGuideComponentsRoute
   StyleGuideIllustrationRoute: typeof StyleGuideIllustrationRoute
@@ -505,6 +530,7 @@ export interface RootRouteChildren {
   StyleGuideIndexRoute: typeof StyleGuideIndexRoute
   ApiBeeMagazineStreamRoute: typeof ApiBeeMagazineStreamRoute
   ApiBeeStreamRoute: typeof ApiBeeStreamRoute
+  ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ShareStyleGuideTokenRoute: typeof ShareStyleGuideTokenRoute
   ApiPublicBeeGuestRoute: typeof ApiPublicBeeGuestRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -648,6 +674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StyleGuideColorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/tryon': {
+      id: '/api/tryon'
+      path: '/api/tryon'
+      fullPath: '/api/tryon'
+      preLoaderRoute: typeof ApiTryonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/generate-illustration': {
       id: '/api/generate-illustration'
       path: '/api/generate-illustration'
@@ -723,6 +756,13 @@ declare module '@tanstack/react-router' {
       path: '/share/style-guide/$token'
       fullPath: '/share/style-guide/$token'
       preLoaderRoute: typeof ShareStyleGuideTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/verify': {
+      id: '/api/public/verify'
+      path: '/api/public/verify'
+      fullPath: '/api/public/verify'
+      preLoaderRoute: typeof ApiPublicVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bee/stream': {
@@ -826,6 +866,7 @@ const rootRouteChildren: RootRouteChildren = {
   TrustRoute: TrustRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
+  ApiTryonRoute: ApiTryonRoute,
   StyleGuideColorRoute: StyleGuideColorRoute,
   StyleGuideComponentsRoute: StyleGuideComponentsRoute,
   StyleGuideIllustrationRoute: StyleGuideIllustrationRoute,
@@ -836,6 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   StyleGuideIndexRoute: StyleGuideIndexRoute,
   ApiBeeMagazineStreamRoute: ApiBeeMagazineStreamRoute,
   ApiBeeStreamRoute: ApiBeeStreamRoute,
+  ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ShareStyleGuideTokenRoute: ShareStyleGuideTokenRoute,
   ApiPublicBeeGuestRoute: ApiPublicBeeGuestRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

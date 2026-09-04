@@ -30,6 +30,14 @@ Bundle identifier must stay `co.liveaskew.app`.
 
 Safe-area insets use `env(safe-area-inset-*)` (there is no published `@capacitor/safe-area` package).
 
+## Auth (Google / Apple)
+
+Supabase OAuth. Redirect URI: `co.liveaskew.app://` (native) and the preview origin (web). After Google, the app sends an email OTP. After Apple, collect a phone number and send a 6-digit SMS (private relay hides the real inbox).
+
+## Virtual try-on
+
+`POST /api/tryon` → `N8N_TRYON_WEBHOOK_URL` with selfie + garment and `preserveBodyProportions: true`. Results cache on `tryon_renders.cache_key`. If n8n is unset, the API returns the unaltered selfie — it never invents a reshaped body.
+
 ## iOS submission (not done in this environment)
 
 - Apple Developer ($99/yr)

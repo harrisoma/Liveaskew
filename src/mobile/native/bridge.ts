@@ -85,3 +85,32 @@ export async function setPushEnabled(enabled: boolean): Promise<boolean> {
 export function isOnline(): boolean {
   return typeof navigator === "undefined" ? true : navigator.onLine;
 }
+
+export function pickWardrobeBatch(): Promise<string[]> {
+  return new Promise((resolve) => {
+    if (typeof document === "undefined") {
+      resolve([]);
+      return;
+    }
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+    input.onchange = async () => {
+      const files = Array.from(input.files ?? []).slice(0, 12);
+      const urls = await Promise.all(
+        files.map(
+          (file) =>
+            new Promise<string | null>((ok) => {
+              const reader = new FileReader();
+              reader.onload = () => ok(typeof reader.result === "string" ? reader.result : null);
+              reader.onerror = () => ok(null);
+              reader.readAsDataURL(file);
+            }),
+        ),
+      );
+      resolve(urls.filter((u): u is string => Boolean(u)));
+    };
+    input.click();
+  });
+}

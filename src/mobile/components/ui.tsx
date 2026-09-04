@@ -13,8 +13,8 @@ export function NeoButton({
   return <button type="button" className={`neo-btn ${extra} ${className}`} {...props} />;
 }
 
-export function NeoField(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className="neo-input" {...props} />;
+export function NeoField({ className = "", ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={`neo-input ${className}`} {...props} />;
 }
 
 export function Screen({
