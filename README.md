@@ -16,6 +16,7 @@ npm test
 
 ## Service boundaries
 
+- **GitHub:** source of truth for this app (`harrisoma/Liveaskew`).
 - **Capacitor:** iOS and Android shells (`ios/`, `android/`).
 - **Vercel:** hosts the app preview and Bee API routes used by this repo.
 - **Supabase:** owns LiveAskew authentication, database, and storage.

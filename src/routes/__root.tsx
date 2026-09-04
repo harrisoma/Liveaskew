@@ -11,13 +11,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { RouteError, RouteNotFound } from "@/components/RouteError";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
   return <RouteError error={error} reset={reset} />;
 }
 
@@ -43,30 +39,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "LiveAskew — Personal AI Stylist" },
       {
-        name: "description",
-        content:
-          "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance.",
-      },
-      {
-        property: "og:description",
-        content:
-          "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance.",
-      },
-      {
         name: "twitter:description",
         content:
-          "LiveAskew is a web application for managing domains, email infrastructure, and user onboarding with AI assistance.",
+          "Conversational AI styling. Monthly looks, colour palette, wardrobe blueprint. Free for 14 days.",
       },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9bf1e19c-c973-4cd4-8889-e3c6de97d021/id-preview-b526b163--59a668ac-393a-421f-8c9e-80dcaad58378.lovable.app-1780610952943.png",
-      },
+      { property: "og:image", content: "/og.png" },
+      { name: "twitter:image", content: "/og.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

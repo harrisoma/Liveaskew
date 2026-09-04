@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { MyStyleGuide } from "@/lib/my-style-guide.functions";
 import type { HeroLook, LookIllustration } from "@/lib/style-looks.functions";
-import beePortraitAsset from "@/assets/bee-portrait.png.asset.json";
+import beePortrait from "@/assets/bee-portrait.png";
 
-const BEE_PORTRAIT = beePortraitAsset.url;
+const BEE_PORTRAIT = beePortrait;
 
 /* ───────────────────────────── helpers ───────────────────────────── */
 

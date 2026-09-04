@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logoAsset from "@/assets/askew-logo.png.asset.json";
+import logo from "@/assets/askew-logo.png";
 
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Meet Bee", href: "/#bee" },
@@ -37,7 +37,7 @@ export function Nav() {
         <Link to="/" className="flex items-center gap-3">
           {logoOk && (
             <img
-              src={logoAsset.url}
+              src={logo}
               alt=""
               aria-hidden
               onError={() => setLogoOk(false)}

@@ -18,7 +18,7 @@ const lines = source.split("\n");
 // 1) Collect image identifiers from import statements.
 //    Match imports whose path looks like an image/asset.
 const imageImportRe =
-  /^\s*import\s+(\w+)\s+from\s+["']([^"']+\.(?:jpe?g|png|gif|webp|avif|svg|png\.asset\.json|jpg\.asset\.json))["']\s*;?\s*$/;
+  /^\s*import\s+(\w+)\s+from\s+["']([^"']+\.(?:jpe?g|png|gif|webp|avif|svg))["']\s*;?\s*$/;
 
 const imageIdents = new Map(); // ident -> import path
 const importLineNumbers = new Set();
