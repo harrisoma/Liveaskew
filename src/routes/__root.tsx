@@ -7,7 +7,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { RouteError, RouteNotFound } from "@/components/RouteError";
 
 import appCss from "../styles.css?url";
@@ -98,6 +98,7 @@ function AuthSync() {
   const router = useRouter();
   const queryClient = useQueryClient();
   useEffect(() => {
+    if (!isSupabaseConfigured()) return;
     try {
       const { data } = supabase.auth.onAuthStateChange(() => {
         router.invalidate();

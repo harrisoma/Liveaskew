@@ -9,7 +9,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: "Who this covers",
     paragraphs: [
-      "This policy applies to the Bee mobile app (co.liveaskew.app) and the LiveAskew service that powers it. It is the public URL for the Google Play data safety form and the App Store privacy questions.",
+      "This policy applies to the Bee web app, the iOS and Android apps (co.liveaskew.app), and the LiveAskew service that powers them. It is the public URL for the Google Play data safety form and the App Store privacy questions.",
     ],
   },
   {

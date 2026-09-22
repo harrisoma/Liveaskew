@@ -21,7 +21,8 @@ const PREVIEW_CODE = "000000";
 
 async function supabaseOrNull() {
   try {
-    const { supabase } = await import("@/integrations/supabase/client");
+    const { isSupabaseConfigured, supabase } = await import("@/integrations/supabase/client");
+    if (!isSupabaseConfigured()) return null;
     return supabase;
   } catch {
     return null;
