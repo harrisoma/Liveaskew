@@ -1,7 +1,7 @@
 # Capacitor — Bee by LiveAskew
 
-Standalone phone app. App ID is permanent: `co.liveaskew.app`.
-Website marketing is a later, separate frontend. This repo’s native layer is the app only.
+Bee is one product: **web app**, **iOS**, and **Android**. App ID is permanent: `co.liveaskew.app`.
+The web app is `/` (and `/app`) on Vercel. These native projects wrap the same UI.
 
 ## Commands
 
@@ -41,7 +41,12 @@ Leave both unset for `npm run dev`.
 
 ## Auth (Google / Apple)
 
-Supabase OAuth. Redirect URI: `co.liveaskew.app://` (native) and the preview origin (web). After Google, the app sends an email OTP. After Apple, collect a phone number and send a 6-digit SMS (private relay hides the real inbox).
+Supabase OAuth with PKCE.
+
+- Web: redirect is the page origin (`/` or `/app`). The app exchanges `?code=` on load.
+- iOS / Android: redirect is `co.liveaskew.app://`. Android has a VIEW/BROWSABLE intent filter; iOS registers the URL scheme. `App.appUrlOpen` resumes the session.
+
+After Google, the app sends an email OTP. After Apple, collect a phone number and send a 6-digit SMS (private relay hides the real inbox).
 
 ## Virtual try-on
 

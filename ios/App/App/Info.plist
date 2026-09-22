@@ -83,6 +83,10 @@
 	<string>Bee uses a photo you choose so looks can be dressed on your body — never altered.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Bee only saves a photo if you ask to keep a reference look.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Bee notifies you when a new look is ready or a tier upgrade is available.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
 </dict>

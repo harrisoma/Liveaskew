@@ -52,6 +52,15 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+.la-web-shell {
+  min-height: 100dvh;
+  background: var(--neo-bg);
+}
+
+.la-web-aside {
+  display: none;
+}
+
 @media (min-width: 540px) {
   body {
     display: grid;
@@ -65,6 +74,24 @@ body {
     overflow: hidden;
     border-radius: 28px;
     box-shadow: var(--neo-raised);
+  }
+}
+
+@media (min-width: 960px) {
+  body {
+    display: block;
+  }
+  .la-web-shell {
+    display: grid;
+    grid-template-columns: minmax(240px, 320px) 390px;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem;
+  }
+  .la-web-aside {
+    display: block;
+    color: var(--ink);
   }
 }
 

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
 import { Route as ApiGenerateIllustrationRouteImport } from './routes/api/generate-illustration'
@@ -27,6 +28,11 @@ import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/g
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -98,6 +104,7 @@ const ApiPublicBeeGuestRoute = ApiPublicBeeGuestRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -131,6 +139,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/app'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   PrivacyRoute: typeof PrivacyRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
   ApiTryonRoute: typeof ApiTryonRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -318,6 +338,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   PrivacyRoute: PrivacyRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
   ApiTryonRoute: ApiTryonRoute,

@@ -1,6 +1,20 @@
 import type { AuthProvider } from "./storage";
 import { apiUrl } from "./api";
 
+export function parseAuthCallbackUrl(raw: string): string | null {
+  const query = raw.includes("?")
+    ? raw.slice(raw.indexOf("?") + 1)
+    : raw.includes("#")
+      ? raw.slice(raw.indexOf("#") + 1)
+      : "";
+  if (!query) return null;
+  try {
+    return new URLSearchParams(query.replace(/^#/, "")).get("code");
+  } catch {
+    return null;
+  }
+}
+
 export type VerifyChannel = "email" | "sms";
 
 const PREVIEW_CODE = "000000";
@@ -97,4 +111,57 @@ export async function confirmVerifyCode(
     /* preview */
   }
   return trimmed === PREVIEW_CODE;
+}
+
+export async function resumeAuthSession(currentUrl = typeof window === "undefined" ? "" : window.location.href): Promise<{
+  signedIn: boolean;
+  email: string | null;
+}> {
+  const supabase = await supabaseOrNull();
+  if (!supabase) return { signedIn: false, email: null };
+
+  try {
+    const code = currentUrl ? parseAuthCallbackUrl(currentUrl) : null;
+    if (code) {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if (typeof window !== "undefined") {
+        const clean = new URL(window.location.href);
+        clean.searchParams.delete("code");
+        clean.searchParams.delete("state");
+        window.history.replaceState({}, "", `${clean.pathname}${clean.search}${clean.hash}`);
+      }
+      if (!error && data.session) {
+        return { signedIn: true, email: data.session.user.email ?? null };
+      }
+    }
+
+    const { data } = await supabase.auth.getSession();
+    return {
+      signedIn: Boolean(data.session),
+      email: data.session?.user.email ?? null,
+    };
+  } catch {
+    return { signedIn: false, email: null };
+  }
+}
+
+export function bindNativeAuthResume(onResume: (email: string | null) => void): () => void {
+  let remove: (() => void) | undefined;
+  void (async () => {
+    try {
+      const { App } = await import("@capacitor/app");
+      const { Capacitor } = await import("@capacitor/core");
+      if (!Capacitor.isNativePlatform()) return;
+      const handle = await App.addListener("appUrlOpen", async (event) => {
+        const result = await resumeAuthSession(event.url);
+        if (result.signedIn) onResume(result.email);
+      });
+      remove = () => {
+        void handle.remove();
+      };
+    } catch {
+      /* web / missing plugin */
+    }
+  })();
+  return () => remove?.();
 }

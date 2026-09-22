@@ -1,26 +1,35 @@
-# LiveAskew — Bee (mobile app)
+# LiveAskew — Bee
 
-Bee is a native iOS/Android app (Capacitor) for personal styling. The product UI is the phone app: onboarding, Bee chat, saved looks, metal tiers, and profile. A marketing website is a separate later project that shares only this Supabase backend.
+Bee is one product on three surfaces: **web app**, **iOS**, and **Android**. The stylist is the same — Fit, Feel, and Fabric. Clothes follow your body. We never alter it.
 
-- App ID: `co.liveaskew.app` (permanent)
+- App ID: `co.liveaskew.app` (permanent on iOS and Android)
+- Web app: `/` and `/app` on this Vercel project
 - Design: neumorphic `#e0e5ec`, rounded rectangles only, Poppins / Nunito
-- Native notes: `docs/CAPACITOR.md`
-- Store copy: `STORE_LISTING.md`
 
 ```bash
-npm run dev          # phone UI + Bee API in this repo
-npm run dev:app      # Capacitor web bundle (Vite SPA)
+npm run dev          # Bee web app + API
+npm run dev:app      # Capacitor SPA (same UI, native bundle)
 npm run build:app && npx cap sync
 npm test
 ```
 
+## Platforms
+
+| Surface | How it ships |
+| --- | --- |
+| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`. |
+| **iOS** | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
+| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme. |
+
+Native notes: `docs/CAPACITOR.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
+
 ## Service boundaries
 
-- **GitHub:** source of truth for this app (`harrisoma/Liveaskew`).
-- **Capacitor:** iOS and Android shells (`ios/`, `android/`).
-- **Vercel:** hosts the app preview and Bee API routes used by this repo.
-- **Supabase:** owns LiveAskew authentication, database, and storage.
-- **Onixus AI:** exposes an OpenAI-compatible `/v1` endpoint and handles model routing for LiveAskew.
+- **GitHub:** source of truth (`harrisoma/Liveaskew`).
+- **Vercel:** Bee web app and Bee API routes.
+- **Capacitor:** iOS and Android shells.
+- **Supabase:** authentication, database, and storage.
+- **Onixus AI:** OpenAI-compatible `/v1` for model routing.
 
 LiveAskew sends `Authorization: Bearer <ONIXUS_AI_API_KEY>`, `X-Onixus-Organization-ID`, and `X-Onixus-Client: liveaskew` on AI requests. Keep all Onixus credentials server-side.
 
@@ -28,7 +37,7 @@ LiveAskew sends `Authorization: Bearer <ONIXUS_AI_API_KEY>`, `X-Onixus-Organizat
 
 1. Copy `.env.example` to `.env` and add the required values.
 2. Run `npm install`.
-3. Run `npm run dev`.
+3. Run `npm run dev` for the web app, or `npm run cap:sync` then open Xcode / Android Studio.
 
 ## Required production environment
 
@@ -47,7 +56,9 @@ ONIXUS_AI_API_KEY
 ONIXUS_AI_ORGANIZATION_ID
 ```
 
-For the current Supabase deployment, set `ONIXUS_AI_BASE_URL` to the Edge Function URL without a trailing slash: `https://rjwbfkuzgusaoizcmmgf.supabase.co/functions/v1/onixus-ai-gateway`. LiveAskew appends the OpenAI-compatible route (`chat/completions`, `images/generations`, or `images/edits`). The service role key and all Onixus values must never use the `VITE_` prefix.
+For native store binaries, also set `VITE_API_BASE` and/or `CAPACITOR_SERVER_URL` to the Vercel origin so `/api` is not relative to a file WebView.
+
+For the current Supabase deployment, set `ONIXUS_AI_BASE_URL` to the Edge Function URL without a trailing slash: `https://rjwbfkuzgusaoizcmmgf.supabase.co/functions/v1/onixus-ai-gateway`. The service role key and all Onixus values must never use the `VITE_` prefix.
 
 ## Verification
 

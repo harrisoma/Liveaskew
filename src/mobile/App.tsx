@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
-import { confirmVerifyCode, sendVerifyCode, signInWithProvider } from "./lib/auth";
+import {
+  bindNativeAuthResume,
+  confirmVerifyCode,
+  resumeAuthSession,
+  sendVerifyCode,
+  signInWithProvider,
+} from "./lib/auth";
+import { currentBeePlatform, platformLabel } from "./lib/platform";
 import {
   answersFromInterview,
   interviewOpener,
@@ -62,11 +69,24 @@ export function MobileApp() {
     setReady(true);
     void configureNativeChrome();
     setOnline(isOnline());
+    const applySession = (email: string | null) => {
+      setSnap((s) => ({
+        ...s,
+        email: email ?? s.email,
+        authProvider: s.authProvider ?? "google",
+        phase: s.phase === "auth" ? "verify" : s.phase,
+      }));
+    };
+    void resumeAuthSession().then((session) => {
+      if (session.signedIn) applySession(session.email);
+    });
+    const unbindAuth = bindNativeAuthResume(applySession);
     const on = () => setOnline(true);
     const off = () => setOnline(false);
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
     return () => {
+      unbindAuth();
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
     };
@@ -468,7 +488,7 @@ function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () =
     <Screen kicker="Bee" title="Sign in to begin">
       <p className="mb-5 text-sm leading-relaxed">
         Google or Apple only. After this, a short verification — then Bee interviews you in Fit,
-        Feel, and Fabric. No email-and-password wall.
+        Feel, and Fabric. Same app on web, iOS, and Android. No email-and-password wall.
       </p>
       <NeoButton variant="ink" onClick={onGoogle}>
         Continue with Google
@@ -932,6 +952,7 @@ function Profile({
           {snap.email ? ` · ${snap.email}` : ""}
           {snap.phone ? ` · ${snap.phone}` : ""}
         </p>
+        <p className="mt-2 opacity-70">Running on {platformLabel(currentBeePlatform())}</p>
       </div>
       <NeoButton className="mt-4" onClick={onPrivacy}>
         Privacy policy
