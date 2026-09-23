@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PLANS, getPlan, hasEntitlement } from "./plans";
+import { PLANS, getPlan, hasEntitlement, membershipAmount } from "./plans";
 
 describe("affordable plan catalog", () => {
   it("keeps published prices at the new rates", () => {
@@ -8,6 +8,9 @@ describe("affordable plan catalog", () => {
     expect(getPlan("platinum")?.priceMonthly).toBe(39);
     expect(getPlan("platinum_plus")?.priceMonthly).toBe(59);
     expect(getPlan("platinum_plus_family")?.priceMonthly).toBe(89);
+    const gold = getPlan("gold");
+    expect(gold && membershipAmount(gold, "month")).toBe(19);
+    expect(gold && membershipAmount(gold, "year")).toBe(182);
   });
 
   it("treats atelier as the negotiated Live Bee seat", () => {

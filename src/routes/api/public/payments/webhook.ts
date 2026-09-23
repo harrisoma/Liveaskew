@@ -36,12 +36,8 @@ async function upsertSubscription(subscription: any, env: StripeEnv) {
         product_id: productId,
         price_id: priceId,
         status: subscription.status,
-        current_period_start: periodStart
-          ? new Date(periodStart * 1000).toISOString()
-          : null,
-        current_period_end: periodEnd
-          ? new Date(periodEnd * 1000).toISOString()
-          : null,
+        current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
+        current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
         cancel_at_period_end: subscription.cancel_at_period_end || false,
         environment: env,
         updated_at: new Date().toISOString(),
@@ -59,18 +55,16 @@ async function upsertSubscription(subscription: any, env: StripeEnv) {
       if (email) {
         // Upsert by (user_id, environment) — unique index handles dedupe;
         // a second insert attempt from the email index will silently fail.
-        await getSupabase()
-          .from("trial_history")
-          .upsert(
-            {
-              user_id: userId,
-              email,
-              environment: env,
-              stripe_subscription_id: subscription.id,
-              started_at: new Date().toISOString(),
-            },
-            { onConflict: "user_id,environment", ignoreDuplicates: true },
-          );
+        await getSupabase().from("trial_history").upsert(
+          {
+            user_id: userId,
+            email,
+            environment: env,
+            stripe_subscription_id: subscription.id,
+            started_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id,environment", ignoreDuplicates: true },
+        );
       }
     } catch (e) {
       console.error("trial_history record failed", e);
@@ -128,6 +122,52 @@ async function handlePaymentFailed(invoice: any, env: StripeEnv) {
   }
 }
 
+type CryptoCheckoutSession = {
+  id?: string;
+  payment_status?: string | null;
+  customer?: string | null;
+  metadata?: {
+    method?: string;
+    userId?: string;
+    plan?: string;
+    interval?: string;
+  } | null;
+};
+
+async function grantCryptoTerm(session: CryptoCheckoutSession, env: StripeEnv) {
+  if (session?.metadata?.method !== "crypto") return;
+  if (session.payment_status !== "paid") return;
+  const userId = session.metadata?.userId;
+  const plan = session.metadata?.plan;
+  const interval = session.metadata?.interval === "year" ? "year" : "month";
+  if (!userId || !plan || !session.id) return;
+
+  const start = new Date();
+  const end = new Date(start);
+  if (interval === "year") end.setFullYear(end.getFullYear() + 1);
+  else end.setMonth(end.getMonth() + 1);
+
+  const { error } = await getSupabase()
+    .from("subscriptions")
+    .upsert(
+      {
+        user_id: userId,
+        stripe_subscription_id: `crypto_${session.id}`,
+        stripe_customer_id: String(session.customer ?? session.id),
+        product_id: plan,
+        price_id: `${plan}_${interval}_crypto`,
+        status: "active",
+        current_period_start: start.toISOString(),
+        current_period_end: end.toISOString(),
+        cancel_at_period_end: true,
+        environment: env,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "stripe_subscription_id" },
+    );
+  if (error) throw error;
+}
+
 async function handlePaymentSucceeded(invoice: any, env: StripeEnv) {
   const subscriptionId = invoice.subscription;
   if (!subscriptionId) return;
@@ -166,6 +206,10 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
               break;
             case "invoice.payment_succeeded":
               await handlePaymentSucceeded(event.data.object, env);
+              break;
+            case "checkout.session.completed":
+            case "checkout.session.async_payment_succeeded":
+              await grantCryptoTerm(event.data.object, env);
               break;
             default:
               console.log("Unhandled payment event:", event.type);

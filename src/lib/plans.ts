@@ -17,8 +17,8 @@ export type Plan = {
   name: string;
   tagline: string;
   priceMonthly: number; // USD, 0 for inquiry-only
-  priceAnnual: number;  // USD/year — priceMonthly * 12 * 0.8 (rounded)
-  cadence: string;      // display cadence for monthly view
+  priceAnnual: number; // USD/year — priceMonthly * 12 * 0.8 (rounded)
+  cadence: string; // display cadence for monthly view
   description: string;
   flagship: boolean;
   inquiry: boolean;
@@ -42,7 +42,7 @@ export const PLANS: Plan[] = [
     features: [
       "Bee in writing",
       "Full wardrobe vault",
-      "Editorial dressing calendar",
+      "A calendar of what is coming up",
       "Personal style profile",
       "Static lookbook (no Selfie AI)",
       "Monthly digest",
@@ -84,6 +84,7 @@ export const PLANS: Plan[] = [
       "Shoppable look manifests",
       "Priority look generation",
       "Full curated shopping access",
+      "The Hive, inside Bee",
     ],
   },
   {
@@ -102,6 +103,8 @@ export const PLANS: Plan[] = [
       "Add a partner seat — their own Bee, face & wardrobe",
       "Household context switcher",
       "Quarterly 1-on-1 with Bianca",
+      "Buzz posts the look",
+      "Honey dresses the occasion from weather, place, time, and energy",
     ],
   },
   {
@@ -121,6 +124,7 @@ export const PLANS: Plan[] = [
       "Kids & couples dressing mode",
       "Shared wardrobe rooms",
       "Quarterly 1-on-1 with Bianca",
+      "Honey for each seat in the household",
     ],
   },
   {
@@ -140,9 +144,14 @@ export const PLANS: Plan[] = [
       "Bespoke wardrobe build",
       "Photoshoot & event direction",
       "Direct line to your stylist",
+      "Honey on the same calendar",
     ],
   },
 ];
+
+export function membershipAmount(plan: Plan, interval: "month" | "year"): number {
+  return interval === "year" ? plan.priceAnnual : plan.priceMonthly;
+}
 
 export function getPlan(slug: string | null | undefined): Plan | null {
   if (!slug) return null;
@@ -259,10 +268,7 @@ function mapTier(tier: string | null | undefined): PlanSlug | null {
   return null;
 }
 
-export function hasEntitlement(
-  tier: string | null | undefined,
-  key: Entitlement,
-): boolean {
+export function hasEntitlement(tier: string | null | undefined, key: Entitlement): boolean {
   const slug = mapTier(tier);
   if (!slug) return false;
   const value = ENTITLEMENTS[slug][key];
@@ -321,8 +327,5 @@ export async function loadResolvedTier(): Promise<string | null> {
   ]);
   // Dev/admin override: admins get every entitlement across the app.
   if (adminRes.data) return "atelier";
-  return resolveTier(
-    (profileRes.data?.tier as string | null) ?? null,
-    subRes.data ?? null,
-  );
+  return resolveTier((profileRes.data?.tier as string | null) ?? null, subRes.data ?? null);
 }
