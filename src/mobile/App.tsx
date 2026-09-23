@@ -868,6 +868,8 @@ function Tiers({
   const currentSlug = normalizePlanSlug(current) ?? "silver";
   const index = Math.max(0, TIER_ORDER.indexOf(currentSlug as PlanSlug));
   const progress = ((index + 1) / TIER_ORDER.length) * 100;
+  const live = TIERS.find((plan) => plan.inquiry);
+  const metals = TIERS.filter((plan) => !plan.inquiry);
   return (
     <Screen kicker="Membership" title="Your metal">
       {gated && (
@@ -875,9 +877,23 @@ function Tiers({
           Your 14-day window is done. Pick a tier to keep generating looks.
         </p>
       )}
-      <div className="neo-inset p-4">
+      {live && (
+        <button
+          type="button"
+          aria-pressed={live.slug === currentSlug}
+          className="neo-choice mb-4 min-h-0 flex-col items-start py-3"
+          onClick={() => onSelect(live.slug)}
+        >
+          <span className="flex w-full items-center justify-between">
+            <span className="la-display text-lg">{live.name}</span>
+            <span className="text-sm text-[var(--gold)]">{formatTierPrice(live)}</span>
+          </span>
+          <span className="mt-1 text-sm font-normal opacity-70">{live.tagline}</span>
+        </button>
+      )}
+      <div className="neo-inset p-3">
         <p className="text-sm">Progress toward 1-on-1 Live Bee</p>
-        <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
+        <div className="mt-2 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
             className="h-full rounded-[8px] bg-[var(--gold)]"
             style={{ width: `${progress}%` }}
@@ -887,15 +903,15 @@ function Tiers({
           {TIERS[index]?.name ?? "Silver"} · {index + 1} of {TIER_ORDER.length}
         </p>
       </div>
-      <ol className="mt-5 space-y-3">
-        {TIERS.map((plan) => {
+      <ol className="mt-4 space-y-2">
+        {metals.map((plan) => {
           const active = plan.slug === currentSlug;
           return (
             <li key={plan.slug}>
               <button
                 type="button"
                 aria-pressed={active}
-                className="neo-choice flex-col items-start"
+                className="neo-choice min-h-0 flex-col items-start py-2"
                 onClick={() => onSelect(plan.slug)}
               >
                 <span className="flex w-full items-center justify-between">
