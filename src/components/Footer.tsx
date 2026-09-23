@@ -8,11 +8,17 @@ export function Footer() {
         <p className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55">
           © 2026 LiveAskew. Inclusive styling, crafted with intention.
         </p>
-        <div className="flex gap-8">
-          <a
-            href="/privacy"
-            className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
-          >
+        <div className="flex flex-wrap justify-center gap-6">
+          <a href="/app" className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep">
+            Bee
+          </a>
+          <a href="/hive" className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep">
+            The Hive
+          </a>
+          <a href="/buzz" className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep">
+            Buzz
+          </a>
+          <a href="/privacy" className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep">
             Privacy
           </a>
         </div>

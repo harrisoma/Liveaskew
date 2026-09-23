@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as HiveRouteImport } from './routes/hive'
+import { Route as BuzzRouteImport } from './routes/buzz'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
@@ -28,6 +30,16 @@ import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/g
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HiveRoute = HiveRouteImport.update({
+  id: '/hive',
+  path: '/hive',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuzzRoute = BuzzRouteImport.update({
+  id: '/buzz',
+  path: '/buzz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -105,6 +117,8 @@ const ApiPublicBeeGuestRoute = ApiPublicBeeGuestRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/buzz': typeof BuzzRoute
+  '/hive': typeof HiveRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -122,6 +136,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/buzz': typeof BuzzRoute
+  '/hive': typeof HiveRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -140,6 +156,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/buzz': typeof BuzzRoute
+  '/hive': typeof HiveRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -159,6 +177,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/buzz'
+    | '/hive'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -176,6 +196,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/buzz'
+    | '/hive'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -193,6 +215,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/buzz'
+    | '/hive'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -211,6 +235,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
+  BuzzRoute: typeof BuzzRoute
+  HiveRoute: typeof HiveRoute
   PrivacyRoute: typeof PrivacyRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
   ApiTryonRoute: typeof ApiTryonRoute
@@ -233,6 +259,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hive': {
+      id: '/hive'
+      path: '/hive'
+      fullPath: '/hive'
+      preLoaderRoute: typeof HiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buzz': {
+      id: '/buzz'
+      path: '/buzz'
+      fullPath: '/buzz'
+      preLoaderRoute: typeof BuzzRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -339,6 +379,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
+  BuzzRoute: BuzzRoute,
+  HiveRoute: HiveRoute,
   PrivacyRoute: PrivacyRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
   ApiTryonRoute: ApiTryonRoute,

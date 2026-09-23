@@ -23,13 +23,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#e0e5ec" },
-      { title: "Bee — AI stylist by LiveAskew" },
+      { title: "LiveAskew — Bee, The Hive, and Buzz" },
       {
         name: "description",
         content:
-          "Bee by LiveAskew is a personal styling app and AI stylist built on Fit, Feel, and Fabric.",
+          "LiveAskew is Bee, the styling app; The Hive, one community; and Buzz, which posts your style everywhere.",
       },
-      { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
+      { property: "og:title", content: "LiveAskew — Bee, The Hive, and Buzz" },
       {
         property: "og:description",
         content:
@@ -57,7 +57,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
     ],
