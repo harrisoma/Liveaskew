@@ -79,22 +79,37 @@ export function LiveAskewLogo({ className = "" }: { className?: string }) {
   );
 }
 
+export function LiveAskewSignature({ className = "" }: { className?: string }) {
+  return (
+    <img
+      src="/liveaskew-signature.png"
+      alt="LiveAskew signature"
+      width={866}
+      height={1610}
+      className={`w-auto object-contain ${className}`}
+    />
+  );
+}
+
 export function BeeByLiveAskew({
   crestClass = "h-20 w-20",
-  wordClass = "text-[1.65rem]",
+  wordClass = "text-[1.55rem]",
 }: {
   crestClass?: string;
   wordClass?: string;
 }) {
   return (
-    <div className="flex items-center gap-3" aria-label="Bee by LiveAskew">
+    <div className="flex items-center gap-4" aria-label="Bee by LiveAskew">
       <BeeLogo className={`${crestClass} shrink-0`} />
-      <p className="text-left leading-none">
-        <span className="mb-1 block text-[0.68rem] font-medium tracking-[0.18em] uppercase opacity-55">
-          by
-        </span>
-        <LiveAskewLogo className={wordClass} />
-      </p>
+      <div className="flex flex-col items-start gap-1">
+        <p className="leading-none">
+          <span className="mr-1 text-[0.68rem] font-medium tracking-[0.18em] uppercase opacity-55">
+            by
+          </span>
+          <LiveAskewLogo className={wordClass} />
+        </p>
+        <LiveAskewSignature className="h-36" />
+      </div>
     </div>
   );
 }
