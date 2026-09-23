@@ -3,6 +3,7 @@ import {
   generateIllustrationBytes,
   ILLUSTRATION_ROUTE_VERSION,
 } from "@/lib/generate-illustration.server";
+import { illustrationModel } from "@/lib/together-image";
 
 function bytesToB64(bytes: Uint8Array): string {
   let binary = "";
@@ -37,9 +38,8 @@ export const Route = createFileRoute("/api/generate-illustration")({
             headers: { "Content-Type": "application/json" },
           });
         }
-        const key = process.env.ONIXUS_AI_API_KEY;
-        if (!key) {
-          return new Response("Missing ONIXUS_AI_API_KEY", { status: 500 });
+        if (!process.env.TOGETHER_API_KEY) {
+          return new Response("Missing TOGETHER_API_KEY", { status: 500 });
         }
 
         // Load supabase admin + db logging helpers.
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/api/generate-illustration")({
           });
         }
 
-        const model = "openai/gpt-image-2";
+        const model = illustrationModel();
         const kind = "photoreal_client_shot";
         const startedAt = Date.now();
 
@@ -96,8 +96,14 @@ export const Route = createFileRoute("/api/generate-illustration")({
         try {
           const result = await generateIllustrationBytes({
             prompt,
-            apiKey: key,
             referenceImageB64,
+            referenceImageUrl: selfiePhotoPath
+              ? (
+                  await supabaseAdmin.storage
+                    .from("selfies")
+                    .createSignedUrl(selfiePhotoPath, 60 * 10)
+                ).data?.signedUrl
+              : undefined,
           });
           await logAttempt("completed", { attempts: 1 });
           return Response.json({

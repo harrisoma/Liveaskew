@@ -11,3 +11,4 @@ export {
 export { planOutfit, type BodyStage, type Occasion, type OutfitPlan } from "./stylist";
 export { rankWardrobe, type WardrobeItem } from "./vectors";
 export { describeGarment, visionPayload } from "./vision";
+export { isDue, publishLook, type PublishConnection, type PublishResult } from "./publish";

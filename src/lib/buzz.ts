@@ -1,8 +1,9 @@
 export const BUZZ_PLATFORMS = [
-  { id: "x", name: "X" },
   { id: "instagram", name: "Instagram" },
+  { id: "tiktok", name: "TikTok" },
+  { id: "pinterest", name: "Pinterest" },
   { id: "facebook", name: "Facebook" },
-  { id: "telegram", name: "Telegram" },
+  { id: "linkedin", name: "LinkedIn" },
 ] as const;
 
 export type BuzzPlatformId = (typeof BUZZ_PLATFORMS)[number]["id"];
@@ -18,10 +19,11 @@ const DAY_LINES = [
 ] as const;
 
 const PLATFORM_TAIL: Record<BuzzPlatformId, string> = {
-  x: "",
-  instagram: " Saved to the grid.",
-  facebook: " Posted for the people who know the week.",
-  telegram: " Sent to the channel.",
+  instagram: " On the grid.",
+  tiktok: " For the evening scroll.",
+  pinterest: " Saved to the board.",
+  facebook: " For the people who know the week.",
+  linkedin: " Before the first meeting.",
 };
 
 export function cleanLook(instruction: string): string {

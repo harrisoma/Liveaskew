@@ -10,6 +10,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateIllustrationBytes } from "@/lib/generate-illustration.server";
+import { illustrationModel } from "@/lib/together-image";
 
 const BUCKET = "style-illustrations";
 const SIGNED_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -63,10 +64,10 @@ async function objectExists(
   return Boolean(data?.some((f) => f.name === `${heroId}.png`));
 }
 
-async function loadSelfieB64(
+async function loadSelfie(
   admin: Awaited<ReturnType<typeof getAdmin>>,
   userId: string,
-): Promise<string> {
+): Promise<{ b64: string; url: string | null }> {
   const { data: profile } = await admin
     .from("profiles")
     .select("selfie_photo_path")
@@ -75,9 +76,10 @@ async function loadSelfieB64(
   const selfiePath = (profile?.selfie_photo_path as string | null) ?? null;
   if (!selfiePath) throw new Error("No selfie on file");
 
-  const { data: selfieBlob, error: dlError } = await admin.storage
-    .from("selfies")
-    .download(selfiePath);
+  const [{ data: selfieBlob, error: dlError }, signed] = await Promise.all([
+    admin.storage.from("selfies").download(selfiePath),
+    admin.storage.from("selfies").createSignedUrl(selfiePath, 60 * 10),
+  ]);
   if (dlError || !selfieBlob) {
     throw new Error(`Selfie download failed: ${dlError?.message ?? "no data"}`);
   }
@@ -87,7 +89,7 @@ async function loadSelfieB64(
   for (let i = 0; i < refBytes.length; i += chunk) {
     refB64 += String.fromCharCode(...refBytes.subarray(i, i + chunk));
   }
-  return btoa(refB64);
+  return { b64: btoa(refB64), url: signed.data?.signedUrl ?? null };
 }
 
 async function renderLook(opts: {
@@ -95,6 +97,7 @@ async function renderLook(opts: {
   userId: string;
   look: PhotorealLookInput;
   selfieB64: string | null;
+  selfieUrl: string | null;
 }): Promise<PhotorealLookResult> {
   const { admin, userId, look } = opts;
   const path = objectPath(userId, look.heroId);
@@ -104,12 +107,13 @@ async function renderLook(opts: {
     if (url) return { heroId: look.heroId, url, cached: true };
   }
 
-  const selfieB64 = opts.selfieB64 ?? (await loadSelfieB64(admin, userId));
-  const apiKey = process.env.ONIXUS_AI_API_KEY;
-  if (!apiKey) throw new Error("Missing ONIXUS_AI_API_KEY");
+  const selfie = opts.selfieB64
+    ? { b64: opts.selfieB64, url: opts.selfieUrl }
+    : await loadSelfie(admin, userId);
+  if (!process.env.TOGETHER_API_KEY) throw new Error("Missing TOGETHER_API_KEY");
 
   const startedAt = Date.now();
-  const model = "openai/gpt-image-2";
+  const model = illustrationModel();
   const kind = "photoreal_hero";
 
   const logAttempt = async (status: "completed" | "failed", extra: { error?: string }) => {
@@ -132,8 +136,8 @@ async function renderLook(opts: {
   try {
     const result = await generateIllustrationBytes({
       prompt: look.prompt,
-      apiKey,
-      referenceImageB64: selfieB64,
+      referenceImageB64: selfie.b64,
+      referenceImageUrl: selfie.url ?? undefined,
       logPrefix: `[photoreal-hero:${look.heroId}]`,
     });
     const { error: upErr } = await admin.storage.from(BUCKET).upload(path, result.bytes, {
@@ -190,11 +194,19 @@ export const generatePhotorealHero = createServerFn({ method: "POST" })
       for (const look of data.looks) {
         if (!(await objectExists(admin, userId, look.heroId))) needsSelfie.push(look);
       }
-      const selfieB64 = needsSelfie.length > 0 ? await loadSelfieB64(admin, userId) : null;
+      const selfie = needsSelfie.length > 0 ? await loadSelfie(admin, userId) : null;
 
       const results: PhotorealLookResult[] = [];
       for (const look of data.looks) {
-        results.push(await renderLook({ admin, userId, look, selfieB64 }));
+        results.push(
+          await renderLook({
+            admin,
+            userId,
+            look,
+            selfieB64: selfie?.b64 ?? null,
+            selfieUrl: selfie?.url ?? null,
+          }),
+        );
       }
       const first = results[0];
       if (!first) throw new Error("Missing heroId/prompt");

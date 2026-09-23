@@ -9,9 +9,8 @@
 // the per-client image, the live status, or fall back to the static plate.
 
 import { createServerFn } from "@tanstack/react-start";
-
-
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { illustrationModel } from "@/lib/together-image";
 
 export type PlateKind = "color" | "silhouette" | "lifestyle";
 export const PLATE_KINDS: ReadonlyArray<PlateKind> = ["color", "silhouette", "lifestyle"];
@@ -80,7 +79,6 @@ type PromptContext = {
   climateExclude: string;
 };
 
-const MODEL_NAME = "google/gemini-3.1-flash-image-preview";
 const MAX_ATTEMPTS = 3; // 1 initial + 2 retries
 
 function currentSeason(climate: string): string {
@@ -237,7 +235,7 @@ async function runOnePlate(params: {
   const baseLog = {
     user_id: userId,
     kind,
-    model: MODEL_NAME,
+    model: illustrationModel(),
     prompt,
     attempts,
     duration_ms: totalDuration,
@@ -251,7 +249,7 @@ async function runOnePlate(params: {
       attempts,
       error: lastError,
       prompt,
-      model: MODEL_NAME,
+      model: illustrationModel(),
       duration_ms: totalDuration,
       created_at: startedAt,
     };
@@ -274,7 +272,7 @@ async function runOnePlate(params: {
       attempts,
       error: `upload ${uploadErr.message}`,
       prompt,
-      model: MODEL_NAME,
+      model: illustrationModel(),
       duration_ms: totalDuration,
       created_at: startedAt,
     };
@@ -292,7 +290,7 @@ async function runOnePlate(params: {
     path,
     prompt,
     attempts,
-    model: MODEL_NAME,
+    model: illustrationModel(),
     duration_ms: totalDuration,
     created_at: startedAt,
   };

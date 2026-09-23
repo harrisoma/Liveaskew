@@ -6,8 +6,6 @@ import type { Database } from "@/integrations/supabase/types";
 
 type DB = SupabaseClient<Database>;
 
-
-
 async function loadStylingContext(supabase: DB, userId: string) {
   const [{ data: profile }, { data: styleProfile }, { data: onboarding }] = await Promise.all([
     supabase
@@ -114,7 +112,6 @@ export const persistMagazineLooks = createServerFn({ method: "POST" })
     };
   });
 
-
 // ──────────────────────────────────────────────────────────────────────────────
 // generateLookCover — render + persist a cover for a single look. Called
 // sequentially from the client (one look at a time) so the serverless queue
@@ -178,13 +175,11 @@ async function renderAndStoreLookCover(args: {
   lookId: string;
   prompt: string;
 }): Promise<string | null> {
-  const key = process.env.ONIXUS_AI_API_KEY;
-  if (!key) throw new Error("Missing ONIXUS_AI_API_KEY");
+  if (!process.env.TOGETHER_API_KEY) throw new Error("Missing TOGETHER_API_KEY");
 
   const { generateIllustrationBytes } = await import("@/lib/generate-illustration.server");
   const { bytes } = await generateIllustrationBytes({
     prompt: args.prompt,
-    apiKey: key,
     logPrefix: "[generate-look-cover]",
   });
 
@@ -230,7 +225,16 @@ export const listMagazineLooks = createServerFn({ method: "GET" })
           .select("look_id, name, category, color, recommended_fit, position")
           .in("look_id", lookIds)
           .order("position", { ascending: true })
-      : { data: [] as Array<{ look_id: string; name: string | null; category: string | null; color: string | null; recommended_fit: string | null; position: number | null }> };
+      : {
+          data: [] as Array<{
+            look_id: string;
+            name: string | null;
+            category: string | null;
+            color: string | null;
+            recommended_fit: string | null;
+            position: number | null;
+          }>,
+        };
 
     // Signed URLs for private bucket covers
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

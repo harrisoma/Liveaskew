@@ -90,12 +90,12 @@ export function Dashboard() {
             margin: "8px 0",
           }}
         >
-          Your look. Your caption.
+          Grow your presence.
         </h1>
         <p className="muted">
-          Buzz is its own app. Upload a photo — influencer, stylist, or anyone. The caption starts
-          from what you tell it, and each note you teach it shows up in the next post. Bee is
-          optional.
+          Elevate. Uplift. Broadcast to the world. Upload a photo, or take one from Bee. Buzz posts
+          to Instagram, TikTok, Pinterest, Facebook, and LinkedIn through each network&apos;s own
+          door once that account is connected. No outside scheduler.
         </p>
       </div>
       <div className="stats">
@@ -204,6 +204,7 @@ export function Dashboard() {
               <p className="muted">
                 {item.status} · {item.platforms.join(", ")}
               </p>
+              {item.publishNote ? <p className="muted">{item.publishNote}</p> : null}
               {(item.captions ?? []).map((caption) => (
                 <p key={caption.platform}>
                   <span className="badge">{caption.platform}</span> {caption.text}

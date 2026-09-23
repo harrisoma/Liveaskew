@@ -21,6 +21,7 @@ export type LookRecord = LookTransfer & {
   captions: LookCaption[];
   signIn: string | null;
   authorName: string | null;
+  publishNote: string | null;
 };
 
 type Store = { looks: LookRecord[] };
@@ -89,6 +90,7 @@ export function getLookStore() {
         captions: meta.captions ?? [],
         signIn: meta.signIn ?? null,
         authorName: meta.authorName ?? null,
+        publishNote: null,
       };
       store().looks.push(record);
       return record;
@@ -104,6 +106,13 @@ export function getLookStore() {
       const look = store().looks.find((item) => item.id === id);
       if (!look) return null;
       look.status = "posted";
+      look.publishNote = null;
+      return look;
+    },
+    setPublishNote(id: string, note: string) {
+      const look = store().looks.find((item) => item.id === id);
+      if (!look) return null;
+      look.publishNote = note;
       return look;
     },
   };
