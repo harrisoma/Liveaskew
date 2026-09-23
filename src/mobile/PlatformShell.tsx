@@ -9,9 +9,13 @@ export function PlatformShell({ children }: { children: ReactNode }) {
   return (
     <div className="la-web-shell">
       <aside className="la-web-aside" aria-label="Bee platforms">
-        <BeeLogo className="h-24 w-24" />
-        <p className="la-kicker mt-4">LiveAskew</p>
-        <p className="la-display mt-2 text-4xl">Bee</p>
+        <div className="flex items-center gap-3">
+          <BeeLogo className="h-20 w-20 shrink-0" />
+          <p className="la-display text-[1.65rem] leading-none font-semibold tracking-tight">
+            <span className="mr-1 text-base font-medium opacity-60">by</span>
+            LiveAskew
+          </p>
+        </div>
         <p className="mt-4 text-sm leading-relaxed">
           The same personal stylist on the web app, iPhone, and Android. Clothes follow your body —
           we never alter it.

@@ -161,6 +161,46 @@ body {
     -4px -4px 8px var(--neo-light);
 }
 
+.login-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: 56px;
+  padding: 0.85rem 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--ink) 14%, transparent);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.login-bar + .login-bar {
+  margin-top: 0.85rem;
+}
+
+.login-bar-ink {
+  background: var(--ink);
+  color: var(--white);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--ink) 32%, transparent);
+}
+
+.login-bar:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.login-bar:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .neo-icon-btn {
   display: grid;
   place-items: center;

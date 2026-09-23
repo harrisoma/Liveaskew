@@ -489,25 +489,29 @@ const AUTH_BUTTONS: {
 
 function AuthScreen({ onProvider }: { onProvider: (provider: AuthProvider) => void }) {
   return (
-    <Screen kicker="Bee" title="Sign in to begin">
-      <div className="mb-5 flex justify-center">
-        <BeeLogo className="h-24 w-24" />
+    <Screen>
+      <div className="mb-6 flex items-center justify-center gap-3">
+        <BeeLogo className="h-20 w-20 shrink-0" />
+        <p className="la-display text-left text-[1.65rem] leading-none font-semibold tracking-tight">
+          <span className="mr-1 text-base font-medium opacity-60">by</span>
+          LiveAskew
+        </p>
       </div>
-      <p className="mb-5 text-sm leading-relaxed">
+      <p className="mb-6 text-sm leading-relaxed">
         Google, Apple, Facebook, or Instagram. After this, a short verification — then Bee
         interviews you in Fit, Feel, and Fabric. Same app on web, iOS, and Android. No
         email-and-password wall.
       </p>
-      {AUTH_BUTTONS.map(({ provider, variant, Mark }, index) => (
-        <NeoButton
+      {AUTH_BUTTONS.map(({ provider, variant, Mark }) => (
+        <button
           key={provider}
-          className={index === 0 ? undefined : "mt-3"}
-          variant={variant}
+          type="button"
+          className={`login-bar ${variant === "ink" ? "login-bar-ink" : ""}`}
           onClick={() => onProvider(provider)}
         >
           <Mark />
           Continue with {AUTH_PROVIDER_LABEL[provider]}
-        </NeoButton>
+        </button>
       ))}
     </Screen>
   );
