@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
+import { SocialMarks } from "@/components/site/SocialMarks";
 import { BUZZ_PLATFORMS, buzzMessage, buzzWeek } from "@/lib/buzz";
 import buzzHero from "@/assets/wardrobe-flatlay.jpg";
 
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/buzz")({
       {
         name: "description",
         content:
-          "Buzz posts your style to X, Instagram, Facebook, and Telegram. Upload a photo, tell the AI what to put you in, and it sends a new message every day.",
+          "Grow your presence. Buzz posts the look to Instagram, TikTok, Pinterest, Facebook, and LinkedIn through each network's own door.",
       },
     ],
   }),
@@ -47,12 +48,13 @@ function BuzzPage() {
           <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
             <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">Buzz</p>
             <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-6xl">
-              Post the look. Every day.
+              Grow your presence.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white">
-              Upload the photo. Say what to put you in. Buzz writes a different line for every
-              platform, then a new one each morning.
+              Elevate. Uplift. Broadcast to the world. Upload the photo, say what to put you in, and
+              Buzz writes a different line for every network.
             </p>
+            <SocialMarks ids={["instagram", "tiktok", "pinterest", "facebook", "linkedin"]} />
           </div>
         </div>
       </section>
@@ -105,20 +107,25 @@ function BuzzPage() {
               className="mt-2 w-full rounded-[1.25rem] border border-black/10 bg-white/80 px-4 py-3 text-base outline-none"
             />
           </label>
-          <button type="submit" className="neo-btn-ink mt-5 disabled:opacity-40" disabled={!photo || !look}>
+          <button
+            type="submit"
+            className="neo-btn-ink mt-5 disabled:opacity-40"
+            disabled={!photo || !look}
+          >
             Post everywhere
           </button>
           <p className="mt-4 text-sm leading-relaxed text-black">
-            Buzz keeps the style and sends a new line each day. Connecting X, Instagram, Facebook,
-            and Telegram is what turns the draft into a live post.
+            Buzz keeps the style and sends a new line each day. Connect Instagram, TikTok,
+            Pinterest, Facebook, and LinkedIn. Buzz posts through each network&apos;s own door. No
+            outside scheduler.
           </p>
         </form>
 
         <div>
           {!ready && (
             <div className="glass rounded-[2rem] px-6 py-10 text-sm leading-relaxed">
-              The four posts appear here. Each platform gets its own wording. The week under them
-              is the same style, said seven different ways.
+              Five posts appear here. Each network gets its own wording. The week under them is the
+              same style, said seven different ways.
             </div>
           )}
           {ready && (

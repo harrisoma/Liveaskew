@@ -12,12 +12,12 @@ describe("buzzMessage", () => {
 
   it("writes a different close for each platform", () => {
     const look = "a covered work set";
-    const x = buzzMessage(look, 0, "x");
     const instagram = buzzMessage(look, 0, "instagram");
+    const tiktok = buzzMessage(look, 0, "tiktok");
     const facebook = buzzMessage(look, 0, "facebook");
-    const telegram = buzzMessage(look, 0, "telegram");
-    expect(instagram).not.toBe(x);
+    const linkedin = buzzMessage(look, 0, "linkedin");
+    expect(tiktok).not.toBe(instagram);
     expect(facebook).not.toBe(instagram);
-    expect(telegram).toMatch(/channel/i);
+    expect(linkedin).toMatch(/meeting/i);
   });
 });

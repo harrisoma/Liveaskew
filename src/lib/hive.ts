@@ -1,4 +1,4 @@
-export const HIVE_NETWORKS = ["X", "Telegram", "Facebook", "Instagram"] as const;
+export const HIVE_NETWORKS = ["Instagram", "Facebook", "TikTok"] as const;
 
 export const HIVE_ROOMS = [
   {
@@ -31,12 +31,12 @@ export const HIVE_THREADS = [
   },
   {
     room: "Style",
-    network: "X",
+    network: "TikTok",
     text: "Wool that holds, silk that breathes. That is the whole brief for this week.",
   },
   {
     room: "Everyday",
-    network: "Telegram",
+    network: "Instagram",
     text: "Rain until Thursday. Who is keeping the shoe and swapping only the layer?",
   },
   {

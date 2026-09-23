@@ -1,4 +1,4 @@
-import { getOnixusAiHeaders, getOnixusAiUrl } from "@/lib/ai-gateway.server";
+import { togetherImageRequest } from "@/lib/together-image";
 
 type ImageGenerationJson = {
   data?: Array<{ b64_json?: string; url?: string }>;
@@ -7,10 +7,11 @@ type ImageGenerationJson = {
   [key: string]: unknown;
 };
 
-export const ILLUSTRATION_ROUTE_VERSION =
-  "generate-illustration-2026-photoreal-img2img-v1";
+export const ILLUSTRATION_ROUTE_VERSION = "generate-illustration-2026-together-qwen-v1";
 
 export const ILLUSTRATION_SYSTEM_PROMPT = `Photorealistic editorial fashion photograph. NOT an illustration, NOT painterly, NOT stylized — a real photograph.
+
+CLEAN FRAME: one person, one outfit, an empty background. No collage, no extra garments, no props crowding the floor, no text.
 
 IDENTITY (hard rule): The person in the reference image is the subject. Preserve their EXACT face, skin tone, hair, body shape, weight, and proportions. Never slim, alter, smooth, idealize, or beautify the body. Same person, same body — different outfit and setting only.
 
@@ -92,54 +93,37 @@ async function urlToB64(url: string): Promise<string | null> {
 
 export async function generateIllustrationBytes(params: {
   prompt: string;
-  apiKey: string;
+  apiKey?: string;
   referenceImageB64?: string;
+  referenceImageUrl?: string;
   logPrefix?: string;
 }): Promise<{ bytes: Uint8Array; routeVersion: string }> {
   const fullPrompt = `${ILLUSTRATION_SYSTEM_PROMPT}\n\nSubject: ${params.prompt}`;
   const startedAt = Date.now();
   const logPrefix = params.logPrefix ?? "[generate-illustration]";
+  const apiKey = process.env.TOGETHER_API_KEY?.trim() || params.apiKey?.trim() || "";
+  if (!apiKey) throw new Error("Missing TOGETHER_API_KEY");
 
-  let upstream: Response;
-  if (params.referenceImageB64) {
-    // Image-to-image: OpenAI-compatible /v1/images/edits, multipart form-data.
-    // Field name is `image` (a file part); prompt + model as text fields.
-    const refBytes = b64ToBytes(params.referenceImageB64);
-    const form = new FormData();
-    form.append("model", "openai/gpt-image-2");
-    form.append("prompt", fullPrompt);
-    form.append("size", "1024x1536");
-    form.append(
-      "image",
-      new Blob([new Uint8Array(refBytes)], { type: "image/png" }),
-      "reference.png",
-    );
-    upstream = await fetch(getOnixusAiUrl("images/edits", params.apiKey), {
-      method: "POST",
-      headers: getOnixusAiHeaders(params.apiKey),
-      body: form,
-    });
-  } else {
-    upstream = await fetch(getOnixusAiUrl("images/generations", params.apiKey), {
-      method: "POST",
-      headers: {
-        ...getOnixusAiHeaders(params.apiKey),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "openai/gpt-image-2",
-        prompt: fullPrompt,
-        quality: "low",
-      }),
-    });
-  }
+  const referenceImageUrl =
+    params.referenceImageUrl ??
+    (params.referenceImageB64 ? `data:image/png;base64,${params.referenceImageB64}` : undefined);
+  const request = togetherImageRequest({
+    apiKey,
+    prompt: fullPrompt,
+    referenceImageUrl,
+  });
+  const upstream = await fetch(request.url, {
+    method: "POST",
+    headers: request.headers,
+    body: request.body,
+  });
 
   const contentType = upstream.headers.get("content-type") ?? "";
   const rawBytes = new Uint8Array(await upstream.arrayBuffer());
   const rawBody = /^image\//i.test(contentType) ? "" : new TextDecoder().decode(rawBytes);
   const baseLog = {
     routeVersion: ILLUSTRATION_ROUTE_VERSION,
-    mode: params.referenceImageB64 ? "img2img" : "txt2img",
+    mode: params.referenceImageB64 || params.referenceImageUrl ? "img2img" : "txt2img",
     status: upstream.status,
     contentType,
     durationMs: Date.now() - startedAt,

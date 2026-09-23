@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
+import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import heroStylist from "@/assets/hero-stylist.jpg";
 import hivePortrait from "@/assets/women/woman-01.jpg";
@@ -62,7 +63,8 @@ const PRODUCTS = [
     kicker: "The community",
     name: "The Hive",
     promise:
-      "The Hive is the conversation around getting dressed. Motherhood, style, the everyday, and editorial — with the accounts she already uses, kept as one member.",
+      "Talk it through. The Hive is the room for motherhood, style, the everyday, and editorial. One member. The accounts she already has.",
+    networks: ["instagram", "facebook", "tiktok", "google", "apple"] as SocialId[],
     href: "/hive",
     cta: "Enter The Hive",
     image: hivePortrait,
@@ -70,8 +72,9 @@ const PRODUCTS = [
     mark: "/hive-logo.png",
     offers: [
       {
-        title: "One member, five doors",
-        text: "Google, Apple, Instagram, Facebook, and TikTok sign her in. The same email keeps them as one member.",
+        title: "One member, the accounts she has",
+        text: "Instagram, Facebook, and TikTok are the rooms. Google and Apple open the door. The same email keeps them as one member.",
+        icons: true,
       },
       {
         title: "Rooms with a subject",
@@ -93,7 +96,8 @@ const PRODUCTS = [
     kicker: "The posting service",
     name: "Buzz",
     promise:
-      "Buzz posts the look. She can use it alone. Upload a photo, say what to put her in, and the caption starts from what she has already said.",
+      "Grow your presence. Elevate. Uplift. Broadcast to the world. Upload a look, or let Bee hand one across. Buzz writes her line and posts it on the networks she connects.",
+    networks: ["instagram", "tiktok", "pinterest", "facebook", "linkedin"] as SocialId[],
     href: "/buzz",
     cta: "Enter Buzz",
     image: buzzCloth,
@@ -101,20 +105,21 @@ const PRODUCTS = [
     mark: "/buzz-logo.png",
     offers: [
       {
-        title: "No other app required",
-        text: "Influencers and anyone else upload a look on Buzz and post from here. Bee can still hand a look across when she wants that.",
+        title: "Grow your presence",
+        text: "She can use Buzz alone. Upload the photograph, or let Bee hand the look across. The people who already watch her see the cloth.",
       },
       {
-        title: "Her words, kept",
-        text: "A caption begins with what she has told us — a Bee interview when she has one, and anything she teaches Buzz. The next post keeps the lesson.",
+        title: "Elevate",
+        text: "The caption starts from her own words — a Bee interview when she has one, and anything she teaches Buzz. The next post keeps the lesson.",
       },
       {
-        title: "The platforms she already uses",
-        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. Each gets its own line. The look stays the same.",
+        title: "Uplift",
+        text: "A different line each day, on the hour that network is awake. School run, boardroom, the cloth she actually wore.",
       },
       {
-        title: "A different message each day",
-        text: "Buzz schedules the post, suggests the hour, and writes hashtags from the life in the caption — school run, boardroom, cloth.",
+        title: "Broadcast to the world",
+        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. She connects each account once. Buzz posts through that network's own door. No outside scheduler.",
+        icons: true,
       },
     ],
   },
@@ -181,6 +186,7 @@ function HomePage() {
                 <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
                   {product.promise}
                 </p>
+                {"networks" in product ? <SocialMarks ids={product.networks} /> : null}
               </div>
             </div>
           </div>
@@ -191,6 +197,9 @@ function HomePage() {
                 <li key={offer.title} className="glass rounded-[1.6rem] px-6 py-6 text-black">
                   <h3 className="font-display text-2xl leading-tight">{offer.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed">{offer.text}</p>
+                  {"icons" in offer && offer.icons && "networks" in product ? (
+                    <SocialMarks ids={product.networks} />
+                  ) : null}
                 </li>
               ))}
             </ul>

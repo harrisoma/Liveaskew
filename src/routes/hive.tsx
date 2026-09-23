@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
-import { HIVE_NETWORKS, HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
+import { SocialMarks } from "@/components/site/SocialMarks";
+import { HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
 import hiveHero from "@/assets/women/woman-04.jpg";
 
 export const Route = createFileRoute("/hive")({
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/hive")({
       {
         name: "description",
         content:
-          "The Hive brings X, Telegram, Facebook, and Instagram into one community. Talk about motherhood, style, everyday life, and editorial.",
+          "The Hive is the room. Talk through motherhood, style, the everyday, and editorial with Instagram, Facebook, and TikTok kept as one member.",
       },
     ],
   }),
@@ -31,25 +32,26 @@ function HivePage() {
           <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
             <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">The Hive</p>
             <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-6xl">
-              One room. Four networks.
+              Talk it through.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white">
-              {HIVE_NETWORKS.join(", ")}. Motherhood, style, everyday life, and editorial — talked
-              in one place. The Hive is not the styling app.
+              The Hive is the conversation. Motherhood, style, the everyday, and editorial.
+              Instagram, Facebook, and TikTok stay one member. Google and Apple open the door.
             </p>
+            <SocialMarks ids={["instagram", "facebook", "tiktok", "google", "apple"]} />
           </div>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1100px] gap-4 px-6 pb-10 md:grid-cols-4">
-        {HIVE_NETWORKS.map((network) => (
-          <p
-            key={network}
-            className="glass rounded-[1.5rem] px-4 py-5 text-center font-display text-2xl"
-          >
-            {network}
+      <section className="mx-auto max-w-[1100px] px-6 pb-6">
+        <article className="glass rounded-[2rem] px-6 py-6">
+          <h2 className="font-display text-3xl">One member</h2>
+          <p className="mt-3 text-sm leading-relaxed">
+            She signs in with Google or Apple, or with the social account she already uses. The
+            rooms stay here. A follow still opens her profile on that network.
           </p>
-        ))}
+          <SocialMarks ids={["instagram", "facebook", "tiktok", "google", "apple"]} />
+        </article>
       </section>
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-12 md:grid-cols-2">
