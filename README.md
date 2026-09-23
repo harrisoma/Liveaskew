@@ -1,6 +1,28 @@
-# LiveAskew — Bee
+# LiveAskew
 
-Bee is one product on three surfaces: **web app**, **iOS**, and **Android**. The stylist is the same — Fit, Feel, and Fabric. Clothes follow your body. We never alter it.
+LiveAskew is the house. Three products ship as separate apps and share auth, UI, and the Bee → Buzz handoff.
+
+| App          | Package     | Where it runs                                                                                    |
+| ------------ | ----------- | ------------------------------------------------------------------------------------------------ |
+| **Bee**      | `apps/bee`  | Expo app. `bee.liveaskew.com` and the stores. AI outfit plans, wardrobe match, transfer to Buzz. |
+| **The Hive** | `apps/hive` | Next.js. `hive.liveaskew.com`. One member, many sign-in platforms, rooms, messages, challenges.  |
+| **The Buzz** | `apps/buzz` | Next.js. `buzz.liveaskew.com`. `POST /api/looks/transfer` from Bee, then schedule.               |
+| **House**    | `apps/www`  | Next.js. `liveaskew.com`. The three medals.                                                      |
+
+Shared packages: `@liveaskew/ui`, `@liveaskew/auth`, `@liveaskew/api-client`.
+
+```bash
+npm run dev:www     # http://localhost:3100
+npm run dev:hive    # http://localhost:3110
+npm run dev:buzz    # http://localhost:3120
+npm run dev:bee     # Expo
+```
+
+The Capacitor client at the repo root is the Bee build already in the stores (`co.liveaskew.app`). `apps/bee` is the Expo app for the Bee product going forward.
+
+# LiveAskew — Bee (store client)
+
+Bee on the current store build is one stylist on three surfaces: **web app**, **iOS**, and **Android**. Fit, Feel, and Fabric. Clothes follow your body. We never alter it.
 
 - App ID: `co.liveaskew.app` (permanent on iOS and Android)
 - Web app: `/` and `/app` on this Vercel project
@@ -15,11 +37,11 @@ npm test
 
 ## Platforms
 
-| Surface | How it ships |
-| --- | --- |
-| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`. |
-| **iOS** | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
-| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme. |
+| Surface     | How it ships                                                                                 |
+| ----------- | -------------------------------------------------------------------------------------------- |
+| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`.        |
+| **iOS**     | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
+| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme.       |
 
 Native notes: `docs/CAPACITOR.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
 

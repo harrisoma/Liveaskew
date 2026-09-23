@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Bee",
+    "slug": "bee",
+    "scheme": "bee",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/bee.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/bee.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0c0c0c"
+    },
+    "ios": {
+      "bundleIdentifier": "co.liveaskew.bee",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "co.liveaskew.bee",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/bee.png",
+        "backgroundColor": "#0c0c0c"
+      }
+    },
+    "extra": {
+      "buzzUrl": "https://buzz.liveaskew.com"
+    }
+  }
+}
