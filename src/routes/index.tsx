@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import heroStylist from "@/assets/hero-stylist.jpg";
@@ -199,6 +200,10 @@ function HomePage() {
           </div>
         </section>
       ))}
+
+      <section id="pricing" className="scroll-mt-32 bg-white px-5 py-20 md:px-8 md:py-28">
+        <PriceBook />
+      </section>
     </SiteFrame>
   );
 }

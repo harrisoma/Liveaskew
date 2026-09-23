@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/#bee", label: "Bee" },
   { href: "/#hive", label: "The Hive" },
   { href: "/#buzz", label: "Buzz" },
+  { href: "/#pricing", label: "Pricing" },
 ] as const;
 
 export function SiteFrame({ children }: { children: ReactNode }) {

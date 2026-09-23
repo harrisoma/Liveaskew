@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as HiveRouteImport } from './routes/hive'
 import { Route as BuzzRouteImport } from './routes/buzz'
 import { Route as AppRouteImport } from './routes/app'
@@ -30,6 +31,11 @@ import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/g
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HiveRoute = HiveRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/buzz': typeof BuzzRoute
   '/hive': typeof HiveRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRoute
   '/buzz': typeof BuzzRoute
   '/hive': typeof HiveRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/buzz': typeof BuzzRoute
   '/hive': typeof HiveRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/buzz'
     | '/hive'
+    | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/buzz'
     | '/hive'
+    | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/buzz'
     | '/hive'
+    | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
     | '/api/tryon'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   BuzzRoute: typeof BuzzRoute
   HiveRoute: typeof HiveRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
   ApiTryonRoute: typeof ApiTryonRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hive': {
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   BuzzRoute: BuzzRoute,
   HiveRoute: HiveRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
   ApiTryonRoute: ApiTryonRoute,
