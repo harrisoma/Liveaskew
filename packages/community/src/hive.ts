@@ -336,21 +336,36 @@ export type BuzzDraft = {
 
 export function prepareBuzzPost(
   actors: Subscriber[],
-  input: { userId: string; look: string; platforms: Platform[] },
+  input: { userId: string; look: string; platforms: Platform[]; learned?: string[] },
 ): BuzzDraft | { error: string } {
-  const actor = actors.find((item) => item.id === input.userId);
-  if (!actor?.subscribed) return { error: "Buzz posts Bee looks for Hive subscribers." };
   if (input.platforms.length === 0) return { error: "Pick at least one platform." };
+  const actor = actors.find((item) => item.id === input.userId);
+  if (!actor) {
+    return {
+      authorName: input.userId,
+      signIn: "On Buzz",
+      summary: input.look,
+      captions: input.platforms.map((platform) => ({ platform, text: input.look })),
+    };
+  }
   const captions = captionsForClient({
     name: actor.name,
     interview: actor.interview,
     look: input.look,
     platforms: input.platforms,
   });
+  const learned = (input.learned ?? []).filter((note) => note.trim().length > 0);
+  const withLessons =
+    learned.length === 0
+      ? captions
+      : captions.map((caption) => ({
+          ...caption,
+          text: `${caption.text} Buzz learned: ${learned.join(" | ")}`,
+        }));
   return {
     authorName: actor.name,
     signIn: signInBadge(actor.signIn.provider),
-    summary: captions[0]?.text ?? input.look,
-    captions,
+    summary: withLessons[0]?.text ?? input.look,
+    captions: withLessons,
   };
 }

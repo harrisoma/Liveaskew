@@ -22,3 +22,12 @@ export {
   type Subscriber,
   type Topic,
 } from "./hive";
+export {
+  blankVoice,
+  captionsFromVoice,
+  learnAbout,
+  prepareOwnLook,
+  voiceFromSubscriber,
+  voiceId,
+  type ClientVoice,
+} from "./voice";
