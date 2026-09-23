@@ -9,6 +9,7 @@ import {
   setFamilySelfie,
   setPrimarySelfie,
 } from "@/lib/selfies.functions";
+import { pickNativeSelfieFile } from "@/lib/native-camera";
 import { hasEntitlement } from "@/lib/plans";
 
 type Scope = { kind: "primary" } | { kind: "family"; id: string };
@@ -76,7 +77,14 @@ interface UploadAttemptOptions {
   onProgress: (pct: number) => void;
 }
 
-function uploadAttempt({ bucket, path, file, token, signal, onProgress }: UploadAttemptOptions): Promise<void> {
+function uploadAttempt({
+  bucket,
+  path,
+  file,
+  token,
+  signal,
+  onProgress,
+}: UploadAttemptOptions): Promise<void> {
   const baseUrl = import.meta.env.VITE_SUPABASE_URL;
   const url = `${baseUrl}/storage/v1/object/${bucket}/${path}`;
 
@@ -89,7 +97,11 @@ function uploadAttempt({ bucket, path, file, token, signal, onProgress }: Upload
     const onAbort = () => {
       if (settled) return;
       settled = true;
-      try { xhr.abort(); } catch { /* ignore */ }
+      try {
+        xhr.abort();
+      } catch {
+        /* ignore */
+      }
       reject(new UploadAbortedError());
     };
     signal.addEventListener("abort", onAbort, { once: true });
@@ -214,9 +226,15 @@ export function SelfieUploader({ scope, tier, label, sublabel, path, onChange }:
       return;
     }
     sign({ data: { path } })
-      .then((r) => { if (on) setUrl(r.url); })
-      .catch(() => { if (on) setUrl(null); });
-    return () => { on = false; };
+      .then((r) => {
+        if (on) setUrl(r.url);
+      })
+      .catch(() => {
+        if (on) setUrl(null);
+      });
+    return () => {
+      on = false;
+    };
   }, [path, sign]);
 
   useEffect(() => {
@@ -228,6 +246,21 @@ export function SelfieUploader({ scope, tier, label, sublabel, path, onChange }:
 
   function handleCancel() {
     abortRef.current?.abort();
+  }
+
+  async function handlePick() {
+    setError(null);
+    try {
+      const { Capacitor } = await import("@capacitor/core");
+      if (Capacitor.isNativePlatform()) {
+        const native = await pickNativeSelfieFile();
+        if (native) await handleFile(native);
+        return;
+      }
+    } catch {
+      return;
+    }
+    inputRef.current?.click();
   }
 
   async function handleFile(file: File) {
@@ -328,7 +361,9 @@ export function SelfieUploader({ scope, tier, label, sublabel, path, onChange }:
             <Lock size={16} />
           </div>
           <div className="flex-1">
-            <p className="text-[0.6rem] uppercase tracking-[0.22em] text-gold-deep">Selfie AI · Gold</p>
+            <p className="text-[0.6rem] uppercase tracking-[0.22em] text-gold-deep">
+              Selfie AI · Gold
+            </p>
             <p className="font-display mt-1 text-base">{label}</p>
             <p className="mt-1 text-xs text-ink/55">
               Upgrade to Gold to see yourself in every look.
@@ -383,7 +418,7 @@ export function SelfieUploader({ scope, tier, label, sublabel, path, onChange }:
             <button
               type="button"
               disabled={busy}
-              onClick={() => inputRef.current?.click()}
+              onClick={() => void handlePick()}
               className="inline-flex items-center gap-2 border border-ink/20 bg-cream px-3 py-2 text-[0.6rem] uppercase tracking-[0.22em] text-ink transition hover:border-gold-deep hover:text-gold-deep disabled:opacity-40"
             >
               <Upload size={11} />

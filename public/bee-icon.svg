@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Bee by LiveAskew">
+  <rect width="512" height="512" rx="96" fill="#e0e5ec"/>
+  <rect x="96" y="96" width="320" height="320" rx="48" fill="#e0e5ec" stroke="#b8860b" stroke-width="10"/>
+  <text x="256" y="300" text-anchor="middle" font-family="Poppins, sans-serif" font-size="148" font-weight="600" fill="#111111">B</text>
+</svg>

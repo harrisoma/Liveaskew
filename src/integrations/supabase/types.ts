@@ -440,6 +440,7 @@ export type Database = {
           height_cm: number | null
           id: string
           location: string | null
+          phone: string | null
           preferred_currency: string | null
           selfie_photo_path: string | null
           share_token: string | null
@@ -449,6 +450,7 @@ export type Database = {
           size_top: string | null
           tier: string
           time_zone: string | null
+          trial_started_at: string | null
           updated_at: string
         }
         Insert: {
@@ -463,6 +465,7 @@ export type Database = {
           height_cm?: number | null
           id: string
           location?: string | null
+          phone?: string | null
           preferred_currency?: string | null
           selfie_photo_path?: string | null
           share_token?: string | null
@@ -472,6 +475,7 @@ export type Database = {
           size_top?: string | null
           tier?: string
           time_zone?: string | null
+          trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -486,6 +490,7 @@ export type Database = {
           height_cm?: number | null
           id?: string
           location?: string | null
+          phone?: string | null
           preferred_currency?: string | null
           selfie_photo_path?: string | null
           share_token?: string | null
@@ -495,7 +500,59 @@ export type Database = {
           size_top?: string | null
           tier?: string
           time_zone?: string | null
+          trial_started_at?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      push_dispatches: {
+        Row: {
+          created_at: string
+          day_key: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_key: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_key?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          platform: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          platform: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          platform?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

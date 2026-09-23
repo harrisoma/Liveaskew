@@ -1,6 +1,6 @@
 import { motion, type Transition, useAnimationFrame } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import orbVideo from "@/assets/bee-orb-woven.mp4.asset.json";
+import orbVideo from "@/assets/bee-orb-woven.mp4";
 
 /**
  * BeeOrb — Bee's reactive presence.
@@ -260,7 +260,7 @@ export function BeeOrb({
       >
         <video
           ref={videoRef}
-          src={orbVideo.url}
+          src={orbVideo}
           autoPlay
           loop
           muted

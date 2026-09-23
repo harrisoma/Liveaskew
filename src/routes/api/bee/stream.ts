@@ -4,6 +4,7 @@ import { z } from "zod";
 import { streamText, type ModelMessage } from "ai";
 import type { Database } from "@/integrations/supabase/types";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 const BEE_MODEL = "google/gemini-2.5-pro";
 
@@ -97,14 +98,7 @@ export const Route = createFileRoute("/api/bee/stream")({
 
         // 1b. Subscription gate (interview-in-progress is always allowed)
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const host = new URL(request.url).hostname;
-        const env: "sandbox" | "live" =
-          host.includes("-dev.") ||
-          host.includes("localhost") ||
-          host.includes("127.0.0.1") ||
-          host.includes("lovableproject.com")
-            ? "sandbox"
-            : "live";
+        const env = getStripeEnvironment(new URL(request.url).hostname);
 
         const [{ data: sub }, { data: latestConv }] = await Promise.all([
           supabaseAdmin

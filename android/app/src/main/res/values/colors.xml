@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#111111</color>
+    <color name="colorPrimaryDark">#111111</color>
+    <color name="colorAccent">#b8860b</color>
+    <color name="neoBackground">#e0e5ec</color>
+</resources>
