@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { HIVE_NETWORKS, HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
+import hiveHero from "@/assets/women/woman-04.jpg";
 
 export const Route = createFileRoute("/hive")({
   head: () => ({
@@ -19,22 +20,32 @@ export const Route = createFileRoute("/hive")({
 function HivePage() {
   return (
     <SiteFrame>
-      <section className="mx-auto max-w-[1100px] px-6 pt-16 pb-8 md:pt-24">
-        <p className="eyebrow">The Hive</p>
-        <h1 className="font-display mt-4 max-w-3xl text-5xl leading-[1.05] md:text-6xl">
-          The community, in one app.
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black">
-          The Hive merges the places clients already talk — {HIVE_NETWORKS.join(", ")} — into one
-          room. Motherhood, style, everyday topics, and editorial live here together.
-        </p>
+      <section className="relative min-h-[70svh]">
+        <img
+          src={hiveHero}
+          alt="A woman with dark curly hair in a black blazer and gold necklace"
+          className="absolute inset-0 h-full w-full object-cover object-top"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-black/15" />
+        <div className="relative z-10 flex min-h-[70svh] items-end px-6 pt-32 pb-12 md:px-16">
+          <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
+            <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">The Hive</p>
+            <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-6xl">
+              One room. Four networks.
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-white">
+              {HIVE_NETWORKS.join(", ")}. Motherhood, style, everyday life, and editorial — talked
+              in one place. The Hive is not the styling app.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto grid max-w-[1100px] gap-4 px-6 pb-10 md:grid-cols-4">
         {HIVE_NETWORKS.map((network) => (
           <p
             key={network}
-            className="rounded-[1.5rem] bg-white px-4 py-5 text-center font-display text-2xl shadow-neo"
+            className="glass rounded-[1.5rem] px-4 py-5 text-center font-display text-2xl"
           >
             {network}
           </p>
@@ -43,7 +54,7 @@ function HivePage() {
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-12 md:grid-cols-2">
         {HIVE_ROOMS.map((room) => (
-          <article key={room.id} className="rounded-[2rem] bg-white p-6 shadow-neo">
+          <article key={room.id} className="glass rounded-[2rem] p-6">
             <h2 className="font-display text-3xl">{room.name}</h2>
             <p className="mt-3 text-sm leading-relaxed text-black">{room.line}</p>
           </article>
@@ -54,7 +65,7 @@ function HivePage() {
         <h2 className="font-display text-3xl">In the room</h2>
         <ul className="mt-5 space-y-3">
           {HIVE_THREADS.map((thread) => (
-            <li key={thread.text} className="rounded-[1.5rem] bg-white px-5 py-4 shadow-neo">
+            <li key={thread.text} className="glass rounded-[1.5rem] px-5 py-4">
               <p className="eyebrow">
                 {thread.room} · {thread.network}
               </p>

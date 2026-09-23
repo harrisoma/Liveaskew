@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { BUZZ_PLATFORMS, buzzMessage, buzzWeek } from "@/lib/buzz";
+import buzzHero from "@/assets/wardrobe-flatlay.jpg";
 
 export const Route = createFileRoute("/buzz")({
   head: () => ({
@@ -35,20 +36,30 @@ function BuzzPage() {
 
   return (
     <SiteFrame>
-      <section className="mx-auto max-w-[1100px] px-6 pt-16 pb-8 md:pt-24">
-        <p className="eyebrow">Buzz</p>
-        <h1 className="font-display mt-4 max-w-3xl text-5xl leading-[1.05] md:text-6xl">
-          Post the look. Every platform. Every day.
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black">
-          Upload your image. Tell Buzz what to put you in. It writes the post for X, Instagram,
-          Facebook, and Telegram — then keeps posting that style each day with a different message.
-        </p>
+      <section className="relative min-h-[62svh]">
+        <img
+          src={buzzHero}
+          alt="A flat lay of a black blazer, black handbag, and cream knit on linen"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-black/20" />
+        <div className="relative z-10 flex min-h-[62svh] items-end px-6 pt-32 pb-12 md:px-16">
+          <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
+            <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">Buzz</p>
+            <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-6xl">
+              Post the look. Every day.
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-white">
+              Upload the photo. Say what to put you in. Buzz writes a different line for every
+              platform, then a new one each morning.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-16 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <form
-          className="rounded-[2rem] bg-white p-6 shadow-neo"
+          className="glass rounded-[2rem] p-6"
           onSubmit={(event) => {
             event.preventDefault();
             if (!photo || !look) return;
@@ -91,7 +102,7 @@ function BuzzPage() {
               rows={4}
               required
               placeholder="Ivory silk shirt, charcoal trouser, almond loafer — a Tuesday at the office."
-              className="mt-2 w-full rounded-[1.25rem] bg-white px-4 py-3 text-base shadow-neo-inset outline-none"
+              className="mt-2 w-full rounded-[1.25rem] border border-black/10 bg-white/80 px-4 py-3 text-base outline-none"
             />
           </label>
           <button type="submit" className="neo-btn-ink mt-5 disabled:opacity-40" disabled={!photo || !look}>
@@ -105,7 +116,7 @@ function BuzzPage() {
 
         <div>
           {!ready && (
-            <div className="rounded-[2rem] bg-white px-6 py-10 text-sm leading-relaxed shadow-neo-inset">
+            <div className="glass rounded-[2rem] px-6 py-10 text-sm leading-relaxed">
               The four posts appear here. Each platform gets its own wording. The week under them
               is the same style, said seven different ways.
             </div>
@@ -114,7 +125,7 @@ function BuzzPage() {
             <>
               <ul className="space-y-3">
                 {today.map((post) => (
-                  <li key={post.id} className="rounded-[1.5rem] bg-white px-5 py-4 shadow-neo">
+                  <li key={post.id} className="glass rounded-[1.5rem] px-5 py-4">
                     <p className="eyebrow">{post.name}</p>
                     <p className="mt-2 text-sm leading-relaxed">{post.message}</p>
                   </li>
@@ -123,7 +134,7 @@ function BuzzPage() {
               <h2 className="font-display mt-8 text-3xl">Every day, a different message</h2>
               <ol className="mt-4 space-y-2">
                 {week.map((message, index) => (
-                  <li key={message} className="rounded-[1.25rem] bg-white px-4 py-3 text-sm shadow-neo">
+                  <li key={message} className="glass rounded-[1.25rem] px-4 py-3 text-sm">
                     <span className="eyebrow">Day {index + 1}</span>
                     <p className="mt-1">{message}</p>
                   </li>
