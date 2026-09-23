@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
-import { AppleMark, FacebookMark, GoogleMark, InstagramMark } from "./components/BrandMarks";
+import { AppleMark, BeeLogo, FacebookMark, GoogleMark, InstagramMark } from "./components/BrandMarks";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
 import {
@@ -490,6 +490,11 @@ const AUTH_BUTTONS: {
 function AuthScreen({ onProvider }: { onProvider: (provider: AuthProvider) => void }) {
   return (
     <Screen kicker="Bee" title="Sign in to begin">
+      <div className="mb-5 flex justify-center">
+        <div className="neo-raised grid place-items-center p-3">
+          <BeeLogo className="h-16 w-16" />
+        </div>
+      </div>
       <p className="mb-5 text-sm leading-relaxed">
         Google, Apple, Facebook, or Instagram. After this, a short verification — then Bee
         interviews you in Fit, Feel, and Fabric. Same app on web, iOS, and Android. No

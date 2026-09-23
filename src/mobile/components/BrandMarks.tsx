@@ -6,8 +6,8 @@ function Mark({ children, ...props }: MarkProps) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width={20}
-      height={20}
+      width={22}
+      height={22}
       aria-hidden
       focusable="false"
       {...props}
@@ -56,6 +56,18 @@ export function FacebookMark(props: MarkProps) {
         d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.87v2.25h3.32l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07z"
       />
     </Mark>
+  );
+}
+
+export function BeeLogo({ className = "" }: { className?: string }) {
+  return (
+    <img
+      src="/bee-icon.svg"
+      alt="Bee by LiveAskew"
+      width={64}
+      height={64}
+      className={className}
+    />
   );
 }
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BeeLogo } from "./components/BrandMarks";
 import { isNativeApp } from "./lib/platform";
 import "./styles.css";
 
@@ -8,7 +9,8 @@ export function PlatformShell({ children }: { children: ReactNode }) {
   return (
     <div className="la-web-shell">
       <aside className="la-web-aside" aria-label="Bee platforms">
-        <p className="la-kicker">LiveAskew</p>
+        <BeeLogo className="h-16 w-16" />
+        <p className="la-kicker mt-4">LiveAskew</p>
         <p className="la-display mt-2 text-4xl">Bee</p>
         <p className="mt-4 text-sm leading-relaxed">
           The same personal stylist on the web app, iPhone, and Android. Clothes follow your body —
