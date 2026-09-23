@@ -9,6 +9,7 @@ export type PlanSlug =
   | "platinum"
   | "platinum_plus"
   | "platinum_plus_family"
+  | "live_bee"
   | "atelier";
 
 export type Plan = {
@@ -31,8 +32,8 @@ export const PLANS: Plan[] = [
     slug: "silver",
     name: "Silver",
     tagline: "The starting ritual.",
-    priceMonthly: 20,
-    priceAnnual: annual(20),
+    priceMonthly: 9,
+    priceAnnual: annual(9),
     cadence: "/ month",
     description:
       "Bee in writing, your wardrobe in the cloud, and a calendar that dresses you for what's actually on it.",
@@ -51,8 +52,8 @@ export const PLANS: Plan[] = [
     slug: "gold",
     name: "Gold",
     tagline: "Step inside your own lookbook.",
-    priceMonthly: 45,
-    priceAnnual: annual(45),
+    priceMonthly: 19,
+    priceAnnual: annual(19),
     cadence: "/ month",
     description:
       "Bee's voice, your private monthly Magazine, and the Selfie-AI engine that models every look on your own likeness.",
@@ -71,8 +72,8 @@ export const PLANS: Plan[] = [
     slug: "platinum",
     name: "Platinum",
     tagline: "Shop the way Bee sees you.",
-    priceMonthly: 90,
-    priceAnnual: annual(90),
+    priceMonthly: 39,
+    priceAnnual: annual(39),
     cadence: "/ month",
     description:
       "Everything in Gold, plus shoppable manifests, priority generation, and full curated shopping access.",
@@ -89,8 +90,8 @@ export const PLANS: Plan[] = [
     slug: "platinum_plus",
     name: "Platinum Plus",
     tagline: "Style, two-fold.",
-    priceMonthly: 165,
-    priceAnnual: annual(165),
+    priceMonthly: 59,
+    priceAnnual: annual(59),
     cadence: "/ month",
     description:
       "Everything in Platinum, plus a dedicated partner seat with their own Bee, face, and wardrobe — and a quarterly hour with Bianca.",
@@ -107,8 +108,8 @@ export const PLANS: Plan[] = [
     slug: "platinum_plus_family",
     name: "Platinum Plus Family",
     tagline: "One Bee, the whole household.",
-    priceMonthly: 249,
-    priceAnnual: annual(249),
+    priceMonthly: 89,
+    priceAnnual: annual(89),
     cadence: "/ month",
     description:
       "The full household experience — up to three family seats, kids & couples dressing mode, shared wardrobe rooms, and Bianca on your calendar.",
@@ -123,21 +124,21 @@ export const PLANS: Plan[] = [
     ],
   },
   {
-    slug: "atelier",
-    name: "The Private Atelier",
-    tagline: "Bianca on retainer.",
+    slug: "live_bee",
+    name: "1-on-1 Live Bee",
+    tagline: "A live human Bee. Price is negotiated.",
     priceMonthly: 0,
     priceAnnual: 0,
     cadence: "",
     description:
-      "A small number of clients each month work directly with Bianca on bespoke styling — wardrobe builds, photoshoot direction, special events, and brand.",
+      "Work 1-on-1 with a live human Bee — not the chat. Price is set with you after a conversation, not published as a rate card.",
     flagship: false,
     inquiry: true,
     features: [
-      "Bianca on retainer",
+      "Live 1-on-1 with a human Bee",
+      "Price negotiated to your brief",
       "Bespoke wardrobe build",
       "Photoshoot & event direction",
-      "Atelier shopping access",
       "Direct line to your stylist",
     ],
   },
@@ -145,6 +146,7 @@ export const PLANS: Plan[] = [
 
 export function getPlan(slug: string | null | undefined): Plan | null {
   if (!slug) return null;
+  if (slug === "atelier") return PLANS.find((p) => p.slug === "live_bee") ?? null;
   return PLANS.find((p) => p.slug === slug) ?? null;
 }
 
@@ -166,6 +168,7 @@ export type Entitlement =
   | "householdFamilySeats"
   | "quarterlyStylistSession"
   | "stylistRetainer"
+  | "liveHumanBee"
   | "curatedShopping"
   | "referralPerk";
 
@@ -189,6 +192,7 @@ const SILVER: EntitlementMap = {
   householdFamilySeats: 0,
   quarterlyStylistSession: false,
   stylistRetainer: false,
+  liveHumanBee: false,
   curatedShopping: "none",
   referralPerk: false,
 };
@@ -225,6 +229,12 @@ const PLATINUM_PLUS_FAMILY: EntitlementMap = {
 const ATELIER: EntitlementMap = {
   ...PLATINUM_PLUS_FAMILY,
   stylistRetainer: true,
+  liveHumanBee: true,
+};
+
+const LIVE_BEE: EntitlementMap = {
+  ...ATELIER,
+  liveHumanBee: true,
 };
 
 const ENTITLEMENTS: Record<PlanSlug, EntitlementMap> = {
@@ -233,6 +243,7 @@ const ENTITLEMENTS: Record<PlanSlug, EntitlementMap> = {
   platinum: PLATINUM,
   platinum_plus: PLATINUM_PLUS,
   platinum_plus_family: PLATINUM_PLUS_FAMILY,
+  live_bee: LIVE_BEE,
   atelier: ATELIER,
 };
 
@@ -243,6 +254,7 @@ export const THE_GATE_LINE: PlanSlug = "gold";
 function mapTier(tier: string | null | undefined): PlanSlug | null {
   if (!tier) return null;
   if (tier === "trial" || tier === "trialing") return "gold";
+  if (tier === "atelier") return "live_bee";
   if (tier in ENTITLEMENTS) return tier as PlanSlug;
   return null;
 }

@@ -1,6 +1,24 @@
 import type { AuthProvider } from "./storage";
 import { apiUrl } from "./api";
 
+/** Instagram Login is a Meta product. Supabase exposes Facebook, not Instagram. */
+export type OAuthProvider = "google" | "apple" | "facebook";
+
+export function oauthProviderFor(provider: AuthProvider): OAuthProvider {
+  return provider === "instagram" ? "facebook" : provider;
+}
+
+export function usesPhoneVerify(provider: AuthProvider | null | undefined): boolean {
+  return provider === "apple";
+}
+
+function previewEmailFor(provider: AuthProvider): string | null {
+  if (provider === "google") return "client@liveaskew.app";
+  if (provider === "facebook") return "facebook@liveaskew.app";
+  if (provider === "instagram") return "instagram@liveaskew.app";
+  return null;
+}
+
 export function parseAuthCallbackUrl(raw: string): string | null {
   const query = raw.includes("?")
     ? raw.slice(raw.indexOf("?") + 1)
@@ -60,7 +78,7 @@ async function providerEnabled(provider: AuthProvider): Promise<boolean> {
     });
     if (!res.ok) return false;
     const json = (await res.json()) as { external?: Record<string, boolean | undefined> };
-    return Boolean(json.external?.[provider]);
+    return Boolean(json.external?.[oauthProviderFor(provider)]);
   } catch {
     return false;
   }
@@ -85,7 +103,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
     try {
       const redirectTo = await oauthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
+        provider: oauthProviderFor(provider),
         options: {
           redirectTo,
           skipBrowserRedirect: true,
@@ -99,7 +117,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
       /* fall through to preview */
     }
   }
-  return { redirected: false, email: provider === "google" ? "client@liveaskew.app" : null };
+  return { redirected: false, email: previewEmailFor(provider) };
 }
 
 export async function sendVerifyCode(

@@ -1,6 +1,50 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
+import {
+  shareLookToFacebook,
+  shareLookToInstagram,
+  shareOutcomeLabel,
+} from "../lib/share";
+import { FacebookMark, InstagramMark } from "./BrandMarks";
 import { NeoButton, Skeleton } from "./ui";
+
+function ShareLookRow({ look }: { look: GuideLook }) {
+  const [status, setStatus] = useState<string | null>(null);
+  const share = async (target: "facebook" | "instagram") => {
+    const payload = {
+      title: look.title,
+      occasion: look.occasion,
+      formula: look.formula,
+      fit: look.fit,
+      feel: look.feel,
+      fabric: look.fabric,
+      imageUrl: look.tryOnUrl,
+    };
+    const outcome =
+      target === "facebook" ? await shareLookToFacebook(payload) : await shareLookToInstagram(payload);
+    setStatus(shareOutcomeLabel(target, outcome));
+  };
+  return (
+    <div className="mt-3">
+      <p className="la-kicker mb-2">Share this look</p>
+      <div className="grid grid-cols-2 gap-3">
+        <NeoButton onClick={() => void share("facebook")}>
+          <FacebookMark />
+          Facebook
+        </NeoButton>
+        <NeoButton onClick={() => void share("instagram")}>
+          <InstagramMark />
+          Instagram
+        </NeoButton>
+      </div>
+      {status && (
+        <p className="mt-2 text-sm" role="status">
+          {status}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export function LookCard({
   look,
@@ -55,6 +99,7 @@ export function LookCard({
         </NeoButton>
       )}
       {footer}
+      <ShareLookRow look={look} />
     </article>
   );
 }

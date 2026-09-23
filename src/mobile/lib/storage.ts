@@ -1,6 +1,13 @@
 import type { LookCard, OnboardingAnswers } from "./recommend";
 
-export type AuthProvider = "google" | "apple";
+export type AuthProvider = "google" | "apple" | "facebook" | "instagram";
+
+export const AUTH_PROVIDER_LABEL: Record<AuthProvider, string> = {
+  google: "Google",
+  apple: "Apple",
+  facebook: "Facebook",
+  instagram: "Instagram",
+};
 export type WardrobeVerdict = "keep" | "toss" | "maybe";
 export type Phase = "auth" | "verify" | "interview" | "selfie" | "app";
 
