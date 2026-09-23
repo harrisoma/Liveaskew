@@ -29,10 +29,38 @@ async function supabaseOrNull() {
   }
 }
 
-function oauthUrlIsLive(url: string): boolean {
+export function oauthUrlIsLive(url: string): boolean {
   try {
     const host = new URL(url).hostname;
     return !host.includes("dummy") && !host.endsWith(".supabase.local");
+  } catch {
+    return false;
+  }
+}
+
+export function withAuthApiKey(url: string, apiKey?: string): string {
+  const key = (apiKey ?? (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined) ?? "").trim();
+  if (!key) return url;
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has("apikey")) parsed.searchParams.set("apikey", key);
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+async function providerEnabled(provider: AuthProvider): Promise<boolean> {
+  const url = String(import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
+  const key = String(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "").trim();
+  if (!url || !key) return false;
+  try {
+    const res = await fetch(`${url}/auth/v1/settings`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    });
+    if (!res.ok) return false;
+    const json = (await res.json()) as { external?: Record<string, boolean | undefined> };
+    return Boolean(json.external?.[provider]);
   } catch {
     return false;
   }
@@ -53,7 +81,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
   email: string | null;
 }> {
   const supabase = await supabaseOrNull();
-  if (supabase) {
+  if (supabase && (await providerEnabled(provider))) {
     try {
       const redirectTo = await oauthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -64,7 +92,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
         },
       });
       if (!error && data.url && oauthUrlIsLive(data.url)) {
-        window.location.assign(data.url);
+        window.location.assign(withAuthApiKey(data.url));
         return { redirected: true, email: null };
       }
     } catch {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseAuthCallbackUrl } from "./auth";
+import { parseAuthCallbackUrl, withAuthApiKey } from "./auth";
 
 describe("parseAuthCallbackUrl", () => {
   it("reads a web OAuth code", () => {
@@ -13,5 +13,24 @@ describe("parseAuthCallbackUrl", () => {
 
   it("returns null when no code is present", () => {
     expect(parseAuthCallbackUrl("https://app.liveaskew.co/")).toBeNull();
+  });
+});
+
+describe("withAuthApiKey", () => {
+  it("adds apikey when the authorize URL omitted it", () => {
+    const next = withAuthApiKey(
+      "https://jpxswrcwpsdgbwndjmow.supabase.co/auth/v1/authorize?provider=google",
+      "test-anon-key",
+    );
+    expect(new URL(next).searchParams.get("apikey")).toBe("test-anon-key");
+    expect(new URL(next).searchParams.get("provider")).toBe("google");
+  });
+
+  it("does not overwrite an existing apikey", () => {
+    const next = withAuthApiKey(
+      "https://jpxswrcwpsdgbwndjmow.supabase.co/auth/v1/authorize?provider=google&apikey=keep",
+      "other",
+    );
+    expect(new URL(next).searchParams.get("apikey")).toBe("keep");
   });
 });
