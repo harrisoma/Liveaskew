@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseAuthCallbackUrl, withAuthApiKey } from "./auth";
+import { oauthProviderFor, parseAuthCallbackUrl, usesPhoneVerify, withAuthApiKey } from "./auth";
 
 describe("parseAuthCallbackUrl", () => {
   it("reads a web OAuth code", () => {
@@ -32,5 +32,21 @@ describe("withAuthApiKey", () => {
       "other",
     );
     expect(new URL(next).searchParams.get("apikey")).toBe("keep");
+  });
+});
+
+describe("oauthProviderFor", () => {
+  it("sends Instagram through Facebook Login", () => {
+    expect(oauthProviderFor("instagram")).toBe("facebook");
+    expect(oauthProviderFor("facebook")).toBe("facebook");
+    expect(oauthProviderFor("google")).toBe("google");
+    expect(oauthProviderFor("apple")).toBe("apple");
+  });
+
+  it("uses SMS only for Apple", () => {
+    expect(usesPhoneVerify("apple")).toBe(true);
+    expect(usesPhoneVerify("google")).toBe(false);
+    expect(usesPhoneVerify("facebook")).toBe(false);
+    expect(usesPhoneVerify("instagram")).toBe(false);
   });
 });

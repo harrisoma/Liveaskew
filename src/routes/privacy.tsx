@@ -22,29 +22,29 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-cream text-ink">
+    <div className="la-site min-h-screen bg-white text-black">
       <header className="mx-auto flex max-w-[1100px] items-center justify-between px-6 pt-10 md:px-10">
         <Link to="/" className="font-display text-2xl tracking-tight">
           Live<em className="text-gold-deep">Askew</em>
         </Link>
         <Link
           to="/"
-          className="text-[0.65rem] tracking-[0.25em] uppercase text-ink/55 hover:text-gold-deep"
+          className="text-[0.65rem] tracking-[0.25em] uppercase text-black hover:text-gold-deep"
         >
           ← Home
         </Link>
       </header>
 
       <main className="mx-auto max-w-[820px] px-6 py-16 md:px-10 md:py-24">
-        <p className="text-[0.65rem] tracking-[0.3em] uppercase text-ink/50">Bee by LiveAskew</p>
+        <p className="text-[0.65rem] tracking-[0.3em] uppercase text-black">Bee by LiveAskew</p>
         <h1 className="mt-3 font-display text-4xl leading-tight md:text-5xl">Privacy policy</h1>
-        <p className="mt-5 font-serif text-lg italic text-ink/70">{PRIVACY_INTRO}</p>
+        <p className="mt-5 font-serif text-lg italic text-black">{PRIVACY_INTRO}</p>
 
         <div className="mt-12 space-y-12">
           {PRIVACY_SECTIONS.map((section) => (
-            <section key={section.title} className="border-t border-ink/10 pt-10">
-              <h2 className="font-display text-2xl text-ink md:text-3xl">{section.title}</h2>
-              <div className="mt-4 space-y-3 font-serif text-[1.05rem] leading-relaxed text-ink/80">
+            <section key={section.title} className="border-t border-black pt-10">
+              <h2 className="font-display text-2xl text-black md:text-3xl">{section.title}</h2>
+              <div className="mt-4 space-y-3 font-serif text-[1.05rem] leading-relaxed text-black">
                 {section.paragraphs.map((p) => (
                   <p key={p}>{p}</p>
                 ))}
@@ -53,7 +53,7 @@ function PrivacyPage() {
           ))}
         </div>
 
-        <p className="mt-16 text-[0.65rem] tracking-[0.25em] uppercase text-ink/45">
+        <p className="mt-16 text-[0.65rem] tracking-[0.25em] uppercase text-black">
           Last updated {PRIVACY_UPDATED} · Play Console data safety URL
         </p>
       </main>

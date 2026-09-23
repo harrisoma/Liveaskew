@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
+import {
+  AppleMark,
+  BeeByLiveAskew,
+  BeeLogo,
+  FacebookMark,
+  GoogleMark,
+  InstagramMark,
+} from "./components/BrandMarks";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
 import {
@@ -8,6 +16,7 @@ import {
   resumeAuthSession,
   sendVerifyCode,
   signInWithProvider,
+  usesPhoneVerify,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
 import {
@@ -22,12 +31,13 @@ import {
   loadSnapshot,
   nid,
   saveSnapshot,
+  AUTH_PROVIDER_LABEL,
   type AppSnapshot,
   type AuthProvider,
   type ChatMsg,
   type GuideLook,
 } from "./lib/storage";
-import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
+import { TIER_ORDER, TIERS, formatTierPrice, normalizePlanSlug, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
 import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
@@ -165,26 +175,16 @@ export function MobileApp() {
 
       {snap.phase === "auth" && (
         <AuthScreen
-          onGoogle={async () => {
-            const result = await signInWithProvider("google");
+          onProvider={async (provider) => {
+            const result = await signInWithProvider(provider);
             if (result.redirected) return;
             patch((s) => ({
               ...s,
-              authProvider: "google",
-              email: result.email,
+              authProvider: provider,
+              email: result.email ?? s.email,
               phase: "verify",
             }));
-            setEmailDraft(result.email ?? "");
-            void haptic("impact");
-          }}
-          onApple={async () => {
-            const result = await signInWithProvider("apple");
-            if (result.redirected) return;
-            patch((s) => ({
-              ...s,
-              authProvider: "apple",
-              phase: "verify",
-            }));
+            if (result.email) setEmailDraft(result.email);
             void haptic("impact");
           }}
         />
@@ -205,7 +205,7 @@ export function MobileApp() {
           onSend={async () => {
             setVerifyErr(null);
             setVerifyBusy(true);
-            const channel = snap.authProvider === "apple" ? "sms" : "email";
+            const channel = usesPhoneVerify(snap.authProvider) ? "sms" : "email";
             const dest = channel === "sms" ? phoneDraft : emailDraft;
             const res = await sendVerifyCode(channel, dest);
             setVerifyBusy(false);
@@ -222,7 +222,7 @@ export function MobileApp() {
           }}
           onConfirm={async () => {
             setVerifyBusy(true);
-            const channel = snap.authProvider === "apple" ? "sms" : "email";
+            const channel = usesPhoneVerify(snap.authProvider) ? "sms" : "email";
             const dest =
               channel === "sms" ? phoneDraft || snap.phone || "" : emailDraft || snap.email || "";
             const ok = await confirmVerifyCode(channel, dest, verifyCode);
@@ -483,19 +483,39 @@ export function MobileApp() {
   );
 }
 
-function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () => void }) {
+const AUTH_BUTTONS: {
+  provider: AuthProvider;
+  variant: "ink" | "raised";
+  Mark: typeof GoogleMark;
+}[] = [
+  { provider: "google", variant: "ink", Mark: GoogleMark },
+  { provider: "apple", variant: "raised", Mark: AppleMark },
+  { provider: "facebook", variant: "raised", Mark: FacebookMark },
+  { provider: "instagram", variant: "raised", Mark: InstagramMark },
+];
+
+function AuthScreen({ onProvider }: { onProvider: (provider: AuthProvider) => void }) {
   return (
-    <Screen kicker="Bee" title="Sign in to begin">
-      <p className="mb-5 text-sm leading-relaxed">
-        Google or Apple only. After this, a short verification — then Bee interviews you in Fit,
-        Feel, and Fabric. Same app on web, iOS, and Android. No email-and-password wall.
+    <Screen>
+      <div className="mb-6 flex justify-center">
+        <BeeByLiveAskew />
+      </div>
+      <p className="mb-6 text-sm leading-relaxed">
+        Google, Apple, Facebook, or Instagram. After this, a short verification — then Bee
+        interviews you in Fit, Feel, and Fabric. Same app on web, iOS, and Android. No
+        email-and-password wall.
       </p>
-      <NeoButton variant="ink" onClick={onGoogle}>
-        Continue with Google
-      </NeoButton>
-      <NeoButton className="mt-3" onClick={onApple}>
-        Continue with Apple
-      </NeoButton>
+      {AUTH_BUTTONS.map(({ provider, variant, Mark }) => (
+        <button
+          key={provider}
+          type="button"
+          className={`login-bar ${variant === "ink" ? "login-bar-ink" : ""}`}
+          onClick={() => onProvider(provider)}
+        >
+          <Mark />
+          Continue with {AUTH_PROVIDER_LABEL[provider]}
+        </button>
+      ))}
     </Screen>
   );
 }
@@ -527,7 +547,8 @@ function VerifyScreen({
   onSend: () => void;
   onConfirm: () => void;
 }) {
-  const apple = provider === "apple";
+  const apple = usesPhoneVerify(provider);
+  const label = AUTH_PROVIDER_LABEL[provider];
   return (
     <Screen
       kicker="Verify"
@@ -546,7 +567,7 @@ function VerifyScreen({
       <p className="mb-4 text-sm leading-relaxed">
         {apple
           ? "Apple's private relay can hide the real inbox. We collect a phone number and send SMS."
-          : "Google path: we confirm the email with a one-time code before Bee starts."}
+          : `We confirm your ${label} email with a one-time code before Bee starts.`}
       </p>
       {apple ? (
         <NeoField
@@ -722,6 +743,7 @@ function HomeChat({
         </form>
       }
     >
+      <BeeLogo className="mb-4 h-12 w-12" />
       <ul className="space-y-3">
         {messages.map((m) => (
           <li
@@ -854,8 +876,11 @@ function Tiers({
   gated: boolean;
   onSelect: (t: string) => void;
 }) {
-  const index = Math.max(0, TIER_ORDER.indexOf(current as PlanSlug));
+  const currentSlug = normalizePlanSlug(current) ?? "silver";
+  const index = Math.max(0, TIER_ORDER.indexOf(currentSlug as PlanSlug));
   const progress = ((index + 1) / TIER_ORDER.length) * 100;
+  const live = TIERS.find((plan) => plan.inquiry);
+  const metals = TIERS.filter((plan) => !plan.inquiry);
   return (
     <Screen kicker="Membership" title="Your metal">
       {gated && (
@@ -863,9 +888,23 @@ function Tiers({
           Your 14-day window is done. Pick a tier to keep generating looks.
         </p>
       )}
-      <div className="neo-inset p-4">
-        <p className="text-sm">Progress toward Atelier</p>
-        <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
+      {live && (
+        <button
+          type="button"
+          aria-pressed={live.slug === currentSlug}
+          className="neo-choice mb-4 min-h-0 flex-col items-start py-3"
+          onClick={() => onSelect(live.slug)}
+        >
+          <span className="flex w-full items-center justify-between">
+            <span className="la-display text-lg">{live.name}</span>
+            <span className="text-sm text-[var(--gold)]">{formatTierPrice(live)}</span>
+          </span>
+          <span className="mt-1 text-sm font-normal opacity-70">{live.tagline}</span>
+        </button>
+      )}
+      <div className="neo-inset p-3">
+        <p className="text-sm">Progress toward 1-on-1 Live Bee</p>
+        <div className="mt-2 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
             className="h-full rounded-[8px] bg-[var(--gold)]"
             style={{ width: `${progress}%` }}
@@ -875,22 +914,20 @@ function Tiers({
           {TIERS[index]?.name ?? "Silver"} · {index + 1} of {TIER_ORDER.length}
         </p>
       </div>
-      <ol className="mt-5 space-y-3">
-        {TIERS.map((plan) => {
-          const active = plan.slug === current;
+      <ol className="mt-4 space-y-2">
+        {metals.map((plan) => {
+          const active = plan.slug === currentSlug;
           return (
             <li key={plan.slug}>
               <button
                 type="button"
                 aria-pressed={active}
-                className="neo-choice flex-col items-start"
+                className="neo-choice min-h-0 flex-col items-start py-2"
                 onClick={() => onSelect(plan.slug)}
               >
                 <span className="flex w-full items-center justify-between">
                   <span className="la-display text-lg">{plan.name}</span>
-                  <span className="text-sm text-[var(--gold)]">
-                    {plan.inquiry ? "Inquiry" : `$${plan.priceMonthly}/mo`}
-                  </span>
+                  <span className="text-sm text-[var(--gold)]">{formatTierPrice(plan)}</span>
                 </span>
                 <span className="mt-1 text-sm font-normal opacity-70">{plan.tagline}</span>
               </button>
@@ -948,7 +985,7 @@ function Profile({
       <div className="mt-5 neo-raised p-4 text-sm leading-relaxed">
         <p className="la-kicker">Account</p>
         <p className="mt-2">
-          {snap.authProvider === "apple" ? "Apple" : "Google"}
+          {snap.authProvider ? AUTH_PROVIDER_LABEL[snap.authProvider] : "Account"}
           {snap.email ? ` · ${snap.email}` : ""}
           {snap.phone ? ` · ${snap.phone}` : ""}
         </p>

@@ -1,0 +1,23 @@
+import { describe, expect, it } from "vitest";
+import { buzzMessage, buzzWeek } from "./buzz";
+
+describe("buzzMessage", () => {
+  it("uses the client's instruction and changes the line each day", () => {
+    const week = buzzWeek("ivory silk and a wool trouser");
+    expect(new Set(week).size).toBe(7);
+    for (const line of week) {
+      expect(line.toLowerCase()).toContain("ivory silk");
+    }
+  });
+
+  it("writes a different close for each platform", () => {
+    const look = "a covered work set";
+    const x = buzzMessage(look, 0, "x");
+    const instagram = buzzMessage(look, 0, "instagram");
+    const facebook = buzzMessage(look, 0, "facebook");
+    const telegram = buzzMessage(look, 0, "telegram");
+    expect(instagram).not.toBe(x);
+    expect(facebook).not.toBe(instagram);
+    expect(telegram).toMatch(/channel/i);
+  });
+});
