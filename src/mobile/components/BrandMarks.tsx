@@ -62,11 +62,11 @@ export function FacebookMark(props: MarkProps) {
 export function BeeLogo({ className = "" }: { className?: string }) {
   return (
     <img
-      src="/bee-icon.svg"
+      src="/bee-logo-192.png"
       alt="Bee by LiveAskew"
-      width={64}
-      height={64}
-      className={className}
+      width={192}
+      height={192}
+      className={`rounded-full ${className}`}
     />
   );
 }

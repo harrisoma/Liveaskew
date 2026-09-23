@@ -51,8 +51,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "icon", href: "/bee-icon.svg", type: "image/svg+xml" },
-      { rel: "apple-touch-icon", href: "/bee-icon.svg" },
+      { rel: "icon", href: "/bee-logo-192.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

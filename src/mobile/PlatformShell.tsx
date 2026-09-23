@@ -9,7 +9,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
   return (
     <div className="la-web-shell">
       <aside className="la-web-aside" aria-label="Bee platforms">
-        <BeeLogo className="h-16 w-16" />
+        <BeeLogo className="h-24 w-24" />
         <p className="la-kicker mt-4">LiveAskew</p>
         <p className="la-display mt-2 text-4xl">Bee</p>
         <p className="mt-4 text-sm leading-relaxed">

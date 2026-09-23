@@ -491,9 +491,7 @@ function AuthScreen({ onProvider }: { onProvider: (provider: AuthProvider) => vo
   return (
     <Screen kicker="Bee" title="Sign in to begin">
       <div className="mb-5 flex justify-center">
-        <div className="neo-raised grid place-items-center p-3">
-          <BeeLogo className="h-16 w-16" />
-        </div>
+        <BeeLogo className="h-24 w-24" />
       </div>
       <p className="mb-5 text-sm leading-relaxed">
         Google, Apple, Facebook, or Instagram. After this, a short verification — then Bee
@@ -738,6 +736,7 @@ function HomeChat({
         </form>
       }
     >
+      <BeeLogo className="mb-4 h-12 w-12" />
       <ul className="space-y-3">
         {messages.map((m) => (
           <li
