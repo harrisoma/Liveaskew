@@ -1,6 +1,10 @@
 {
   "name": "liveaskew",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -17,7 +21,14 @@
     "cap:android": "npx cap open android",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dev:www": "npm run dev --workspace @liveaskew/www",
+    "dev:hive": "npm run dev --workspace @liveaskew/hive",
+    "dev:buzz": "npm run dev --workspace @liveaskew/buzz",
+    "dev:bee": "npm run start --workspace @liveaskew/bee",
+    "build:www": "npm run build --workspace @liveaskew/www",
+    "build:hive": "npm run build --workspace @liveaskew/hive",
+    "build:buzz": "npm run build --workspace @liveaskew/buzz"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.48",

@@ -1,0 +1,33 @@
+@import "@liveaskew/ui/styles.css";
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat {
+  padding: 16px;
+  text-align: center;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+
+.look {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+}
+
+@media (min-width: 800px) {
+  .split {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 16px;
+    align-items: start;
+  }
+}

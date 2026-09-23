@@ -1,0 +1,40 @@
+@import "@liveaskew/ui/styles.css";
+
+.room-grid {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 800px) {
+  .room-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pad {
+  padding: 22px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chat-log {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.bubble {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: #101010;
+  border: 1px solid rgba(214, 178, 94, 0.25);
+}
+
+.provider {
+  width: 100%;
+  text-align: left;
+}

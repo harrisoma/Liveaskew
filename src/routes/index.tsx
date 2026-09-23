@@ -28,7 +28,7 @@ const PRODUCTS = [
     id: "bee",
     kicker: "The app",
     name: "Bee",
-    line: "The stylist. Fit, Feel, and Fabric — its own pages on the web, iPhone, and Android.",
+    line: "The stylist for working mothers. Maternity to the boardroom. Its own app.",
     href: "/app",
     cta: "Enter Bee",
     image: heroStylist,
@@ -39,23 +39,23 @@ const PRODUCTS = [
     id: "hive",
     kicker: "The community",
     name: "The Hive",
-    line: "X, Telegram, Facebook, and Instagram in one room. Motherhood, style, everyday life, editorial.",
+    line: "One community. Google, Apple, Instagram, Facebook, and TikTok, then the same rooms.",
     href: "/hive",
     cta: "Enter The Hive",
     image: hivePortrait,
     alt: "A woman in a black blazer and gold jewelry, seated in warm light",
-    mark: null,
+    mark: "/hive-logo.png",
   },
   {
     id: "buzz",
     kicker: "The posting service",
     name: "Buzz",
-    line: "Upload the photo. Say what to put you in. The look posts everywhere, every day, in new words.",
+    line: "Bee sends the look. Buzz schedules it across Instagram, TikTok, Pinterest, Facebook, and LinkedIn.",
     href: "/buzz",
     cta: "Enter Buzz",
     image: buzzCloth,
     alt: "An ivory silk blouse with black trousers and a textured gold jacket",
-    mark: null,
+    mark: "/buzz-logo.png",
   },
 ] as const;
 
@@ -77,7 +77,9 @@ function HomePage() {
               className="h-28 w-auto md:h-36"
               style={{ aspectRatio: "788 / 1570" }}
             />
-            <p className="mt-5 text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">LiveAskew</p>
+            <p className="mt-5 text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">
+              LiveAskew
+            </p>
             <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-7xl">
               Bee. The Hive. Buzz.
             </h1>
@@ -94,7 +96,11 @@ function HomePage() {
 
       <section className="mx-auto grid max-w-[1180px] gap-6 px-5 py-16 md:grid-cols-3 md:py-24">
         {PRODUCTS.map((product) => (
-          <article id={product.id} key={product.id} className="group overflow-hidden rounded-[1.75rem]">
+          <article
+            id={product.id}
+            key={product.id}
+            className="group overflow-hidden rounded-[1.75rem]"
+          >
             <a href={product.href} className="relative block min-h-[460px]">
               <img
                 src={product.image}
@@ -108,12 +114,16 @@ function HomePage() {
                     <img src={product.mark} alt="" className="h-10 w-10 rounded-full" />
                   )}
                   <div>
-                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">{product.kicker}</p>
+                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                      {product.kicker}
+                    </p>
                     <h2 className="font-display text-3xl leading-none">{product.name}</h2>
                   </div>
                 </div>
                 <p className="mt-3 text-sm leading-relaxed">{product.line}</p>
-                <p className="mt-4 text-[0.68rem] tracking-[0.18em] uppercase text-[#b8860b]">{product.cta}</p>
+                <p className="mt-4 text-[0.68rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                  {product.cta}
+                </p>
               </div>
             </a>
           </article>
