@@ -63,11 +63,39 @@ export function BeeLogo({ className = "" }: { className?: string }) {
   return (
     <img
       src="/bee-logo-192.png"
-      alt="Bee by LiveAskew"
+      alt=""
       width={192}
       height={192}
       className={`rounded-full ${className}`}
     />
+  );
+}
+
+export function LiveAskewLogo({ className = "" }: { className?: string }) {
+  return (
+    <span className={`la-display leading-none font-semibold tracking-tight ${className}`}>
+      Live<em className="text-[var(--gold)]">Askew</em>
+    </span>
+  );
+}
+
+export function BeeByLiveAskew({
+  crestClass = "h-20 w-20",
+  wordClass = "text-[1.65rem]",
+}: {
+  crestClass?: string;
+  wordClass?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3" aria-label="Bee by LiveAskew">
+      <BeeLogo className={`${crestClass} shrink-0`} />
+      <p className="text-left leading-none">
+        <span className="mb-1 block text-[0.68rem] font-medium tracking-[0.18em] uppercase opacity-55">
+          by
+        </span>
+        <LiveAskewLogo className={wordClass} />
+      </p>
+    </div>
   );
 }
 

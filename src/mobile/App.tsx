@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
-import { AppleMark, BeeLogo, FacebookMark, GoogleMark, InstagramMark } from "./components/BrandMarks";
+import {
+  AppleMark,
+  BeeByLiveAskew,
+  BeeLogo,
+  FacebookMark,
+  GoogleMark,
+  InstagramMark,
+} from "./components/BrandMarks";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
 import {
@@ -490,12 +497,8 @@ const AUTH_BUTTONS: {
 function AuthScreen({ onProvider }: { onProvider: (provider: AuthProvider) => void }) {
   return (
     <Screen>
-      <div className="mb-6 flex items-center justify-center gap-3">
-        <BeeLogo className="h-20 w-20 shrink-0" />
-        <p className="la-display text-left text-[1.65rem] leading-none font-semibold tracking-tight">
-          <span className="mr-1 text-base font-medium opacity-60">by</span>
-          LiveAskew
-        </p>
+      <div className="mb-6 flex justify-center">
+        <BeeByLiveAskew />
       </div>
       <p className="mb-6 text-sm leading-relaxed">
         Google, Apple, Facebook, or Instagram. After this, a short verification — then Bee
