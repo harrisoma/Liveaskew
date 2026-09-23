@@ -4,8 +4,8 @@ import { Footer } from "@/components/Footer";
 
 const LINKS = [
   { href: "/#bee", label: "Bee" },
-  { href: "/hive", label: "The Hive" },
-  { href: "/buzz", label: "Buzz" },
+  { href: "/#hive", label: "The Hive" },
+  { href: "/#buzz", label: "Buzz" },
 ] as const;
 
 export function SiteFrame({ children }: { children: ReactNode }) {
@@ -39,12 +39,15 @@ export function SiteFrame({ children }: { children: ReactNode }) {
             Enter the app
           </Link>
         </div>
-        <nav className="mx-auto mt-3 flex max-w-[1180px] justify-center gap-6 md:hidden" aria-label="House">
+        <nav
+          className="glass mx-auto mt-3 flex max-w-[1180px] justify-center gap-6 rounded-full px-4 py-2.5 md:hidden"
+          aria-label="House"
+        >
           {LINKS.map((link) => (
             <a
               key={link.label}
               href={link.href}
-                className="text-[0.68rem] font-medium tracking-[0.16em] uppercase text-black"
+              className="text-[0.68rem] font-medium tracking-[0.16em] uppercase text-black"
             >
               {link.label}
             </a>
