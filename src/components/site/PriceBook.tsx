@@ -48,9 +48,9 @@ export function PriceBook() {
         <button type="button" className="book-cover" onClick={() => setOpen(true)}>
           <span className="book-cover-kicker">LiveAskew</span>
           <span className="book-cover-title">
-            14-day
+            14 Day
             <br />
-            free trial
+            Free Trial
           </span>
           <span className="book-cover-cta">See pricing</span>
         </button>

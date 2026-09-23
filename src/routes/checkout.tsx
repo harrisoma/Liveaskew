@@ -174,7 +174,7 @@ function PayForm({ plan, interval }: { plan: Plan; interval: Interval }) {
         <p className="book-kicker">Payment</p>
         <h2 className="font-display mt-3 text-3xl">Card or crypto</h2>
         <p className="pay-note">
-          A card starts a 14-day free trial, then renews for this {term}. Crypto pays this {term}{" "}
+          A card starts a 14 Day Free Trial, then renews for this {term}. Crypto pays this {term}{" "}
           now in USDC. A wallet does not renew itself, and it does not start the free trial.
         </p>
         {ready && email ? <p className="pay-note">Signed in as {email}</p> : null}
