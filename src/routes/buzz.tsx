@@ -40,7 +40,7 @@ function BuzzPage() {
         <h1 className="font-display mt-4 max-w-3xl text-5xl leading-[1.05] md:text-6xl">
           Post the look. Every platform. Every day.
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink/80">
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black">
           Upload your image. Tell Buzz what to put you in. It writes the post for X, Instagram,
           Facebook, and Telegram — then keeps posting that style each day with a different message.
         </p>
@@ -48,7 +48,7 @@ function BuzzPage() {
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-16 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <form
-          className="rounded-[2rem] bg-cream p-6 shadow-neo"
+          className="rounded-[2rem] bg-white p-6 shadow-neo"
           onSubmit={(event) => {
             event.preventDefault();
             if (!photo || !look) return;
@@ -91,13 +91,13 @@ function BuzzPage() {
               rows={4}
               required
               placeholder="Ivory silk shirt, charcoal trouser, almond loafer — a Tuesday at the office."
-              className="mt-2 w-full rounded-[1.25rem] bg-cream px-4 py-3 text-base shadow-neo-inset outline-none"
+              className="mt-2 w-full rounded-[1.25rem] bg-white px-4 py-3 text-base shadow-neo-inset outline-none"
             />
           </label>
           <button type="submit" className="neo-btn-ink mt-5 disabled:opacity-40" disabled={!photo || !look}>
             Post everywhere
           </button>
-          <p className="mt-4 text-sm leading-relaxed text-ink/70">
+          <p className="mt-4 text-sm leading-relaxed text-black">
             Buzz keeps the style and sends a new line each day. Connecting X, Instagram, Facebook,
             and Telegram is what turns the draft into a live post.
           </p>
@@ -105,7 +105,7 @@ function BuzzPage() {
 
         <div>
           {!ready && (
-            <div className="rounded-[2rem] bg-cream px-6 py-10 text-sm leading-relaxed shadow-neo-inset">
+            <div className="rounded-[2rem] bg-white px-6 py-10 text-sm leading-relaxed shadow-neo-inset">
               The four posts appear here. Each platform gets its own wording. The week under them
               is the same style, said seven different ways.
             </div>
@@ -114,7 +114,7 @@ function BuzzPage() {
             <>
               <ul className="space-y-3">
                 {today.map((post) => (
-                  <li key={post.id} className="rounded-[1.5rem] bg-cream px-5 py-4 shadow-neo">
+                  <li key={post.id} className="rounded-[1.5rem] bg-white px-5 py-4 shadow-neo">
                     <p className="eyebrow">{post.name}</p>
                     <p className="mt-2 text-sm leading-relaxed">{post.message}</p>
                   </li>
@@ -123,7 +123,7 @@ function BuzzPage() {
               <h2 className="font-display mt-8 text-3xl">Every day, a different message</h2>
               <ol className="mt-4 space-y-2">
                 {week.map((message, index) => (
-                  <li key={message} className="rounded-[1.25rem] bg-cream px-4 py-3 text-sm shadow-neo">
+                  <li key={message} className="rounded-[1.25rem] bg-white px-4 py-3 text-sm shadow-neo">
                     <span className="eyebrow">Day {index + 1}</span>
                     <p className="mt-1">{message}</p>
                   </li>

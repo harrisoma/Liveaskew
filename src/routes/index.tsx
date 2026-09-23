@@ -5,6 +5,7 @@ import { HIVE_NETWORKS, HIVE_ROOMS } from "@/lib/hive";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { name: "theme-color", content: "#ffffff" },
       { title: "LiveAskew — Bee, The Hive, and Buzz" },
       {
         name: "description",
@@ -72,7 +73,7 @@ function HomePage() {
         <h1 className="font-display mt-4 max-w-3xl text-5xl leading-[1.05] md:text-6xl">
           Three products. One house.
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink/80">
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black">
           Bee styles you. The Hive is where clients talk. Buzz takes the look and posts it — today,
           and again tomorrow, in different words.
         </p>
@@ -80,10 +81,10 @@ function HomePage() {
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-16 md:grid-cols-3">
         {PRODUCTS.map((product) => (
-          <article id={product.id} key={product.id} className="rounded-[2rem] bg-cream p-6 shadow-neo">
+          <article id={product.id} key={product.id} className="rounded-[2rem] bg-white p-6 shadow-neo">
             <p className="eyebrow">{product.kicker}</p>
             <h2 className="font-display mt-3 text-4xl">{product.name}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-ink/80">{product.line}</p>
+            <p className="mt-3 text-sm leading-relaxed text-black">{product.line}</p>
             <ul className="mt-5 space-y-2 text-sm leading-relaxed">
               {product.points.map((point) => (
                 <li key={point}>· {point}</li>
@@ -97,18 +98,18 @@ function HomePage() {
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 pb-20">
-        <div className="rounded-[2rem] bg-cream p-6 shadow-neo-inset md:p-10">
+        <div className="rounded-[2rem] bg-white p-6 shadow-neo-inset md:p-10">
           <p className="eyebrow">The Hive, in short</p>
           <h2 className="font-display mt-3 text-3xl">One room. Four networks.</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/80">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black">
             {HIVE_NETWORKS.join(", ")}. The conversation stays in The Hive — motherhood, style, the
             everyday, and editorial — instead of scattering across apps.
           </p>
           <ul className="mt-6 grid gap-3 md:grid-cols-2">
             {HIVE_ROOMS.map((room) => (
-              <li key={room.id} className="rounded-[1.5rem] bg-cream px-4 py-4 shadow-neo">
+              <li key={room.id} className="rounded-[1.5rem] bg-white px-4 py-4 shadow-neo">
                 <p className="font-display text-2xl">{room.name}</p>
-                <p className="mt-1 text-sm leading-relaxed text-ink/75">{room.line}</p>
+                <p className="mt-1 text-sm leading-relaxed text-black">{room.line}</p>
               </li>
             ))}
           </ul>

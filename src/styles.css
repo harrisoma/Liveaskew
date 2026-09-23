@@ -180,6 +180,40 @@
   }
 }
 
+/* Website: black, white, and gold. No clay, no gray. */
+.la-site {
+  --ink: #000000;
+  --ink-soft: #000000;
+  --cream: #ffffff;
+  --bone: #ffffff;
+  --gold: #b8860b;
+  --gold-deep: #b8860b;
+  --gold-soft: #b8860b;
+  --background: #ffffff;
+  --foreground: #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.la-site .shadow-neo,
+.la-site .shadow-neo-sm,
+.la-site .shadow-neo-lg,
+.la-site .shadow-neo-inset {
+  box-shadow: none;
+  border: 1px solid #000000;
+  background: #ffffff;
+}
+
+.la-site .neo-btn-ink {
+  background: #000000;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.la-site .neo-btn-ink:hover {
+  color: #b8860b;
+}
+
 /* ——— editorial utilities ——— */
 
 @utility font-display {

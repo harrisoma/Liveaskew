@@ -10,9 +10,9 @@ const LINKS = [
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-cream text-ink">
+    <div className="la-site min-h-screen bg-white text-black">
       <header className="px-4 pt-4 md:px-8 md:pt-6">
-        <div className="mx-auto flex max-w-[1100px] items-center justify-between gap-4 rounded-full bg-cream px-4 py-3 shadow-neo md:px-6">
+        <div className="mx-auto flex max-w-[1100px] items-center justify-between gap-4 rounded-full bg-white px-4 py-3 shadow-neo md:px-6">
           <Link to="/" className="flex items-center gap-3">
             <img src="/bee-logo-192.png" alt="" className="h-11 w-11 rounded-full" />
             <span className="font-display text-2xl tracking-tight">
@@ -24,7 +24,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[0.68rem] font-medium tracking-[0.22em] uppercase text-ink/70 hover:text-gold-deep"
+                className="text-[0.68rem] font-medium tracking-[0.22em] uppercase text-black hover:text-gold-deep"
               >
                 {link.label}
               </a>
@@ -39,7 +39,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[0.68rem] font-medium tracking-[0.18em] uppercase text-ink/70"
+                className="text-[0.68rem] font-medium tracking-[0.18em] uppercase text-black hover:text-gold-deep"
               >
                 {link.label}
               </a>
