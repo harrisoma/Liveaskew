@@ -268,9 +268,72 @@
 
 .la-site .book-cover-title {
   font-family: var(--font-serif);
-  font-size: 4.4rem;
-  line-height: 0.9;
+  font-size: clamp(2.7rem, 7vw, 3.35rem);
+  line-height: 0.92;
   letter-spacing: -0.03em;
+}
+
+.la-site .book-pay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.la-site .book-pay-year {
+  background: #b8860b;
+  color: #000000;
+}
+
+.la-site .book-pay-year:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.la-site button.glass-btn {
+  border: 0;
+  cursor: pointer;
+}
+
+.la-site button.glass-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.la-site .pay-sheet {
+  width: min(880px, 100%);
+  margin-inline: auto;
+}
+
+.la-site .pay-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.la-site .pay-card {
+  border: 1px solid rgba(184, 134, 11, 0.55);
+  border-radius: 1.5rem;
+  background: #ffffff;
+  padding: 1.5rem;
+}
+
+.la-site .pay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.la-site .pay-note {
+  margin-top: 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 800px) {
+  .la-site .pay-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .la-site .book-cover-cta {

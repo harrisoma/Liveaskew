@@ -149,6 +149,10 @@ export const PLANS: Plan[] = [
   },
 ];
 
+export function membershipAmount(plan: Plan, interval: "month" | "year"): number {
+  return interval === "year" ? plan.priceAnnual : plan.priceMonthly;
+}
+
 export function getPlan(slug: string | null | undefined): Plan | null {
   if (!slug) return null;
   if (slug === "atelier") return PLANS.find((p) => p.slug === "live_bee") ?? null;

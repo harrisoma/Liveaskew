@@ -47,7 +47,11 @@ export function PriceBook() {
       <div className="price-book">
         <button type="button" className="book-cover" onClick={() => setOpen(true)}>
           <span className="book-cover-kicker">LiveAskew</span>
-          <span className="book-cover-title">Pricing</span>
+          <span className="book-cover-title">
+            14-day
+            <br />
+            free trial
+          </span>
           <span className="book-cover-cta">See pricing</span>
         </button>
       </div>
@@ -93,9 +97,23 @@ export function PriceBook() {
             )}
             <p className="book-tagline">{plan.tagline}</p>
             <p className="book-description">{plan.description}</p>
-            <a href="/app" className="glass-btn mt-8">
-              {plan.inquiry ? "Ask for a Live Bee" : "Enter Bee"}
-            </a>
+            {plan.inquiry ? (
+              <a href="/checkout?plan=live_bee" className="glass-btn mt-8">
+                Ask for a Live Bee
+              </a>
+            ) : (
+              <div className="book-pay">
+                <a className="glass-btn" href={`/checkout?plan=${plan.slug}&interval=month`}>
+                  1 month · {money(plan)}
+                </a>
+                <a
+                  className="glass-btn book-pay-year"
+                  href={`/checkout?plan=${plan.slug}&interval=year`}
+                >
+                  1 year · ${plan.priceAnnual}
+                </a>
+              </div>
+            )}
           </article>
           <article className="book-page book-page-right">
             <p className="book-kicker">In this plan</p>
