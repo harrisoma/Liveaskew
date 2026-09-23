@@ -83,32 +83,31 @@ export function LiveAskewSignature({ className = "" }: { className?: string }) {
   return (
     <img
       src="/liveaskew-signature.png"
-      alt="LiveAskew signature"
-      width={866}
-      height={1610}
-      className={`w-auto object-contain ${className}`}
+      alt=""
+      width={788}
+      height={1570}
+      className={`h-12 w-auto shrink-0 object-contain ${className}`}
+      style={{ aspectRatio: "788 / 1570" }}
     />
   );
 }
 
 export function BeeByLiveAskew({
-  crestClass = "h-20 w-20",
-  wordClass = "text-[1.55rem]",
+  crestClass = "h-24 w-24",
+  wordClass = "text-[1.35rem]",
 }: {
   crestClass?: string;
   wordClass?: string;
 }) {
   return (
-    <div className="flex items-center gap-4" aria-label="Bee by LiveAskew">
+    <div className="flex items-center gap-3" aria-label="Bee by LiveAskew">
       <BeeLogo className={`${crestClass} shrink-0`} />
-      <div className="flex flex-col items-start gap-1">
-        <p className="leading-none">
-          <span className="mr-1 text-[0.68rem] font-medium tracking-[0.18em] uppercase opacity-55">
-            by
-          </span>
+      <div className="min-w-0 text-left leading-none">
+        <p className="text-[0.68rem] font-medium tracking-[0.16em] uppercase opacity-55">by</p>
+        <div className="mt-1.5 flex items-end gap-2">
           <LiveAskewLogo className={wordClass} />
-        </p>
-        <LiveAskewSignature className="h-36" />
+          <LiveAskewSignature />
+        </div>
       </div>
     </div>
   );
