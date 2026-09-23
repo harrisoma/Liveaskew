@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@liveaskew/auth": "*",
+    "@liveaskew/community": "*",
     "@liveaskew/ui": "*",
     "next": "^15.5.4",
     "next-auth": "^5.0.0-beta.29",

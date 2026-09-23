@@ -4,6 +4,7 @@ export {
   getLookStore,
   parseLookTransfer,
   transferLook,
+  type LookCaption,
   type LookRecord,
   type LookTransfer,
 } from "./looks";
