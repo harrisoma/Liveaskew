@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@liveaskew/api-client": "*",
+    "@liveaskew/community": "*",
     "@liveaskew/ui": "*",
     "next": "^15.5.4",
     "react": "^19.2.3",

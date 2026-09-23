@@ -9,7 +9,9 @@ LiveAskew is the house. Three products ship as separate apps and share auth, UI,
 | **The Buzz** | `apps/buzz` | Next.js. `buzz.liveaskew.com`. `POST /api/looks/transfer` from Bee, then schedule.               |
 | **House**    | `apps/www`  | Next.js. `liveaskew.com`. The three medals.                                                      |
 
-Shared packages: `@liveaskew/ui`, `@liveaskew/auth`, `@liveaskew/api-client`.
+Shared packages: `@liveaskew/ui`, `@liveaskew/auth`, `@liveaskew/api-client`, `@liveaskew/community`.
+
+The Hive is built on [ActivityPub](https://www.w3.org/TR/activitypub/) (ActivityStreams 2.0), the open model behind Mastodon: a subscriber is a Person, a topic is a Note, a reply is a Note with `inReplyTo`, and a follow points at the platform they signed in with. Buzz only posts Bee looks for those subscribers. Each caption is written from that client’s Bee interview (Fit, Feel, Fabric). Set `OPENAI_BASE_URL` and `CAPTION_MODEL` to any OpenAI-compatible server, including an open model, and Buzz keeps the interview caption when the model drops her words.
 
 ```bash
 npm run dev:www     # http://localhost:3100

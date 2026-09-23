@@ -54,7 +54,7 @@ export default function App() {
     try {
       await transferLook(BUZZ, {
         lookId: `${Date.now()}`,
-        userId: "bee-member",
+        userId: "amina",
         imageUrl: "https://bee.liveaskew.com/look",
         caption:
           `${plan.title}. ${plan.pieces.map((piece) => piece.item).join(", ")}. ${note}`.trim(),

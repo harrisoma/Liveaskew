@@ -10,9 +10,10 @@ export const metadata: Metadata = {
 };
 
 const links = [
+  { href: "/people", label: "People" },
+  { href: "/topics", label: "Topics" },
   { href: "/", label: "Rooms" },
   { href: "/messages", label: "Messages" },
-  { href: "/challenges", label: "Challenges" },
   { href: "/signin", label: "Sign in" },
 ];
 

@@ -9,6 +9,8 @@ export type LookTransfer = {
   source: "bee";
 };
 
+export type LookCaption = { platform: Platform; text: string };
+
 export type LookRecord = LookTransfer & {
   id: string;
   status: "queued" | "scheduled" | "posted";
@@ -16,6 +18,9 @@ export type LookRecord = LookTransfer & {
   createdAt: string;
   hashtags: string[];
   description: string | null;
+  captions: LookCaption[];
+  signIn: string | null;
+  authorName: string | null;
 };
 
 type Store = { looks: LookRecord[] };
@@ -66,7 +71,11 @@ export function getLookStore() {
     list() {
       return [...store().looks].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     },
-    transfer(input: LookTransfer, description: string | null = null): LookRecord {
+    transfer(
+      input: LookTransfer,
+      description: string | null = null,
+      meta: { captions?: LookCaption[]; signIn?: string | null; authorName?: string | null } = {},
+    ): LookRecord {
       const record: LookRecord = {
         ...input,
         id: crypto.randomUUID(),
@@ -75,6 +84,9 @@ export function getLookStore() {
         createdAt: new Date().toISOString(),
         hashtags: suggestHashtags(input.caption),
         description,
+        captions: meta.captions ?? [],
+        signIn: meta.signIn ?? null,
+        authorName: meta.authorName ?? null,
       };
       store().looks.push(record);
       return record;
