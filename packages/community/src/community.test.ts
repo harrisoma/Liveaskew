@@ -11,6 +11,7 @@ import {
   replyToTopic,
   signInBadge,
 } from "./hive";
+import { blankVoice, captionsFromVoice, learnAbout, prepareOwnLook } from "./voice";
 
 describe("Hive subscribers", () => {
   it("shows the platform they used, and a follow link on that platform", () => {
@@ -90,7 +91,7 @@ describe("Buzz captions from the Bee interview", () => {
     expect(parseModelCaptions("not json", ["instagram"])).toBeNull();
   });
 
-  it("posts a subscriber's Bee look and refuses everyone else", () => {
+  it("posts a Bee interview and also posts someone who only has Buzz", () => {
     const posted = prepareBuzzPost(initialHive().actors, {
       userId: "amina",
       look: "Stretch wool blazer",
@@ -99,12 +100,37 @@ describe("Buzz captions from the Bee interview", () => {
     if ("error" in posted) throw new Error(posted.error);
     expect(posted.signIn).toBe("Signed in with Facebook");
     expect(posted.captions[0]?.text).toContain("School run, then a board meeting.");
-    expect(
-      prepareBuzzPost(initialHive().actors, {
-        userId: "guest",
-        look: "A dress",
-        platforms: ["instagram"],
-      }),
-    ).toEqual({ error: "Buzz posts Bee looks for Hive subscribers." });
+    const guest = prepareBuzzPost(initialHive().actors, {
+      userId: "guest",
+      look: "A red coat",
+      platforms: ["instagram"],
+    });
+    if ("error" in guest) throw new Error(guest.error);
+    expect(guest.signIn).toBe("On Buzz");
+    expect(guest.captions[0]?.text).toContain("A red coat");
+  });
+});
+
+describe("Buzz on its own", () => {
+  it("writes from what she said, then from what Buzz learned", () => {
+    const first = blankVoice("Nia Reed", "I post for other stylists. Keep the joke dry.");
+    const before = captionsFromVoice({
+      voice: first,
+      look: "Black coat, gold earring",
+      platforms: ["instagram"],
+    });
+    expect(before[0]?.text).toContain("Keep the joke dry.");
+    expect(before[0]?.text).not.toContain("Shorter next time");
+
+    const taught = learnAbout(first, "Shorter next time. No boardroom.");
+    const after = prepareOwnLook({
+      voice: taught,
+      look: "Black coat, gold earring",
+      platforms: ["instagram"],
+    });
+    if ("error" in after) throw new Error(after.error);
+    expect(after.signIn).toBe("On Buzz");
+    expect(after.captions[0]?.text).toContain("Shorter next time. No boardroom.");
+    expect(after.captions[0]?.text).toContain("Keep the joke dry.");
   });
 });

@@ -13,10 +13,15 @@ const empty = { looks: [], counts: { queued: 0, scheduled: 0, posted: 0 } };
 
 export function Dashboard() {
   const [data, setData] = useState<Payload>(empty);
-  const [caption, setCaption] = useState("Stretch wool blazer");
-  const [userId, setUserId] = useState("amina");
-  const [platforms, setPlatforms] = useState<Platform[]>(["instagram", "facebook"]);
+  const [name, setName] = useState("");
+  const [about, setAbout] = useState("");
+  const [lesson, setLesson] = useState("");
+  const [look, setLook] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [beeId, setBeeId] = useState("");
+  const [platforms, setPlatforms] = useState<Platform[]>(["instagram", "tiktok"]);
   const [error, setError] = useState("");
+  const [learned, setLearned] = useState<string[]>([]);
 
   async function refresh() {
     const response = await fetch("/api/looks");
@@ -27,26 +32,32 @@ export function Dashboard() {
     void refresh();
   }, []);
 
-  async function receive(event: FormEvent) {
-    event.preventDefault();
-    setError("");
-    const response = await fetch("/api/looks/transfer", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        lookId: crypto.randomUUID(),
-        userId,
-        imageUrl: "/buzz.png",
-        caption,
-        platforms,
-        source: "bee",
-      }),
-    });
-    const payload = (await response.json()) as { error?: string };
-    if (!response.ok) {
-      setError(payload.error ?? "Transfer failed");
+  function onImage(file: File | undefined) {
+    if (!file) return;
+    if (file.size > 1_500_000) {
+      setError("Use a photo under 1.5 MB.");
       return;
     }
+    const reader = new FileReader();
+    reader.onload = () => setImageUrl(typeof reader.result === "string" ? reader.result : "");
+    reader.readAsDataURL(file);
+  }
+
+  async function upload(event: FormEvent) {
+    event.preventDefault();
+    setError("");
+    const response = await fetch("/api/looks/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name, about, lesson, look, imageUrl, platforms, beeId }),
+    });
+    const payload = (await response.json()) as { error?: string; learned?: string[] };
+    if (!response.ok) {
+      setError(payload.error ?? "Buzz did not take the look.");
+      return;
+    }
+    setLearned(payload.learned ?? []);
+    setLesson("");
     await refresh();
   }
 
@@ -79,11 +90,12 @@ export function Dashboard() {
             margin: "8px 0",
           }}
         >
-          The look, then the post.
+          Your look. Your caption.
         </h1>
         <p className="muted">
-          Hive subscribers send a Bee look here. Buzz writes the caption from that client’s
-          interview, then posts it on the platforms she chose.
+          Buzz is its own app. Upload a photo — influencer, stylist, or anyone. The caption starts
+          from what you tell it, and each note you teach it shows up in the next post. Bee is
+          optional.
         </p>
       </div>
       <div className="stats">
@@ -96,28 +108,58 @@ export function Dashboard() {
       </div>
       <div className="split">
         <Card className="pad">
-          <p className="kicker">From Bee</p>
-          <form className="stack" onSubmit={receive}>
-            <label className="muted">
-              Subscriber
-              <select
-                className="neo-input"
-                aria-label="Subscriber"
-                value={userId}
-                onChange={(event) => setUserId(event.target.value)}
-              >
-                <option value="amina">Amina Cole · Facebook</option>
-                <option value="june">June Adler · Instagram</option>
-                <option value="guest">Not a Hive subscriber</option>
-              </select>
-            </label>
+          <p className="kicker">Upload</p>
+          <form className="stack" onSubmit={upload}>
+            <input
+              className="neo-input"
+              aria-label="Your name"
+              placeholder="Your name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
             <textarea
               className="neo-textarea"
-              rows={3}
-              value={caption}
-              onChange={(event) => setCaption(event.target.value)}
-              aria-label="Look from Bee"
+              rows={2}
+              aria-label="About you"
+              placeholder="Who you post for, and how you sound"
+              value={about}
+              onChange={(event) => setAbout(event.target.value)}
             />
+            <textarea
+              className="neo-textarea"
+              rows={2}
+              aria-label="Look"
+              placeholder="What is in the photo"
+              value={look}
+              onChange={(event) => setLook(event.target.value)}
+            />
+            <input
+              aria-label="Photo"
+              type="file"
+              accept="image/*"
+              onChange={(event) => onImage(event.target.files?.[0])}
+            />
+            <textarea
+              className="neo-textarea"
+              rows={2}
+              aria-label="Teach Buzz"
+              placeholder="Teach Buzz — shorter, funnier, no boardroom"
+              value={lesson}
+              onChange={(event) => setLesson(event.target.value)}
+            />
+            <label className="muted">
+              Bee interview, if you have one
+              <select
+                className="neo-input"
+                aria-label="Bee interview"
+                value={beeId}
+                onChange={(event) => setBeeId(event.target.value)}
+              >
+                <option value="">I only have Buzz</option>
+                <option value="amina">Amina Cole</option>
+                <option value="june">June Adler</option>
+              </select>
+            </label>
             <div className="row">
               {PLATFORMS.map((platform) => (
                 <label key={platform} className="muted">
@@ -131,7 +173,8 @@ export function Dashboard() {
               ))}
             </div>
             {error && <p>{error}</p>}
-            <Button type="submit">Receive look</Button>
+            {learned.length > 0 && <p className="muted">Buzz remembers: {learned.join(" | ")}</p>}
+            <Button type="submit">Upload look</Button>
           </form>
           <div className="stack" style={{ marginTop: 18 }}>
             {PLATFORMS.map((platform) => (
@@ -142,28 +185,35 @@ export function Dashboard() {
           </div>
         </Card>
         <div className="stack">
-          {data.looks.map((look) => (
-            <Card key={look.id} className="look">
-              {look.authorName && look.signIn ? (
+          {data.looks.map((item) => (
+            <Card key={item.id} className="look">
+              {item.imageUrl ? (
+                <img
+                  src={item.imageUrl}
+                  alt=""
+                  style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 16 }}
+                />
+              ) : null}
+              {item.authorName ? (
                 <p className="badge">
-                  {look.authorName} · {look.signIn}
+                  {item.authorName}
+                  {item.signIn ? ` · ${item.signIn}` : ""}
                 </p>
               ) : null}
-              <strong>{look.caption}</strong>
+              <strong>{item.caption}</strong>
               <p className="muted">
-                {look.status} · {look.platforms.join(", ")}
+                {item.status} · {item.platforms.join(", ")}
               </p>
-              {(look.captions ?? []).map((item) => (
-                <p key={item.platform}>
-                  <span className="badge">{item.platform}</span> {item.text}
+              {(item.captions ?? []).map((caption) => (
+                <p key={caption.platform}>
+                  <span className="badge">{caption.platform}</span> {caption.text}
                 </p>
               ))}
-              <p>{look.hashtags.join(" ")}</p>
               <div className="row">
-                <Button type="button" onClick={() => update(look.id, "schedule")}>
+                <Button type="button" onClick={() => update(item.id, "schedule")}>
                   Schedule
                 </Button>
-                <Button type="button" onClick={() => update(look.id, "posted")}>
+                <Button type="button" onClick={() => update(item.id, "posted")}>
                   Mark posted
                 </Button>
               </div>

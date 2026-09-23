@@ -6,7 +6,7 @@ export type LookTransfer = {
   imageUrl: string;
   caption: string;
   platforms: Platform[];
-  source: "bee";
+  source: "bee" | "buzz";
 };
 
 export type LookCaption = { platform: Platform; text: string };
@@ -42,7 +42,9 @@ export function parseLookTransfer(body: unknown): LookTransfer | { error: string
   const platforms = Array.isArray(value.platforms)
     ? value.platforms.filter((item): item is Platform => PLATFORMS.includes(item as Platform))
     : [];
-  if (value.source !== "bee") return { error: "Looks transfer only from Bee." };
+  if (value.source !== "bee" && value.source !== "buzz") {
+    return { error: "Looks come from Bee or from an upload on Buzz." };
+  }
   if (typeof value.lookId !== "string" || value.lookId.trim() === "") {
     return { error: "A look id is required." };
   }
@@ -62,7 +64,7 @@ export function parseLookTransfer(body: unknown): LookTransfer | { error: string
     imageUrl: value.imageUrl.trim(),
     caption: value.caption.trim(),
     platforms,
-    source: "bee",
+    source: value.source,
   };
 }
 

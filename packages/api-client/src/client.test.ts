@@ -17,7 +17,7 @@ const look = {
 describe("Bee to Buzz", () => {
   it("rejects a transfer that did not come from Bee", () => {
     expect(parseLookTransfer({ ...look, source: "web" })).toEqual({
-      error: "Looks transfer only from Bee.",
+      error: "Looks come from Bee or from an upload on Buzz.",
     });
   });
 
