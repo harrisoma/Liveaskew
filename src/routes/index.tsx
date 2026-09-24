@@ -131,8 +131,8 @@ function HomePage() {
       <section className="relative min-h-[100svh]">
         <img
           src={heroEditorial}
-          alt="A woman in a cream silk blouse and black tailored trousers, hand on hip"
-          className="absolute inset-0 h-full w-full object-cover"
+          alt="A woman in a tailored black and gold ensemble, standing in a modern interior with thin gold frames of looks"
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/30" />
         <div className="relative z-10 flex min-h-[100svh] items-end px-5 pt-36 pb-12 md:items-center md:px-16 md:pb-16">
