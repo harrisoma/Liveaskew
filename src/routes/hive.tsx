@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks } from "@/components/site/SocialMarks";
 import { HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
-import hiveHero from "@/assets/women/woman-04.jpg";
+import hiveHero from "@/assets/hive-gathering.jpg";
 
 export const Route = createFileRoute("/hive")({
   head: () => ({
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/hive")({
       {
         name: "description",
         content:
-          "The Hive is the room. Talk through motherhood, style, the everyday, and editorial with Instagram, Facebook, and TikTok kept as one member.",
+          "The Hive is the room. Mothers talk through family, motherhood, relationships, styling, and the everyday of a working life.",
       },
     ],
   }),
@@ -24,10 +24,10 @@ function HivePage() {
       <section className="relative min-h-[70svh]">
         <img
           src={hiveHero}
-          alt="A woman with dark curly hair in a black blazer and gold necklace"
-          className="absolute inset-0 h-full w-full object-cover object-top"
+          alt="Mothers gathered on a sofa in a bright room, laughing and sipping wine, casually dressed"
+          className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
         <div className="relative z-10 flex min-h-[70svh] items-end px-6 pt-32 pb-12 md:px-16">
           <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
             <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">The Hive</p>
@@ -35,8 +35,9 @@ function HivePage() {
               Talk it through.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white">
-              The Hive is the conversation. Motherhood, style, the everyday, and editorial.
-              Instagram, Facebook, and TikTok stay one member. Google and Apple open the door.
+              The Hive is the conversation. Family, motherhood, relationships, styling, and the
+              everyday of a working life. Instagram, Facebook, and TikTok stay one member. Google
+              and Apple open the door.
             </p>
             <SocialMarks ids={["instagram", "facebook", "tiktok", "google", "apple"]} />
           </div>

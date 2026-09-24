@@ -4,7 +4,7 @@ import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import heroStylist from "@/assets/hero-stylist.jpg";
-import hivePortrait from "@/assets/women/woman-01.jpg";
+import hiveGathering from "@/assets/hive-gathering.jpg";
 import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
 
 export const Route = createFileRoute("/")({
@@ -63,12 +63,14 @@ const PRODUCTS = [
     kicker: "The community",
     name: "The Hive",
     promise:
-      "Talk it through. The Hive is the room for motherhood, style, the everyday, and editorial. One member. The accounts she already has.",
+      "Talk it through. Mothers gather for family, motherhood, relationships, styling, and the everyday of a working life. One member. The accounts she already has.",
     networks: ["instagram", "facebook", "tiktok", "google", "apple"] as SocialId[],
     href: "/hive",
     cta: "Enter The Hive",
-    image: hivePortrait,
-    alt: "A woman in a black blazer and gold jewelry, seated in warm light",
+    image: hiveGathering,
+    alt: "Mothers gathered on a sofa in a bright room, laughing and sipping wine, casually dressed",
+    frame: "object-[78%_center]",
+    wash: "bg-gradient-to-t from-black/30 via-transparent to-transparent",
     mark: "/hive-logo.png",
     offers: [
       {
@@ -167,9 +169,11 @@ function HomePage() {
             <img
               src={product.image}
               alt={product.alt}
-              className="absolute inset-0 h-full w-full object-cover"
+              className={`absolute inset-0 h-full w-full object-cover ${"frame" in product ? product.frame : ""}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/25" />
+            <div
+              className={`absolute inset-0 ${"wash" in product ? product.wash : "bg-gradient-to-t from-black/70 via-black/20 to-black/25"}`}
+            />
             <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
               <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
                 <div className="flex items-center gap-4">
