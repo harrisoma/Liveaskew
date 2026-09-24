@@ -36,7 +36,7 @@ const PRODUCTS = [
     href: "/app",
     cta: "Enter Bee",
     image: heroStylist,
-    alt: "A stylist at a sunlit table, reviewing a sketch with a client",
+    alt: "An African American mother holding her phone, looking at her looks in the Bee app, with the Bee logo",
     mark: "/bee-logo-192.png",
     offers: [
       {
