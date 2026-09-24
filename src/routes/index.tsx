@@ -3,7 +3,7 @@ import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
-import heroStylist from "@/assets/hero-stylist.jpg";
+import beeAppCard from "@/assets/bee-app-card.jpg";
 import hiveGathering from "@/assets/hive-gathering.jpg";
 import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
 
@@ -35,8 +35,8 @@ const PRODUCTS = [
       "Bee interviews her before it dresses her. Fit, how she wants to feel, and the cloth. The clothes follow the body she has. The photograph stays the woman in front of it.",
     href: "/app",
     cta: "Enter Bee",
-    image: heroStylist,
-    alt: "A woman scrolling through her looks in the Bee app while getting ready for the evening, her clothes laid out behind her, with the Bee logo",
+    image: beeAppCard,
+    alt: "The Bee app on her phone, a scroll of her looks and the Bee logo, in a bright room",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -165,35 +165,65 @@ function HomePage() {
 
       {PRODUCTS.map((product) => (
         <section id={product.id} key={product.id} className="scroll-mt-32 bg-white">
-          <div className="relative min-h-[78svh]">
-            <img
-              src={product.image}
-              alt={product.alt}
-              className={`absolute inset-0 h-full w-full object-cover ${"frame" in product ? product.frame : ""}`}
-            />
-            <div
-              className={`absolute inset-0 ${"wash" in product ? product.wash : "bg-gradient-to-t from-black/70 via-black/20 to-black/25"}`}
-            />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
-              <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
-                <div className="flex items-center gap-4">
-                  <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
-                  <div>
-                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
-                      {product.index} — {product.kicker}
-                    </p>
-                    <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
-                      {product.name}
-                    </h2>
+          {product.id === "bee" ? (
+            <div className="mx-auto max-w-[1180px] px-5 pt-28 md:px-8 md:pt-32">
+              <article className="overflow-hidden rounded-[2rem] border border-black/10 bg-[#f6f3ee] shadow-[0_24px_60px_rgba(0,0,0,0.08)] md:grid md:min-h-[680px] md:grid-cols-2">
+                <div className="flex flex-col justify-center px-7 py-10 md:px-12 md:py-14">
+                  <div className="flex items-center gap-4">
+                    <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                    <div>
+                      <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                        {product.index} — {product.kicker}
+                      </p>
+                      <h2 className="font-display text-5xl leading-none text-black md:text-6xl">
+                        {product.name}
+                      </h2>
+                    </div>
                   </div>
+                  <p className="mt-5 max-w-xl text-base leading-relaxed text-black">
+                    {product.promise}
+                  </p>
                 </div>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
-                  {product.promise}
-                </p>
-                {"networks" in product ? <SocialMarks ids={product.networks} /> : null}
+                <div className="relative min-h-[560px] bg-[#efe8dc]">
+                  <img
+                    src={product.image}
+                    alt={product.alt}
+                    className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
+                  />
+                </div>
+              </article>
+            </div>
+          ) : (
+            <div className="relative min-h-[78svh]">
+              <img
+                src={product.image}
+                alt={product.alt}
+                className={`absolute inset-0 h-full w-full object-cover ${"frame" in product ? product.frame : ""}`}
+              />
+              <div
+                className={`absolute inset-0 ${"wash" in product ? product.wash : "bg-gradient-to-t from-black/70 via-black/20 to-black/25"}`}
+              />
+              <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
+                <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
+                  <div className="flex items-center gap-4">
+                    <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                    <div>
+                      <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                        {product.index} — {product.kicker}
+                      </p>
+                      <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
+                        {product.name}
+                      </h2>
+                    </div>
+                  </div>
+                  <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
+                    {product.promise}
+                  </p>
+                  {"networks" in product ? <SocialMarks ids={product.networks} /> : null}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
             <ul className="grid gap-4 md:grid-cols-2">
