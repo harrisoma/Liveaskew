@@ -3,7 +3,7 @@ import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
-import beeHoldingApp from "@/assets/bee-holding-app.png";
+import beeHoldingApp from "@/assets/bee-holding-app.jpg";
 import hiveGathering from "@/assets/hive-gathering.jpg";
 import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
 
@@ -36,7 +36,7 @@ const PRODUCTS = [
     href: "/app",
     cta: "Enter Bee",
     image: beeHoldingApp,
-    alt: "A look laid out on the bed: camel sweater, jeans, gold loafers, scarf, bag, and jewelry, with that look open on the tablet",
+    alt: "A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open on the tablet",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -167,7 +167,7 @@ function HomePage() {
         <section id={product.id} key={product.id} className="scroll-mt-32 bg-white">
           {product.id === "bee" ? (
             <div className="mx-auto max-w-[1180px] px-5 pt-28 md:px-8 md:pt-32">
-              <article className="relative aspect-[1024/572] w-full overflow-hidden rounded-[2rem]">
+              <article className="relative aspect-[2752/1536] w-full overflow-hidden rounded-[2rem]">
                 <img
                   src={product.image}
                   alt={product.alt}
