@@ -186,11 +186,11 @@ function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="relative min-h-[520px] md:min-h-full">
+                <div className="relative md:min-h-full">
                   <img
                     src={product.image}
                     alt={product.alt}
-                    className="absolute inset-0 h-full w-full object-cover object-[68%_center]"
+                    className="h-auto w-full object-contain md:absolute md:inset-0 md:h-full md:object-cover md:object-[68%_center]"
                   />
                 </div>
               </article>
