@@ -36,7 +36,7 @@ const PRODUCTS = [
     href: "/app",
     cta: "Enter Bee",
     image: beeHoldingApp,
-    alt: "A woman laying out an ivory silk blouse, a black midi skirt, and pointed heels, the same look open in the Bee app",
+    alt: "A full women's outfit laid out on the bed, top, skirt, heels, and gold jewelry, with that look open in the Bee app on the phone",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -171,7 +171,7 @@ function HomePage() {
                 <img
                   src={product.image}
                   alt={product.alt}
-                  className="absolute inset-0 h-full w-full object-cover object-[center_88%]"
+                  className="absolute inset-0 h-full w-full object-cover object-[center_62%]"
                 />
                 <div className="relative z-10 flex min-h-[78svh] items-end px-5 py-8 md:min-h-[680px] md:items-center md:px-12 md:py-12">
                   <div className="glass max-w-xl rounded-[2rem] px-7 py-8 text-black md:px-10 md:py-10">
