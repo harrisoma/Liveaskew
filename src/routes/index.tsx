@@ -167,29 +167,29 @@ function HomePage() {
         <section id={product.id} key={product.id} className="scroll-mt-32 bg-white">
           {product.id === "bee" ? (
             <div className="mx-auto max-w-[1180px] px-5 pt-28 md:px-8 md:pt-32">
-              <article className="overflow-hidden rounded-[2rem] border border-black/10 bg-[#f6f3ee] shadow-[0_24px_60px_rgba(0,0,0,0.08)] md:grid md:min-h-[680px] md:grid-cols-2">
-                <div className="flex flex-col justify-center px-7 py-10 md:px-12 md:py-14">
-                  <div className="flex items-center gap-4">
-                    <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
-                    <div>
-                      <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
-                        {product.index} — {product.kicker}
-                      </p>
-                      <h2 className="font-display text-5xl leading-none text-black md:text-6xl">
-                        {product.name}
-                      </h2>
+              <article className="glass relative min-h-[78svh] overflow-hidden rounded-[2rem] md:min-h-[680px]">
+                <img
+                  src={product.image}
+                  alt={product.alt}
+                  className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
+                />
+                <div className="relative z-10 flex min-h-[78svh] items-end px-5 py-8 md:min-h-[680px] md:items-center md:px-12 md:py-12">
+                  <div className="glass max-w-xl rounded-[2rem] px-7 py-8 text-black md:px-10 md:py-10">
+                    <div className="flex items-center gap-4">
+                      <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                      <div>
+                        <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                          {product.index} — {product.kicker}
+                        </p>
+                        <h2 className="font-display text-5xl leading-none text-black md:text-6xl">
+                          {product.name}
+                        </h2>
+                      </div>
                     </div>
+                    <p className="mt-5 max-w-xl text-base leading-relaxed text-black">
+                      {product.promise}
+                    </p>
                   </div>
-                  <p className="mt-5 max-w-xl text-base leading-relaxed text-black">
-                    {product.promise}
-                  </p>
-                </div>
-                <div className="relative min-h-[640px]">
-                  <img
-                    src={product.image}
-                    alt={product.alt}
-                    className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
-                  />
                 </div>
               </article>
             </div>
