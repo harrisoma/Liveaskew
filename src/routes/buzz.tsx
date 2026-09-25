@@ -5,9 +5,14 @@ import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import { BUZZ_PLATFORMS, buzzMessage, buzzWeek, type BuzzPlatformId } from "@/lib/buzz";
 import {
   BEE_LOOKS,
+  attachAccount,
+  detachAccount,
   loadAccounts,
-  saveAccounts,
+  loadAutonomous,
+  runAutonomousPosts,
+  saveAutonomous,
   scheduleLookOnHoney,
+  writeBeeCaptions,
   type BeeLookId,
 } from "@/lib/house";
 import buzzHero from "@/assets/wardrobe-flatlay.jpg";
@@ -34,6 +39,10 @@ function BuzzPage() {
   const [lookId, setLookId] = useState<BeeLookId>("boardroom");
   const [when, setWhen] = useState("09:00");
   const [chosen, setChosen] = useState<BuzzPlatformId[]>([]);
+  const [attached, setAttached] = useState<BuzzPlatformId[]>([]);
+  const [autonomous, setAutonomous] = useState(false);
+  const [captions, setCaptions] = useState<Partial<Record<BuzzPlatformId, string>>>({});
+  const [pass, setPass] = useState(0);
   const [scheduled, setScheduled] = useState<string | null>(null);
   const look = instruction.trim();
 
@@ -42,17 +51,31 @@ function BuzzPage() {
     const next: Partial<Record<BuzzPlatformId, string>> = {};
     for (const account of accounts) next[account.platform] = account.handle;
     setHandles(next);
-    setChosen(accounts.map((account) => account.platform));
+    const platforms = accounts.map((account) => account.platform);
+    setChosen(platforms);
+    setAttached(platforms);
+    setAutonomous(loadAutonomous());
+    runAutonomousPosts(new Date());
   }, []);
 
   function attachSocials(event: FormEvent) {
     event.preventDefault();
-    const accounts = BUZZ_PLATFORMS.flatMap((platform) => {
+    let accounts = loadAccounts();
+    for (const platform of BUZZ_PLATFORMS) {
       const handle = handles[platform.id]?.trim();
-      return handle ? [{ platform: platform.id, handle }] : [];
-    });
-    saveAccounts(accounts);
-    setChosen(accounts.map((account) => account.platform));
+      if (handle) accounts = attachAccount({ platform: platform.id, handle });
+    }
+    const platforms = accounts.map((account) => account.platform);
+    setChosen(platforms);
+    setAttached(platforms);
+  }
+
+  function disconnect(platform: BuzzPlatformId) {
+    const accounts = detachAccount(platform);
+    const platforms = accounts.map((account) => account.platform);
+    setAttached(platforms);
+    setChosen(platforms);
+    setHandles((current) => ({ ...current, [platform]: "" }));
   }
 
   function schedule(event: FormEvent) {
@@ -60,7 +83,13 @@ function BuzzPage() {
     if (chosen.length === 0) return;
     const date = new Date();
     const stamp = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, "0")}-${`${date.getDate()}`.padStart(2, "0")}`;
-    const posts = scheduleLookOnHoney({ lookId, platforms: chosen, date: stamp, time: when });
+    const posts = scheduleLookOnHoney({
+      lookId,
+      platforms: chosen,
+      date: stamp,
+      time: when,
+      captions,
+    });
     setScheduled(posts.map((post) => post.network).join(", "));
   }
 
@@ -117,12 +146,42 @@ function BuzzPage() {
                   aria-label={`${platform.name} handle`}
                   className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm"
                 />
+                {attached.includes(platform.id) ? (
+                  <>
+                    <span className="text-sm text-[#b8860b]">Attached</span>
+                    <button
+                      type="button"
+                      className="text-sm"
+                      onClick={() => disconnect(platform.id)}
+                    >
+                      Disconnect
+                    </button>
+                  </>
+                ) : null}
               </li>
             ))}
           </ul>
           <button type="submit" className="glass-btn mt-4">
             Save accounts
           </button>
+          {attached.length > 0 && (
+            <p className="mt-3 text-sm">
+              {attached.length} {attached.length === 1 ? "account stays" : "accounts stay"}{" "}
+              attached.
+            </p>
+          )}
+          <label className="mt-4 flex items-center gap-3 text-sm">
+            <input
+              type="checkbox"
+              checked={autonomous}
+              onChange={(event) => {
+                setAutonomous(event.target.checked);
+                saveAutonomous(event.target.checked);
+              }}
+            />
+            Autonomous posting. When the hour hits, Buzz sends the caption on the attached
+            platforms.
+          </label>
         </form>
         <form className="glass rounded-[2rem] p-6" onSubmit={schedule}>
           <h2 className="font-display text-3xl">Put a Bee look on Honey</h2>
@@ -151,6 +210,40 @@ function BuzzPage() {
               className="mt-2 block rounded-xl border border-black/10 bg-white px-3 py-2"
             />
           </label>
+          <button
+            type="button"
+            className="glass-btn mt-4"
+            disabled={chosen.length === 0}
+            onClick={() => {
+              const look = BEE_LOOKS.find((item) => item.id === lookId) ?? BEE_LOOKS[0];
+              const written = writeBeeCaptions(look.pieces, chosen, pass);
+              const next: Partial<Record<BuzzPlatformId, string>> = {};
+              for (const line of written) next[line.platform] = line.caption;
+              setCaptions(next);
+              setPass((value) => value + 1);
+            }}
+          >
+            Write captions with Bee
+          </button>
+          {Object.keys(captions).length > 0 && (
+            <ul className="mt-4 space-y-2">
+              {chosen.map((platform) => (
+                <li key={platform}>
+                  <label className="block text-sm">
+                    {BUZZ_PLATFORMS.find((item) => item.id === platform)?.name}
+                    <textarea
+                      value={captions[platform] ?? ""}
+                      onChange={(event) =>
+                        setCaptions((current) => ({ ...current, [platform]: event.target.value }))
+                      }
+                      rows={2}
+                      className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm"
+                    />
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
           <button type="submit" className="glass-btn mt-4" disabled={chosen.length === 0}>
             Schedule {chosen.length} {chosen.length === 1 ? "platform" : "platforms"}
           </button>

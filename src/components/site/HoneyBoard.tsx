@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
+import { runAutonomousPosts } from "@/lib/house";
 import {
   HONEY_NETWORKS,
   honeyIcon,
@@ -30,6 +31,7 @@ export function HoneyBoard() {
     const stamp = todayStamp(clock);
     setNow(clock);
     setDay(stamp);
+    runAutonomousPosts(clock);
     setItems(loadHoney(stamp));
   }, []);
 
@@ -96,7 +98,7 @@ export function HoneyBoard() {
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
                     {item.time} · {item.kind}
-                    {hit ? " · Hit" : ""}
+                    {item.posted ? " · Posted" : hit ? " · Hit" : ""}
                   </p>
                   {icon ? <SocialMarks ids={[icon as SocialId]} /> : null}
                 </div>

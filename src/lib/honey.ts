@@ -9,6 +9,7 @@ export type HoneyItem = {
   network: string | null;
   lookId?: string;
   caption?: string;
+  posted?: boolean;
 };
 
 const NETWORK_ICON: Record<string, "instagram" | "tiktok" | "pinterest" | "facebook" | "linkedin"> =

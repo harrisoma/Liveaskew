@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { scheduleLookOnHoney } from "./house";
+import {
+  attachAccount,
+  loadAccounts,
+  runAutonomousPosts,
+  saveAutonomous,
+  scheduleLookOnHoney,
+} from "./house";
 
 const store = new Map<string, string>();
 
@@ -30,5 +36,27 @@ describe("scheduleLookOnHoney", () => {
     expect(notes[0]?.text).toContain("The boardroom look");
     const alerts = JSON.parse(store.get("la_hive_alerts_v1") ?? "[]") as { text: string }[];
     expect(alerts[0]?.text).toContain("Honey");
+  });
+
+  it("keeps an attached account when another is added", () => {
+    attachAccount({ platform: "instagram", handle: "@maya" });
+    attachAccount({ platform: "linkedin", handle: "maya-cole" });
+    expect(
+      loadAccounts()
+        .map((account) => account.platform)
+        .sort(),
+    ).toEqual(["instagram", "linkedin"]);
+  });
+
+  it("posts on its own once the hour has passed", () => {
+    saveAutonomous(true);
+    scheduleLookOnHoney({
+      lookId: "evening",
+      platforms: ["tiktok"],
+      date: "2026-09-25",
+      time: "07:00",
+    });
+    const sent = runAutonomousPosts(new Date("2026-09-25T07:30:00"));
+    expect(sent).toEqual(["TikTok"]);
   });
 });
