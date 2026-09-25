@@ -33,10 +33,16 @@ const SEED: { rooms: Room[]; messages: HiveMessage[] } = {
       blurb: "Maternity to the boardroom, said out loud.",
     },
     {
-      id: "everyday",
-      name: "Everyday",
+      id: "working-mom",
+      name: "Working mom",
       kind: "topic",
-      blurb: "What actually got worn.",
+      blurb: "The school run and the meeting, in the same afternoon.",
+    },
+    {
+      id: "family",
+      name: "Family",
+      kind: "topic",
+      blurb: "The people at the table, and what the day is actually for.",
     },
     {
       id: "editorial",

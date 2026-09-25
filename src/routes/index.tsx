@@ -272,6 +272,79 @@ function HomePage() {
         </section>
       ))}
 
+      <section id="honey" className="scroll-mt-32 bg-white">
+        <div className="mx-auto max-w-[1180px] px-5 pt-16 md:px-8 md:pt-20">
+          <article className="glass overflow-hidden rounded-[2rem] md:grid md:min-h-[560px] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div className="flex items-center px-7 py-10 md:px-12 md:py-12">
+              <div className="glass max-w-xl rounded-[2rem] px-7 py-8 text-black md:px-10 md:py-10">
+                <div className="flex items-center gap-4">
+                  <img src="/honey-mark.svg" alt="" className="h-14 w-14 rounded-full" />
+                  <div>
+                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                      04 — The calendar
+                    </p>
+                    <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
+                      Honey
+                    </h2>
+                  </div>
+                </div>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-black">
+                  Schedule the event, the meeting, and the post. Honey holds the day the way a
+                  calendar does, and it records the social post and the hour it hits.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center px-6 py-8 md:px-8">
+              <ul className="grid w-full gap-3">
+                {[
+                  ["3:00", "Event", "School pickup"],
+                  ["11:00", "Meeting", "Stylist meeting"],
+                  ["9:00", "Instagram · Hit", "The boardroom look"],
+                ].map(([time, kind, title]) => (
+                  <li key={title} className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                    <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                      {time} · {kind}
+                    </p>
+                    <p className="mt-1 font-display text-2xl">{title}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        </div>
+        <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
+          <ul className="grid gap-4 md:grid-cols-2">
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Upcoming events</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                The school run, the dinner, the thing already on the day.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Meetings</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                A meeting sits on the hour, with the room and the reason.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Social posting schedule</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                The post lands on the same calendar, with the network and the hour.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">When it hits</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                A post that has gone out is marked. The hour it hit stays on the day.
+              </p>
+            </li>
+          </ul>
+          <a href="/honey" className="glass-btn mt-8">
+            Open Honey
+          </a>
+        </div>
+      </section>
+
       <section id="pricing" className="scroll-mt-32 bg-white px-5 py-20 md:px-8 md:py-28">
         <PriceBook />
       </section>

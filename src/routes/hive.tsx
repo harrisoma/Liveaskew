@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks } from "@/components/site/SocialMarks";
+import { HiveRoom } from "@/components/site/HiveRoom";
 import { HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
 import hiveHero from "@/assets/hive-gathering.jpg";
 
@@ -62,6 +63,17 @@ function HivePage() {
             <p className="mt-3 text-sm leading-relaxed text-black">{room.line}</p>
           </article>
         ))}
+      </section>
+
+      <section className="mx-auto max-w-[1100px] px-6 pb-12">
+        <h2 className="font-display text-3xl">The room</h2>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed">
+          Sign in with your name. Motherhood, style, working mom, and family are open to every
+          member.
+        </p>
+        <div className="mt-5">
+          <HiveRoom />
+        </div>
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 pb-20">
