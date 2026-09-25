@@ -36,7 +36,7 @@ const PRODUCTS = [
     href: "/app",
     cta: "Enter Bee",
     image: beeHoldingApp,
-    alt: "A full look laid out on the bed: camel sweater, jeans, gold loafers, scarf, bag, and jewelry, with that look open on the Bee app",
+    alt: "A women's evening look laid out on the bed: camel turtleneck, black satin skirt, gold mules, scarf, bag, and jewelry, open in the Bee app",
     mark: "/bee-logo-192.png",
     offers: [
       {
