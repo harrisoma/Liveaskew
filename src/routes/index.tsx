@@ -36,7 +36,7 @@ const PRODUCTS = [
     href: "/app",
     cta: "Enter Bee",
     image: beeHoldingApp,
-    alt: "A look laid out on the bed: camel sweater, black satin skirt, gold mules, scarf, bag, and jewelry, with that look open on the tablet",
+    alt: "A look laid out on the bed: camel sweater, jeans, gold loafers, scarf, bag, and jewelry, with that look open on the tablet",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -167,8 +167,13 @@ function HomePage() {
         <section id={product.id} key={product.id} className="scroll-mt-32 bg-white">
           {product.id === "bee" ? (
             <div className="mx-auto max-w-[1180px] px-5 pt-28 md:px-8 md:pt-32">
-              <article className="glass overflow-hidden rounded-[2rem] md:grid md:min-h-[640px] md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-                <div className="relative z-10 flex items-center px-7 py-10 md:px-12 md:py-12">
+              <article className="relative min-h-[640px] overflow-hidden rounded-[2rem]">
+                <img
+                  src={product.image}
+                  alt={product.alt}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                />
+                <div className="relative z-10 flex min-h-[640px] items-center px-7 py-10 md:px-12 md:py-12">
                   <div className="glass max-w-xl rounded-[2rem] px-7 py-8 text-black md:px-10 md:py-10">
                     <div className="flex items-center gap-4">
                       <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
@@ -185,13 +190,6 @@ function HomePage() {
                       {product.promise}
                     </p>
                   </div>
-                </div>
-                <div className="relative md:min-h-full">
-                  <img
-                    src={product.image}
-                    alt={product.alt}
-                    className="h-auto w-full object-contain md:absolute md:inset-0 md:h-full md:object-cover md:object-[68%_center]"
-                  />
                 </div>
               </article>
             </div>
