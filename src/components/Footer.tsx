@@ -26,12 +26,6 @@ export function Footer() {
             The Hive
           </a>
           <a
-            href="/buzz"
-            className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
-          >
-            Buzz
-          </a>
-          <a
             href="/honey"
             className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
           >

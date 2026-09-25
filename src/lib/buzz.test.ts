@@ -27,5 +27,7 @@ describe("buzzMessage", () => {
     expect(platformLoginUrl("pinterest")).toContain("pinterest.com");
     expect(platformLoginUrl("facebook")).toContain("facebook.com");
     expect(platformLoginUrl("linkedin")).toContain("linkedin.com");
+    expect(platformLoginUrl("x")).toContain("x.com");
+    expect(platformLoginUrl("threads")).toContain("threads.net");
   });
 });

@@ -1,4 +1,4 @@
-import { BUZZ_PLATFORMS, buzzMessage, type BuzzPlatformId } from "@/lib/buzz";
+import { BUZZ_PLATFORMS, buzzMessage, type BuzzPlatformId, type SocialDoor } from "@/lib/buzz";
 import { loadHoney, postHasHit, saveHoney, type HoneyItem } from "@/lib/honey";
 
 export const BEE_LOOKS = [
@@ -148,7 +148,7 @@ export function ensureLookOfTheDay(today: Date): HoneyItem[] {
 }
 
 export type ConnectedAccount = {
-  platform: BuzzPlatformId;
+  platform: SocialDoor;
   handle: string;
 };
 
@@ -183,7 +183,7 @@ export function attachAccount(account: ConnectedAccount) {
   return next;
 }
 
-export function detachAccount(platform: BuzzPlatformId) {
+export function detachAccount(platform: SocialDoor) {
   const next = loadAccounts().filter((item) => item.platform !== platform);
   saveAccounts(next);
   return next;
@@ -268,13 +268,20 @@ export function addComment(input: Omit<HiveComment, "id">) {
 }
 
 export function scheduleLookOnHoney(input: {
-  lookId: BeeLookId;
+  lookId: string;
+  title?: string;
+  pieces?: string;
   platforms: BuzzPlatformId[];
   date: string;
   time: string;
   captions?: Partial<Record<BuzzPlatformId, string>>;
 }): HoneyItem[] {
-  const look = BEE_LOOKS.find((item) => item.id === input.lookId) ?? BEE_LOOKS[0];
+  const known = BEE_LOOKS.find((item) => item.id === input.lookId);
+  const look = {
+    id: input.lookId,
+    title: input.title ?? known?.title ?? "Look",
+    pieces: input.pieces ?? known?.pieces ?? "",
+  };
   const existing = loadHoney(input.date);
   const posts: HoneyItem[] = input.platforms.map((platform) => {
     const name = BUZZ_PLATFORMS.find((item) => item.id === platform)?.name ?? platform;

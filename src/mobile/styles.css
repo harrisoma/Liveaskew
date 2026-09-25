@@ -295,6 +295,294 @@ body {
   }
 }
 
+@media (min-width: 960px) {
+  .la-web-shell:has(.la-dashboard) {
+    grid-template-columns: 220px minmax(760px, 1080px);
+    align-items: start;
+  }
+  .la-dashboard {
+    width: 100%;
+    height: min(960px, 96dvh);
+    overflow: auto;
+    border-radius: 28px;
+  }
+}
+
+.bee-dash {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem 0.85rem 5.5rem;
+}
+
+.bee-card,
+.bee-scheduler {
+  background: var(--neo-bg);
+  border-radius: 22px;
+  box-shadow: var(--neo-raised);
+  padding: 0.85rem;
+}
+
+.bee-card-head,
+.bee-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.bee-card h1,
+.bee-social h2,
+.bee-scheduler h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.bee-card-actions .neo-btn {
+  width: auto;
+  min-height: 40px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
+}
+
+.bee-carousel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 0.7rem;
+}
+
+.bee-carousel figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  min-height: 220px;
+  background: #111;
+}
+
+.bee-carousel img {
+  display: block;
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.bee-carousel figcaption {
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 14px;
+  color: #fff;
+  background: color-mix(in srgb, #000 42%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.bee-carousel figcaption p,
+.bee-carousel figcaption span {
+  display: block;
+  font-size: 0.72rem;
+}
+
+.bee-carousel figcaption strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.bee-carousel-nav {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--neo-bg);
+  box-shadow: var(--neo-raised-sm);
+  cursor: pointer;
+}
+
+.bee-carousel-empty,
+.bee-rendering {
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.bee-rendering {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  color: #fff;
+  background: #000;
+}
+
+.bee-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.bee-dots button {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #c8c8c8;
+  cursor: pointer;
+}
+
+.bee-dots button[aria-selected="true"] {
+  background: #b8860b;
+}
+
+.bee-dash-lower {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.bee-social {
+  padding: 0.65rem 0.7rem 0.75rem;
+  border-radius: 16px;
+  background: var(--neo-bg);
+  box-shadow: var(--neo-raised-sm);
+}
+
+.bee-social h2 {
+  font-size: 0.95rem;
+}
+
+.bee-pills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.bee-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 28px;
+  padding: 0.15rem 0.4rem;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.bee-pill svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.bee-pill[aria-pressed="true"] {
+  outline: 2px solid #b8860b;
+  outline-offset: 1px;
+}
+
+.bee-automate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+}
+
+.bee-scheduler ul {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.bee-scheduler li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.82rem;
+}
+
+.bee-scheduler li span {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: #b8860b;
+}
+
+.bee-scheduler select {
+  margin-left: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  padding: 0.2rem 0.35rem;
+}
+
+.bee-login {
+  position: fixed;
+  z-index: 40;
+  top: 50%;
+  left: 50%;
+  width: min(22rem, calc(100% - 2rem));
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 20px;
+  padding: 1rem;
+  background: var(--neo-bg);
+  box-shadow: var(--neo-raised);
+}
+
+.bee-login svg {
+  width: 28px;
+  height: 28px;
+}
+
+.bee-login h2 {
+  margin: 0.4rem 0;
+  font-family: var(--font-display);
+}
+
+.bee-login p,
+.bee-login form {
+  font-size: 0.85rem;
+}
+
+.bee-login input {
+  display: block;
+  width: 100%;
+  margin: 0.35rem 0 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.bee-login .neo-btn {
+  width: auto;
+  min-height: 40px;
+  margin-right: 0.4rem;
+}
+
+@media (min-width: 800px) {
+  .bee-dash-lower {
+    grid-template-columns: 250px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .neo-shimmer {
     animation: none;

@@ -8,19 +8,33 @@ export const BUZZ_PLATFORMS = [
 
 export type BuzzPlatformId = (typeof BUZZ_PLATFORMS)[number]["id"];
 
-const PLATFORM_LOGIN: Record<BuzzPlatformId, string> = {
+export const CONNECT_DOORS = [
+  { id: "x", name: "X", color: "#000000", ink: "#ffffff" },
+  { id: "threads", name: "Threads", color: "#000000", ink: "#ffffff" },
+  { id: "instagram", name: "Instagram", color: "#E1306C", ink: "#ffffff" },
+  { id: "facebook", name: "Facebook", color: "#1877F2", ink: "#ffffff" },
+  { id: "tiktok", name: "TikTok", color: "#010101", ink: "#ffffff" },
+  { id: "linkedin", name: "LinkedIn", color: "#0A66C2", ink: "#ffffff" },
+] as const;
+
+export type ConnectDoorId = (typeof CONNECT_DOORS)[number]["id"];
+export type SocialDoor = BuzzPlatformId | "x" | "threads";
+
+const PLATFORM_LOGIN: Record<SocialDoor, string> = {
   instagram: "https://www.instagram.com/accounts/login/",
   tiktok: "https://www.tiktok.com/login",
   pinterest: "https://www.pinterest.com/login/",
   facebook: "https://www.facebook.com/login/",
   linkedin: "https://www.linkedin.com/login",
+  x: "https://x.com/i/flow/login",
+  threads: "https://www.threads.net/login",
 };
 
-export function platformLoginUrl(platform: BuzzPlatformId) {
+export function platformLoginUrl(platform: SocialDoor) {
   return PLATFORM_LOGIN[platform];
 }
 
-export function openPlatformLogin(platform: BuzzPlatformId) {
+export function openPlatformLogin(platform: SocialDoor) {
   if (typeof window === "undefined") return null;
   return window.open(
     platformLoginUrl(platform),

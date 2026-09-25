@@ -5,7 +5,6 @@ import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import beeHoldingApp from "@/assets/bee-holding-app.jpg";
 import hiveGathering from "@/assets/hive-gathering.jpg";
-import buzzBroadcast from "@/assets/buzz-broadcast.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "LiveAskew dresses the day a working mother actually has. Bee builds the look from her body and her closet. The Hive is the conversation. Buzz posts it in her words.",
+          "LiveAskew dresses the day a working mother actually has. Bee builds the look from her body and her closet. The Hive is the conversation.",
       },
       { property: "og:title", content: "LiveAskew" },
       { property: "og:image", content: "/liveaskew-signature.png" },
@@ -92,39 +91,6 @@ const PRODUCTS = [
       },
     ],
   },
-  {
-    id: "buzz",
-    index: "03",
-    kicker: "The posting service",
-    name: "Buzz",
-    promise:
-      "Grow your presence. Elevate. Uplift. Broadcast to the world. Upload a look, or let Bee hand one across. Buzz writes her line and posts it on the networks she connects.",
-    networks: ["instagram", "tiktok", "pinterest", "facebook", "linkedin"] as SocialId[],
-    href: "/buzz",
-    cta: "Enter Buzz",
-    image: buzzBroadcast,
-    alt: "A woman smiling at her phone, with Instagram, TikTok, Facebook, Pinterest, LinkedIn, and YouTube beside her",
-    mark: "/buzz-logo.png",
-    offers: [
-      {
-        title: "Grow your presence",
-        text: "She can use Buzz alone. Upload the photograph, or let Bee hand the look across. The people who already watch her see the cloth.",
-      },
-      {
-        title: "Elevate",
-        text: "The caption starts from her own words — a Bee interview when she has one, and anything she teaches Buzz. The next post keeps the lesson.",
-      },
-      {
-        title: "Uplift",
-        text: "A different line each day, on the hour that network is awake. School run, boardroom, the cloth she actually wore.",
-      },
-      {
-        title: "Broadcast to the world",
-        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. She connects each account once. Bee hands the look to Buzz, and Onixus Social publishes it.",
-        icons: true,
-      },
-    ],
-  },
 ] as const;
 
 function HomePage() {
@@ -154,7 +120,7 @@ function HomePage() {
             <p className="mt-5 max-w-md text-base leading-relaxed text-white">
               LiveAskew is for the woman between a school run and a room that requires a shoulder.
               Bee builds the look from her body and the closet she owns. The Hive is where she talks
-              it through. Buzz posts it, in her words.
+              it through.
             </p>
             <a href="#bee" className="glass-btn mt-7">
               See what we offer
@@ -174,34 +140,6 @@ function HomePage() {
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div className="absolute top-4 left-4 z-10 max-w-[46%] md:top-6 md:left-6">
-                  <div className="glass rounded-[2rem] px-5 py-5 text-black md:px-8 md:py-7">
-                    <div className="flex items-center gap-4">
-                      <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
-                      <div>
-                        <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
-                          {product.index} — {product.kicker}
-                        </p>
-                        <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
-                          {product.name}
-                        </h2>
-                      </div>
-                    </div>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-black md:mt-5 md:text-base">
-                      {product.promise}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            </div>
-          ) : product.id === "buzz" ? (
-            <div className="mx-auto max-w-[1180px] px-5 pt-16 md:px-8 md:pt-20">
-              <article className="relative aspect-[1920/1280] w-full overflow-hidden rounded-[2rem]">
-                <img
-                  src={product.image}
-                  alt={product.alt}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute bottom-4 left-4 z-10 max-w-[42%] md:bottom-6 md:left-6">
                   <div className="glass rounded-[2rem] px-5 py-5 text-black md:px-8 md:py-7">
                     <div className="flex items-center gap-4">
                       <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
@@ -291,7 +229,7 @@ function HomePage() {
                   <img src="/honey-mark.svg" alt="" className="h-14 w-14 rounded-full" />
                   <div>
                     <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
-                      04 — The calendar
+                      03 — The calendar
                     </p>
                     <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
                       Honey
