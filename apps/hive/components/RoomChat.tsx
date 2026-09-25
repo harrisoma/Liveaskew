@@ -9,7 +9,8 @@ type Message = { id: string; author: string; text: string; createdAt: string };
 const ROOMS = [
   { id: "motherhood", name: "Motherhood" },
   { id: "style", name: "Style" },
-  { id: "everyday", name: "Everyday" },
+  { id: "working-mom", name: "Working mom" },
+  { id: "family", name: "Family" },
   { id: "editorial", name: "Editorial" },
   { id: "circle", name: "Wednesday circle" },
   { id: "dm-june", name: "DM · June" },

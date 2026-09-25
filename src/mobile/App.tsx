@@ -8,7 +8,8 @@ import {
   GoogleMark,
   InstagramMark,
 } from "./components/BrandMarks";
-import { LookCard, WardrobeCard } from "./components/LookCard";
+import { BeeDashboard } from "./components/BeeDashboard";
+import { WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
 import {
   bindNativeAuthResume,
@@ -39,8 +40,8 @@ import {
 } from "./lib/storage";
 import { TIER_ORDER, TIERS, formatTierPrice, normalizePlanSlug, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
-import { requestTryOn } from "./lib/tryon";
-import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
+import { anotherLook, starterLooks } from "./lib/dashboard-looks";
+import { persistTrialStartedAt } from "./lib/account";
 import { askBee } from "./lib/bee-chat";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
@@ -72,7 +73,6 @@ export function MobileApp() {
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
   const [gateOpen, setGateOpen] = useState(false);
-  const [rateOpen, setRateOpen] = useState(false);
 
   useEffect(() => {
     setSnap(loadSnapshot());
@@ -116,6 +116,11 @@ export function MobileApp() {
     setSnap((s) => fn(s));
   }, []);
 
+  useEffect(() => {
+    if (!ready || snap.phase !== "app" || snap.looks.length > 0) return;
+    patch((current) => ({ ...current, looks: starterLooks() }));
+  }, [ready, snap.phase, snap.looks.length, patch]);
+
   const trialText = useMemo(
     () => trialLabel(snap.trialStartedAt),
     [snap.trialStartedAt, snap.lastActiveAt],
@@ -157,7 +162,7 @@ export function MobileApp() {
   }
 
   return (
-    <div className="la-app relative flex flex-col">
+    <div className={`la-app relative flex flex-col${snap.phase === "app" ? " la-dashboard" : ""}`}>
       {!online && (
         <div
           className="mx-5 mt-3 flex items-center gap-2 neo-inset px-3 py-2 text-sm"
@@ -338,49 +343,45 @@ export function MobileApp() {
             />
           )}
           {tab === "guide" && (
-            <StyleGuide
+            <BeeDashboard
               looks={snap.looks}
               selfie={snap.selfie}
               renderingId={renderingId}
-              locked={!looksUnlocked}
-              rateOpen={rateOpen}
-              onDismissRate={() => setRateOpen(false)}
-              onSelect={async (look) => {
-                if (!snap.selfie) return;
-                const key = cacheKey(snap.selfie, look.id);
-                if (look.tryOnUrl && look.tryOnKey === key) return;
-                if (!looksUnlocked) {
-                  setGateOpen(true);
-                  setTab("tier");
-                  return;
-                }
-                setRenderingId(look.id);
-                void haptic("impact");
-                const result = await requestTryOn({
-                  look,
-                  selfie: snap.selfie,
-                  cache: snap.tryOnCache,
-                });
-                patch((s) => ({
-                  ...s,
-                  tryOnCache: { ...s.tryOnCache, [key]: result.url },
-                  looks: s.looks.map((l) =>
-                    l.id === look.id ? { ...l, tryOnUrl: result.url, tryOnKey: key } : l,
-                  ),
+              onUpload={async () => {
+                const data = await pickStylingPhoto();
+                if (!data) return;
+                setRenderingId("all");
+                patch((current) => ({
+                  ...current,
+                  selfie: data,
+                  looks: current.looks.map((look) => ({
+                    ...look,
+                    tryOnUrl: data,
+                    tryOnKey: cacheKey(data, look.id),
+                  })),
                 }));
                 setRenderingId(null);
                 void haptic("success");
               }}
-              onSave={(look) => {
-                void haptic("success");
-                const firstSave = !snap.ratingAsked;
-                patch((s) => ({
-                  ...s,
-                  looks: s.looks.map((l) => (l.id === look.id ? { ...l, saved: true } : l)),
-                  ratingAsked: true,
+              onGenerate={() => {
+                const extra = anotherLook(snap.looks.map((look) => look.title));
+                const base = snap.looks.length > 0 ? snap.looks : starterLooks();
+                const next = extra ? [...base, extra] : base;
+                patch((current) => ({
+                  ...current,
+                  looks: current.selfie
+                    ? next.map((look) =>
+                        look.tryOnUrl
+                          ? look
+                          : {
+                              ...look,
+                              tryOnUrl: current.selfie,
+                              tryOnKey: cacheKey(current.selfie as string, look.id),
+                            },
+                      )
+                    : next,
                 }));
-                void notifyRecommendationReady();
-                if (firstSave) setRateOpen(true);
+                void haptic("impact");
               }}
             />
           )}
@@ -768,72 +769,6 @@ function HomeChat({
   );
 }
 
-function StyleGuide({
-  looks,
-  selfie,
-  renderingId,
-  locked,
-  rateOpen,
-  onDismissRate,
-  onSelect,
-  onSave,
-}: {
-  looks: GuideLook[];
-  selfie: string | null;
-  renderingId: string | null;
-  locked: boolean;
-  rateOpen: boolean;
-  onDismissRate: () => void;
-  onSelect: (look: GuideLook) => void;
-  onSave: (look: GuideLook) => void;
-}) {
-  if (!selfie) {
-    return (
-      <Screen kicker="Style Guide" title="Needs your likeness">
-        <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
-          Upload a selfie in You before Bee can dress you. Looks sit on your body — never a
-          retouched one.
-        </div>
-      </Screen>
-    );
-  }
-  return (
-    <Screen kicker="Style Guide" title="Looks on you">
-      {rateOpen && (
-        <div className="mb-4 neo-inset px-3 py-3 text-sm leading-relaxed">
-          <p>
-            If this look feels like you, that is when Bee asks for a rating — never on cold start.
-          </p>
-          <NeoButton className="mt-3" onClick={onDismissRate}>
-            Got it
-          </NeoButton>
-        </div>
-      )}
-      {locked && (
-        <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
-          Trial ended. Choose a metal tier to render further looks. Saved try-ons stay.
-        </p>
-      )}
-      <div className="grid grid-cols-1 gap-4">
-        {looks.map((look) => (
-          <LookCard
-            key={look.id}
-            look={look}
-            rendering={renderingId === look.id}
-            actionLabel={look.saved ? "Saved" : "Save this look"}
-            onAction={() => onSave(look)}
-            footer={
-              <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
-                {look.tryOnUrl ? "View try-on" : "See this on me"}
-              </NeoButton>
-            }
-          />
-        ))}
-      </div>
-    </Screen>
-  );
-}
-
 function WardrobeReset({
   items,
   onUpload,
@@ -1054,7 +989,7 @@ function NotifyRow({
 function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
   const items: { id: Tab; label: string; icon: typeof MessageCircle }[] = [
     { id: "home", label: "Bee", icon: MessageCircle },
-    { id: "guide", label: "Guide", icon: Bookmark },
+    { id: "guide", label: "Looks", icon: Bookmark },
     { id: "reset", label: "Reset", icon: RefreshCw },
     { id: "tier", label: "Tier", icon: Sparkles },
     { id: "you", label: "You", icon: Settings },

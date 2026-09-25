@@ -3,9 +3,8 @@ import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
-import heroStylist from "@/assets/hero-stylist.jpg";
-import hivePortrait from "@/assets/women/woman-01.jpg";
-import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
+import beeHoldingApp from "@/assets/bee-holding-app.jpg";
+import hiveGathering from "@/assets/hive-gathering.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "LiveAskew dresses the day a working mother actually has. Bee builds the look from her body and her closet. The Hive is the conversation. Buzz posts it in her words.",
+          "LiveAskew dresses the day a working mother actually has. Bee builds the look from her body and her closet. The Hive is the conversation.",
       },
       { property: "og:title", content: "LiveAskew" },
       { property: "og:image", content: "/liveaskew-signature.png" },
@@ -35,8 +34,8 @@ const PRODUCTS = [
       "Bee interviews her before it dresses her. Fit, how she wants to feel, and the cloth. The clothes follow the body she has. The photograph stays the woman in front of it.",
     href: "/app",
     cta: "Enter Bee",
-    image: heroStylist,
-    alt: "A stylist at a sunlit table, reviewing a sketch with a client",
+    image: beeHoldingApp,
+    alt: "A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open on the tablet",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -63,12 +62,14 @@ const PRODUCTS = [
     kicker: "The community",
     name: "The Hive",
     promise:
-      "Talk it through. The Hive is the room for motherhood, style, the everyday, and editorial. One member. The accounts she already has.",
+      "A warm, unified space for motherhood, style, work, everyday life, and what's next. No juggling five apps. No performing perfect. Just real women, real wardrobes, real work. Sign in from any platform, follow each other, and build a social presence.",
     networks: ["instagram", "facebook", "tiktok", "google", "apple"] as SocialId[],
     href: "/hive",
     cta: "Enter The Hive",
-    image: hivePortrait,
-    alt: "A woman in a black blazer and gold jewelry, seated in warm light",
+    image: hiveGathering,
+    alt: "Mothers gathered on a sofa in a bright room, laughing and sipping wine, casually dressed",
+    frame: "object-[78%_center]",
+    wash: "bg-gradient-to-t from-black/30 via-transparent to-transparent",
     mark: "/hive-logo.png",
     offers: [
       {
@@ -85,41 +86,8 @@ const PRODUCTS = [
         text: "Style challenges sit with women dressing the same kind of week — school, work, weather, a cloth that has to hold.",
       },
       {
-        title: "Follow leaves the house",
-        text: "A follow opens her profile on the platform she came from.",
-      },
-    ],
-  },
-  {
-    id: "buzz",
-    index: "03",
-    kicker: "The posting service",
-    name: "Buzz",
-    promise:
-      "Grow your presence. Elevate. Uplift. Broadcast to the world. Upload a look, or let Bee hand one across. Buzz writes her line and posts it on the networks she connects.",
-    networks: ["instagram", "tiktok", "pinterest", "facebook", "linkedin"] as SocialId[],
-    href: "/buzz",
-    cta: "Enter Buzz",
-    image: buzzCloth,
-    alt: "An ivory silk blouse with black trousers and a textured gold jacket",
-    mark: "/buzz-logo.png",
-    offers: [
-      {
-        title: "Grow your presence",
-        text: "She can use Buzz alone. Upload the photograph, or let Bee hand the look across. The people who already watch her see the cloth.",
-      },
-      {
-        title: "Elevate",
-        text: "The caption starts from her own words — a Bee interview when she has one, and anything she teaches Buzz. The next post keeps the lesson.",
-      },
-      {
-        title: "Uplift",
-        text: "A different line each day, on the hour that network is awake. School run, boardroom, the cloth she actually wore.",
-      },
-      {
-        title: "Broadcast to the world",
-        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. She connects each account once. Buzz posts through that network's own door. No outside scheduler.",
-        icons: true,
+        title: "Follow from any platform",
+        text: "She signs in with Instagram, Facebook, TikTok, Google, or Apple, follows the women in the room, and builds her presence from there.",
       },
     ],
   },
@@ -131,8 +99,8 @@ function HomePage() {
       <section className="relative min-h-[100svh]">
         <img
           src={heroEditorial}
-          alt="A woman in a cream silk blouse and black tailored trousers, hand on hip"
-          className="absolute inset-0 h-full w-full object-cover"
+          alt="An African American mother in a tailored black and gold ensemble, standing in a modern interior with thin gold frames of looks"
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/30" />
         <div className="relative z-10 flex min-h-[100svh] items-end px-5 pt-36 pb-12 md:items-center md:px-16 md:pb-16">
@@ -152,7 +120,7 @@ function HomePage() {
             <p className="mt-5 max-w-md text-base leading-relaxed text-white">
               LiveAskew is for the woman between a school run and a room that requires a shoulder.
               Bee builds the look from her body and the closet she owns. The Hive is where she talks
-              it through. Buzz posts it, in her words.
+              it through.
             </p>
             <a href="#bee" className="glass-btn mt-7">
               See what we offer
@@ -163,33 +131,75 @@ function HomePage() {
 
       {PRODUCTS.map((product) => (
         <section id={product.id} key={product.id} className="scroll-mt-32 bg-white">
-          <div className="relative min-h-[78svh]">
-            <img
-              src={product.image}
-              alt={product.alt}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/25" />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
-              <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
-                <div className="flex items-center gap-4">
-                  <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
-                  <div>
-                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
-                      {product.index} — {product.kicker}
+          {product.id === "bee" ? (
+            <div className="mx-auto max-w-[1180px] px-5 pt-28 md:px-8 md:pt-32">
+              <article className="relative aspect-[2752/1536] w-full overflow-hidden rounded-[2rem]">
+                <img
+                  src={product.image}
+                  alt={product.alt}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div className="absolute top-4 left-4 z-10 max-w-[46%] md:top-6 md:left-6">
+                  <div className="glass rounded-[2rem] px-5 py-5 text-black md:px-8 md:py-7">
+                    <div className="flex items-center gap-4">
+                      <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                      <div>
+                        <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                          {product.index} — {product.kicker}
+                        </p>
+                        <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
+                          {product.name}
+                        </h2>
+                      </div>
+                    </div>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-black md:mt-5 md:text-base">
+                      {product.promise}
                     </p>
-                    <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
-                      {product.name}
-                    </h2>
                   </div>
                 </div>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
-                  {product.promise}
-                </p>
-                {"networks" in product ? <SocialMarks ids={product.networks} /> : null}
+              </article>
+            </div>
+          ) : (
+            <div className="relative min-h-[78svh]">
+              <img
+                src={product.image}
+                alt={product.alt}
+                className={`absolute inset-0 h-full w-full object-cover ${"frame" in product ? product.frame : ""}`}
+              />
+              <div
+                className={`absolute inset-0 ${"wash" in product ? product.wash : "bg-gradient-to-t from-black/70 via-black/20 to-black/25"}`}
+              />
+              <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
+                <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
+                  <div className="flex items-center gap-4">
+                    <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                    <div>
+                      <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                        {product.index} — {product.kicker}
+                      </p>
+                      {product.id === "hive" ? (
+                        <h2 className="font-display text-4xl leading-[0.95] text-white md:text-5xl">
+                          One community.
+                          <br />
+                          Every side
+                          <br />
+                          of you.
+                        </h2>
+                      ) : (
+                        <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
+                          {product.name}
+                        </h2>
+                      )}
+                    </div>
+                  </div>
+                  <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
+                    {product.promise}
+                  </p>
+                  {"networks" in product ? <SocialMarks ids={product.networks} /> : null}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
             <ul className="grid gap-4 md:grid-cols-2">
@@ -209,6 +219,88 @@ function HomePage() {
           </div>
         </section>
       ))}
+
+      <section id="honey" className="scroll-mt-32 bg-white">
+        <div className="mx-auto max-w-[1180px] px-5 pt-16 md:px-8 md:pt-20">
+          <article className="glass overflow-hidden rounded-[2rem] md:grid md:min-h-[560px] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div className="flex items-center px-7 py-10 md:px-12 md:py-12">
+              <div className="glass max-w-xl rounded-[2rem] px-7 py-8 text-black md:px-10 md:py-10">
+                <div className="flex items-center gap-4">
+                  <img src="/honey-mark.svg" alt="" className="h-14 w-14 rounded-full" />
+                  <div>
+                    <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                      03 — The calendar
+                    </p>
+                    <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
+                      Honey
+                    </h2>
+                  </div>
+                </div>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-black">
+                  Schedule the event, the meeting, and the post. Honey holds the day the way a
+                  calendar does, and it records the social post and the hour it hits.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center px-6 py-8 md:px-8">
+              <ul className="grid w-full gap-3">
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                    3:00 · Event
+                  </p>
+                  <p className="mt-1 font-display text-2xl">School pickup</p>
+                </li>
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                    11:00 · Meeting
+                  </p>
+                  <p className="mt-1 font-display text-2xl">Stylist meeting</p>
+                </li>
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                      9:00 · Post · Hit
+                    </p>
+                    <SocialMarks ids={["instagram"]} />
+                  </div>
+                  <p className="mt-1 font-display text-2xl">The boardroom look</p>
+                </li>
+              </ul>
+            </div>
+          </article>
+        </div>
+        <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
+          <ul className="grid gap-4 md:grid-cols-2">
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Upcoming events</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                The school run, the dinner, the thing already on the day.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Meetings</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                A meeting sits on the hour, with the room and the reason.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">Social posting schedule</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                The post lands on the same calendar, with the network and the hour.
+              </p>
+            </li>
+            <li className="glass rounded-[1.6rem] px-6 py-6 text-black">
+              <h3 className="font-display text-2xl leading-tight">When it hits</h3>
+              <p className="mt-3 text-sm leading-relaxed">
+                A post that has gone out is marked. The hour it hit stays on the day.
+              </p>
+            </li>
+          </ul>
+          <a href="/honey" className="glass-btn mt-8">
+            Open Honey
+          </a>
+        </div>
+      </section>
 
       <section id="pricing" className="scroll-mt-32 bg-white px-5 py-20 md:px-8 md:py-28">
         <PriceBook />

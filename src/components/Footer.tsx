@@ -11,20 +11,30 @@ export function Footer() {
           />
           Live<em className="text-gold-deep">Askew</em>
         </span>
-        <p className="text-[0.65rem] tracking-[0.22em] uppercase text-black">
-          © 2026 LiveAskew
-        </p>
+        <p className="text-[0.65rem] tracking-[0.22em] uppercase text-black">© 2026 LiveAskew</p>
         <div className="flex flex-wrap justify-center gap-6">
-          <a href="/app" className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep">
+          <a
+            href="/app"
+            className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
+          >
             The app
           </a>
-          <a href="/hive" className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep">
+          <a
+            href="/hive"
+            className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
+          >
             The Hive
           </a>
-          <a href="/buzz" className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep">
-            Buzz
+          <a
+            href="/honey"
+            className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
+          >
+            Honey
           </a>
-          <a href="/privacy" className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep">
+          <a
+            href="/privacy"
+            className="text-[0.65rem] tracking-[0.22em] uppercase text-black hover:text-gold-deep"
+          >
             Privacy
           </a>
         </div>

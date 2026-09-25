@@ -11,9 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as HoneyRouteImport } from './routes/honey'
 import { Route as HiveRouteImport } from './routes/hive'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as BuzzRouteImport } from './routes/buzz'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
@@ -39,6 +39,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HoneyRoute = HoneyRouteImport.update({
+  id: '/honey',
+  path: '/honey',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HiveRoute = HiveRouteImport.update({
   id: '/hive',
   path: '/hive',
@@ -47,11 +52,6 @@ const HiveRoute = HiveRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuzzRoute = BuzzRouteImport.update({
-  id: '/buzz',
-  path: '/buzz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -129,9 +129,9 @@ const ApiPublicBeeGuestRoute = ApiPublicBeeGuestRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
-  '/buzz': typeof BuzzRoute
   '/checkout': typeof CheckoutRoute
   '/hive': typeof HiveRoute
+  '/honey': typeof HoneyRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
@@ -150,9 +150,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
-  '/buzz': typeof BuzzRoute
   '/checkout': typeof CheckoutRoute
   '/hive': typeof HiveRoute
+  '/honey': typeof HoneyRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
@@ -172,9 +172,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
-  '/buzz': typeof BuzzRoute
   '/checkout': typeof CheckoutRoute
   '/hive': typeof HiveRoute
+  '/honey': typeof HoneyRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
@@ -195,9 +195,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
-    | '/buzz'
     | '/checkout'
     | '/hive'
+    | '/honey'
     | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
@@ -216,9 +216,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
-    | '/buzz'
     | '/checkout'
     | '/hive'
+    | '/honey'
     | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
@@ -237,9 +237,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
-    | '/buzz'
     | '/checkout'
     | '/hive'
+    | '/honey'
     | '/pricing'
     | '/privacy'
     | '/api/generate-illustration'
@@ -259,9 +259,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
-  BuzzRoute: typeof BuzzRoute
   CheckoutRoute: typeof CheckoutRoute
   HiveRoute: typeof HiveRoute
+  HoneyRoute: typeof HoneyRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
@@ -294,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/honey': {
+      id: '/honey'
+      path: '/honey'
+      fullPath: '/honey'
+      preLoaderRoute: typeof HoneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hive': {
       id: '/hive'
       path: '/hive'
@@ -306,13 +313,6 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/buzz': {
-      id: '/buzz'
-      path: '/buzz'
-      fullPath: '/buzz'
-      preLoaderRoute: typeof BuzzRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -419,9 +419,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
-  BuzzRoute: BuzzRoute,
   CheckoutRoute: CheckoutRoute,
   HiveRoute: HiveRoute,
+  HoneyRoute: HoneyRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,

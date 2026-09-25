@@ -12,14 +12,14 @@ export const HIVE_ROOMS = [
     line: "Fit, Feel, and Fabric, talked through with other clients.",
   },
   {
-    id: "everyday",
-    name: "Everyday",
-    line: "Weather, work, errands, and the clothes that survive them.",
+    id: "working-mom",
+    name: "Working mom",
+    line: "The school run and the meeting, in the same afternoon.",
   },
   {
-    id: "editorial",
-    name: "Editorial",
-    line: "Longer reads. A look, a cloth, a point of view.",
+    id: "family",
+    name: "Family",
+    line: "The people at the table, and what the day is actually for.",
   },
 ] as const;
 
@@ -35,13 +35,13 @@ export const HIVE_THREADS = [
     text: "Wool that holds, silk that breathes. That is the whole brief for this week.",
   },
   {
-    room: "Everyday",
+    room: "Working mom",
     network: "Instagram",
-    text: "Rain until Thursday. Who is keeping the shoe and swapping only the layer?",
+    text: "Board meeting at ten, school run at three. One closet.",
   },
   {
-    room: "Editorial",
+    room: "Family",
     network: "Facebook",
-    text: "A covered neckline can still be the sharpest thing in the room. The cloth does the talking.",
+    text: "Sunday lunch is at her mother's. Nothing fussy.",
   },
 ] as const;

@@ -93,9 +93,9 @@ export function Dashboard() {
           Grow your presence.
         </h1>
         <p className="muted">
-          Elevate. Uplift. Broadcast to the world. Upload a photo, or take one from Bee. Buzz posts
-          to Instagram, TikTok, Pinterest, Facebook, and LinkedIn through each network&apos;s own
-          door once that account is connected. No outside scheduler.
+          Elevate. Uplift. Broadcast to the world. Bee hands the look to Buzz. Onixus Social
+          publishes it to Instagram, TikTok, Pinterest, Facebook, and LinkedIn once each account is
+          connected.
         </p>
       </div>
       <div className="stats">
