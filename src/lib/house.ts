@@ -44,6 +44,28 @@ export function dateStamp(date: Date) {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
+const WEEKDAY_NAMES = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;
+
+export function weekDays(today: Date) {
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  const todayStamp = dateStamp(today);
+  return WEEKDAY_NAMES.map((weekday, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const stamp = dateStamp(date);
+    return { weekday, date: stamp, today: stamp === todayStamp };
+  });
+}
+
 export function handedWeek(today: Date) {
   const monday = new Date(today);
   monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));

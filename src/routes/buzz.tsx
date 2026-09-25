@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
-import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
-import { BUZZ_PLATFORMS, buzzMessage, buzzWeek, type BuzzPlatformId } from "@/lib/buzz";
+import { SocialMarkButton, SocialMarks } from "@/components/site/SocialMarks";
+import { SocialLoginDialog } from "@/components/site/SocialLoginDialog";
+import {
+  BUZZ_PLATFORMS,
+  buzzMessage,
+  buzzWeek,
+  openPlatformLogin,
+  type BuzzPlatformId,
+} from "@/lib/buzz";
 import {
   BEE_LOOKS,
   attachAccount,
@@ -15,6 +22,7 @@ import {
   runAutonomousPosts,
   saveAutonomous,
   scheduleLookOnHoney,
+  weekDays,
   writeBeeCaptions,
   type BeeLookId,
 } from "@/lib/house";
@@ -59,11 +67,12 @@ function BuzzPage() {
   const [captions, setCaptions] = useState<Partial<Record<BuzzPlatformId, string>>>({});
   const [pass, setPass] = useState(0);
   const [scheduled, setScheduled] = useState<string | null>(null);
+  const [loginPlatform, setLoginPlatform] = useState<BuzzPlatformId | null>(null);
   const look = instruction.trim();
   const week = useMemo(() => (clock ? handedWeek(clock) : []), [clock]);
-  const todayName = clock ? clock.toLocaleDateString("en-US", { weekday: "long" }) : "today";
+  const days = useMemo(() => (clock ? weekDays(clock) : []), [clock]);
   const selected = BEE_LOOKS.find((item) => item.id === lookId) ?? BEE_LOOKS[0];
-  const handed = week.find((item) => item.id === lookId);
+  const loginName = BUZZ_PLATFORMS.find((item) => item.id === loginPlatform)?.name ?? "";
 
   useEffect(() => {
     const now = new Date();
@@ -84,16 +93,19 @@ function BuzzPage() {
     setQueue(items.filter((item) => item.kind === "post"));
   }, []);
 
-  function attachSocials(event: FormEvent) {
-    event.preventDefault();
-    let accounts = loadAccounts();
-    for (const platform of BUZZ_PLATFORMS) {
-      const handle = handles[platform.id]?.trim();
-      if (handle) accounts = attachAccount({ platform: platform.id, handle });
-    }
+  function openLogin(platform: BuzzPlatformId) {
+    openPlatformLogin(platform);
+    setLoginPlatform(platform);
+  }
+
+  function finishLogin(handle: string) {
+    if (!loginPlatform) return;
+    const accounts = attachAccount({ platform: loginPlatform, handle });
     const platforms = accounts.map((account) => account.platform);
+    setHandles((current) => ({ ...current, [loginPlatform]: handle }));
     setChosen(platforms);
     setAttached(platforms);
+    setLoginPlatform(null);
   }
 
   function disconnect(platform: BuzzPlatformId) {
@@ -108,7 +120,6 @@ function BuzzPage() {
     setLookId(id);
     setCaptions({});
     setScheduled(null);
-    if (clock) setPostDate(dateStamp(clock));
   }
 
   function schedule(event: FormEvent) {
@@ -157,7 +168,7 @@ function BuzzPage() {
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white">
               Bee hands the look to Buzz. Onixus Social publishes it. The look of the day is already
-              queued, and an earlier look can still go out today.
+              queued, and any look can be reposted on any day of the week.
             </p>
             <SocialMarks ids={["instagram", "tiktok", "pinterest", "facebook", "linkedin"]} />
           </div>
@@ -170,7 +181,7 @@ function BuzzPage() {
           <h2 className="font-display mt-2 text-3xl">Bee handoff</h2>
           <p className="mt-2 text-sm leading-relaxed">
             Each weekday look comes from Bee. The look of the day is already handed down and ready
-            to post. Choose an earlier day when today should wear that cloth.
+            to post. Repost any of these looks on any day of the week.
           </p>
           <ul className="mt-4 space-y-3">
             {week.map((item) => (
@@ -183,7 +194,7 @@ function BuzzPage() {
                 <p className="mt-1 text-sm leading-relaxed">{item.pieces}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <button type="button" className="glass-btn" onClick={() => chooseLook(item.id)}>
-                    {item.ofTheDay ? "Open in the scheduler" : `Post this look on ${todayName}`}
+                    Repost
                   </button>
                   <Link to="/hive" search={{ look: item.id }} className="text-sm text-[#b8860b]">
                     Talk about this look in the Hive
@@ -197,30 +208,28 @@ function BuzzPage() {
           <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">Onixus Social</p>
           <h2 className="font-display mt-2 text-3xl">Social Scheduler</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            Bee uses Onixus Social to publish. {selected.title} stays queued until the hour. Pick
-            Friday when Tuesday&apos;s look should go out today.
+            Bee uses Onixus Social to publish. Choose the look, then choose any day of the week.
           </p>
           <SocialMarks ids={["instagram", "tiktok", "pinterest", "facebook", "linkedin"]} />
           <p className="mt-4 text-sm">
             <strong>{selected.title}</strong>
             <span className="block text-black/70">{selected.pieces}</span>
           </p>
-          {handed && !handed.ofTheDay && (
-            <p className="mt-2 text-sm">
-              This is {handed.weekday}&apos;s look. Onixus Social will queue it for{" "}
-              {postDate ? dayLabel(postDate) : todayName}.
-            </p>
-          )}
+          {postDate && <p className="mt-2 text-sm">Goes out {dayLabel(postDate)}.</p>}
+          <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Day of the week">
+            {days.map((day) => (
+              <button
+                key={day.date}
+                type="button"
+                aria-pressed={postDate === day.date}
+                onClick={() => setPostDate(day.date)}
+                className={`rounded-full px-3 py-2 text-sm ${postDate === day.date ? "bg-black text-white" : "bg-white text-black"}`}
+              >
+                {day.weekday}
+              </button>
+            ))}
+          </div>
           <div className="mt-4 flex flex-wrap gap-4">
-            <label className="block text-sm">
-              Post date
-              <input
-                type="date"
-                value={postDate}
-                onChange={(event) => setPostDate(event.target.value)}
-                className="mt-2 block rounded-xl border border-black/10 bg-white px-3 py-2"
-              />
-            </label>
             <label className="block text-sm">
               Hour
               <input
@@ -302,27 +311,22 @@ function BuzzPage() {
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 pb-6">
-        <form className="glass rounded-[2rem] p-6" onSubmit={attachSocials}>
+        <div className="glass rounded-[2rem] p-6">
           <h2 className="font-display text-3xl">Attach your socials</h2>
           <p className="mt-2 text-sm leading-relaxed">
-            Connect each network once. Buzz posts the Bee look through that door.
+            Click a platform logo. Log in on that network, then the account stays attached.
           </p>
-          <ul className="mt-4 space-y-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             {BUZZ_PLATFORMS.map((platform) => (
-              <li key={platform.id} className="flex items-center gap-3">
-                <SocialMarks ids={[platform.id as SocialId]} />
-                <input
-                  value={handles[platform.id] ?? ""}
-                  onChange={(event) =>
-                    setHandles((current) => ({ ...current, [platform.id]: event.target.value }))
-                  }
-                  placeholder="@handle"
-                  aria-label={`${platform.name} handle`}
-                  className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm"
+              <div key={platform.id} className="flex items-center gap-2">
+                <SocialMarkButton
+                  id={platform.id}
+                  attached={attached.includes(platform.id)}
+                  onClick={() => openLogin(platform.id)}
                 />
                 {attached.includes(platform.id) ? (
                   <>
-                    <span className="text-sm text-[#b8860b]">Attached</span>
+                    <span className="text-sm text-[#b8860b]">{handles[platform.id]}</span>
                     <button
                       type="button"
                       className="text-sm"
@@ -332,12 +336,9 @@ function BuzzPage() {
                     </button>
                   </>
                 ) : null}
-              </li>
+              </div>
             ))}
-          </ul>
-          <button type="submit" className="glass-btn mt-4">
-            Save accounts
-          </button>
+          </div>
           {attached.length > 0 && (
             <p className="mt-3 text-sm">
               {attached.length} {attached.length === 1 ? "account stays" : "accounts stay"}{" "}
@@ -356,7 +357,7 @@ function BuzzPage() {
             Autonomous posting. When the hour hits, Onixus Social sends the queued caption on the
             attached platforms.
           </label>
-        </form>
+        </div>
       </section>
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-16 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -450,6 +451,15 @@ function BuzzPage() {
           )}
         </div>
       </section>
+      {loginPlatform && (
+        <SocialLoginDialog
+          platform={loginPlatform}
+          name={loginName}
+          initialHandle={handles[loginPlatform] ?? ""}
+          onClose={() => setLoginPlatform(null)}
+          onAttach={finishLogin}
+        />
+      )}
     </SiteFrame>
   );
 }

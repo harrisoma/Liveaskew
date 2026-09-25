@@ -360,6 +360,33 @@
   color: #000000;
 }
 
+.la-site button.social-mark {
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.la-site button.social-mark[aria-pressed="true"] {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.la-site dialog.social-login {
+  width: min(28rem, calc(100vw - 2rem));
+  border: 1px solid rgba(184, 134, 11, 0.75);
+  border-radius: 2rem;
+  padding: 1.5rem;
+  color: #000000;
+  background: color-mix(in srgb, #ffffff 72%, transparent);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.la-site dialog.social-login::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
 .la-site .pay-note {
   margin-top: 0.9rem;
   font-size: 0.9rem;

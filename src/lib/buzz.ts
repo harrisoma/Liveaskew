@@ -8,6 +8,27 @@ export const BUZZ_PLATFORMS = [
 
 export type BuzzPlatformId = (typeof BUZZ_PLATFORMS)[number]["id"];
 
+const PLATFORM_LOGIN: Record<BuzzPlatformId, string> = {
+  instagram: "https://www.instagram.com/accounts/login/",
+  tiktok: "https://www.tiktok.com/login",
+  pinterest: "https://www.pinterest.com/login/",
+  facebook: "https://www.facebook.com/login/",
+  linkedin: "https://www.linkedin.com/login",
+};
+
+export function platformLoginUrl(platform: BuzzPlatformId) {
+  return PLATFORM_LOGIN[platform];
+}
+
+export function openPlatformLogin(platform: BuzzPlatformId) {
+  if (typeof window === "undefined") return null;
+  return window.open(
+    platformLoginUrl(platform),
+    `liveaskew-${platform}`,
+    "popup=yes,width=480,height=720",
+  );
+}
+
 const DAY_LINES = [
   (look: string) => `Wearing this today. ${look}`,
   (look: string) => `Same style, a new sentence. ${look}`,

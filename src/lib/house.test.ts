@@ -3,6 +3,7 @@ import {
   attachAccount,
   ensureLookOfTheDay,
   handedWeek,
+  weekDays,
   loadAccounts,
   runAutonomousPosts,
   saveAutonomous,
@@ -54,16 +55,32 @@ describe("handed looks", () => {
     expect(notes.filter((note) => note.lookId === "boardroom")).toHaveLength(1);
   });
 
-  it("queues Tuesday's look on Friday", () => {
+  it("lists every day of the week so a look can be reposted on any of them", () => {
+    const days = weekDays(new Date("2026-09-25T12:00:00"));
+    expect(days.map((day) => day.weekday)).toEqual([
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ]);
+    expect(days[0]?.date).toBe("2026-09-21");
+    expect(days[6]?.date).toBe("2026-09-27");
+    expect(days.find((day) => day.today)?.weekday).toBe("Friday");
+  });
+
+  it("reposts a look on a chosen day of the week", () => {
     const posts = scheduleLookOnHoney({
       lookId: "tuesday",
       platforms: ["instagram"],
-      date: "2026-09-25",
+      date: "2026-09-23",
       time: "16:00",
     });
     expect(posts[0]).toMatchObject({
       title: "Tuesday column",
-      date: "2026-09-25",
+      date: "2026-09-23",
       lookId: "tuesday",
       posted: false,
     });

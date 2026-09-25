@@ -114,6 +114,29 @@ function Mark({ id }: { id: SocialId }) {
   );
 }
 
+export function SocialMarkButton({
+  id,
+  attached = false,
+  onClick,
+}: {
+  id: SocialId;
+  attached?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="social-mark"
+      aria-label={`Log in to ${NAMES[id]}`}
+      aria-pressed={attached}
+      onClick={onClick}
+    >
+      <Mark id={id} />
+      <span>{NAMES[id]}</span>
+    </button>
+  );
+}
+
 export function SocialMarks({ ids }: { ids: readonly SocialId[] }) {
   return (
     <ul className="social-row">
