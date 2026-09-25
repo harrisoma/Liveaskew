@@ -3,7 +3,7 @@ import { PriceBook } from "@/components/site/PriceBook";
 import { SiteFrame } from "@/components/site/SiteFrame";
 import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
-import beeAppScreen from "@/assets/bee-app-screen.png";
+import beeHoldingApp from "@/assets/bee-holding-app.jpg";
 import hiveGathering from "@/assets/hive-gathering.jpg";
 import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
 
@@ -35,8 +35,8 @@ const PRODUCTS = [
       "Bee interviews her before it dresses her. Fit, how she wants to feel, and the cloth. The clothes follow the body she has. The photograph stays the woman in front of it.",
     href: "/app",
     cta: "Enter Bee",
-    image: beeAppScreen,
-    alt: "The Bee app Style Guide, Looks on you, with Fit, Feel, and Fabric on each look",
+    image: beeHoldingApp,
+    alt: "A woman holding her phone, looking at her looks in the Bee app",
     mark: "/bee-logo-192.png",
     offers: [
       {
@@ -184,11 +184,11 @@ function HomePage() {
                     {product.promise}
                   </p>
                 </div>
-                <div className="flex items-center justify-center bg-[#e0e5ec] px-6 py-8 md:px-10">
+                <div className="relative min-h-[640px]">
                   <img
                     src={product.image}
                     alt={product.alt}
-                    className="h-auto max-h-[720px] w-[min(100%,340px)] rounded-[28px] shadow-[7px_7px_14px_#a3b1c6,-7px_-7px_14px_#ffffff]"
+                    className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
                   />
                 </div>
               </article>
