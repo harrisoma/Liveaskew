@@ -5,7 +5,7 @@ import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import beeHoldingApp from "@/assets/bee-holding-app.jpg";
 import hiveGathering from "@/assets/hive-gathering.jpg";
-import buzzCloth from "@/assets/formulas/formula-quiet-luxury.jpg";
+import buzzBroadcast from "@/assets/buzz-broadcast.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -102,8 +102,8 @@ const PRODUCTS = [
     networks: ["instagram", "tiktok", "pinterest", "facebook", "linkedin"] as SocialId[],
     href: "/buzz",
     cta: "Enter Buzz",
-    image: buzzCloth,
-    alt: "An ivory silk blouse with black trousers and a textured gold jacket",
+    image: buzzBroadcast,
+    alt: "A woman smiling at her phone, with Instagram, TikTok, Facebook, Pinterest, LinkedIn, and YouTube beside her",
     mark: "/buzz-logo.png",
     offers: [
       {
@@ -174,6 +174,34 @@ function HomePage() {
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div className="absolute top-4 left-4 z-10 max-w-[46%] md:top-6 md:left-6">
+                  <div className="glass rounded-[2rem] px-5 py-5 text-black md:px-8 md:py-7">
+                    <div className="flex items-center gap-4">
+                      <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
+                      <div>
+                        <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
+                          {product.index} — {product.kicker}
+                        </p>
+                        <h2 className="font-display text-4xl leading-none text-black md:text-6xl">
+                          {product.name}
+                        </h2>
+                      </div>
+                    </div>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-black md:mt-5 md:text-base">
+                      {product.promise}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          ) : product.id === "buzz" ? (
+            <div className="mx-auto max-w-[1180px] px-5 pt-16 md:px-8 md:pt-20">
+              <article className="relative aspect-[1920/1280] w-full overflow-hidden rounded-[2rem]">
+                <img
+                  src={product.image}
+                  alt={product.alt}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div className="absolute bottom-4 left-4 z-10 max-w-[42%] md:bottom-6 md:left-6">
                   <div className="glass rounded-[2rem] px-5 py-5 text-black md:px-8 md:py-7">
                     <div className="flex items-center gap-4">
                       <img src={product.mark} alt="" className="h-14 w-14 rounded-full" />
