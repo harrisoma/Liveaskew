@@ -5,6 +5,14 @@ type Note = { id: string; roomId: string; author: string; text: string };
 
 const KEY = "la_hive_room_v1";
 const NAME_KEY = "la_hive_name";
+const PLATFORM_KEY = "la_hive_platform";
+const FOLLOW_KEY = "la_hive_following";
+
+const PLATFORMS = ["Instagram", "Facebook", "TikTok", "Google", "Apple"] as const;
+const MEMBERS = [
+  { name: "June", platform: "Instagram" },
+  { name: "Amina", platform: "TikTok" },
+] as const;
 
 const SEED: Note[] = [
   {
@@ -36,14 +44,26 @@ const SEED: Note[] = [
 export function HiveRoom() {
   const [roomId, setRoomId] = useState<(typeof HIVE_ROOMS)[number]["id"]>("motherhood");
   const [name, setName] = useState("");
+  const [platform, setPlatform] = useState<(typeof PLATFORMS)[number]>("Instagram");
   const [signedIn, setSignedIn] = useState(false);
+  const [following, setFollowing] = useState<string[]>([]);
   const [notes, setNotes] = useState<Note[]>(SEED);
   const [text, setText] = useState("");
 
   useEffect(() => {
     const savedName = window.localStorage.getItem(NAME_KEY) ?? "";
+    const savedPlatform = window.localStorage.getItem(PLATFORM_KEY);
     setName(savedName);
+    if (PLATFORMS.includes(savedPlatform as (typeof PLATFORMS)[number])) {
+      setPlatform(savedPlatform as (typeof PLATFORMS)[number]);
+    }
     setSignedIn(savedName.trim().length > 0);
+    try {
+      const savedFollows = JSON.parse(window.localStorage.getItem(FOLLOW_KEY) ?? "[]") as string[];
+      if (Array.isArray(savedFollows)) setFollowing(savedFollows);
+    } catch {
+      /* no follows yet */
+    }
     try {
       const raw = window.localStorage.getItem(KEY);
       if (raw) {
@@ -60,8 +80,17 @@ export function HiveRoom() {
     const next = name.trim();
     if (!next) return;
     window.localStorage.setItem(NAME_KEY, next);
+    window.localStorage.setItem(PLATFORM_KEY, platform);
     setName(next);
     setSignedIn(true);
+  }
+
+  function toggleFollow(member: string) {
+    const next = following.includes(member)
+      ? following.filter((item) => item !== member)
+      : [...following, member];
+    setFollowing(next);
+    window.localStorage.setItem(FOLLOW_KEY, JSON.stringify(next));
   }
 
   function send(event: FormEvent) {
@@ -107,6 +136,19 @@ export function HiveRoom() {
             </li>
           ))}
         </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {MEMBERS.map((member) => (
+            <button
+              key={member.name}
+              type="button"
+              onClick={() => toggleFollow(member.name)}
+              className="rounded-full border border-black/10 bg-white px-3 py-2 text-sm"
+            >
+              {following.includes(member.name) ? "Following" : "Follow"} {member.name}
+              <span className="text-black/50"> · {member.platform}</span>
+            </button>
+          ))}
+        </div>
         {signedIn ? (
           <form onSubmit={send} className="mt-4 flex flex-col gap-3 sm:flex-row">
             <input
@@ -121,17 +163,32 @@ export function HiveRoom() {
             </button>
           </form>
         ) : (
-          <form onSubmit={signIn} className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Your name"
-              aria-label="Your name"
-              className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-3 text-sm"
-            />
-            <button type="submit" className="glass-btn">
-              Sign in
-            </button>
+          <form onSubmit={signIn} className="mt-4 grid gap-3">
+            <div className="flex flex-wrap gap-2">
+              {PLATFORMS.map((door) => (
+                <button
+                  key={door}
+                  type="button"
+                  onClick={() => setPlatform(door)}
+                  className={`rounded-full px-3 py-2 text-sm ${platform === door ? "bg-black text-white" : "bg-white text-black"}`}
+                  aria-pressed={platform === door}
+                >
+                  {door}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Your name"
+                aria-label="Your name"
+                className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-3 text-sm"
+              />
+              <button type="submit" className="glass-btn">
+                Sign in with {platform}
+              </button>
+            </div>
           </form>
         )}
       </div>

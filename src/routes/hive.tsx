@@ -12,7 +12,7 @@ export const Route = createFileRoute("/hive")({
       {
         name: "description",
         content:
-          "The Hive is the room. Mothers talk through family, motherhood, relationships, styling, and the everyday of a working life.",
+          "One community. Every side of you. A warm, unified space for motherhood, style, work, everyday life, and what's next.",
       },
     ],
   }),
@@ -33,12 +33,16 @@ function HivePage() {
           <div className="glass-dark max-w-xl rounded-[2rem] px-8 py-8">
             <p className="text-[0.68rem] tracking-[0.28em] uppercase text-[#b8860b]">The Hive</p>
             <h1 className="font-display mt-3 text-5xl leading-[0.95] text-white md:text-6xl">
-              Talk it through.
+              One community.
+              <br />
+              Every side
+              <br />
+              of you.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-white">
-              The Hive is the conversation. Family, motherhood, relationships, styling, and the
-              everyday of a working life. Instagram, Facebook, and TikTok stay one member. Google
-              and Apple open the door.
+              A warm, unified space for motherhood, style, work, everyday life, and what&apos;s
+              next. No juggling five apps. No performing perfect. Just real women, real wardrobes,
+              real work. Sign in from any platform, follow each other, and build a social presence.
             </p>
             <SocialMarks ids={["instagram", "facebook", "tiktok", "google", "apple"]} />
           </div>
@@ -68,8 +72,8 @@ function HivePage() {
       <section className="mx-auto max-w-[1100px] px-6 pb-12">
         <h2 className="font-display text-3xl">The room</h2>
         <p className="mt-3 max-w-xl text-sm leading-relaxed">
-          Sign in with your name. Motherhood, style, working mom, and family are open to every
-          member.
+          Sign in from Instagram, Facebook, TikTok, Google, or Apple. Follow the women in the room
+          and build a presence from there.
         </p>
         <div className="mt-5">
           <HiveRoom />

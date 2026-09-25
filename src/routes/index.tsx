@@ -63,7 +63,7 @@ const PRODUCTS = [
     kicker: "The community",
     name: "The Hive",
     promise:
-      "Talk it through. Mothers gather for family, motherhood, relationships, styling, and the everyday of a working life. One member. The accounts she already has.",
+      "A warm, unified space for motherhood, style, work, everyday life, and what's next. No juggling five apps. No performing perfect. Just real women, real wardrobes, real work. Sign in from any platform, follow each other, and build a social presence.",
     networks: ["instagram", "facebook", "tiktok", "google", "apple"] as SocialId[],
     href: "/hive",
     cta: "Enter The Hive",
@@ -87,8 +87,8 @@ const PRODUCTS = [
         text: "Style challenges sit with women dressing the same kind of week — school, work, weather, a cloth that has to hold.",
       },
       {
-        title: "Follow leaves the house",
-        text: "A follow opens her profile on the platform she came from.",
+        title: "Follow from any platform",
+        text: "She signs in with Instagram, Facebook, TikTok, Google, or Apple, follows the women in the room, and builds her presence from there.",
       },
     ],
   },
@@ -239,9 +239,19 @@ function HomePage() {
                       <p className="text-[0.62rem] tracking-[0.22em] uppercase text-[#b8860b]">
                         {product.index} — {product.kicker}
                       </p>
-                      <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
-                        {product.name}
-                      </h2>
+                      {product.id === "hive" ? (
+                        <h2 className="font-display text-4xl leading-[0.95] text-white md:text-5xl">
+                          One community.
+                          <br />
+                          Every side
+                          <br />
+                          of you.
+                        </h2>
+                      ) : (
+                        <h2 className="font-display text-5xl leading-none text-white md:text-6xl">
+                          {product.name}
+                        </h2>
+                      )}
                     </div>
                   </div>
                   <p className="mt-5 max-w-xl text-base leading-relaxed text-white">
