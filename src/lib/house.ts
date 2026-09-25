@@ -3,6 +3,26 @@ import { loadHoney, postHasHit, saveHoney, type HoneyItem } from "@/lib/honey";
 
 export const BEE_LOOKS = [
   {
+    id: "monday",
+    title: "Monday ease",
+    pieces: "Camel sweater, black satin skirt, gold hoops",
+  },
+  {
+    id: "tuesday",
+    title: "Tuesday column",
+    pieces: "Ivory silk blouse, black midi skirt, gold necklace",
+  },
+  {
+    id: "wednesday",
+    title: "Wednesday circle",
+    pieces: "Fine knit, wide trouser, gold mules",
+  },
+  {
+    id: "thursday",
+    title: "Thursday layer",
+    pieces: "Black blazer, cream knit, gold earrings",
+  },
+  {
     id: "boardroom",
     title: "The boardroom look",
     pieces: "Burgundy sweater, grey trousers, gold mules",
@@ -15,6 +35,95 @@ export const BEE_LOOKS = [
 ] as const;
 
 export type BeeLookId = (typeof BEE_LOOKS)[number]["id"];
+
+const WEEK_IDS = ["monday", "tuesday", "wednesday", "thursday", "boardroom"] as const;
+
+export function dateStamp(date: Date) {
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+export function handedWeek(today: Date) {
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  const names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  return WEEK_IDS.map((id, index) => {
+    const look = BEE_LOOKS.find((item) => item.id === id)!;
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const stamp = dateStamp(date);
+    return {
+      ...look,
+      date: stamp,
+      weekday: names[index],
+      ofTheDay: stamp === dateStamp(today),
+    };
+  });
+}
+
+function networkPlatform(network: string | null): BuzzPlatformId {
+  const id = (network ?? "").toLowerCase();
+  if (
+    id === "instagram" ||
+    id === "tiktok" ||
+    id === "pinterest" ||
+    id === "facebook" ||
+    id === "linkedin"
+  ) {
+    return id;
+  }
+  return "instagram";
+}
+
+function noteHandedLook(look: { id: string; title: string; pieces: string }) {
+  const comments = loadComments();
+  if (comments.some((comment) => comment.lookId === look.id && comment.author === "Buzz")) return;
+  addComment({
+    roomId: "style",
+    author: "Buzz",
+    text: `${look.title} is handed down for posting. ${look.pieces}`,
+    lookId: look.id,
+    parentId: null,
+  });
+}
+
+export function ensureLookOfTheDay(today: Date): HoneyItem[] {
+  const stamp = dateStamp(today);
+  const look = handedWeek(today).find((item) => item.ofTheDay);
+  const items = loadHoney(stamp);
+  if (!look) return items;
+  const index = items.findIndex(
+    (item) =>
+      item.kind === "post" &&
+      item.date === stamp &&
+      (item.lookId === look.id || item.title === look.title),
+  );
+  if (index >= 0) {
+    const current = items[index];
+    if (current.lookId === look.id && current.caption) return items;
+    const next = items.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            lookId: look.id,
+            title: look.title,
+            caption: item.caption ?? buzzMessage(look.pieces, 0, networkPlatform(item.network)),
+          }
+        : item,
+    );
+    saveHoney(next);
+    noteHandedLook(look);
+    return next;
+  }
+  scheduleLookOnHoney({
+    lookId: look.id,
+    platforms: ["instagram"],
+    date: stamp,
+    time: "09:00",
+  });
+  return loadHoney(stamp);
+}
 
 export type ConnectedAccount = {
   platform: BuzzPlatformId;

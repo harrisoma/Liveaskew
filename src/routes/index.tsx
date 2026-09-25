@@ -120,7 +120,7 @@ const PRODUCTS = [
       },
       {
         title: "Broadcast to the world",
-        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. She connects each account once. Buzz posts through that network's own door. No outside scheduler.",
+        text: "Instagram, TikTok, Pinterest, Facebook, and LinkedIn. She connects each account once. Bee hands the look to Buzz, and Onixus Social publishes it.",
         icons: true,
       },
     ],

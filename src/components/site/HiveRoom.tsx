@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { addComment, loadAlerts, saveAlerts, type HouseAlert } from "@/lib/house";
+import { addComment, BEE_LOOKS, loadAlerts, saveAlerts, type HouseAlert } from "@/lib/house";
 import { HIVE_ROOMS } from "@/lib/hive";
 
 type Note = {
@@ -49,8 +49,11 @@ const SEED: Note[] = [
   },
 ];
 
-export function HiveRoom() {
-  const [roomId, setRoomId] = useState<(typeof HIVE_ROOMS)[number]["id"]>("motherhood");
+export function HiveRoom({ lookId = "" }: { lookId?: string }) {
+  const subject = BEE_LOOKS.find((item) => item.id === lookId) ?? null;
+  const [roomId, setRoomId] = useState<(typeof HIVE_ROOMS)[number]["id"]>(
+    subject ? "style" : "motherhood",
+  );
   const [name, setName] = useState("");
   const [platform, setPlatform] = useState<(typeof PLATFORMS)[number]>("Instagram");
   const [signedIn, setSignedIn] = useState(false);
@@ -59,6 +62,10 @@ export function HiveRoom() {
   const [text, setText] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<HouseAlert[]>([]);
+
+  useEffect(() => {
+    if (BEE_LOOKS.some((item) => item.id === lookId)) setRoomId("style");
+  }, [lookId]);
 
   useEffect(() => {
     const savedName = window.localStorage.getItem(NAME_KEY) ?? "";
@@ -112,7 +119,7 @@ export function HiveRoom() {
       roomId,
       author: name,
       text: line.slice(0, 500),
-      lookId: null,
+      lookId: roomId === "style" ? (subject?.id ?? null) : null,
       parentId: replyTo,
     });
     setNotes([...notes, comment]);
@@ -128,7 +135,12 @@ export function HiveRoom() {
   }
 
   const room = HIVE_ROOMS.find((item) => item.id === roomId) ?? HIVE_ROOMS[0];
-  const visible = notes.filter((note) => note.roomId === roomId && !note.parentId);
+  const visible = notes
+    .filter((note) => note.roomId === roomId && !note.parentId)
+    .sort((a, b) => {
+      if (!subject) return 0;
+      return Number(b.lookId === subject.id) - Number(a.lookId === subject.id);
+    });
   const unread = alerts.filter((alert) => !alert.read);
 
   return (
@@ -148,6 +160,16 @@ export function HiveRoom() {
       <div className="glass rounded-[2rem] p-5 text-black">
         <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">{room.name}</p>
         <p className="mt-2 text-sm leading-relaxed">{room.line}</p>
+        {subject && (
+          <div className="mt-4 rounded-2xl bg-white/80 px-4 py-3">
+            <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">This look</p>
+            <p className="mt-1 font-display text-2xl">{subject.title}</p>
+            <p className="mt-1 text-sm leading-relaxed">{subject.pieces}</p>
+            <p className="mt-2 text-sm leading-relaxed">
+              Bee handed this look to Buzz. Talk about it here.
+            </p>
+          </div>
+        )}
         {unread.length > 0 && (
           <button
             type="button"
@@ -165,7 +187,9 @@ export function HiveRoom() {
               <li key={note.id} className="rounded-2xl bg-white/70 px-4 py-3">
                 <p className="text-[0.62rem] tracking-[0.16em] uppercase text-[#b8860b]">
                   {note.author}
-                  {note.lookId ? " · Bee look" : ""}
+                  {note.lookId
+                    ? ` · ${BEE_LOOKS.find((item) => item.id === note.lookId)?.title ?? "Bee look"}`
+                    : ""}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed">{note.text}</p>
                 {replies.map((reply) => (

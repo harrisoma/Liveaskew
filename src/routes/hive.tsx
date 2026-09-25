@@ -6,6 +6,9 @@ import { HIVE_ROOMS, HIVE_THREADS } from "@/lib/hive";
 import hiveHero from "@/assets/hive-gathering.jpg";
 
 export const Route = createFileRoute("/hive")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    look: typeof search.look === "string" ? search.look : "",
+  }),
   head: () => ({
     meta: [
       { title: "The Hive — LiveAskew" },
@@ -20,6 +23,7 @@ export const Route = createFileRoute("/hive")({
 });
 
 function HivePage() {
+  const { look } = Route.useSearch();
   return (
     <SiteFrame>
       <section className="relative min-h-[70svh]">
@@ -72,11 +76,11 @@ function HivePage() {
       <section className="mx-auto max-w-[1100px] px-6 pb-12">
         <h2 className="font-display text-3xl">The room</h2>
         <p className="mt-3 max-w-xl text-sm leading-relaxed">
-          Sign in from Instagram, Facebook, TikTok, Google, or Apple. Follow the women in the room
-          and build a presence from there.
+          Sign in from Instagram, Facebook, TikTok, Google, or Apple. Talk about the look Bee handed
+          to Buzz, follow the women in the room, and build a presence from there.
         </p>
         <div className="mt-5">
-          <HiveRoom />
+          <HiveRoom lookId={look} />
         </div>
       </section>
 

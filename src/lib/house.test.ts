@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   attachAccount,
+  ensureLookOfTheDay,
+  handedWeek,
   loadAccounts,
   runAutonomousPosts,
   saveAutonomous,
@@ -19,6 +21,52 @@ beforeEach(() => {
         setItem: (key: string, value: string) => store.set(key, value),
       },
     },
+  });
+});
+
+describe("handed looks", () => {
+  it("places Tuesday earlier in the week and marks Friday as the look of the day", () => {
+    const week = handedWeek(new Date("2026-09-25T12:00:00"));
+    expect(week.map((item) => item.id)).toEqual([
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "boardroom",
+    ]);
+    expect(week.find((item) => item.id === "tuesday")?.date).toBe("2026-09-22");
+    expect(week.find((item) => item.ofTheDay)?.title).toBe("The boardroom look");
+  });
+
+  it("already has the look of the day ready to post", () => {
+    const today = new Date("2026-09-25T08:00:00");
+    const items = ensureLookOfTheDay(today);
+    const handed = items.filter(
+      (item) => item.kind === "post" && item.date === "2026-09-25" && item.lookId === "boardroom",
+    );
+    expect(handed).toHaveLength(1);
+    expect(handed[0]?.posted).toBeFalsy();
+    const again = ensureLookOfTheDay(today);
+    expect(
+      again.filter((item) => item.kind === "post" && item.lookId === "boardroom"),
+    ).toHaveLength(1);
+    const notes = JSON.parse(store.get("la_hive_room_v1") ?? "[]") as { lookId: string }[];
+    expect(notes.filter((note) => note.lookId === "boardroom")).toHaveLength(1);
+  });
+
+  it("queues Tuesday's look on Friday", () => {
+    const posts = scheduleLookOnHoney({
+      lookId: "tuesday",
+      platforms: ["instagram"],
+      date: "2026-09-25",
+      time: "16:00",
+    });
+    expect(posts[0]).toMatchObject({
+      title: "Tuesday column",
+      date: "2026-09-25",
+      lookId: "tuesday",
+      posted: false,
+    });
   });
 });
 
