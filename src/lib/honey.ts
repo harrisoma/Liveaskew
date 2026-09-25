@@ -7,7 +7,23 @@ export type HoneyItem = {
   time: string;
   kind: HoneyKind;
   network: string | null;
+  lookId?: string;
+  caption?: string;
 };
+
+const NETWORK_ICON: Record<string, "instagram" | "tiktok" | "pinterest" | "facebook" | "linkedin"> =
+  {
+    Instagram: "instagram",
+    TikTok: "tiktok",
+    Pinterest: "pinterest",
+    Facebook: "facebook",
+    LinkedIn: "linkedin",
+  };
+
+export function honeyIcon(network: string | null) {
+  if (!network) return null;
+  return NETWORK_ICON[network] ?? null;
+}
 
 export const HONEY_KEY = "la_honey_v1";
 

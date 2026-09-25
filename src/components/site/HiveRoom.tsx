@@ -1,7 +1,15 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { addComment, loadAlerts, saveAlerts, type HouseAlert } from "@/lib/house";
 import { HIVE_ROOMS } from "@/lib/hive";
 
-type Note = { id: string; roomId: string; author: string; text: string };
+type Note = {
+  id: string;
+  roomId: string;
+  author: string;
+  text: string;
+  lookId?: string | null;
+  parentId?: string | null;
+};
 
 const KEY = "la_hive_room_v1";
 const NAME_KEY = "la_hive_name";
@@ -49,6 +57,8 @@ export function HiveRoom() {
   const [following, setFollowing] = useState<string[]>([]);
   const [notes, setNotes] = useState<Note[]>(SEED);
   const [text, setText] = useState("");
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [alerts, setAlerts] = useState<HouseAlert[]>([]);
 
   useEffect(() => {
     const savedName = window.localStorage.getItem(NAME_KEY) ?? "";
@@ -58,6 +68,7 @@ export function HiveRoom() {
       setPlatform(savedPlatform as (typeof PLATFORMS)[number]);
     }
     setSignedIn(savedName.trim().length > 0);
+    setAlerts(loadAlerts());
     try {
       const savedFollows = JSON.parse(window.localStorage.getItem(FOLLOW_KEY) ?? "[]") as string[];
       if (Array.isArray(savedFollows)) setFollowing(savedFollows);
@@ -97,17 +108,28 @@ export function HiveRoom() {
     event.preventDefault();
     const line = text.trim();
     if (!line || !signedIn) return;
-    const next = [
-      ...notes,
-      { id: crypto.randomUUID(), roomId, author: name, text: line.slice(0, 500) },
-    ];
-    setNotes(next);
-    window.localStorage.setItem(KEY, JSON.stringify(next));
+    const comment = addComment({
+      roomId,
+      author: name,
+      text: line.slice(0, 500),
+      lookId: null,
+      parentId: replyTo,
+    });
+    setNotes([...notes, comment]);
+    setAlerts(loadAlerts());
     setText("");
+    setReplyTo(null);
+  }
+
+  function markAlertsRead() {
+    const next = alerts.map((alert) => ({ ...alert, read: true }));
+    setAlerts(next);
+    saveAlerts(next);
   }
 
   const room = HIVE_ROOMS.find((item) => item.id === roomId) ?? HIVE_ROOMS[0];
-  const visible = notes.filter((note) => note.roomId === roomId);
+  const visible = notes.filter((note) => note.roomId === roomId && !note.parentId);
+  const unread = alerts.filter((alert) => !alert.read);
 
   return (
     <div className="grid gap-5 md:grid-cols-[220px_minmax(0,1fr)]">
@@ -126,16 +148,48 @@ export function HiveRoom() {
       <div className="glass rounded-[2rem] p-5 text-black">
         <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">{room.name}</p>
         <p className="mt-2 text-sm leading-relaxed">{room.line}</p>
+        {unread.length > 0 && (
+          <button
+            type="button"
+            onClick={markAlertsRead}
+            className="mt-4 w-full rounded-2xl bg-black px-4 py-3 text-left text-sm text-white"
+          >
+            {unread.length} new {unread.length === 1 ? "alert" : "alerts"}. {unread[0]?.text} Tap to
+            clear.
+          </button>
+        )}
         <ul className="mt-4 space-y-3">
-          {visible.map((note) => (
-            <li key={note.id} className="rounded-2xl bg-white/70 px-4 py-3">
-              <p className="text-[0.62rem] tracking-[0.16em] uppercase text-[#b8860b]">
-                {note.author}
-              </p>
-              <p className="mt-1 text-sm leading-relaxed">{note.text}</p>
-            </li>
-          ))}
+          {visible.map((note) => {
+            const replies = notes.filter((item) => item.parentId === note.id);
+            return (
+              <li key={note.id} className="rounded-2xl bg-white/70 px-4 py-3">
+                <p className="text-[0.62rem] tracking-[0.16em] uppercase text-[#b8860b]">
+                  {note.author}
+                  {note.lookId ? " · Bee look" : ""}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed">{note.text}</p>
+                {replies.map((reply) => (
+                  <div key={reply.id} className="mt-2 ml-4 border-l border-[#b8860b] pl-3">
+                    <p className="text-[0.62rem] tracking-[0.16em] uppercase text-[#b8860b]">
+                      {reply.author}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed">{reply.text}</p>
+                  </div>
+                ))}
+                {signedIn && (
+                  <button
+                    type="button"
+                    className="mt-2 text-sm text-[#b8860b]"
+                    onClick={() => setReplyTo(note.id)}
+                  >
+                    Reply
+                  </button>
+                )}
+              </li>
+            );
+          })}
         </ul>
+        {replyTo && <p className="mt-3 text-sm">Replying in this thread.</p>}
         <div className="mt-4 flex flex-wrap gap-2">
           {MEMBERS.map((member) => (
             <button

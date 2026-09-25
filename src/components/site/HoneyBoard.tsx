@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
 import {
   HONEY_NETWORKS,
+  honeyIcon,
   loadHoney,
   postHasHit,
   saveHoney,
@@ -88,14 +90,20 @@ export function HoneyBoard() {
         <ul className="space-y-3">
           {visible.map((item) => {
             const hit = now ? postHasHit(item, now) : false;
+            const icon = honeyIcon(item.network);
             return (
               <li key={item.id} className="glass rounded-[1.4rem] px-4 py-4 text-black">
-                <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
-                  {item.time} · {item.kind}
-                  {item.network ? ` · ${item.network}` : ""}
-                  {hit ? " · Hit" : ""}
-                </p>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                    {item.time} · {item.kind}
+                    {hit ? " · Hit" : ""}
+                  </p>
+                  {icon ? <SocialMarks ids={[icon as SocialId]} /> : null}
+                </div>
                 <p className="mt-1 font-display text-2xl">{item.title}</p>
+                {item.caption ? (
+                  <p className="mt-1 text-sm leading-relaxed">{item.caption}</p>
+                ) : null}
               </li>
             );
           })}

@@ -306,18 +306,27 @@ function HomePage() {
             </div>
             <div className="flex items-center px-6 py-8 md:px-8">
               <ul className="grid w-full gap-3">
-                {[
-                  ["3:00", "Event", "School pickup"],
-                  ["11:00", "Meeting", "Stylist meeting"],
-                  ["9:00", "Instagram · Hit", "The boardroom look"],
-                ].map(([time, kind, title]) => (
-                  <li key={title} className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                    3:00 · Event
+                  </p>
+                  <p className="mt-1 font-display text-2xl">School pickup</p>
+                </li>
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
+                    11:00 · Meeting
+                  </p>
+                  <p className="mt-1 font-display text-2xl">Stylist meeting</p>
+                </li>
+                <li className="glass rounded-[1.4rem] px-5 py-4 text-black">
+                  <div className="flex items-center justify-between gap-3">
                     <p className="text-[0.62rem] tracking-[0.18em] uppercase text-[#b8860b]">
-                      {time} · {kind}
+                      9:00 · Post · Hit
                     </p>
-                    <p className="mt-1 font-display text-2xl">{title}</p>
-                  </li>
-                ))}
+                    <SocialMarks ids={["instagram"]} />
+                  </div>
+                  <p className="mt-1 font-display text-2xl">The boardroom look</p>
+                </li>
               </ul>
             </div>
           </article>

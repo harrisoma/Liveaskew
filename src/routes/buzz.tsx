@@ -1,8 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteFrame } from "@/components/site/SiteFrame";
-import { SocialMarks } from "@/components/site/SocialMarks";
-import { BUZZ_PLATFORMS, buzzMessage, buzzWeek } from "@/lib/buzz";
+import { SocialMarks, type SocialId } from "@/components/site/SocialMarks";
+import { BUZZ_PLATFORMS, buzzMessage, buzzWeek, type BuzzPlatformId } from "@/lib/buzz";
+import {
+  BEE_LOOKS,
+  loadAccounts,
+  saveAccounts,
+  scheduleLookOnHoney,
+  type BeeLookId,
+} from "@/lib/house";
 import buzzHero from "@/assets/wardrobe-flatlay.jpg";
 
 export const Route = createFileRoute("/buzz")({
@@ -23,7 +30,39 @@ function BuzzPage() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [instruction, setInstruction] = useState("");
   const [ready, setReady] = useState(false);
+  const [handles, setHandles] = useState<Partial<Record<BuzzPlatformId, string>>>({});
+  const [lookId, setLookId] = useState<BeeLookId>("boardroom");
+  const [when, setWhen] = useState("09:00");
+  const [chosen, setChosen] = useState<BuzzPlatformId[]>([]);
+  const [scheduled, setScheduled] = useState<string | null>(null);
   const look = instruction.trim();
+
+  useEffect(() => {
+    const accounts = loadAccounts();
+    const next: Partial<Record<BuzzPlatformId, string>> = {};
+    for (const account of accounts) next[account.platform] = account.handle;
+    setHandles(next);
+    setChosen(accounts.map((account) => account.platform));
+  }, []);
+
+  function attachSocials(event: FormEvent) {
+    event.preventDefault();
+    const accounts = BUZZ_PLATFORMS.flatMap((platform) => {
+      const handle = handles[platform.id]?.trim();
+      return handle ? [{ platform: platform.id, handle }] : [];
+    });
+    saveAccounts(accounts);
+    setChosen(accounts.map((account) => account.platform));
+  }
+
+  function schedule(event: FormEvent) {
+    event.preventDefault();
+    if (chosen.length === 0) return;
+    const date = new Date();
+    const stamp = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, "0")}-${`${date.getDate()}`.padStart(2, "0")}`;
+    const posts = scheduleLookOnHoney({ lookId, platforms: chosen, date: stamp, time: when });
+    setScheduled(posts.map((post) => post.network).join(", "));
+  }
 
   const today = useMemo(() => {
     if (!ready) return [];
@@ -57,6 +96,70 @@ function BuzzPage() {
             <SocialMarks ids={["instagram", "tiktok", "pinterest", "facebook", "linkedin"]} />
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pt-10 pb-6 md:grid-cols-2">
+        <form className="glass rounded-[2rem] p-6" onSubmit={attachSocials}>
+          <h2 className="font-display text-3xl">Attach your socials</h2>
+          <p className="mt-2 text-sm leading-relaxed">
+            Connect each network once. Buzz posts the Bee look through that door.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {BUZZ_PLATFORMS.map((platform) => (
+              <li key={platform.id} className="flex items-center gap-3">
+                <SocialMarks ids={[platform.id as SocialId]} />
+                <input
+                  value={handles[platform.id] ?? ""}
+                  onChange={(event) =>
+                    setHandles((current) => ({ ...current, [platform.id]: event.target.value }))
+                  }
+                  placeholder="@handle"
+                  aria-label={`${platform.name} handle`}
+                  className="min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm"
+                />
+              </li>
+            ))}
+          </ul>
+          <button type="submit" className="glass-btn mt-4">
+            Save accounts
+          </button>
+        </form>
+        <form className="glass rounded-[2rem] p-6" onSubmit={schedule}>
+          <h2 className="font-display text-3xl">Put a Bee look on Honey</h2>
+          <div className="mt-4 grid gap-2">
+            {BEE_LOOKS.map((item) => (
+              <label key={item.id} className="flex items-start gap-3 text-sm">
+                <input
+                  type="radio"
+                  name="look"
+                  checked={lookId === item.id}
+                  onChange={() => setLookId(item.id)}
+                />
+                <span>
+                  <strong>{item.title}</strong>
+                  <span className="block text-black/70">{item.pieces}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          <label className="mt-4 block text-sm">
+            Hour
+            <input
+              type="time"
+              value={when}
+              onChange={(event) => setWhen(event.target.value)}
+              className="mt-2 block rounded-xl border border-black/10 bg-white px-3 py-2"
+            />
+          </label>
+          <button type="submit" className="glass-btn mt-4" disabled={chosen.length === 0}>
+            Schedule {chosen.length} {chosen.length === 1 ? "platform" : "platforms"}
+          </button>
+          {scheduled && (
+            <p className="mt-3 text-sm">
+              On Honey for {scheduled}. The Hive has the look, and an alert is waiting.
+            </p>
+          )}
+        </form>
       </section>
 
       <section className="mx-auto grid max-w-[1100px] gap-5 px-6 pb-16 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
