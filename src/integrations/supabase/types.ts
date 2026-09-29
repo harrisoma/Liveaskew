@@ -316,6 +316,129 @@ export type Database = {
         };
         Relationships: [];
       };
+      hive_blocks: {
+        Row: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at: string;
+        };
+        Insert: {
+          blocked_id: string;
+          blocker_id: string;
+          created_at?: string;
+        };
+        Update: {
+          blocked_id?: string;
+          blocker_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      hive_messages: {
+        Row: {
+          author_name: string;
+          body: string;
+          created_at: string;
+          hidden: boolean;
+          id: string;
+          look: Json | null;
+          room_id: string;
+          user_id: string;
+        };
+        Insert: {
+          author_name?: string;
+          body: string;
+          created_at?: string;
+          hidden?: boolean;
+          id?: string;
+          look?: Json | null;
+          room_id: string;
+          user_id: string;
+        };
+        Update: {
+          author_name?: string;
+          body?: string;
+          created_at?: string;
+          hidden?: boolean;
+          id?: string;
+          look?: Json | null;
+          room_id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      hive_profiles: {
+        Row: {
+          created_at: string;
+          display_name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          display_name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          display_name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      hive_reports: {
+        Row: {
+          created_at: string;
+          id: string;
+          message_id: string;
+          reason: string;
+          reporter_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          message_id: string;
+          reason?: string;
+          reporter_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          message_id?: string;
+          reason?: string;
+          reporter_id?: string;
+        };
+        Relationships: [];
+      };
+      hive_rooms: {
+        Row: {
+          blurb: string;
+          created_at: string;
+          id: string;
+          kind: string;
+          name: string;
+          sort_order: number;
+        };
+        Insert: {
+          blurb?: string;
+          created_at?: string;
+          id: string;
+          kind?: string;
+          name: string;
+          sort_order?: number;
+        };
+        Update: {
+          blurb?: string;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          name?: string;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
       look_items: {
         Row: {
           category: string | null;

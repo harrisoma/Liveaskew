@@ -76,6 +76,7 @@ export function MobileApp() {
   const [honeyNotice, setHoneyNotice] = useState<string | null>(null);
   const [tierBusy, setTierBusy] = useState(false);
   const [tierNotice, setTierNotice] = useState<string | null>(null);
+  const [shareLook, setShareLook] = useState<GuideLook | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
@@ -416,6 +417,10 @@ export function MobileApp() {
               locked={!looksUnlocked}
               rateOpen={rateOpen}
               onDismissRate={() => setRateOpen(false)}
+              onShare={(look) => {
+                setShareLook(look);
+                setTab("hive");
+              }}
               onSelect={async (look) => {
                 if (!snap.selfie) return;
                 const key = cacheKey(snap.selfie, look.id);
@@ -618,7 +623,9 @@ export function MobileApp() {
           {tab === "hive" && (
             <HiveScreen
               looks={snap.looks}
-              onDiscuss={(look) => {
+              shareLook={shareLook}
+              onShared={() => setShareLook(null)}
+              onDiscussWithBee={(look) => {
                 setInput(`Let's talk about "${look.title}" — ${look.formula.join(", ")}. `);
                 setTab("bee");
                 setBeeView("chat");
@@ -962,6 +969,7 @@ function StyleGuide({
   onDismissRate,
   onSelect,
   onSave,
+  onShare,
 }: {
   looks: GuideLook[];
   selfie: string | null;
@@ -971,6 +979,7 @@ function StyleGuide({
   onDismissRate: () => void;
   onSelect: (look: GuideLook) => void;
   onSave: (look: GuideLook) => void;
+  onShare: (look: GuideLook) => void;
 }) {
   if (!selfie) {
     return (
@@ -1008,9 +1017,16 @@ function StyleGuide({
             actionLabel={look.saved ? "Saved" : "Save this look"}
             onAction={() => onSave(look)}
             footer={
-              <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
-                {look.tryOnUrl ? "View try-on" : "See this on me"}
-              </NeoButton>
+              <>
+                <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
+                  {look.tryOnUrl ? "View try-on" : "See this on me"}
+                </NeoButton>
+                {look.saved && (
+                  <NeoButton className="mt-3" onClick={() => onShare(look)}>
+                    Share to the Hive
+                  </NeoButton>
+                )}
+              </>
             }
           />
         ))}
