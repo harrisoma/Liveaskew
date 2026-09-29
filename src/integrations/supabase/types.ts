@@ -129,6 +129,15 @@ export type Database = {
       }
       calendar_events: {
         Row: {
+          caption: string | null
+          client_id: string | null
+          external_id: string | null
+          kind: string
+          look_id: string | null
+          network: string | null
+          post_status: string | null
+          source: string
+          start_time: string | null
           created_at: string
           description: string | null
           event_date: string
@@ -141,6 +150,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          caption?: string | null
+          client_id?: string | null
+          external_id?: string | null
+          kind?: string
+          look_id?: string | null
+          network?: string | null
+          post_status?: string | null
+          source?: string
+          start_time?: string | null
           created_at?: string
           description?: string | null
           event_date: string
@@ -153,6 +171,15 @@ export type Database = {
           user_id: string
         }
         Update: {
+          caption?: string | null
+          client_id?: string | null
+          external_id?: string | null
+          kind?: string
+          look_id?: string | null
+          network?: string | null
+          post_status?: string | null
+          source?: string
+          start_time?: string | null
           created_at?: string
           description?: string | null
           event_date?: string
@@ -429,6 +456,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          auth_provider: string | null
+          verified_at: string | null
           body_shape: string | null
           budget_band: string | null
           client_code: string | null
@@ -454,6 +483,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auth_provider?: string | null
+          verified_at?: string | null
           body_shape?: string | null
           budget_band?: string | null
           client_code?: string | null
@@ -479,6 +510,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auth_provider?: string | null
+          verified_at?: string | null
           body_shape?: string | null
           budget_band?: string | null
           client_code?: string | null
@@ -748,6 +781,36 @@ export type Database = {
         }
         Relationships: []
       }
+      tryon_renders: {
+        Row: {
+          cache_key: string
+          created_at: string
+          id: string
+          image_path: string | null
+          image_url: string | null
+          look_id: string
+          user_id: string | null
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          look_id: string
+          user_id?: string | null
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          look_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_look_feedback: {
         Row: {
           created_at: string
@@ -820,8 +883,43 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_codes: {
+        Row: {
+          channel: string
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          destination: string
+          expires_at: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          channel: string
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          destination: string
+          expires_at: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          channel?: string
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          destination?: string
+          expires_at?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       wardrobe_items: {
         Row: {
+          reset_reason: string | null
+          reset_verdict: string | null
           brand: string | null
           category: string
           color: string | null
@@ -838,6 +936,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          reset_reason?: string | null
+          reset_verdict?: string | null
           brand?: string | null
           category: string
           color?: string | null
@@ -854,6 +954,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          reset_reason?: string | null
+          reset_verdict?: string | null
           brand?: string | null
           category?: string
           color?: string | null

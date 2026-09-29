@@ -1,4 +1,4 @@
-import { apiUrl } from "./api";
+import { apiUrl, sessionBearer } from "./api";
 
 export async function persistTrialStartedAt(startedAt: string): Promise<void> {
   try {
@@ -15,15 +15,7 @@ export async function persistTrialStartedAt(startedAt: string): Promise<void> {
   }
 }
 
-export async function authBearer(): Promise<string | null> {
-  try {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data } = await supabase.auth.getSession();
-    return data.session?.access_token ?? null;
-  } catch {
-    return null;
-  }
-}
+export const authBearer = sessionBearer;
 
 export async function registerPushToken(opts: {
   token: string;

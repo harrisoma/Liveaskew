@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { requireApiUser } from "@/lib/api-auth.server";
 
 const BEE_MODEL = "google/gemini-2.5-flash";
 
@@ -52,6 +53,8 @@ export const Route = createFileRoute("/api/bee/app")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const caller = await requireApiUser(request);
+        if (caller instanceof Response) return caller;
         const ONIXUS_AI_API_KEY = process.env.ONIXUS_AI_API_KEY;
         if (!ONIXUS_AI_API_KEY) {
           return Response.json({ error: "not_configured" }, { status: 503 });

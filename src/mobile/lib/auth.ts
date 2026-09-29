@@ -19,6 +19,11 @@ export type VerifyChannel = "email" | "sms";
 
 const PREVIEW_CODE = "000000";
 
+/** The offline 000000 fallback exists for `npm run dev` only — never in a shipped build. */
+export function localPreviewAllowed(): boolean {
+  return Boolean(import.meta.env.DEV);
+}
+
 async function supabaseOrNull() {
   try {
     const { isSupabaseConfigured, supabase } = await import("@/integrations/supabase/client");
@@ -99,28 +104,75 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
       /* fall through to preview */
     }
   }
-  return { redirected: false, email: provider === "google" ? "client@liveaskew.app" : null };
+  return { redirected: false, email: null };
+}
+
+type OtpType = "email" | "sms" | "email_change" | "phone_change";
+const pendingOtpType = new Map<string, OtpType>();
+
+type SupabaseClientLike = NonNullable<Awaited<ReturnType<typeof supabaseOrNull>>>;
+
+/**
+ * Signed in already (Google / Apple): confirm the address on that same account.
+ * Not signed in: the code itself signs the person in.
+ */
+async function startOtp(
+  supabase: SupabaseClientLike,
+  channel: VerifyChannel,
+  destination: string,
+): Promise<{ type: OtpType; error: string | null }> {
+  const { data } = await supabase.auth.getSession();
+  const user = data.session?.user;
+  if (user && channel === "email" && user.email?.toLowerCase() !== destination.toLowerCase()) {
+    const { error } = await supabase.auth.updateUser({ email: destination });
+    return { type: "email_change", error: error?.message ?? null };
+  }
+  if (user && channel === "sms") {
+    const { error } = await supabase.auth.updateUser({ phone: destination });
+    return { type: "phone_change", error: error?.message ?? null };
+  }
+  const { error } =
+    channel === "email"
+      ? await supabase.auth.signInWithOtp({ email: destination })
+      : await supabase.auth.signInWithOtp({ phone: destination });
+  return { type: channel, error: error?.message ?? null };
 }
 
 export async function sendVerifyCode(
   channel: VerifyChannel,
   destination: string,
 ): Promise<{ ok: boolean; preview: boolean; error?: string }> {
-  if (!destination.trim()) return { ok: false, preview: false, error: "Add a destination first." };
+  const dest = destination.trim();
+  if (!dest) return { ok: false, preview: false, error: "Add a destination first." };
+
+  const supabase = await supabaseOrNull();
+  if (supabase) {
+    try {
+      const { type, error } = await startOtp(supabase, channel, dest);
+      if (error) return { ok: false, preview: false, error: "Could not send a code. Check it and try again." };
+      pendingOtpType.set(dest, type);
+      return { ok: true, preview: false };
+    } catch {
+      return { ok: false, preview: false, error: "No connection. Try again in a moment." };
+    }
+  }
+
   try {
     const res = await fetch(apiUrl("/api/public/verify?action=send"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ channel, destination: destination.trim() }),
+      body: JSON.stringify({ channel, destination: dest }),
     });
     if (res.ok) {
       const json = (await res.json()) as { preview?: boolean };
       return { ok: true, preview: Boolean(json.preview) };
     }
+    return { ok: false, preview: false, error: "Could not send a code. Check it and try again." };
   } catch {
-    /* preview */
+    // No Bee API at all: only local dev may continue with the preview code.
+    if (localPreviewAllowed()) return { ok: true, preview: true };
+    return { ok: false, preview: false, error: "No connection. Try again in a moment." };
   }
-  return { ok: true, preview: true };
 }
 
 export async function confirmVerifyCode(
@@ -128,18 +180,35 @@ export async function confirmVerifyCode(
   destination: string,
   code: string,
 ): Promise<boolean> {
-  const trimmed = code.replace(/\s/g, "");
+  const dest = destination.trim();
+  const token = code.replace(/\s/g, "");
+
+  const supabase = await supabaseOrNull();
+  if (supabase) {
+    const type = pendingOtpType.get(dest) ?? channel;
+    try {
+      const { error } =
+        type === "email" || type === "email_change"
+          ? await supabase.auth.verifyOtp({ email: dest, token, type })
+          : await supabase.auth.verifyOtp({ phone: dest, token, type });
+      if (error) return false;
+      pendingOtpType.delete(dest);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   try {
     const res = await fetch(apiUrl("/api/public/verify?action=confirm"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ channel, destination: destination.trim(), code: trimmed }),
+      body: JSON.stringify({ channel, destination: dest, code: token }),
     });
-    if (res.ok) return true;
+    return res.ok;
   } catch {
-    /* preview */
+    return localPreviewAllowed() && token === PREVIEW_CODE;
   }
-  return trimmed === PREVIEW_CODE;
 }
 
 export async function resumeAuthSession(currentUrl = typeof window === "undefined" ? "" : window.location.href): Promise<{

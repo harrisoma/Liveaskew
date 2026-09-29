@@ -3,6 +3,7 @@ import {
   generateIllustrationBytes,
   ILLUSTRATION_ROUTE_VERSION,
 } from "@/lib/generate-illustration.server";
+import { requireApiUser } from "@/lib/api-auth.server";
 
 function bytesToB64(bytes: Uint8Array): string {
   let binary = "";
@@ -17,25 +18,25 @@ type Body = {
   prompt?: string;
   selfiePhotoPath?: string;
   referenceImageB64?: string;
-  userId?: string;
 };
 
 export const Route = createFileRoute("/api/generate-illustration")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const caller = await requireApiUser(request);
+        if (caller instanceof Response) return caller;
+        const userId = caller;
         const body = (await request.json().catch(() => ({}))) as Body;
-        const { prompt, selfiePhotoPath, userId } = body;
+        const { prompt } = body;
+        // Only read selfies from the caller's own storage folder.
+        const selfiePhotoPath = body.selfiePhotoPath?.startsWith(`${userId}/`)
+          ? body.selfiePhotoPath
+          : undefined;
         let referenceImageB64 = body.referenceImageB64;
 
         if (!prompt || typeof prompt !== "string") {
           return new Response("Missing prompt", { status: 400 });
-        }
-        if (!userId || typeof userId !== "string") {
-          return new Response(JSON.stringify({ error: "missing_user_id" }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          });
         }
         const key = process.env.ONIXUS_AI_API_KEY;
         if (!key) {

@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireApiUser } from "@/lib/api-auth.server";
 
 type Body = {
   lookId?: string;
   cacheKey?: string;
   selfieDataUrl?: string;
-  userId?: string;
   garment?: {
     title?: string;
     formula?: string[];
@@ -31,6 +31,9 @@ export const Route = createFileRoute("/api/tryon")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const caller = await requireApiUser(request);
+        if (caller instanceof Response) return caller;
+        const ownerId = caller === "preview" ? undefined : caller;
         const body = (await request.json().catch(() => ({}))) as Body;
         const lookId = body.lookId?.trim();
         const key = body.cacheKey?.trim();
@@ -90,7 +93,7 @@ export const Route = createFileRoute("/api/tryon")({
               let url = json.url ?? json.imageUrl ?? null;
               if (!url && json.imageBase64) url = `data:image/jpeg;base64,${json.imageBase64}`;
               if (url) {
-                await persistTryOn(key, lookId, body.userId, url, selfie);
+                await persistTryOn(key, lookId, ownerId, url, selfie);
                 return Response.json({ url, cached: false, source: "n8n" });
               }
             }
@@ -102,7 +105,7 @@ export const Route = createFileRoute("/api/tryon")({
         }
 
         // Identity passthrough: never generate a reshaped body if the try-on model is unavailable.
-        await persistTryOn(key, lookId, body.userId, selfie, selfie);
+        await persistTryOn(key, lookId, ownerId, selfie, selfie);
         return Response.json({
           url: selfie,
           cached: false,
