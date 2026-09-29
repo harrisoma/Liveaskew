@@ -1,8 +1,8 @@
 export type HoneyKind = "event" | "meeting" | "post";
 export type HoneySource = "manual" | "google" | "apple" | "outlook";
-export type PostStatus = "scheduled" | "posted" | "failed";
+export type PostStatus = "scheduled" | "publishing" | "posted" | "failed";
 
-export const HONEY_NETWORKS = ["Instagram", "TikTok", "Pinterest", "Facebook", "LinkedIn"] as const;
+export const HONEY_NETWORKS = ["Instagram", "Facebook", "LinkedIn", "X", "Threads"] as const;
 export type HoneyNetwork = (typeof HONEY_NETWORKS)[number];
 
 /** One row on the Honey calendar — a day's event, a meeting, or a Buzz post. */
@@ -18,6 +18,12 @@ export type HoneyItem = {
   caption: string | null;
   postStatus: PostStatus | null;
   beeNote: string | null;
+  /** Posts: the exact publish moment (ISO, from the device's local date + time). */
+  scheduledAt?: string | null;
+  /** Posts: public image URL (Instagram needs one; the others may post text only). */
+  mediaUrl?: string | null;
+  postError?: string | null;
+  postUrl?: string | null;
 };
 
 export function isoDay(d: Date): string {

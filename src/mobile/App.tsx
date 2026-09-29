@@ -23,6 +23,17 @@ import {
   startCheckout,
 } from "./lib/billing";
 import { deleteHoney, importCalendar, pullHoney, pushHoney } from "./lib/honey-sync";
+import {
+  connectNetwork,
+  consumeBuzzReturn,
+  disconnectNetwork,
+  fetchBuzzAccounts,
+  publishNow,
+  uploadPostImage,
+  type BuzzAccounts,
+} from "./lib/buzz-client";
+import { bindReturnLinks } from "./lib/return-links";
+import { networkById, scheduledInstant } from "@/lib/buzz";
 import { isoDay, mergeHoney, type HoneyItem } from "@/lib/honey";
 import {
   cacheKey,
@@ -77,6 +88,9 @@ export function MobileApp() {
   const [tierBusy, setTierBusy] = useState(false);
   const [tierNotice, setTierNotice] = useState<string | null>(null);
   const [shareLook, setShareLook] = useState<GuideLook | null>(null);
+  const [buzzAccounts, setBuzzAccounts] = useState<BuzzAccounts | null>(null);
+  const [buzzNotice, setBuzzNotice] = useState<string | null>(null);
+  const [buzzBusy, setBuzzBusy] = useState<string | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
@@ -96,12 +110,33 @@ export function MobileApp() {
         phase: s.phase === "auth" ? "verify" : s.phase,
       }));
     };
-    const billingReturn = consumeBillingReturn(window.location.href);
-    if (billingReturn === "success") {
-      setTab("you");
-      setYouView("membership");
-      setTierNotice("Payment received. Your tier switches on as soon as Stripe confirms it.");
-    }
+    const handleReturn = (href: string) => {
+      if (consumeBillingReturn(href) === "success") {
+        setTab("you");
+        setYouView("membership");
+        setTierNotice("Payment received. Your tier switches on as soon as Stripe confirms it.");
+        void syncAccount();
+      }
+      const buzz = consumeBuzzReturn(href);
+      if (buzz) {
+        setTab("buzz");
+        const names = buzz.network
+          .split(",")
+          .map((id) => networkById(id)?.label)
+          .filter(Boolean)
+          .join(" and ");
+        setBuzzNotice(
+          buzz.status === "connected"
+            ? `${names || "Account"} connected.`
+            : buzz.status === "cancelled"
+              ? "Connection cancelled."
+              : buzz.reason || "That connection did not finish. Try again.",
+        );
+        void fetchBuzzAccounts().then(setBuzzAccounts);
+      }
+    };
+    handleReturn(window.location.href);
+    const unbindLinks = bindReturnLinks(handleReturn);
     void resumeAuthSession().then((session) => {
       if (session.signedIn) {
         applySession(session.email);
@@ -118,6 +153,7 @@ export function MobileApp() {
     window.addEventListener("offline", off);
     return () => {
       unbindAuth();
+      unbindLinks();
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
     };
@@ -126,6 +162,19 @@ export function MobileApp() {
   useEffect(() => {
     if (ready) saveSnapshot(snap);
   }, [snap, ready]);
+
+  // Posts publish on the server; pick up their status when Buzz or Honey opens.
+  useEffect(() => {
+    if (snap.phase !== "app" || (tab !== "buzz" && tab !== "honey")) return;
+    let live = true;
+    void pullHoney().then((remote) => {
+      if (live && remote) setSnap((s) => ({ ...s, honey: mergeHoney(s.honey, remote) }));
+    });
+    if (tab === "buzz") void fetchBuzzAccounts().then((a) => live && setBuzzAccounts(a));
+    return () => {
+      live = false;
+    };
+  }, [tab, snap.phase]);
 
   useEffect(() => {
     if (snap.phase === "app" && snap.notifications.beeReady) {
@@ -139,7 +188,12 @@ export function MobileApp() {
 
   /** Server truth for paid access and the Honey calendar, once there is a session. */
   async function syncAccount() {
-    const [membership, remote] = await Promise.all([fetchMembership(), pullHoney()]);
+    const [membership, remote, accounts] = await Promise.all([
+      fetchMembership(),
+      pullHoney(),
+      fetchBuzzAccounts(),
+    ]);
+    setBuzzAccounts(accounts);
     setSnap((s) => ({
       ...s,
       ...(membership
@@ -159,6 +213,31 @@ export function MobileApp() {
   function upsertHoney(items: HoneyItem[]) {
     patch((s) => ({ ...s, honey: mergeHoney(s.honey, items) }));
     void pushHoney(items);
+  }
+
+  async function runPublishNow(post: HoneyItem) {
+    setBuzzBusy(post.id);
+    patch((s) => ({
+      ...s,
+      honey: s.honey.map((h) => (h.id === post.id ? { ...h, postStatus: "publishing" } : h)),
+    }));
+    const result = await publishNow(post.id);
+    setBuzzBusy(null);
+    patch((s) => ({
+      ...s,
+      honey: s.honey.map((h) =>
+        h.id === post.id
+          ? {
+              ...h,
+              postStatus: result.post_status ?? (result.ok ? "posted" : "failed"),
+              postError: result.post_error ?? (result.ok ? null : "That did not post. Try again."),
+              postUrl: result.post_url ?? h.postUrl ?? null,
+            }
+          : h,
+      ),
+    }));
+    setBuzzNotice(result.ok ? `Posted to ${post.network}.` : null);
+    void haptic(result.ok ? "success" : "impact");
   }
 
   function openMembership() {
@@ -588,36 +667,77 @@ export function MobileApp() {
               looks={snap.looks}
               posts={snap.honey.filter((h) => h.kind === "post")}
               today={today}
+              accounts={buzzAccounts}
+              notice={buzzNotice}
+              busyId={buzzBusy}
+              onConnect={async (network) => {
+                setBuzzNotice(null);
+                const result = await connectNetwork(network);
+                if (result) setBuzzNotice(result.error);
+              }}
+              onDisconnect={async (network) => {
+                if (await disconnectNetwork(network)) {
+                  setBuzzAccounts(await fetchBuzzAccounts());
+                  setBuzzNotice(`${networkById(network)?.label} disconnected.`);
+                }
+              }}
+              onPickPhoto={() => pickStylingPhoto()}
               onCaption={(look, network) =>
                 askBee({
                   messages: [
                     {
                       id: nid("m"),
                       role: "user",
-                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.`,
+                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.${network === "X" ? " Keep it under 260 characters." : network === "Threads" ? " Keep it under 480 characters." : ""}`,
                     },
                   ],
                   profile: snap.onboarding,
                 })
               }
-              onSchedule={({ look, network, date, time, caption }) => {
-                upsertHoney([
-                  {
-                    id: nid("p"),
-                    title: `${network}: ${look.title}`,
-                    date,
-                    time,
-                    kind: "post",
-                    source: "manual",
-                    network,
-                    lookId: look.id,
-                    caption,
-                    postStatus: "scheduled",
-                    beeNote: null,
-                  },
-                ]);
+              onSchedule={async ({ look, network, date, time, caption, photo, now }) => {
+                setBuzzNotice(null);
+                let mediaUrl: string | null = null;
+                if (photo) {
+                  mediaUrl = await uploadPostImage(photo);
+                  if (!mediaUrl && network.requiresImage) {
+                    setBuzzNotice("Sign in to post photos — the photo could not be uploaded.");
+                    return;
+                  }
+                }
+                const at = now ? new Date() : null;
+                const item: HoneyItem = {
+                  id: nid("p"),
+                  title: `${network.label}: ${look.title}`,
+                  date: at ? isoDay(at) : date,
+                  time: at ? at.toTimeString().slice(0, 5) : time,
+                  kind: "post",
+                  source: "manual",
+                  network: network.label,
+                  lookId: look.id,
+                  caption,
+                  postStatus: "scheduled",
+                  beeNote: null,
+                  scheduledAt: at ? at.toISOString() : scheduledInstant(date, time),
+                  mediaUrl,
+                };
+                patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
                 void haptic("success");
+                const saved = await pushHoney([item]);
+                if (!now) {
+                  if (!saved) {
+                    setBuzzNotice(
+                      "Saved on this device. It posts once you're signed in and the account is connected.",
+                    );
+                  }
+                  return;
+                }
+                if (!saved) {
+                  setBuzzNotice("Could not reach Bee to post. It stays scheduled on Honey.");
+                  return;
+                }
+                await runPublishNow(item);
               }}
+              onPublishNow={(post) => void runPublishNow(post)}
             />
           )}
           {tab === "hive" && (

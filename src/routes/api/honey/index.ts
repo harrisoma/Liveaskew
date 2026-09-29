@@ -16,9 +16,11 @@ const itemSchema = z.object({
   source: z.enum(["manual", "google", "apple", "outlook"]),
   network: z.enum(HONEY_NETWORKS).nullable(),
   lookId: z.string().max(120).nullable(),
-  caption: z.string().max(2200).nullable(),
-  postStatus: z.enum(["scheduled", "posted", "failed"]).nullable(),
+  caption: z.string().max(5000).nullable(),
+  postStatus: z.enum(["scheduled", "publishing", "posted", "failed"]).nullable(),
   beeNote: z.string().max(2000).nullable(),
+  scheduledAt: z.string().datetime().nullable().optional(),
+  mediaUrl: z.string().url().max(1000).nullable().optional(),
 });
 
 const upsertSchema = z.object({ items: z.array(itemSchema).min(1).max(200) });
@@ -55,10 +57,30 @@ export const Route = createFileRoute("/api/honey/")({
         const parsed = upsertSchema.safeParse(await request.json().catch(() => null));
         if (!parsed.success) return Response.json({ error: "invalid_body" }, { status: 400 });
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { error } = await supabaseAdmin.from("calendar_events").upsert(
-          parsed.data.items.map((item) => honeyToInsert(userId, item)),
-          { onConflict: "user_id,client_id" },
-        );
+        const items = parsed.data.items;
+        const { data: existingRows } = await supabaseAdmin
+          .from("calendar_events")
+          .select("client_id, post_status")
+          .eq("user_id", userId)
+          .in(
+            "client_id",
+            items.map((i) => i.id),
+          );
+        const existing = new Map((existingRows ?? []).map((r) => [r.client_id, r]));
+        // Rows with and without post fields go separately so each upsert has one column set.
+        const rows = items.map((item) => honeyToInsert(userId, item, existing.get(item.id)));
+        const groups = new Map<string, typeof rows>();
+        for (const row of rows) {
+          const key = Object.keys(row).sort().join(",");
+          groups.set(key, [...(groups.get(key) ?? []), row]);
+        }
+        let error: { message: string } | null = null;
+        for (const group of groups.values()) {
+          const res = await supabaseAdmin
+            .from("calendar_events")
+            .upsert(group, { onConflict: "user_id,client_id" });
+          if (res.error) error = res.error;
+        }
         if (error) {
           console.error("[honey] upsert failed", error.message);
           return Response.json({ error: "honey_unavailable" }, { status: 503 });

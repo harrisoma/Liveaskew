@@ -5,7 +5,7 @@ type Row = Database["public"]["Tables"]["calendar_events"]["Row"];
 type Insert = Database["public"]["Tables"]["calendar_events"]["Insert"];
 
 export const HONEY_COLUMNS =
-  "id, client_id, title, event_date, start_time, kind, source, network, look_id, caption, post_status, outfit_recommendation";
+  "id, client_id, title, event_date, start_time, kind, source, network, look_id, caption, post_status, outfit_recommendation, scheduled_at, media_url, post_error, post_url";
 
 function asNetwork(value: string | null): HoneyNetwork | null {
   return (HONEY_NETWORKS as readonly string[]).includes(value ?? "")
@@ -28,6 +28,10 @@ export function rowToHoney(
     | "caption"
     | "post_status"
     | "outfit_recommendation"
+    | "scheduled_at"
+    | "media_url"
+    | "post_error"
+    | "post_url"
   >,
 ): HoneyItem {
   return {
@@ -45,15 +49,46 @@ export function rowToHoney(
     caption: row.caption,
     postStatus:
       row.post_status === "scheduled" ||
+      row.post_status === "publishing" ||
       row.post_status === "posted" ||
       row.post_status === "failed"
         ? row.post_status
         : null,
     beeNote: row.outfit_recommendation,
+    scheduledAt: row.scheduled_at,
+    mediaUrl: row.media_url,
+    postError: row.post_error,
+    postUrl: row.post_url,
   };
 }
 
-export function honeyToInsert(userId: string, item: HoneyItem): Insert {
+/**
+ * Row from a device's copy. Publishing state (status, error, link, posted time) is the
+ * server's: a new post starts as scheduled, and an existing row keeps whatever the
+ * publisher recorded — so an old copy on a phone can never re-queue a published post.
+ */
+export function honeyToInsert(
+  userId: string,
+  item: HoneyItem,
+  existing?: { post_status: string | null } | null,
+): Insert {
+  const locked = existing?.post_status === "publishing" || existing?.post_status === "posted";
+  const postFields =
+    item.kind !== "post"
+      ? { post_status: null }
+      : existing
+        ? locked
+          ? {}
+          : {
+              // Editing a scheduled/failed post may move its time and media, not its status.
+              scheduled_at: item.scheduledAt ?? null,
+              media_url: item.mediaUrl ?? null,
+            }
+        : {
+            post_status: "scheduled",
+            scheduled_at: item.scheduledAt ?? null,
+            media_url: item.mediaUrl ?? null,
+          };
   return {
     user_id: userId,
     client_id: item.id,
@@ -64,8 +99,8 @@ export function honeyToInsert(userId: string, item: HoneyItem): Insert {
     source: item.source,
     network: item.network,
     look_id: item.lookId,
-    caption: item.caption?.slice(0, 2200) ?? null,
-    post_status: item.kind === "post" ? (item.postStatus ?? "scheduled") : null,
+    caption: item.caption?.slice(0, 5000) ?? null,
+    ...postFields,
     outfit_recommendation: item.beeNote,
     recommendation_status: item.beeNote ? "ready" : "pending",
   };

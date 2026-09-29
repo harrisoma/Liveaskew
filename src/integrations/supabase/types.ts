@@ -123,6 +123,11 @@ export type Database = {
       };
       calendar_events: {
         Row: {
+          media_url: string | null;
+          post_error: string | null;
+          post_url: string | null;
+          posted_at: string | null;
+          scheduled_at: string | null;
           caption: string | null;
           client_id: string | null;
           external_id: string | null;
@@ -144,6 +149,11 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          media_url?: string | null;
+          post_error?: string | null;
+          post_url?: string | null;
+          posted_at?: string | null;
+          scheduled_at?: string | null;
           caption?: string | null;
           client_id?: string | null;
           external_id?: string | null;
@@ -165,6 +175,11 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          media_url?: string | null;
+          post_error?: string | null;
+          post_url?: string | null;
+          posted_at?: string | null;
+          scheduled_at?: string | null;
           caption?: string | null;
           client_id?: string | null;
           external_id?: string | null;
@@ -702,6 +717,72 @@ export type Database = {
           platform?: string;
           token?: string;
           updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      social_connections: {
+        Row: {
+          access_token_enc: string;
+          account_id: string;
+          account_name: string;
+          created_at: string;
+          expires_at: string | null;
+          id: string;
+          network: string;
+          refresh_token_enc: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          access_token_enc: string;
+          account_id: string;
+          account_name?: string;
+          created_at?: string;
+          expires_at?: string | null;
+          id?: string;
+          network: string;
+          refresh_token_enc?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          access_token_enc?: string;
+          account_id?: string;
+          account_name?: string;
+          created_at?: string;
+          expires_at?: string | null;
+          id?: string;
+          network?: string;
+          refresh_token_enc?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      social_oauth_states: {
+        Row: {
+          code_verifier: string | null;
+          created_at: string;
+          network: string;
+          return_to: string;
+          state: string;
+          user_id: string;
+        };
+        Insert: {
+          code_verifier?: string | null;
+          created_at?: string;
+          network: string;
+          return_to: string;
+          state: string;
+          user_id: string;
+        };
+        Update: {
+          code_verifier?: string | null;
+          created_at?: string;
+          network?: string;
+          return_to?: string;
+          state?: string;
           user_id?: string;
         };
         Relationships: [];

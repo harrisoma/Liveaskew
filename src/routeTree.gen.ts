@@ -21,6 +21,10 @@ import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommen
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiHoneyImportRouteImport } from './routes/api/honey/import'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
+import { Route as ApiCronBuzzRouteImport } from './routes/api/cron/buzz'
+import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
+import { Route as ApiBuzzConnectionsRouteImport } from './routes/api/buzz/connections'
+import { Route as ApiBuzzConnectRouteImport } from './routes/api/buzz/connect'
 import { Route as ApiBillingStatusRouteImport } from './routes/api/billing/status'
 import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inquiry'
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
@@ -29,6 +33,7 @@ import { Route as ApiBeeMagazineStreamRouteImport } from './routes/api/bee/magaz
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicBuzzCallbackRouteImport } from './routes/api/public/buzz/callback'
 import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/guest'
 
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -91,6 +96,26 @@ const ApiCronPushRoute = ApiCronPushRouteImport.update({
   path: '/api/cron/push',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronBuzzRoute = ApiCronBuzzRouteImport.update({
+  id: '/api/cron/buzz',
+  path: '/api/cron/buzz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBuzzPublishRoute = ApiBuzzPublishRouteImport.update({
+  id: '/api/buzz/publish',
+  path: '/api/buzz/publish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBuzzConnectionsRoute = ApiBuzzConnectionsRouteImport.update({
+  id: '/api/buzz/connections',
+  path: '/api/buzz/connections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBuzzConnectRoute = ApiBuzzConnectRouteImport.update({
+  id: '/api/buzz/connect',
+  path: '/api/buzz/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBillingStatusRoute = ApiBillingStatusRouteImport.update({
   id: '/api/billing/status',
   path: '/api/billing/status',
@@ -132,6 +157,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBuzzCallbackRoute = ApiPublicBuzzCallbackRouteImport.update({
+  id: '/api/public/buzz/callback',
+  path: '/api/public/buzz/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBeeGuestRoute = ApiPublicBeeGuestRouteImport.update({
   id: '/api/public/bee/guest',
   path: '/api/public/bee/guest',
@@ -151,6 +181,10 @@ export interface FileRoutesByFullPath {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
+  '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/publish': typeof ApiBuzzPublishRoute
+  '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
@@ -159,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
+  '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -174,6 +209,10 @@ export interface FileRoutesByTo {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
+  '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/publish': typeof ApiBuzzPublishRoute
+  '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
@@ -182,6 +221,7 @@ export interface FileRoutesByTo {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
+  '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
@@ -198,6 +238,10 @@ export interface FileRoutesById {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
+  '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/publish': typeof ApiBuzzPublishRoute
+  '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
@@ -206,6 +250,7 @@ export interface FileRoutesById {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
+  '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -223,6 +268,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/status'
+    | '/api/buzz/connect'
+    | '/api/buzz/connections'
+    | '/api/buzz/publish'
+    | '/api/cron/buzz'
     | '/api/cron/push'
     | '/api/honey/import'
     | '/api/public/verify'
@@ -231,6 +280,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey/'
     | '/api/public/bee/guest'
+    | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -246,6 +296,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/status'
+    | '/api/buzz/connect'
+    | '/api/buzz/connections'
+    | '/api/buzz/publish'
+    | '/api/cron/buzz'
     | '/api/cron/push'
     | '/api/honey/import'
     | '/api/public/verify'
@@ -254,6 +308,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey'
     | '/api/public/bee/guest'
+    | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   id:
     | '__root__'
@@ -269,6 +324,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/status'
+    | '/api/buzz/connect'
+    | '/api/buzz/connections'
+    | '/api/buzz/publish'
+    | '/api/cron/buzz'
     | '/api/cron/push'
     | '/api/honey/import'
     | '/api/public/verify'
@@ -277,6 +336,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey/'
     | '/api/public/bee/guest'
+    | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -293,6 +353,10 @@ export interface RootRouteChildren {
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
   ApiBillingStatusRoute: typeof ApiBillingStatusRoute
+  ApiBuzzConnectRoute: typeof ApiBuzzConnectRoute
+  ApiBuzzConnectionsRoute: typeof ApiBuzzConnectionsRoute
+  ApiBuzzPublishRoute: typeof ApiBuzzPublishRoute
+  ApiCronBuzzRoute: typeof ApiCronBuzzRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
   ApiHoneyImportRoute: typeof ApiHoneyImportRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
@@ -301,6 +365,7 @@ export interface RootRouteChildren {
   ApiWardrobeAnalyzeRoute: typeof ApiWardrobeAnalyzeRoute
   ApiHoneyIndexRoute: typeof ApiHoneyIndexRoute
   ApiPublicBeeGuestRoute: typeof ApiPublicBeeGuestRoute
+  ApiPublicBuzzCallbackRoute: typeof ApiPublicBuzzCallbackRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -390,6 +455,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCronPushRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/buzz': {
+      id: '/api/cron/buzz'
+      path: '/api/cron/buzz'
+      fullPath: '/api/cron/buzz'
+      preLoaderRoute: typeof ApiCronBuzzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/buzz/publish': {
+      id: '/api/buzz/publish'
+      path: '/api/buzz/publish'
+      fullPath: '/api/buzz/publish'
+      preLoaderRoute: typeof ApiBuzzPublishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/buzz/connections': {
+      id: '/api/buzz/connections'
+      path: '/api/buzz/connections'
+      fullPath: '/api/buzz/connections'
+      preLoaderRoute: typeof ApiBuzzConnectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/buzz/connect': {
+      id: '/api/buzz/connect'
+      path: '/api/buzz/connect'
+      fullPath: '/api/buzz/connect'
+      preLoaderRoute: typeof ApiBuzzConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/billing/status': {
       id: '/api/billing/status'
       path: '/api/billing/status'
@@ -446,6 +539,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/buzz/callback': {
+      id: '/api/public/buzz/callback'
+      path: '/api/public/buzz/callback'
+      fullPath: '/api/public/buzz/callback'
+      preLoaderRoute: typeof ApiPublicBuzzCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bee/guest': {
       id: '/api/public/bee/guest'
       path: '/api/public/bee/guest'
@@ -469,6 +569,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingInquiryRoute: ApiBillingInquiryRoute,
   ApiBillingStatusRoute: ApiBillingStatusRoute,
+  ApiBuzzConnectRoute: ApiBuzzConnectRoute,
+  ApiBuzzConnectionsRoute: ApiBuzzConnectionsRoute,
+  ApiBuzzPublishRoute: ApiBuzzPublishRoute,
+  ApiCronBuzzRoute: ApiCronBuzzRoute,
   ApiCronPushRoute: ApiCronPushRoute,
   ApiHoneyImportRoute: ApiHoneyImportRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
@@ -477,6 +581,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiWardrobeAnalyzeRoute: ApiWardrobeAnalyzeRoute,
   ApiHoneyIndexRoute: ApiHoneyIndexRoute,
   ApiPublicBeeGuestRoute: ApiPublicBeeGuestRoute,
+  ApiPublicBuzzCallbackRoute: ApiPublicBuzzCallbackRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

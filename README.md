@@ -21,7 +21,7 @@ npm test
 | **iOS**     | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
 | **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme.       |
 
-Native notes: `docs/CAPACITOR.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
+Native notes: `docs/CAPACITOR.md`. Social publishing: `docs/BUZZ.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
 
 ## Service boundaries
 
