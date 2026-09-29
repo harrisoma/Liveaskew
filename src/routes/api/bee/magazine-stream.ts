@@ -58,8 +58,8 @@ export const Route = createFileRoute("/api/bee/magazine-stream")({
         }
         const userId = claimsData.claims.sub as string;
 
-        const [{ data: profile }, { data: styleProfile }, { data: onboarding }] =
-          await Promise.all([
+        const [{ data: profile }, { data: styleProfile }, { data: onboarding }] = await Promise.all(
+          [
             supabase
               .from("profiles")
               .select(
@@ -76,7 +76,8 @@ export const Route = createFileRoute("/api/bee/magazine-stream")({
               .from("bee_onboarding_responses")
               .select("question_id, pillar, choice, note")
               .eq("user_id", userId),
-          ]);
+          ],
+        );
 
         const userPrompt = `Member profile (sizing-aware, climate-aware, budget-aware):
 ${JSON.stringify(profile ?? {}, null, 2)}

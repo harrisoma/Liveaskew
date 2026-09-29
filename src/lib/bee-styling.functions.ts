@@ -6,8 +6,6 @@ import type { Database } from "@/integrations/supabase/types";
 
 type DB = SupabaseClient<Database>;
 
-
-
 async function loadStylingContext(supabase: DB, userId: string) {
   const [{ data: profile }, { data: styleProfile }, { data: onboarding }] = await Promise.all([
     supabase
@@ -113,7 +111,6 @@ export const persistMagazineLooks = createServerFn({ method: "POST" })
       look_ids: createdLookIds,
     };
   });
-
 
 // ──────────────────────────────────────────────────────────────────────────────
 // generateLookCover — render + persist a cover for a single look. Called
@@ -230,7 +227,16 @@ export const listMagazineLooks = createServerFn({ method: "GET" })
           .select("look_id, name, category, color, recommended_fit, position")
           .in("look_id", lookIds)
           .order("position", { ascending: true })
-      : { data: [] as Array<{ look_id: string; name: string | null; category: string | null; color: string | null; recommended_fit: string | null; position: number | null }> };
+      : {
+          data: [] as Array<{
+            look_id: string;
+            name: string | null;
+            category: string | null;
+            color: string | null;
+            recommended_fit: string | null;
+            position: number | null;
+          }>,
+        };
 
     // Signed URLs for private bucket covers
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

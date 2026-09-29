@@ -15,11 +15,11 @@ npm test
 
 ## Platforms
 
-| Surface | How it ships |
-| --- | --- |
-| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`. |
-| **iOS** | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
-| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme. |
+| Surface     | How it ships                                                                                 |
+| ----------- | -------------------------------------------------------------------------------------------- |
+| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`.        |
+| **iOS**     | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
+| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme.       |
 
 Native notes: `docs/CAPACITOR.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
 

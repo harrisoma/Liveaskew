@@ -102,11 +102,7 @@ export function BeeLauncher() {
             </div>
 
             <footer className="px-6 py-5">
-              <Link
-                to="/"
-                onClick={() => setOpen(false)}
-                className="neo-btn-ink w-full"
-              >
+              <Link to="/" onClick={() => setOpen(false)} className="neo-btn-ink w-full">
                 Start a conversation
               </Link>
               <p className="mt-3 text-center text-[0.65rem] tracking-[0.18em] uppercase text-ink/45">

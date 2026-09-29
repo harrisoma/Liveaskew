@@ -6,7 +6,9 @@ export type PushPlatform = "ios" | "android" | "web";
 
 export const TRIAL_REMINDER_DAYS = [7, 3, 1] as const;
 
-export function trialReminderDay(daysLeft: number | null): (typeof TRIAL_REMINDER_DAYS)[number] | null {
+export function trialReminderDay(
+  daysLeft: number | null,
+): (typeof TRIAL_REMINDER_DAYS)[number] | null {
   if (daysLeft === 7 || daysLeft === 3 || daysLeft === 1) return daysLeft;
   return null;
 }
@@ -106,7 +108,9 @@ export async function notifyBeeRecommendation(userId: string): Promise<{ sent: n
   return sendToUser(userId, "bee_recommendation");
 }
 
-export async function runTrialCountdownPushes(now = Date.now()): Promise<{ sent: number; skipped: number }> {
+export async function runTrialCountdownPushes(
+  now = Date.now(),
+): Promise<{ sent: number; skipped: number }> {
   const admin = await getAdmin();
   const { data, error } = await admin
     .from("profiles")
@@ -178,7 +182,11 @@ async function sendFcm(token: string, payload: FcmPayload): Promise<SendResult> 
   return "skipped";
 }
 
-async function sendFcmLegacy(serverKey: string, token: string, payload: FcmPayload): Promise<SendResult> {
+async function sendFcmLegacy(
+  serverKey: string,
+  token: string,
+  payload: FcmPayload,
+): Promise<SendResult> {
   const res = await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
@@ -197,7 +205,10 @@ async function sendFcmLegacy(serverKey: string, token: string, payload: FcmPaylo
     console.error("[push] FCM legacy status", res.status, await res.text().catch(() => ""));
     return "skipped";
   }
-  const json = (await res.json().catch(() => ({}))) as { failure?: number; results?: { error?: string }[] };
+  const json = (await res.json().catch(() => ({}))) as {
+    failure?: number;
+    results?: { error?: string }[];
+  };
   const err = json.results?.[0]?.error;
   if (err === "NotRegistered" || err === "InvalidRegistration") return "invalid";
   if (json.failure && json.failure > 0 && err) return "skipped";
@@ -210,7 +221,11 @@ type ServiceAccount = {
   private_key?: string;
 };
 
-async function sendFcmHttpV1(rawJson: string, token: string, payload: FcmPayload): Promise<SendResult> {
+async function sendFcmHttpV1(
+  rawJson: string,
+  token: string,
+  payload: FcmPayload,
+): Promise<SendResult> {
   const account = JSON.parse(rawJson) as ServiceAccount;
   const projectId = account.project_id;
   if (!projectId || !account.client_email || !account.private_key) {

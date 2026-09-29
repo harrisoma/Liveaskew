@@ -319,7 +319,6 @@ function deterministicRotation(heroCount: number): RotationDay[] {
 
 /* ────────────────── Image generation (per hero + cover) ────────────────── */
 
-
 type GenResult = { ok: true; bytes: Uint8Array } | { ok: false; status: number; error: string };
 
 function responseSnippet(text: string): string {

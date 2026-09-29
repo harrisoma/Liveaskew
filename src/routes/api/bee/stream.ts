@@ -130,10 +130,10 @@ export const Route = createFileRoute("/api/bee/stream")({
             : sub.status === "trialing"
               ? "trial_expired"
               : "subscription_inactive";
-          return new Response(
-            JSON.stringify({ error: "subscription_required", reason }),
-            { status: 402, headers: { "Content-Type": "application/json" } },
-          );
+          return new Response(JSON.stringify({ error: "subscription_required", reason }), {
+            status: 402,
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         // 2. Validate body
@@ -271,9 +271,7 @@ export const Route = createFileRoute("/api/bee/stream")({
               // Strip onboarding sentinel before persisting
               const SENTINEL = "[[ONBOARDING_COMPLETE]]";
               const completed = fullText.includes(SENTINEL);
-              const cleanText = completed
-                ? fullText.replace(SENTINEL, "").trimEnd()
-                : fullText;
+              const cleanText = completed ? fullText.replace(SENTINEL, "").trimEnd() : fullText;
 
               // Token usage (best-effort)
               let tokens_in: number | null = null;
@@ -314,9 +312,7 @@ export const Route = createFileRoute("/api/bee/stream")({
                   })),
                   { role: "assistant" as const, content: cleanText },
                 ];
-                const { extractAndPersistBeeSignals } = await import(
-                  "@/lib/bee-extract.server"
-                );
+                const { extractAndPersistBeeSignals } = await import("@/lib/bee-extract.server");
                 await extractAndPersistBeeSignals({
                   supabase,
                   userId,
@@ -333,9 +329,7 @@ export const Route = createFileRoute("/api/bee/stream")({
                   .update({ onboarding_completed_at: new Date().toISOString() })
                   .eq("id", conversationId)
                   .is("onboarding_completed_at", null);
-                controller.enqueue(
-                  encoder.encode(`event: onboarding_complete\ndata: {}\n\n`),
-                );
+                controller.enqueue(encoder.encode(`event: onboarding_complete\ndata: {}\n\n`));
               }
 
               controller.enqueue(encoder.encode(`event: done\ndata: {}\n\n`));

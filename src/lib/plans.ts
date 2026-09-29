@@ -16,8 +16,8 @@ export type Plan = {
   name: string;
   tagline: string;
   priceMonthly: number; // USD, 0 for inquiry-only
-  priceAnnual: number;  // USD/year — priceMonthly * 12 * 0.8 (rounded)
-  cadence: string;      // display cadence for monthly view
+  priceAnnual: number; // USD/year — priceMonthly * 12 * 0.8 (rounded)
+  cadence: string; // display cadence for monthly view
   description: string;
   flagship: boolean;
   inquiry: boolean;
@@ -247,10 +247,7 @@ function mapTier(tier: string | null | undefined): PlanSlug | null {
   return null;
 }
 
-export function hasEntitlement(
-  tier: string | null | undefined,
-  key: Entitlement,
-): boolean {
+export function hasEntitlement(tier: string | null | undefined, key: Entitlement): boolean {
   const slug = mapTier(tier);
   if (!slug) return false;
   const value = ENTITLEMENTS[slug][key];
@@ -309,8 +306,5 @@ export async function loadResolvedTier(): Promise<string | null> {
   ]);
   // Dev/admin override: admins get every entitlement across the app.
   if (adminRes.data) return "atelier";
-  return resolveTier(
-    (profileRes.data?.tier as string | null) ?? null,
-    subRes.data ?? null,
-  );
+  return resolveTier((profileRes.data?.tier as string | null) ?? null, subRes.data ?? null);
 }

@@ -74,9 +74,7 @@ export function ActingProfileSwitcher({ tier }: { tier: string | null }) {
       >
         <Users size={12} className="text-gold-deep" />
         <span className="hidden sm:inline">Styling</span>
-        <span className="text-ink">
-          {activeMember ? activeMember.name : "You"}
-        </span>
+        <span className="text-ink">{activeMember ? activeMember.name : "You"}</span>
         <ChevronDown size={12} className="text-ink/40" />
       </button>
 
@@ -94,7 +92,9 @@ export function ActingProfileSwitcher({ tier }: { tier: string | null }) {
             <User size={14} className="mt-0.5 text-ink/60" />
             <div>
               <div className="font-display text-base">You</div>
-              <div className="text-[0.65rem] uppercase tracking-[0.2em] text-ink/45">Primary member</div>
+              <div className="text-[0.65rem] uppercase tracking-[0.2em] text-ink/45">
+                Primary member
+              </div>
             </div>
           </button>
           {profiles.map((p) => (
@@ -108,7 +108,9 @@ export function ActingProfileSwitcher({ tier }: { tier: string | null }) {
               <User size={14} className="mt-0.5 text-ink/60" />
               <div>
                 <div className="font-display text-base">{p.name}</div>
-                <div className="text-[0.65rem] uppercase tracking-[0.2em] text-ink/45">{p.relationship}</div>
+                <div className="text-[0.65rem] uppercase tracking-[0.2em] text-ink/45">
+                  {p.relationship}
+                </div>
               </div>
             </button>
           ))}

@@ -10,7 +10,6 @@ export type StyleIllustration = {
   attempts?: number;
 };
 
-
 export type MyStyleGuide = {
   hasSubscription: boolean;
   displayName: string | null;
@@ -30,7 +29,12 @@ export type MyStyleGuide = {
     illustrations: Array<StyleIllustration> | null;
     looks: LooksDoc | null;
   } | null;
-  onboarding: Array<{ question_id: string | null; pillar: string | null; choice: string | null; note: string | null }>;
+  onboarding: Array<{
+    question_id: string | null;
+    pillar: string | null;
+    choice: string | null;
+    note: string | null;
+  }>;
 };
 
 async function buildGuide(
@@ -53,23 +57,24 @@ async function buildGuide(
     hasSubscription = Boolean(live || sandbox);
   }
 
-  const [{ data: profile }, { data: styleProfile }, { data: onboarding }] =
-    await Promise.all([
-      supabase
-        .from("profiles")
-        .select("display_name, body_shape, location, climate, budget_band, selfie_photo_path")
-        .eq("id", userId)
-        .maybeSingle(),
-      supabase
-        .from("style_profiles")
-        .select("color_palette, color_season, pillar_weights, lifestyle_mix, north_star, illustrations, looks")
-        .eq("user_id", userId)
-        .maybeSingle(),
-      supabase
-        .from("bee_onboarding_responses")
-        .select("question_id, pillar, choice, note")
-        .eq("user_id", userId),
-    ]);
+  const [{ data: profile }, { data: styleProfile }, { data: onboarding }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("display_name, body_shape, location, climate, budget_band, selfie_photo_path")
+      .eq("id", userId)
+      .maybeSingle(),
+    supabase
+      .from("style_profiles")
+      .select(
+        "color_palette, color_season, pillar_weights, lifestyle_mix, north_star, illustrations, looks",
+      )
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabase
+      .from("bee_onboarding_responses")
+      .select("question_id, pillar, choice, note")
+      .eq("user_id", userId),
+  ]);
 
   // Resolve illustration entries. Each entry has a status. Successful entries
   // include a `path` we sign into a short-lived URL; failed/fallback entries
@@ -138,15 +143,20 @@ async function buildGuide(
       heroes: (storedLooks.heroes ?? []).map((h) => ({
         ...h,
         illustration: h.illustration
-          ? { ...h.illustration, url: h.illustration.path ? urlByPath.get(h.illustration.path) : undefined }
+          ? {
+              ...h.illustration,
+              url: h.illustration.path ? urlByPath.get(h.illustration.path) : undefined,
+            }
           : undefined,
       })),
       cover: storedLooks.cover
-        ? { ...storedLooks.cover, url: storedLooks.cover.path ? urlByPath.get(storedLooks.cover.path) : undefined }
+        ? {
+            ...storedLooks.cover,
+            url: storedLooks.cover.path ? urlByPath.get(storedLooks.cover.path) : undefined,
+          }
         : undefined,
     };
   }
-
 
   return {
     hasSubscription,
@@ -169,10 +179,8 @@ async function buildGuide(
               role?: string;
             }> | null) ?? null,
           color_season: (styleProfile.color_season as string | null) ?? null,
-          pillar_weights:
-            (styleProfile.pillar_weights as Record<string, number> | null) ?? null,
-          lifestyle_mix:
-            (styleProfile.lifestyle_mix as Record<string, number> | null) ?? null,
+          pillar_weights: (styleProfile.pillar_weights as Record<string, number> | null) ?? null,
+          lifestyle_mix: (styleProfile.lifestyle_mix as Record<string, number> | null) ?? null,
           north_star: (styleProfile.north_star as string | null) ?? null,
           illustrations: resolvedIllustrations,
           looks: resolvedLooks,
@@ -213,9 +221,7 @@ export const getMyShareToken = createServerFn({ method: "GET" })
 export const rotateShareToken = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<{ token: string }> => {
-    const { data, error } = await context.supabase.rpc(
-      "rotate_style_guide_share_token",
-    );
+    const { data, error } = await context.supabase.rpc("rotate_style_guide_share_token");
     if (error) throw new Error(error.message);
     return { token: data as string };
   });
@@ -223,9 +229,7 @@ export const rotateShareToken = createServerFn({ method: "POST" })
 export const revokeShareToken = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<{ ok: true }> => {
-    const { error } = await context.supabase.rpc(
-      "revoke_style_guide_share_token",
-    );
+    const { error } = await context.supabase.rpc("revoke_style_guide_share_token");
     if (error) throw new Error(error.message);
     return { ok: true };
   });

@@ -7,8 +7,7 @@ type ImageGenerationJson = {
   [key: string]: unknown;
 };
 
-export const ILLUSTRATION_ROUTE_VERSION =
-  "generate-illustration-2026-photoreal-img2img-v1";
+export const ILLUSTRATION_ROUTE_VERSION = "generate-illustration-2026-photoreal-img2img-v1";
 
 export const ILLUSTRATION_SYSTEM_PROMPT = `Photorealistic editorial fashion photograph. NOT an illustration, NOT painterly, NOT stylized — a real photograph.
 

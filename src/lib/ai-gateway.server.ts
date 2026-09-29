@@ -13,10 +13,7 @@ export function getOnixusAiConfig(apiKeyOverride?: string) {
   return {
     apiKey: required(apiKeyOverride ?? process.env.ONIXUS_AI_API_KEY, "ONIXUS_AI_API_KEY"),
     baseURL: required(process.env.ONIXUS_AI_BASE_URL, "ONIXUS_AI_BASE_URL").replace(/\/$/, ""),
-    organizationId: required(
-      process.env.ONIXUS_AI_ORGANIZATION_ID,
-      "ONIXUS_AI_ORGANIZATION_ID",
-    ),
+    organizationId: required(process.env.ONIXUS_AI_ORGANIZATION_ID, "ONIXUS_AI_ORGANIZATION_ID"),
   };
 }
 

@@ -154,15 +154,12 @@ async function extractSection<T>(opts: {
     } catch (err) {
       // Log the raw model output so we can see exactly which field broke.
       if (NoObjectGeneratedError.isInstance(err)) {
-        console.error(
-          `bee-extract[${label}] attempt ${tryNum} no-object error.`,
-          {
-            cause: err.cause,
-            text: err.text,
-            usage: err.usage,
-            finishReason: err.finishReason,
-          },
-        );
+        console.error(`bee-extract[${label}] attempt ${tryNum} no-object error.`, {
+          cause: err.cause,
+          text: err.text,
+          usage: err.usage,
+          finishReason: err.finishReason,
+        });
       } else {
         console.error(`bee-extract[${label}] attempt ${tryNum} failed`, err);
       }
@@ -176,10 +173,7 @@ async function extractSection<T>(opts: {
     try {
       return await attempt(2);
     } catch (err2) {
-      console.error(
-        `bee-extract[${label}] gave up after retry; skipping section.`,
-        err2,
-      );
+      console.error(`bee-extract[${label}] gave up after retry; skipping section.`, err2);
       return null;
     }
   }
@@ -194,9 +188,7 @@ export async function extractAndPersistBeeSignals(opts: {
   const { supabase, userId, apiKey, transcript } = opts;
   if (!transcript.length) return { onboardingCount: 0, styleProfileSaved: false };
 
-  const conversation = transcript
-    .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
-    .join("\n\n");
+  const conversation = transcript.map((m) => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n");
   const transcriptBlock = `Bee conversation transcript:\n\n${conversation}`;
 
   let onboardingCount = 0;
@@ -259,10 +251,7 @@ export async function extractAndPersistBeeSignals(opts: {
     if (profile.climate) profilePatch.climate = profile.climate;
     if (profile.budget_band) profilePatch.budget_band = profile.budget_band;
     if (Object.keys(profilePatch).length) {
-      const { error } = await supabase
-        .from("profiles")
-        .update(profilePatch)
-        .eq("id", userId);
+      const { error } = await supabase.from("profiles").update(profilePatch).eq("id", userId);
       if (error) console.error("bee-extract: profile update", error);
     }
   }
@@ -300,11 +289,7 @@ export async function extractAndPersistBeeSignals(opts: {
       // the UI renders gracefully instead of leaving the field empty.
       payload.color_season = sp.color_season?.trim() || "pending photo";
       if (sp.pillar_weights)
-        payload.pillar_weights = normalizePercents(sp.pillar_weights, [
-          "fit",
-          "feel",
-          "fabric",
-        ]);
+        payload.pillar_weights = normalizePercents(sp.pillar_weights, ["fit", "feel", "fabric"]);
       if (sp.lifestyle_mix)
         payload.lifestyle_mix = normalizePercents(sp.lifestyle_mix, [
           "office",
@@ -369,7 +354,7 @@ function ensureHex(hex: string | undefined, name: string): string {
   // Last resort: deterministic, name-derived muted tone (never #CCCCCC).
   let hash = 0;
   for (let i = 0; i < n.length; i++) hash = (hash * 31 + n.charCodeAt(i)) | 0;
-  const h = ((hash >>> 0) % 360);
+  const h = (hash >>> 0) % 360;
   return hslToHex(h, 38, 48);
 }
 
@@ -389,10 +374,7 @@ function hslToHex(h: number, s: number, l: number): string {
 
 // Normalise pillar/lifestyle values to integer percentages summing to 100.
 // Handles both fractional (0..1) and percent (0..100) inputs from the model.
-function normalizePercents(
-  obj: Record<string, unknown>,
-  keys: string[],
-): Record<string, number> {
+function normalizePercents(obj: Record<string, unknown>, keys: string[]): Record<string, number> {
   const vals: Record<string, number> = {};
   let total = 0;
   for (const k of keys) {

@@ -25,7 +25,8 @@ export const submitLookFeedback = createServerFn({ method: "POST" })
         image_url: data.image_url ?? null,
         status: data.status,
         // Drizzle of JSON — cast through unknown to satisfy generated Json type
-        style_metadata: data.style_metadata as unknown as Database["public"]["Tables"]["user_look_feedback"]["Insert"]["style_metadata"],
+        style_metadata:
+          data.style_metadata as unknown as Database["public"]["Tables"]["user_look_feedback"]["Insert"]["style_metadata"],
       },
       { onConflict: "user_id,profile_id,look_id,status" },
     );
@@ -34,10 +35,7 @@ export const submitLookFeedback = createServerFn({ method: "POST" })
   });
 
 // Server-only helper (no createServerFn export — invoked from other server fns / routes)
-export async function getStyleFeedbackSummary(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-) {
+export async function getStyleFeedbackSummary(supabase: SupabaseClient<Database>, userId: string) {
   const [{ data: approved }, { data: rejected }] = await Promise.all([
     supabase
       .from("user_look_feedback")

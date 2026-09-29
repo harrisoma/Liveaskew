@@ -19,9 +19,7 @@ export async function streamImage(
     body: JSON.stringify({ prompt }),
   });
   if (!res.ok || !res.body) {
-    throw new Error(
-      `Image generation failed: ${res.status} ${await res.text().catch(() => "")}`,
-    );
+    throw new Error(`Image generation failed: ${res.status} ${await res.text().catch(() => "")}`);
   }
 
   let sawCompleted = false;
@@ -30,7 +28,8 @@ export async function streamImage(
       if (
         event.event !== "image_generation.partial_image" &&
         event.event !== "image_generation.completed"
-      ) return;
+      )
+        return;
       let payload: ImageEventPayload;
       try {
         payload = JSON.parse(event.data) as ImageEventPayload;

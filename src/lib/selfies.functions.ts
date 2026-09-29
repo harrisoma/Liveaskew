@@ -29,10 +29,7 @@ export const getMySelfies = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const [{ data: profile }, { data: family }] = await Promise.all([
       supabase.from("profiles").select("selfie_photo_path, tier").eq("id", userId).maybeSingle(),
-      supabase
-        .from("family_profiles")
-        .select("id, selfie_photo_path")
-        .eq("user_id", userId),
+      supabase.from("family_profiles").select("id, selfie_photo_path").eq("user_id", userId),
     ]);
     return {
       tier: (profile?.tier as string | null) ?? null,

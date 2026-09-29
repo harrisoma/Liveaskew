@@ -11,12 +11,7 @@ import orbVideo from "@/assets/bee-orb-woven.mp4";
  * speak and "present" (bloom outward then gather).
  */
 
-export type BeeOrbState =
-  | "idle"
-  | "listening"
-  | "thinking"
-  | "speaking"
-  | "presenting";
+export type BeeOrbState = "idle" | "listening" | "thinking" | "speaking" | "presenting";
 export type BeeOrbSurface = "light" | "dark" | "auto";
 
 interface BeeOrbProps {
@@ -92,12 +87,14 @@ function toRgb(c: string): [number, number, number] {
     }
   }
   const h = c.replace("#", "");
-  const s = h.length === 3 ? h.split("").map((x) => x + x).join("") : h;
-  return [
-    parseInt(s.slice(0, 2), 16),
-    parseInt(s.slice(2, 4), 16),
-    parseInt(s.slice(4, 6), 16),
-  ];
+  const s =
+    h.length === 3
+      ? h
+          .split("")
+          .map((x) => x + x)
+          .join("")
+      : h;
+  return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
 }
 
 export function BeeOrb({
@@ -250,10 +247,8 @@ export function BeeOrb({
           overflow: "hidden",
           // crop out the reference video's outer smoke ribbons by zooming in
           // so only the woven sphere itself is visible
-          maskImage:
-            "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
+          maskImage: "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
         }}
         animate={{ scale: breath.scale.map((s) => s * bloomScale) }}
         transition={breathT}

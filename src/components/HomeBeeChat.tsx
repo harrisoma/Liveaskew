@@ -337,10 +337,7 @@ export function HomeBeeChat() {
                     either way.
                   </p>
                   <div className="mt-4 flex flex-wrap items-center gap-4">
-                    <Link
-                      to="/"
-                      className="neo-btn-ink !px-5 !py-3 text-[0.7rem]"
-                    >
+                    <Link to="/" className="neo-btn-ink !px-5 !py-3 text-[0.7rem]">
                       Activate 14-day trial
                       <ArrowUpRight
                         size={14}

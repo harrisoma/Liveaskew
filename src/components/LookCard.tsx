@@ -188,9 +188,7 @@ export function LookCard({
 
         {notes && (
           <div className="mb-6 relative pl-4 border-l-2 border-[var(--gold)]">
-            <p className="text-sm text-[var(--ink)] font-serif italic leading-relaxed">
-              "{notes}"
-            </p>
+            <p className="text-sm text-[var(--ink)] font-serif italic leading-relaxed">"{notes}"</p>
           </div>
         )}
 
@@ -201,10 +199,15 @@ export function LookCard({
             </h4>
             <ul className="space-y-2.5">
               {items.map((item, idx) => (
-                <li key={idx} className="flex justify-between items-baseline text-xs text-neutral-700">
+                <li
+                  key={idx}
+                  className="flex justify-between items-baseline text-xs text-neutral-700"
+                >
                   <span className="font-serif text-[var(--ink)] font-medium">{item.brand}</span>
                   <span className="flex-1 border-b border-dotted border-neutral-200 mx-2" />
-                  <span className="text-neutral-500 font-light truncate max-w-[50%]">{item.name}</span>
+                  <span className="text-neutral-500 font-light truncate max-w-[50%]">
+                    {item.name}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -235,9 +238,8 @@ export function LookCard({
               See yourself, modeled by Bee.
             </h3>
             <p className="text-sm text-[var(--ink)]/70 leading-relaxed mb-6">
-              Selfie-AI rendering, the thumbs feedback loop, and a magazine that
-              learns your taste are part of <em>The Premium</em>. Upgrade to step
-              inside your own lookbook.
+              Selfie-AI rendering, the thumbs feedback loop, and a magazine that learns your taste
+              are part of <em>The Premium</em>. Upgrade to step inside your own lookbook.
             </p>
             <div className="flex justify-center gap-3">
               <button

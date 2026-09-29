@@ -62,6 +62,4 @@ if (offenders.length > 0) {
   process.exit(1);
 }
 
-console.log(
-  `✓ landing-image-reuse: ${imageIdents.size} image assets, each used exactly once.`,
-);
+console.log(`✓ landing-image-reuse: ${imageIdents.size} image assets, each used exactly once.`);

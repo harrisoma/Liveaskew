@@ -31,7 +31,12 @@ const ICS = [
 describe("parseIcs", () => {
   it("reads timed, all-day, and folded events in range and skips cancelled ones", () => {
     expect(parseIcs(ICS, "2026-09-29", "2026-12-31")).toEqual([
-      { uid: "a1@google.com", title: "Dinner with Maya, downtown", date: "2026-10-02", time: "18:30" },
+      {
+        uid: "a1@google.com",
+        title: "Dinner with Maya, downtown",
+        date: "2026-10-02",
+        time: "18:30",
+      },
       { uid: "b2", title: "Boardmeeting", date: "2026-10-05", time: null },
     ]);
   });
@@ -39,7 +44,9 @@ describe("parseIcs", () => {
 
 describe("feedSource", () => {
   it("accepts Google, iCloud, and Outlook feeds only", () => {
-    expect(feedSource("https://calendar.google.com/calendar/ical/x/basic.ics")?.source).toBe("google");
+    expect(feedSource("https://calendar.google.com/calendar/ical/x/basic.ics")?.source).toBe(
+      "google",
+    );
     expect(feedSource("webcal://p52-caldav.icloud.com/published/2/abc")?.source).toBe("apple");
     expect(feedSource("https://outlook.office365.com/owa/calendar/x/calendar.ics")?.source).toBe(
       "outlook",

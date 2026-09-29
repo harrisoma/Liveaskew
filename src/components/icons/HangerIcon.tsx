@@ -1,4 +1,12 @@
-export function HangerIcon({ size = 16, className = "", strokeWidth = 1.4 }: { size?: number; className?: string; strokeWidth?: number }) {
+export function HangerIcon({
+  size = 16,
+  className = "",
+  strokeWidth = 1.4,
+}: {
+  size?: number;
+  className?: string;
+  strokeWidth?: number;
+}) {
   return (
     <svg
       width={size}

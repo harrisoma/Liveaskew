@@ -8,7 +8,9 @@ export const listWardrobeItems = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     let query = supabase
       .from("wardrobe_items")
-      .select("id, name, brand, category, subcategory, color, pattern, season, tags, photo_path, notes, created_at")
+      .select(
+        "id, name, brand, category, subcategory, color, pattern, season, tags, photo_path, notes, created_at",
+      )
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
     if (data.category && data.category !== "All") {

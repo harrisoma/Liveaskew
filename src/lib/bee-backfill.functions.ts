@@ -27,12 +27,22 @@ export const backfillMyStyleFromBee = createServerFn({ method: "POST" })
       return { ok: false, messageCount: 0, ran: false, reason: error.message };
     }
     if (!msgs || msgs.length < 2) {
-      return { ok: true, messageCount: msgs?.length ?? 0, ran: false, reason: "not enough history" };
+      return {
+        ok: true,
+        messageCount: msgs?.length ?? 0,
+        ran: false,
+        reason: "not enough history",
+      };
     }
 
     const apiKey = process.env.ONIXUS_AI_API_KEY;
     if (!apiKey) {
-      return { ok: false, messageCount: msgs.length, ran: false, reason: "missing ONIXUS_AI_API_KEY" };
+      return {
+        ok: false,
+        messageCount: msgs.length,
+        ran: false,
+        reason: "missing ONIXUS_AI_API_KEY",
+      };
     }
 
     const transcript = msgs.map((m) => ({

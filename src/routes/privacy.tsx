@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Footer } from "@/components/Footer";
-import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_TITLE, PRIVACY_UPDATED } from "@/lib/privacy-policy";
+import {
+  PRIVACY_INTRO,
+  PRIVACY_SECTIONS,
+  PRIVACY_TITLE,
+  PRIVACY_UPDATED,
+} from "@/lib/privacy-policy";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({

@@ -44,7 +44,9 @@ export const createCalendarEvent = createServerFn({ method: "POST" })
         description: data.description ?? null,
         recommendation_status: "pending",
       })
-      .select("id, title, event_date, description, outfit_recommendation, recommendation_status, recommendation_error, created_at")
+      .select(
+        "id, title, event_date, description, outfit_recommendation, recommendation_status, recommendation_error, created_at",
+      )
       .single();
     if (error || !row) throw error ?? new Error("Failed to create event");
     return { event: row };
@@ -93,12 +95,13 @@ export const generateEventOutfit = createServerFn({ method: "POST" })
       }
     }
 
-
     // Load styling context (Fit / Feel / Fabric profile)
     const [{ data: profile }, { data: styleProfile }, { data: onboarding }] = await Promise.all([
       supabase
         .from("profiles")
-        .select("display_name, size_top, size_bottom, size_shoe, height_cm, body_shape, location, climate, budget_band")
+        .select(
+          "display_name, size_top, size_bottom, size_shoe, height_cm, body_shape, location, climate, budget_band",
+        )
         .eq("id", userId)
         .maybeSingle(),
       supabase
@@ -115,7 +118,8 @@ export const generateEventOutfit = createServerFn({ method: "POST" })
     const key = process.env.ONIXUS_AI_API_KEY;
     if (!key) throw new Error("Missing ONIXUS_AI_API_KEY");
 
-    const { getStyleFeedbackSummary, buildFeedbackPromptBlock } = await import("@/lib/feedback.functions");
+    const { getStyleFeedbackSummary, buildFeedbackPromptBlock } =
+      await import("@/lib/feedback.functions");
     const feedbackBlock = buildFeedbackPromptBlock(await getStyleFeedbackSummary(supabase, userId));
 
     const systemPrompt = `You are Bee — LiveAskew's personal AI stylist. Your voice is intimate, editorial, decisive, never generic.
@@ -181,7 +185,9 @@ Provide a head-to-toe outfit recommendation using the client's saved Fit/Feel/Fa
       })
       .eq("id", event.id)
       .eq("user_id", userId)
-      .select("id, title, event_date, description, outfit_recommendation, recommendation_status, recommendation_error, created_at")
+      .select(
+        "id, title, event_date, description, outfit_recommendation, recommendation_status, recommendation_error, created_at",
+      )
       .single();
     if (upErr) throw upErr;
 

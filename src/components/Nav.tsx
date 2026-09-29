@@ -61,7 +61,11 @@ export function Nav() {
               isActive ? "text-gold-deep" : "text-ink/70 hover:text-gold-deep"
             }`;
             return (
-              <a key={label} href={href === "/pricing" || href === "/bianca" ? "/" : href} className={classes}>
+              <a
+                key={label}
+                href={href === "/pricing" || href === "/bianca" ? "/" : href}
+                className={classes}
+              >
                 {label}
               </a>
             );

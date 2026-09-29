@@ -69,9 +69,7 @@ function PlatePending({ className }: { className?: string }) {
         <span className="block font-mono text-[9px] tracking-[0.3em] uppercase text-ink/40 mb-2">
           plate
         </span>
-        <span className="block font-display italic text-sm text-ink/55">
-          illustration pending
-        </span>
+        <span className="block font-display italic text-sm text-ink/55">illustration pending</span>
       </div>
     </div>
   );
@@ -127,15 +125,12 @@ export function MagazineSpread({
   const variations = looks?.variations ?? [];
   const rotation = looks?.rotation ?? [];
 
-  const [enlargedDay, setEnlargedDay] = useState<
-    { day: number; hero: HeroLook } | null
-  >(null);
+  const [enlargedDay, setEnlargedDay] = useState<{ day: number; hero: HeroLook } | null>(null);
 
   const closeEnlarged = useCallback(() => setEnlargedDay(null), []);
 
   const heroColor = ensureSwatchHex(palette[0]?.hex, palette[0]?.name) || "#1a1a1a";
-  const accentColor =
-    ensureSwatchHex(palette[1]?.hex, palette[1]?.name) || heroColor || "#c9a84c";
+  const accentColor = ensureSwatchHex(palette[1]?.hex, palette[1]?.name) || heroColor || "#c9a84c";
 
   const today = new Date();
   const issueLabel = today
@@ -260,15 +255,13 @@ export function MagazineSpread({
           </div>
           <div className="md:col-span-9">
             <p className="font-display text-2xl md:text-4xl leading-[1.15] text-ink max-w-3xl">
-              A wardrobe should{" "}
-              <em style={{ color: accentColor }}>argue for you</em> before you
-              open your mouth. This month: eight looks, two ways each, mapped
-              across thirty days — built from your colors, your climate, your
-              real life.
+              A wardrobe should <em style={{ color: accentColor }}>argue for you</em> before you
+              open your mouth. This month: eight looks, two ways each, mapped across thirty days —
+              built from your colors, your climate, your real life.
             </p>
             <p className="mt-5 text-ink/65 text-base md:text-lg leading-relaxed max-w-2xl">
-              Read it like a magazine. Wear it like a thesis. When something
-              shifts, your guide shifts with it.
+              Read it like a magazine. Wear it like a thesis. When something shifts, your guide
+              shifts with it.
             </p>
             <p
               className="mt-6 text-2xl md:text-3xl leading-snug"
@@ -281,11 +274,7 @@ export function MagazineSpread({
       </section>
 
       {/* ───────────── 01 · THE FOUNDATION ───────────── */}
-      <section
-        id="foundation"
-        data-magsection
-        className="px-8 md:px-16 py-12 max-w-5xl mx-auto"
-      >
+      <section id="foundation" data-magsection className="px-8 md:px-16 py-12 max-w-5xl mx-auto">
         <p className="eyebrow mb-3" style={{ color: accentColor }}>
           01 — The Foundation
         </p>
@@ -412,11 +401,7 @@ export function MagazineSpread({
       </section>
 
       {/* ───────────── 02 · THE LOOKS ───────────── */}
-      <section
-        id="looks"
-        data-magsection
-        className="px-8 md:px-16 py-12 max-w-6xl mx-auto"
-      >
+      <section id="looks" data-magsection className="px-8 md:px-16 py-12 max-w-6xl mx-auto">
         <p className="eyebrow mb-3" style={{ color: accentColor }}>
           02 — The Looks
         </p>
@@ -451,11 +436,7 @@ export function MagazineSpread({
       </section>
 
       {/* ───────────── 03 · VARIATIONS ───────────── */}
-      <section
-        id="variations"
-        data-magsection
-        className="px-8 md:px-16 py-12 max-w-5xl mx-auto"
-      >
+      <section id="variations" data-magsection className="px-8 md:px-16 py-12 max-w-5xl mx-auto">
         <p className="eyebrow mb-3" style={{ color: accentColor }}>
           03 — The Variations
         </p>
@@ -481,10 +462,7 @@ export function MagazineSpread({
               if (heroVars.length === 0) return null;
               return (
                 <article key={hero.id} className="break-inside-avoid">
-                  <p
-                    className="eyebrow mb-2"
-                    style={{ color: accentColor }}
-                  >
+                  <p className="eyebrow mb-2" style={{ color: accentColor }}>
                     {hero.name}
                   </p>
                   <ul className="space-y-3 border-t hairline pt-3">
@@ -510,11 +488,7 @@ export function MagazineSpread({
       </section>
 
       {/* ───────────── 04 · 30-DAY ROTATION ───────────── */}
-      <section
-        id="rotation"
-        data-magsection
-        className="px-8 md:px-16 py-12 max-w-5xl mx-auto"
-      >
+      <section id="rotation" data-magsection className="px-8 md:px-16 py-12 max-w-5xl mx-auto">
         <p className="eyebrow mb-3" style={{ color: accentColor }}>
           04 — The 30-Day Rotation
         </p>
@@ -773,7 +747,10 @@ function SectionDock({ sections, accent }: { sections: Section[]; accent: string
     setOpen(false);
   };
 
-  const idx = Math.max(0, sections.findIndex((s) => s.id === active));
+  const idx = Math.max(
+    0,
+    sections.findIndex((s) => s.id === active),
+  );
   const prev = sections[idx - 1];
   const next = sections[idx + 1];
 

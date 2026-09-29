@@ -127,9 +127,7 @@ describe("extractAndPersistBeeSignals — partial persistence on validation fail
     generateObjectMock
       .mockResolvedValueOnce({
         object: {
-          answers: [
-            { question_id: "q1_pillar_priority", pillar: "meta", choice: "feel" },
-          ],
+          answers: [{ question_id: "q1_pillar_priority", pillar: "meta", choice: "feel" }],
         },
       })
       .mockResolvedValueOnce({ object: { climate: "temperate" } })
@@ -152,9 +150,7 @@ describe("extractAndPersistBeeSignals — partial persistence on validation fail
       .mockRejectedValueOnce(makeNoObjectError("onb-1"))
       .mockResolvedValueOnce({
         object: {
-          answers: [
-            { question_id: "q10_keep_line", pillar: "meta", choice: "protect" },
-          ],
+          answers: [{ question_id: "q10_keep_line", pillar: "meta", choice: "protect" }],
         },
       })
       // profile + style succeed
@@ -198,7 +194,11 @@ describe("extractAndPersistBeeSignals — partial persistence on validation fail
           answers: [
             { question_id: "q4_silhouette", pillar: "fit", choice: "pure ease" },
             { question_id: "q99_made_up", pillar: "meta", choice: "nope" },
-            { question_id: "q6_fabric_preference", pillar: "weird-pillar", choice: "soft naturals" },
+            {
+              question_id: "q6_fabric_preference",
+              pillar: "weird-pillar",
+              choice: "soft naturals",
+            },
           ],
         },
       })
@@ -210,8 +210,6 @@ describe("extractAndPersistBeeSignals — partial persistence on validation fail
 
     expect(res.onboardingCount).toBe(2);
     expect(calls.bee_onboarding_responses).toHaveLength(2);
-    expect(
-      (calls.bee_onboarding_responses[1] as { pillar: string }).pillar,
-    ).toBe("meta"); // bad pillar coerced
+    expect((calls.bee_onboarding_responses[1] as { pillar: string }).pillar).toBe("meta"); // bad pillar coerced
   });
 });

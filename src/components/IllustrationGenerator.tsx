@@ -31,7 +31,8 @@ export function IllustrationGenerator() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       if (msg.includes("429")) setError("Rate limit reached. Try again in a moment.");
-      else if (msg.includes("402")) setError("AI credits exhausted. Add credits in Settings → Plans & credits.");
+      else if (msg.includes("402"))
+        setError("AI credits exhausted. Add credits in Settings → Plans & credits.");
       else setError(msg);
     } finally {
       setLoading(false);
@@ -48,9 +49,8 @@ export function IllustrationGenerator() {
           Generate an illustration in <em>this vibe</em>.
         </h3>
         <p className="text-ink/65 leading-[1.7] text-sm max-w-xl">
-          Describe a subject. The system prompt enforces the LiveAskew style —
-          loose hand-rendered linework, warm paper background, jewel accents,
-          handwritten label beside the figure.
+          Describe a subject. The system prompt enforces the LiveAskew style — loose hand-rendered
+          linework, warm paper background, jewel accents, handwritten label beside the figure.
         </p>
       </div>
 
@@ -75,7 +75,9 @@ export function IllustrationGenerator() {
         </form>
 
         <div className="flex flex-wrap gap-2">
-          <span className="text-xs tracking-[0.22em] uppercase text-ink/45 mr-1 self-center">Try:</span>
+          <span className="text-xs tracking-[0.22em] uppercase text-ink/45 mr-1 self-center">
+            Try:
+          </span>
           {SUGGESTIONS.map((s) => (
             <button
               key={s}
