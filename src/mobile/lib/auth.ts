@@ -44,7 +44,11 @@ export function oauthUrlIsLive(url: string): boolean {
 }
 
 export function withAuthApiKey(url: string, apiKey?: string): string {
-  const key = (apiKey ?? (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined) ?? "").trim();
+  const key = (
+    apiKey ??
+    (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined) ??
+    ""
+  ).trim();
   if (!key) return url;
   try {
     const parsed = new URL(url);
@@ -149,7 +153,12 @@ export async function sendVerifyCode(
   if (supabase) {
     try {
       const { type, error } = await startOtp(supabase, channel, dest);
-      if (error) return { ok: false, preview: false, error: "Could not send a code. Check it and try again." };
+      if (error)
+        return {
+          ok: false,
+          preview: false,
+          error: "Could not send a code. Check it and try again.",
+        };
       pendingOtpType.set(dest, type);
       return { ok: true, preview: false };
     } catch {
@@ -211,7 +220,9 @@ export async function confirmVerifyCode(
   }
 }
 
-export async function resumeAuthSession(currentUrl = typeof window === "undefined" ? "" : window.location.href): Promise<{
+export async function resumeAuthSession(
+  currentUrl = typeof window === "undefined" ? "" : window.location.href,
+): Promise<{
   signedIn: boolean;
   email: string | null;
 }> {
@@ -262,4 +273,13 @@ export function bindNativeAuthResume(onResume: (email: string | null) => void): 
     }
   })();
   return () => remove?.();
+}
+
+export async function signOut(): Promise<void> {
+  const supabase = await supabaseOrNull();
+  try {
+    await supabase?.auth.signOut();
+  } catch {
+    /* already signed out */
+  }
 }

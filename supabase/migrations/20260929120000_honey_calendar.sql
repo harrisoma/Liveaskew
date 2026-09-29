@@ -31,14 +31,10 @@ BEGIN
   END IF;
 END $$;
 
--- Calendar sync upserts on (user, source, external id); the app upserts on its own client id.
-CREATE UNIQUE INDEX IF NOT EXISTS calendar_events_external_idx
-  ON public.calendar_events (user_id, source, external_id)
-  WHERE external_id IS NOT NULL;
-
+-- The app and calendar sync upsert on (user_id, client_id). Not partial: PostgREST's
+-- on_conflict cannot target a partial index. NULL client ids (older rows) stay distinct.
 CREATE UNIQUE INDEX IF NOT EXISTS calendar_events_client_idx
-  ON public.calendar_events (user_id, client_id)
-  WHERE client_id IS NOT NULL;
+  ON public.calendar_events (user_id, client_id);
 
 CREATE INDEX IF NOT EXISTS calendar_events_user_date_idx
   ON public.calendar_events (user_id, event_date);

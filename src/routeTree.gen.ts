@@ -14,13 +14,19 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
 import { Route as ApiGenerateIllustrationRouteImport } from './routes/api/generate-illustration'
+import { Route as ApiHoneyIndexRouteImport } from './routes/api/honey/index'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
+import { Route as ApiHoneyImportRouteImport } from './routes/api/honey/import'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
+import { Route as ApiBillingStatusRouteImport } from './routes/api/billing/status'
+import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inquiry'
+import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBeeStreamRouteImport } from './routes/api/bee/stream'
 import { Route as ApiBeeMagazineStreamRouteImport } from './routes/api/bee/magazine-stream'
+import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicBeeGuestRouteImport } from './routes/api/public/bee/guest'
@@ -50,6 +56,11 @@ const ApiGenerateIllustrationRoute = ApiGenerateIllustrationRouteImport.update({
   path: '/api/generate-illustration',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHoneyIndexRoute = ApiHoneyIndexRouteImport.update({
+  id: '/api/honey/',
+  path: '/api/honey/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
   id: '/api/wardrobe/analyze',
   path: '/api/wardrobe/analyze',
@@ -70,9 +81,29 @@ const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
   path: '/api/public/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHoneyImportRoute = ApiHoneyImportRouteImport.update({
+  id: '/api/honey/import',
+  path: '/api/honey/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCronPushRoute = ApiCronPushRouteImport.update({
   id: '/api/cron/push',
   path: '/api/cron/push',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBillingStatusRoute = ApiBillingStatusRouteImport.update({
+  id: '/api/billing/status',
+  path: '/api/billing/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBillingInquiryRoute = ApiBillingInquiryRouteImport.update({
+  id: '/api/billing/inquiry',
+  path: '/api/billing/inquiry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBillingCheckoutRoute = ApiBillingCheckoutRouteImport.update({
+  id: '/api/billing/checkout',
+  path: '/api/billing/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBeeStreamRoute = ApiBeeStreamRouteImport.update({
@@ -83,6 +114,11 @@ const ApiBeeStreamRoute = ApiBeeStreamRouteImport.update({
 const ApiBeeMagazineStreamRoute = ApiBeeMagazineStreamRouteImport.update({
   id: '/api/bee/magazine-stream',
   path: '/api/bee/magazine-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBeeLooksRoute = ApiBeeLooksRouteImport.update({
+  id: '/api/bee/looks',
+  path: '/api/bee/looks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBeeAppRoute = ApiBeeAppRouteImport.update({
@@ -109,13 +145,19 @@ export interface FileRoutesByFullPath {
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
   '/api/bee/app': typeof ApiBeeAppRoute
+  '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/billing/checkout': typeof ApiBillingCheckoutRoute
+  '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/honey/': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -126,13 +168,19 @@ export interface FileRoutesByTo {
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
   '/api/bee/app': typeof ApiBeeAppRoute
+  '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/billing/checkout': typeof ApiBillingCheckoutRoute
+  '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/honey': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -144,13 +192,19 @@ export interface FileRoutesById {
   '/api/generate-illustration': typeof ApiGenerateIllustrationRoute
   '/api/tryon': typeof ApiTryonRoute
   '/api/bee/app': typeof ApiBeeAppRoute
+  '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/bee/magazine-stream': typeof ApiBeeMagazineStreamRoute
   '/api/bee/stream': typeof ApiBeeStreamRoute
+  '/api/billing/checkout': typeof ApiBillingCheckoutRoute
+  '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/honey/': typeof ApiHoneyIndexRoute
   '/api/public/bee/guest': typeof ApiPublicBeeGuestRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -163,13 +217,19 @@ export interface FileRouteTypes {
     | '/api/generate-illustration'
     | '/api/tryon'
     | '/api/bee/app'
+    | '/api/bee/looks'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/billing/checkout'
+    | '/api/billing/inquiry'
+    | '/api/billing/status'
     | '/api/cron/push'
+    | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/honey/'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -180,13 +240,19 @@ export interface FileRouteTypes {
     | '/api/generate-illustration'
     | '/api/tryon'
     | '/api/bee/app'
+    | '/api/bee/looks'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/billing/checkout'
+    | '/api/billing/inquiry'
+    | '/api/billing/status'
     | '/api/cron/push'
+    | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/honey'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
   id:
@@ -197,13 +263,19 @@ export interface FileRouteTypes {
     | '/api/generate-illustration'
     | '/api/tryon'
     | '/api/bee/app'
+    | '/api/bee/looks'
     | '/api/bee/magazine-stream'
     | '/api/bee/stream'
+    | '/api/billing/checkout'
+    | '/api/billing/inquiry'
+    | '/api/billing/status'
     | '/api/cron/push'
+    | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/honey/'
     | '/api/public/bee/guest'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -215,13 +287,19 @@ export interface RootRouteChildren {
   ApiGenerateIllustrationRoute: typeof ApiGenerateIllustrationRoute
   ApiTryonRoute: typeof ApiTryonRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
+  ApiBeeLooksRoute: typeof ApiBeeLooksRoute
   ApiBeeMagazineStreamRoute: typeof ApiBeeMagazineStreamRoute
   ApiBeeStreamRoute: typeof ApiBeeStreamRoute
+  ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
+  ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
+  ApiBillingStatusRoute: typeof ApiBillingStatusRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
+  ApiHoneyImportRoute: typeof ApiHoneyImportRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
   ApiPushRegisterRoute: typeof ApiPushRegisterRoute
   ApiWardrobeAnalyzeRoute: typeof ApiWardrobeAnalyzeRoute
+  ApiHoneyIndexRoute: typeof ApiHoneyIndexRoute
   ApiPublicBeeGuestRoute: typeof ApiPublicBeeGuestRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -263,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateIllustrationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/honey/': {
+      id: '/api/honey/'
+      path: '/api/honey'
+      fullPath: '/api/honey/'
+      preLoaderRoute: typeof ApiHoneyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/wardrobe/analyze': {
       id: '/api/wardrobe/analyze'
       path: '/api/wardrobe/analyze'
@@ -291,11 +376,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/honey/import': {
+      id: '/api/honey/import'
+      path: '/api/honey/import'
+      fullPath: '/api/honey/import'
+      preLoaderRoute: typeof ApiHoneyImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cron/push': {
       id: '/api/cron/push'
       path: '/api/cron/push'
       fullPath: '/api/cron/push'
       preLoaderRoute: typeof ApiCronPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/billing/status': {
+      id: '/api/billing/status'
+      path: '/api/billing/status'
+      fullPath: '/api/billing/status'
+      preLoaderRoute: typeof ApiBillingStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/billing/inquiry': {
+      id: '/api/billing/inquiry'
+      path: '/api/billing/inquiry'
+      fullPath: '/api/billing/inquiry'
+      preLoaderRoute: typeof ApiBillingInquiryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/billing/checkout': {
+      id: '/api/billing/checkout'
+      path: '/api/billing/checkout'
+      fullPath: '/api/billing/checkout'
+      preLoaderRoute: typeof ApiBillingCheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bee/stream': {
@@ -310,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/api/bee/magazine-stream'
       fullPath: '/api/bee/magazine-stream'
       preLoaderRoute: typeof ApiBeeMagazineStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/bee/looks': {
+      id: '/api/bee/looks'
+      path: '/api/bee/looks'
+      fullPath: '/api/bee/looks'
+      preLoaderRoute: typeof ApiBeeLooksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bee/app': {
@@ -343,13 +463,19 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGenerateIllustrationRoute: ApiGenerateIllustrationRoute,
   ApiTryonRoute: ApiTryonRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
+  ApiBeeLooksRoute: ApiBeeLooksRoute,
   ApiBeeMagazineStreamRoute: ApiBeeMagazineStreamRoute,
   ApiBeeStreamRoute: ApiBeeStreamRoute,
+  ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
+  ApiBillingInquiryRoute: ApiBillingInquiryRoute,
+  ApiBillingStatusRoute: ApiBillingStatusRoute,
   ApiCronPushRoute: ApiCronPushRoute,
+  ApiHoneyImportRoute: ApiHoneyImportRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
   ApiPushRegisterRoute: ApiPushRegisterRoute,
   ApiWardrobeAnalyzeRoute: ApiWardrobeAnalyzeRoute,
+  ApiHoneyIndexRoute: ApiHoneyIndexRoute,
   ApiPublicBeeGuestRoute: ApiPublicBeeGuestRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

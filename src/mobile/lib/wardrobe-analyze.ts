@@ -36,7 +36,8 @@ export async function analyzeWardrobePhoto(opts: {
         error:
           json.error === "vision_unavailable"
             ? "I couldn't see the cloth clearly. Try another photo in better light."
-            : (json.error ?? "I couldn't see the cloth clearly. Try another photo in better light."),
+            : (json.error ??
+              "I couldn't see the cloth clearly. Try another photo in better light."),
       };
     }
     return {

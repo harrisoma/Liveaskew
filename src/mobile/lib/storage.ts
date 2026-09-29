@@ -1,3 +1,4 @@
+import type { HoneyItem } from "@/lib/honey";
 import type { LookCard, OnboardingAnswers } from "./recommend";
 
 export type AuthProvider = "google" | "apple";
@@ -47,6 +48,8 @@ export type AppSnapshot = {
   tier: string;
   notifications: { beeReady: boolean; tierUpgrade: boolean };
   ratingAsked: boolean;
+  honey: HoneyItem[];
+  calendarFeeds: string[];
   lastActiveAt: string;
 };
 
@@ -70,6 +73,8 @@ export const emptySnapshot: AppSnapshot = {
   tier: "silver",
   notifications: { beeReady: true, tierUpgrade: true },
   ratingAsked: false,
+  honey: [],
+  calendarFeeds: [],
   lastActiveAt: new Date().toISOString(),
 };
 
@@ -83,6 +88,8 @@ function cloneEmpty(): AppSnapshot {
     looks: [],
     wardrobe: [],
     tryOnCache: {},
+    honey: [],
+    calendarFeeds: [],
   };
 }
 
@@ -101,6 +108,8 @@ export function loadSnapshot(): AppSnapshot {
       tryOnCache: parsed.tryOnCache ?? {},
       wardrobe: parsed.wardrobe ?? [],
       looks: parsed.looks ?? [],
+      honey: parsed.honey ?? [],
+      calendarFeeds: parsed.calendarFeeds ?? [],
     };
   } catch {
     return cloneEmpty();

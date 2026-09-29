@@ -1,21 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CalendarDays, Megaphone, MessagesSquare, Settings, Sparkles, WifiOff } from "lucide-react";
 import { LookCard, WardrobeCard } from "./components/LookCard";
-import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
+import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/ui";
+import { HoneyScreen } from "./screens/Honey";
+import { BuzzScreen } from "./screens/Buzz";
+import { HiveScreen } from "./screens/Hive";
 import {
   bindNativeAuthResume,
   confirmVerifyCode,
   resumeAuthSession,
   sendVerifyCode,
   signInWithProvider,
+  signOut,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
+import { answersFromInterview, interviewOpener, reflectOnAnswer } from "./lib/interview";
+import { generateLooks } from "./lib/looks";
 import {
-  answersFromInterview,
-  interviewOpener,
-  looksFromInterview,
-  reflectOnAnswer,
-} from "./lib/interview";
+  consumeBillingReturn,
+  fetchMembership,
+  requestAtelier,
+  startCheckout,
+} from "./lib/billing";
+import { deleteHoney, importCalendar, pullHoney, pushHoney } from "./lib/honey-sync";
+import { isoDay, mergeHoney, type HoneyItem } from "@/lib/honey";
 import {
   cacheKey,
   emptySnapshot,
@@ -44,12 +52,16 @@ import {
 } from "./native/bridge";
 import "./styles.css";
 
-type Tab = "home" | "guide" | "reset" | "tier" | "you";
+type Tab = "bee" | "honey" | "buzz" | "hive" | "you";
+type BeeView = "chat" | "looks" | "reset";
 
 export function MobileApp() {
   const [ready, setReady] = useState(false);
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
-  const [tab, setTab] = useState<Tab>("guide");
+  const snapRef = useRef(snap);
+  snapRef.current = snap;
+  const [tab, setTab] = useState<Tab>("bee");
+  const [beeView, setBeeView] = useState<BeeView>("looks");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [online, setOnline] = useState(true);
@@ -57,7 +69,13 @@ export function MobileApp() {
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyErr, setVerifyErr] = useState<string | null>(null);
   const [previewOtp, setPreviewOtp] = useState(false);
-  const [youView, setYouView] = useState<"profile" | "privacy">("profile");
+  const [youView, setYouView] = useState<"profile" | "privacy" | "membership">("profile");
+  const [building, setBuilding] = useState(false);
+  const [dressingId, setDressingId] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [honeyNotice, setHoneyNotice] = useState<string | null>(null);
+  const [tierBusy, setTierBusy] = useState(false);
+  const [tierNotice, setTierNotice] = useState<string | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
@@ -77,10 +95,22 @@ export function MobileApp() {
         phase: s.phase === "auth" ? "verify" : s.phase,
       }));
     };
+    const billingReturn = consumeBillingReturn(window.location.href);
+    if (billingReturn === "success") {
+      setTab("you");
+      setYouView("membership");
+      setTierNotice("Payment received. Your tier switches on as soon as Stripe confirms it.");
+    }
     void resumeAuthSession().then((session) => {
-      if (session.signedIn) applySession(session.email);
+      if (session.signedIn) {
+        applySession(session.email);
+        void syncAccount();
+      }
     });
-    const unbindAuth = bindNativeAuthResume(applySession);
+    const unbindAuth = bindNativeAuthResume((email) => {
+      applySession(email);
+      void syncAccount();
+    });
     const on = () => setOnline(true);
     const off = () => setOnline(false);
     window.addEventListener("online", on);
@@ -105,6 +135,35 @@ export function MobileApp() {
   const patch = useCallback((fn: (s: AppSnapshot) => AppSnapshot) => {
     setSnap((s) => fn(s));
   }, []);
+
+  /** Server truth for paid access and the Honey calendar, once there is a session. */
+  async function syncAccount() {
+    const [membership, remote] = await Promise.all([fetchMembership(), pullHoney()]);
+    setSnap((s) => ({
+      ...s,
+      ...(membership
+        ? { membershipActive: membership.active, tier: membership.tier ?? s.tier }
+        : {}),
+      honey: remote ? mergeHoney(s.honey, remote) : s.honey,
+    }));
+    if (remote) {
+      const remoteIds = new Set(remote.map((r) => r.id));
+      const localOnly = snapRef.current.honey.filter((h) => !remoteIds.has(h.id));
+      void pushHoney(localOnly);
+    }
+  }
+
+  const today = isoDay(new Date());
+
+  function upsertHoney(items: HoneyItem[]) {
+    patch((s) => ({ ...s, honey: mergeHoney(s.honey, items) }));
+    void pushHoney(items);
+  }
+
+  function openMembership() {
+    setTab("you");
+    setYouView("membership");
+  }
 
   const trialText = useMemo(
     () => trialLabel(snap.trialStartedAt),
@@ -131,9 +190,11 @@ export function MobileApp() {
         },
       ],
     }));
-    setTab("guide");
+    setTab("bee");
+    setBeeView("looks");
     void haptic("success");
     void persistTrialStartedAt(startedAt);
+    void syncAccount();
   };
 
   if (!ready) {
@@ -294,24 +355,34 @@ export function MobileApp() {
               void haptic("impact");
             }
           }}
-          onContinue={() => {
-            if (!snap.selfie) return;
-            const cards = looksFromInterview(snap.interview.answers).map((look) => ({
-              ...look,
-              saved: false,
-              createdAt: new Date().toISOString(),
-              garmentNote: look.formula[0] ?? look.title,
-              tryOnUrl: null,
-              tryOnKey: null,
-            }));
-            startTrial(cards);
+          building={building}
+          onContinue={async () => {
+            if (!snap.selfie || building) return;
+            setBuilding(true);
+            const { looks } = await generateLooks({ interview: snap.interview.answers });
+            setBuilding(false);
+            startTrial(looks);
           }}
         />
       )}
 
       {snap.phase === "app" && (
         <>
-          {tab === "home" && (
+          {tab === "bee" && (
+            <div className="px-5 pt-4">
+              <Segmented
+                label="Bee"
+                value={beeView}
+                onChange={setBeeView}
+                options={[
+                  { id: "looks", label: "Looks" },
+                  { id: "chat", label: "Chat" },
+                  { id: "reset", label: "Reset" },
+                ]}
+              />
+            </div>
+          )}
+          {tab === "bee" && beeView === "chat" && (
             <HomeChat
               messages={snap.messages}
               sending={sending}
@@ -337,7 +408,7 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "guide" && (
+          {tab === "bee" && beeView === "looks" && (
             <StyleGuide
               looks={snap.looks}
               selfie={snap.selfie}
@@ -351,7 +422,7 @@ export function MobileApp() {
                 if (look.tryOnUrl && look.tryOnKey === key) return;
                 if (!looksUnlocked) {
                   setGateOpen(true);
-                  setTab("tier");
+                  openMembership();
                   return;
                 }
                 setRenderingId(look.id);
@@ -384,7 +455,7 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "reset" && (
+          {tab === "bee" && beeView === "reset" && (
             <WardrobeReset
               items={snap.wardrobe}
               onUpload={async () => {
@@ -429,18 +500,150 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "tier" && (
-            <Tiers
-              current={snap.tier}
-              gated={gateOpen && !looksUnlocked}
-              onSelect={(tier) => {
+          {tab === "honey" && (
+            <HoneyScreen
+              items={snap.honey}
+              today={today}
+              looks={snap.looks}
+              dressingId={dressingId}
+              feeds={snap.calendarFeeds}
+              importing={importing}
+              notice={honeyNotice}
+              onAdd={(input) => {
+                setHoneyNotice(null);
+                upsertHoney([
+                  {
+                    id: nid("h"),
+                    ...input,
+                    source: "manual",
+                    network: null,
+                    lookId: null,
+                    caption: null,
+                    postStatus: null,
+                    beeNote: null,
+                  },
+                ]);
+                void haptic("impact");
+              }}
+              onDelete={(item) => {
+                patch((s) => ({ ...s, honey: s.honey.filter((h) => h.id !== item.id) }));
+                void deleteHoney(item.id);
+              }}
+              onDressMe={async (item) => {
+                if (!looksUnlocked) {
+                  setGateOpen(true);
+                  openMembership();
+                  return;
+                }
+                setDressingId(item.id);
+                const { looks } = await generateLooks({
+                  interview: snap.interview.answers,
+                  occasion: { title: item.title, date: item.date, kind: item.kind },
+                  count: 1,
+                });
+                setDressingId(null);
+                const look = looks[0];
+                if (!look) return;
+                const dressed: HoneyItem = {
+                  ...item,
+                  lookId: look.id,
+                  beeNote: `${look.title}: ${look.formula.join(", ")}`,
+                };
+                patch((s) => ({ ...s, looks: [look, ...s.looks] }));
+                upsertHoney([dressed]);
                 void haptic("success");
+              }}
+              onImport={async (url) => {
+                setImporting(true);
+                setHoneyNotice(null);
+                const result = await importCalendar(url);
+                setImporting(false);
+                if ("error" in result) {
+                  setHoneyNotice(result.error);
+                  return;
+                }
                 patch((s) => ({
                   ...s,
-                  tier,
-                  membershipActive: true,
+                  honey: mergeHoney(s.honey, result.items),
+                  calendarFeeds: s.calendarFeeds.includes(url)
+                    ? s.calendarFeeds
+                    : [...s.calendarFeeds, url].slice(-5),
                 }));
-                setGateOpen(false);
+                setHoneyNotice(
+                  result.items.length === 0
+                    ? "Connected. Nothing on that calendar in the next 60 days."
+                    : `Added ${result.items.length} upcoming event${result.items.length === 1 ? "" : "s"}.`,
+                );
+                void haptic("success");
+              }}
+            />
+          )}
+          {tab === "buzz" && (
+            <BuzzScreen
+              looks={snap.looks}
+              posts={snap.honey.filter((h) => h.kind === "post")}
+              today={today}
+              onCaption={(look, network) =>
+                askBee({
+                  messages: [
+                    {
+                      id: nid("m"),
+                      role: "user",
+                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.`,
+                    },
+                  ],
+                  profile: snap.onboarding,
+                })
+              }
+              onSchedule={({ look, network, date, time, caption }) => {
+                upsertHoney([
+                  {
+                    id: nid("p"),
+                    title: `${network}: ${look.title}`,
+                    date,
+                    time,
+                    kind: "post",
+                    source: "manual",
+                    network,
+                    lookId: look.id,
+                    caption,
+                    postStatus: "scheduled",
+                    beeNote: null,
+                  },
+                ]);
+                void haptic("success");
+              }}
+            />
+          )}
+          {tab === "hive" && (
+            <HiveScreen
+              looks={snap.looks}
+              onDiscuss={(look) => {
+                setInput(`Let's talk about "${look.title}" — ${look.formula.join(", ")}. `);
+                setTab("bee");
+                setBeeView("chat");
+              }}
+            />
+          )}
+          {tab === "you" && youView === "membership" && (
+            <Tiers
+              current={snap.tier}
+              active={snap.membershipActive}
+              gated={gateOpen && !looksUnlocked}
+              busy={tierBusy}
+              notice={tierNotice}
+              onBack={() => setYouView("profile")}
+              onSelect={async (tier) => {
+                setTierBusy(true);
+                setTierNotice(null);
+                const plan = TIERS.find((t) => t.slug === tier);
+                const result = plan?.inquiry ? await requestAtelier() : await startCheckout(tier);
+                setTierBusy(false);
+                if (result) setTierNotice(result.error);
+                else if (plan?.inquiry) {
+                  setTierNotice("Thank you. The Atelier team will be in touch.");
+                  void haptic("success");
+                }
               }}
             />
           )}
@@ -462,10 +665,12 @@ export function MobileApp() {
                 patch((s) => ({ ...s, notifications: { ...s.notifications, [key]: value } }));
               }}
               onPrivacy={() => setYouView("privacy")}
+              onMembership={() => setYouView("membership")}
               onReset={() => {
+                void signOut();
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
-                setTab("guide");
+                setTab("bee");
                 setYouView("profile");
               }}
             />
@@ -649,10 +854,12 @@ function InterviewScreen({
 
 function SelfieScreen({
   selfie,
+  building,
   onPick,
   onContinue,
 }: {
   selfie: string | null;
+  building: boolean;
   onPick: () => void;
   onContinue: () => void;
 }) {
@@ -661,8 +868,8 @@ function SelfieScreen({
       kicker="Likeness"
       title="A photo of you"
       footer={
-        <NeoButton variant="ink" disabled={!selfie} onClick={onContinue}>
-          Build my Style Guide
+        <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
+          {building ? "Bee is building your looks…" : "Build my Style Guide"}
         </NeoButton>
       }
     >
@@ -847,49 +1054,73 @@ function WardrobeReset({
 
 function Tiers({
   current,
+  active,
   gated,
+  busy,
+  notice,
+  onBack,
   onSelect,
 }: {
   current: string;
+  active: boolean;
   gated: boolean;
-  onSelect: (t: string) => void;
+  busy: boolean;
+  notice: string | null;
+  onBack: () => void;
+  onSelect: (t: PlanSlug) => void;
 }) {
   const index = Math.max(0, TIER_ORDER.indexOf(current as PlanSlug));
   const progress = ((index + 1) / TIER_ORDER.length) * 100;
   return (
-    <Screen kicker="Membership" title="Your metal">
+    <Screen
+      kicker="Membership"
+      title="Your metal"
+      footer={
+        <NeoButton onClick={onBack} variant="ink">
+          Back to You
+        </NeoButton>
+      }
+    >
       {gated && (
         <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
           Your 14-day window is done. Pick a tier to keep generating looks.
         </p>
       )}
+      {notice && (
+        <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2" role="status">
+          {notice}
+        </p>
+      )}
       <div className="neo-inset p-4">
-        <p className="text-sm">Progress toward Atelier</p>
+        <p className="text-sm">{active ? "Your membership" : "Progress toward Atelier"}</p>
         <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
             className="h-full rounded-[8px] bg-[var(--gold)]"
-            style={{ width: `${progress}%` }}
+            style={{ width: `${active ? progress : 0}%` }}
           />
         </div>
         <p className="mt-2 text-sm">
-          {TIERS[index]?.name ?? "Silver"} · {index + 1} of {TIER_ORDER.length}
+          {active
+            ? `${TIERS[index]?.name ?? "Silver"} · ${index + 1} of ${TIER_ORDER.length}`
+            : "No paid tier yet"}
         </p>
       </div>
       <ol className="mt-5 space-y-3">
         {TIERS.map((plan) => {
-          const active = plan.slug === current;
+          const mine = active && plan.slug === current;
           return (
             <li key={plan.slug}>
               <button
                 type="button"
-                aria-pressed={active}
+                aria-pressed={mine}
+                disabled={busy || mine || (active && !plan.inquiry)}
                 className="neo-choice flex-col items-start"
                 onClick={() => onSelect(plan.slug)}
               >
                 <span className="flex w-full items-center justify-between">
                   <span className="la-display text-lg">{plan.name}</span>
                   <span className="text-sm text-[var(--gold)]">
-                    {plan.inquiry ? "Inquiry" : `$${plan.priceMonthly}/mo`}
+                    {mine ? "Current" : plan.inquiry ? "Inquire" : `$${plan.priceMonthly}/mo`}
                   </span>
                 </span>
                 <span className="mt-1 text-sm font-normal opacity-70">{plan.tagline}</span>
@@ -898,6 +1129,11 @@ function Tiers({
           );
         })}
       </ol>
+      {active && (
+        <p className="mt-4 text-sm opacity-70">
+          To change or cancel your tier, use the link in your Stripe receipt email.
+        </p>
+      )}
     </Screen>
   );
 }
@@ -907,12 +1143,14 @@ function Profile({
   onSelfie,
   onNotify,
   onPrivacy,
+  onMembership,
   onReset,
 }: {
   snap: AppSnapshot;
   onSelfie: () => void;
   onNotify: (key: "beeReady" | "tierUpgrade", value: boolean) => void;
   onPrivacy: () => void;
+  onMembership: () => void;
   onReset: () => void;
 }) {
   return (
@@ -954,7 +1192,12 @@ function Profile({
         </p>
         <p className="mt-2 opacity-70">Running on {platformLabel(currentBeePlatform())}</p>
       </div>
-      <NeoButton className="mt-4" onClick={onPrivacy}>
+      <NeoButton className="mt-4" variant="gold" onClick={onMembership}>
+        {snap.membershipActive
+          ? `Membership · ${TIERS.find((t) => t.slug === snap.tier)?.name ?? "Active"}`
+          : "Membership"}
+      </NeoButton>
+      <NeoButton className="mt-3" onClick={onPrivacy}>
         Privacy policy
       </NeoButton>
       <NeoButton className="mt-3" onClick={onReset}>
@@ -1015,11 +1258,11 @@ function NotifyRow({
 }
 
 function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: typeof MessageCircle }[] = [
-    { id: "home", label: "Bee", icon: MessageCircle },
-    { id: "guide", label: "Guide", icon: Bookmark },
-    { id: "reset", label: "Reset", icon: RefreshCw },
-    { id: "tier", label: "Tier", icon: Sparkles },
+  const items: { id: Tab; label: string; icon: typeof Sparkles }[] = [
+    { id: "bee", label: "Bee", icon: Sparkles },
+    { id: "honey", label: "Honey", icon: CalendarDays },
+    { id: "buzz", label: "Buzz", icon: Megaphone },
+    { id: "hive", label: "Hive", icon: MessagesSquare },
     { id: "you", label: "You", icon: Settings },
   ];
   return (
