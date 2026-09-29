@@ -331,6 +331,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      hive_bans: {
+        Row: {
+          banned_by: string | null;
+          created_at: string;
+          reason: string;
+          user_id: string;
+        };
+        Insert: {
+          banned_by?: string | null;
+          created_at?: string;
+          reason?: string;
+          user_id: string;
+        };
+        Update: {
+          banned_by?: string | null;
+          created_at?: string;
+          reason?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       hive_blocks: {
         Row: {
           blocked_id: string;
@@ -351,6 +372,7 @@ export type Database = {
       };
       hive_messages: {
         Row: {
+          reviewed_at: string | null;
           author_name: string;
           body: string;
           created_at: string;
@@ -361,6 +383,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          reviewed_at?: string | null;
           author_name?: string;
           body: string;
           created_at?: string;
@@ -371,6 +394,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          reviewed_at?: string | null;
           author_name?: string;
           body?: string;
           created_at?: string;

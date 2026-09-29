@@ -158,7 +158,9 @@ export async function sendMessage(opts: {
     return {
       error: error?.message.includes("hive_profile_required")
         ? "Choose your Hive name first."
-        : "That did not send. Try again.",
+        : error?.message.includes("hive_banned")
+          ? "Your Hive posting has been paused by the moderators."
+          : "That did not send. Try again.",
     };
   }
   return rowToMessage(data);

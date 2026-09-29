@@ -5,6 +5,8 @@ import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/u
 import { HoneyScreen } from "./screens/Honey";
 import { BuzzScreen } from "./screens/Buzz";
 import { HiveScreen } from "./screens/Hive";
+import { ModerationScreen } from "./screens/Moderation";
+import { fetchModerationQueue, type ModerationItem } from "./lib/moderation";
 import {
   bindNativeAuthResume,
   confirmVerifyCode,
@@ -80,7 +82,10 @@ export function MobileApp() {
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyErr, setVerifyErr] = useState<string | null>(null);
   const [previewOtp, setPreviewOtp] = useState(false);
-  const [youView, setYouView] = useState<"profile" | "privacy" | "membership">("profile");
+  const [youView, setYouView] = useState<"profile" | "privacy" | "membership" | "moderation">(
+    "profile",
+  );
+  const [modQueue, setModQueue] = useState<ModerationItem[] | null>(null);
   const [building, setBuilding] = useState(false);
   const [dressingId, setDressingId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
@@ -162,6 +167,16 @@ export function MobileApp() {
   useEffect(() => {
     if (ready) saveSnapshot(snap);
   }, [snap, ready]);
+
+  // Moderators see the Hive report queue under You; everyone else gets null (403).
+  useEffect(() => {
+    if (snap.phase !== "app" || tab !== "you") return;
+    let live = true;
+    void fetchModerationQueue().then((q) => live && setModQueue(q));
+    return () => {
+      live = false;
+    };
+  }, [tab, snap.phase]);
 
   // Posts publish on the server; pick up their status when Buzz or Honey opens.
   useEffect(() => {
@@ -752,6 +767,13 @@ export function MobileApp() {
               }}
             />
           )}
+          {tab === "you" && youView === "moderation" && modQueue && (
+            <ModerationScreen
+              items={modQueue}
+              onBack={() => setYouView("profile")}
+              onChanged={(id) => setModQueue((q) => (q ?? []).filter((i) => i.id !== id))}
+            />
+          )}
           {tab === "you" && youView === "membership" && (
             <Tiers
               current={snap.tier}
@@ -793,6 +815,8 @@ export function MobileApp() {
               }}
               onPrivacy={() => setYouView("privacy")}
               onMembership={() => setYouView("membership")}
+              moderationCount={modQueue ? modQueue.length : null}
+              onModeration={() => setYouView("moderation")}
               onReset={() => {
                 void signOut();
                 window.localStorage.removeItem("la_mobile_v2");
@@ -1280,6 +1304,8 @@ function Profile({
   onNotify,
   onPrivacy,
   onMembership,
+  moderationCount,
+  onModeration,
   onReset,
 }: {
   snap: AppSnapshot;
@@ -1287,6 +1313,9 @@ function Profile({
   onNotify: (key: "beeReady" | "tierUpgrade", value: boolean) => void;
   onPrivacy: () => void;
   onMembership: () => void;
+  /** null = not a moderator. */
+  moderationCount: number | null;
+  onModeration: () => void;
   onReset: () => void;
 }) {
   return (
@@ -1333,6 +1362,11 @@ function Profile({
           ? `Membership · ${TIERS.find((t) => t.slug === snap.tier)?.name ?? "Active"}`
           : "Membership"}
       </NeoButton>
+      {moderationCount !== null && (
+        <NeoButton className="mt-3" onClick={onModeration}>
+          Hive moderation{moderationCount > 0 ? ` · ${moderationCount} to review` : ""}
+        </NeoButton>
+      )}
       <NeoButton className="mt-3" onClick={onPrivacy}>
         Privacy policy
       </NeoButton>

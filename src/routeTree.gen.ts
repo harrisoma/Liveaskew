@@ -19,6 +19,7 @@ import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiHoneyImportRouteImport } from './routes/api/honey/import'
+import { Route as ApiHiveModerationRouteImport } from './routes/api/hive/moderation'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiCronBuzzRouteImport } from './routes/api/cron/buzz'
 import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
@@ -80,6 +81,11 @@ const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
 const ApiHoneyImportRoute = ApiHoneyImportRouteImport.update({
   id: '/api/honey/import',
   path: '/api/honey/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHiveModerationRoute = ApiHiveModerationRouteImport.update({
+  id: '/api/hive/moderation',
+  path: '/api/hive/moderation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCronPushRoute = ApiCronPushRouteImport.update({
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
+  '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
+    | '/api/hive/moderation'
     | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
+    | '/api/hive/moderation'
     | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
+    | '/api/hive/moderation'
     | '/api/honey/import'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   ApiBuzzPublishRoute: typeof ApiBuzzPublishRoute
   ApiCronBuzzRoute: typeof ApiCronBuzzRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
+  ApiHiveModerationRoute: typeof ApiHiveModerationRoute
   ApiHoneyImportRoute: typeof ApiHoneyImportRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
@@ -387,6 +400,13 @@ declare module '@tanstack/react-router' {
       path: '/api/honey/import'
       fullPath: '/api/honey/import'
       preLoaderRoute: typeof ApiHoneyImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/hive/moderation': {
+      id: '/api/hive/moderation'
+      path: '/api/hive/moderation'
+      fullPath: '/api/hive/moderation'
+      preLoaderRoute: typeof ApiHiveModerationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/cron/push': {
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBuzzPublishRoute: ApiBuzzPublishRoute,
   ApiCronBuzzRoute: ApiCronBuzzRoute,
   ApiCronPushRoute: ApiCronPushRoute,
+  ApiHiveModerationRoute: ApiHiveModerationRoute,
   ApiHoneyImportRoute: ApiHoneyImportRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
