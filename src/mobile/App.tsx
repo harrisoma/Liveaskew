@@ -63,6 +63,7 @@ import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
 import { deleteMyAccount, persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
 import { askBee } from "./lib/bee-chat";
+import { TALK_GUIDES, TALK_TOPICS, talkOpener, type TalkTopic } from "@/lib/bee-talk";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
 import { downscaleDataUrl, THUMB_MAX } from "./lib/image";
@@ -88,6 +89,9 @@ export function MobileApp() {
   const [beeView, setBeeView] = useState<BeeView>("looks");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  /** Real Talk in progress: the topic, and the id of Bee's opening question. */
+  const [talk, setTalk] = useState<{ topic: TalkTopic; startId: string } | null>(null);
+  const [hiveRoomId, setHiveRoomId] = useState<string | null>(null);
   const [online, setOnline] = useState(true);
   const [verifyCode, setVerifyCode] = useState("");
   const [verifyBusy, setVerifyBusy] = useState(false);
@@ -407,7 +411,7 @@ export function MobileApp() {
         </header>
       )}
       {snap.phase === "app" && trialText && tab !== "today" && (
-        <p className="mx-5 mt-2 neo-inset px-3 py-2 text-sm" role="status">
+        <p className="mx-5 mt-1 text-[13px] opacity-60" role="status">
           {trialText}
         </p>
       )}
@@ -633,6 +637,26 @@ export function MobileApp() {
               sending={sending}
               input={input}
               setInput={setInput}
+              topic={talk?.topic ?? null}
+              onTopic={(topic) => {
+                if (sending) return;
+                if (!topic) {
+                  setTalk(null);
+                  return;
+                }
+                const opener: ChatMsg = {
+                  id: nid("m"),
+                  role: "assistant",
+                  content: talkOpener(topic),
+                };
+                patch((s) => ({ ...s, messages: [...s.messages, opener] }));
+                setTalk({ topic, startId: opener.id });
+                void haptic("impact");
+              }}
+              onOpenHive={(topic) => {
+                setHiveRoomId(TALK_GUIDES[topic].hiveRoom);
+                setTab("hive");
+              }}
               onSend={async () => {
                 const value = input.trim();
                 if (!value || sending) return;
@@ -640,9 +664,12 @@ export function MobileApp() {
                 const user: ChatMsg = { id: nid("m"), role: "user", content: value };
                 patch((s) => ({ ...s, messages: [...s.messages, user] }));
                 setSending(true);
+                // Real Talk only sends the conversation since Bee's opening question.
+                const start = talk ? snap.messages.findIndex((m) => m.id === talk.startId) : -1;
                 const reply = await askBee({
-                  messages: [...snap.messages, user],
+                  messages: [...(start >= 0 ? snap.messages.slice(start) : snap.messages), user],
                   profile: snap.onboarding,
+                  topic: start >= 0 ? talk?.topic : null,
                 });
                 patch((s) => ({
                   ...s,
@@ -921,6 +948,8 @@ export function MobileApp() {
               looks={snap.looks}
               shareLook={shareLook}
               onShared={() => setShareLook(null)}
+              openRoomId={hiveRoomId}
+              onRoomOpened={() => setHiveRoomId(null)}
               onDiscussWithBee={(look) => {
                 setInput(`Let's talk about "${look.title}" — ${look.formula.join(", ")}. `);
                 setTab("bee");
@@ -1156,17 +1185,13 @@ function InterviewScreen({
         </form>
       }
     >
-      <ul className="space-y-3">
+      <ul className="flex flex-col gap-2">
         {messages.map((m) => (
           <li
             key={m.id}
-            className={
-              m.role === "user"
-                ? "neo-inset px-4 py-3 text-sm"
-                : "neo-raised px-4 py-3 text-sm leading-relaxed"
-            }
+            className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
           >
-            <p className="la-kicker mb-1">{m.role === "user" ? "You" : "Bee"}</p>
+            {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
             <p className="whitespace-pre-wrap">{m.content}</p>
           </li>
         ))}
@@ -1225,17 +1250,27 @@ function HomeChat({
   input,
   setInput,
   onSend,
+  topic,
+  onTopic,
+  onOpenHive,
 }: {
   messages: ChatMsg[];
   sending: boolean;
   input: string;
   setInput: (v: string) => void;
   onSend: () => void;
+  topic: TalkTopic | null;
+  onTopic: (topic: TalkTopic | null) => void;
+  onOpenHive: (topic: TalkTopic) => void;
 }) {
+  const listEnd = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    listEnd.current?.scrollIntoView({ block: "end" });
+  }, [messages.length, sending]);
   return (
     <Screen
-      kicker="Bee"
-      title="Your stylist"
+      kicker={topic ? "Real Talk" : "Bee"}
+      title={topic ? TALK_GUIDES[topic].label : "Your stylist"}
       footer={
         <form
           className="space-y-3"
@@ -1248,7 +1283,7 @@ function HomeChat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
-            placeholder="Tell Bee what you're dressing for…"
+            placeholder={topic ? "Say it plainly…" : "Tell Bee what you're dressing for…"}
             className="neo-input resize-none"
           />
           <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
@@ -1257,17 +1292,53 @@ function HomeChat({
         </form>
       }
     >
-      <ul className="space-y-3">
+      <section aria-label="Real Talk" className="mb-4">
+        {!topic && <p className="la-kicker">Real Talk</p>}
+        <p className="mt-1 text-[15px] opacity-70">
+          {topic
+            ? TALK_GUIDES[topic].blurb
+            : "Bee asks the questions that are hard to say out loud. Pick one."}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {TALK_TOPICS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              aria-pressed={topic === t}
+              disabled={sending}
+              className="la-chip"
+              onClick={() => onTopic(t)}
+            >
+              {TALK_GUIDES[t].label}
+            </button>
+          ))}
+          {topic && (
+            <button
+              type="button"
+              className="px-2 py-2 text-[15px] font-medium"
+              style={{ color: "var(--gold)" }}
+              onClick={() => onTopic(null)}
+            >
+              Back to styling
+            </button>
+          )}
+        </div>
+        {topic && (
+          <p className="mt-3 text-xs leading-relaxed opacity-70">
+            Bee listens and asks; it is not a therapist. In danger or crisis? Call or text 988.{" "}
+            <button type="button" className="underline" onClick={() => onOpenHive(topic)}>
+              Talk it through in the Hive
+            </button>
+          </p>
+        )}
+      </section>
+      <ul className="flex flex-col gap-2">
         {messages.map((m) => (
           <li
             key={m.id}
-            className={
-              m.role === "user"
-                ? "neo-inset px-4 py-3 text-sm"
-                : "neo-raised px-4 py-3 text-sm leading-relaxed"
-            }
+            className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
           >
-            <p className="la-kicker mb-1">{m.role === "user" ? "You" : "Bee"}</p>
+            {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
             <p className="whitespace-pre-wrap">{m.content}</p>
           </li>
         ))}
@@ -1276,6 +1347,7 @@ function HomeChat({
             <Skeleton className="h-16" />
           </li>
         )}
+        <li ref={listEnd} aria-hidden />
       </ul>
     </Screen>
   );
@@ -1670,7 +1742,7 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
     { id: "hive", label: "Hive", crest: "hive" },
   ];
   return (
-    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
+    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 px-2 pt-1.5">
       {items.map((item) => {
         const active = tab === item.id;
         return (
@@ -1679,14 +1751,12 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
             type="button"
             aria-current={active ? "page" : undefined}
             onClick={() => onChange(item.id)}
-            className={`flex flex-col items-center gap-1 px-1 py-2 text-[0.65rem] font-semibold ${
-              active ? "neo-inset" : "neo-raised-sm"
-            }`}
+            className="flex flex-col items-center gap-0.5 px-1 py-1 text-[0.66rem] font-medium"
           >
             {item.crest ? (
-              <Crest name={item.crest} size={22} decorative />
+              <Crest name={item.crest} size={26} decorative />
             ) : (
-              <Home size={20} aria-hidden />
+              <Home size={26} strokeWidth={active ? 2.2 : 1.8} aria-hidden />
             )}
             {item.label}
           </button>

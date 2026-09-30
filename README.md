@@ -3,8 +3,8 @@
 Bee is one product on three surfaces: **web app**, **iOS**, and **Android**. The stylist is the same — Fit, Feel, and Fabric. Clothes follow your body. We never alter it.
 
 - App ID: `co.liveaskew.app` (permanent on iOS and Android)
-- Web app: `/` and `/app` on this Vercel project
-- Design: neumorphic `#e0e5ec`, rounded rectangles only, Poppins / Nunito. Brand layer: the four black-and-gold crests (Bee, Honey, Buzz, Hive) in `src/assets/brand/`, text gold `#7d5a0e`, fill gold `#e2b04a`.
+- Website: `/` (the LiveAskew house site, `src/site/`). Web app: `/app` on this Vercel project
+- Design: Apple-native. The app uses iOS grouped surfaces, SF type, a frosted tab bar, and light / dark from the system (`src/mobile/styles.css`); the website uses liquid glass on black, white, and gold (`src/styles.css`). Brand layer: the four black-and-gold crests (Bee, Honey, Buzz, Hive) in `src/assets/brand/`, text gold `#7d5a0e`, fill gold `#e2b04a`.
 
 ```bash
 npm run dev          # Bee web app + API
@@ -15,11 +15,11 @@ npm test
 
 ## Platforms
 
-| Surface     | How it ships                                                                                 |
-| ----------- | -------------------------------------------------------------------------------------------- |
-| **Web app** | TanStack Start on Vercel. Open `/` or `/app`. Installable via `manifest.webmanifest`.        |
-| **iOS**     | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`. |
-| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme.       |
+| Surface     | How it ships                                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------------------------------- |
+| **Web app** | TanStack Start on Vercel. Open `/app` (the website at `/` links to it). Installable via `manifest.webmanifest`. |
+| **iOS**     | Capacitor project in `ios/`. Bundle ID `co.liveaskew.app`. URL scheme `co.liveaskew.app://`.                    |
+| **Android** | Capacitor project in `android/`. applicationId `co.liveaskew.app`. Same custom scheme.                          |
 
 Native notes: `docs/CAPACITOR.md`. Social publishing: `docs/BUZZ.md`. Store copy: `STORE_LISTING.md`. Privacy: `/privacy`.
 

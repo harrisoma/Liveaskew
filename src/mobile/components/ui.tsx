@@ -30,10 +30,10 @@ export function Screen({
 }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-3">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-3">
         {kicker && <p className="la-kicker">{kicker}</p>}
         {title && (
-          <h1 className="la-display mt-2 text-[1.75rem] leading-tight font-semibold">{title}</h1>
+          <h1 className="la-display mt-1 text-[2.125rem] leading-[1.1] font-bold">{title}</h1>
         )}
         <div className={title ? "mt-5" : ""}>{children}</div>
       </div>
@@ -57,7 +57,7 @@ export function Segmented<T extends string>({
     <div
       role="tablist"
       aria-label={label}
-      className="neo-inset grid auto-cols-fr grid-flow-col gap-1 p-1"
+      className="la-segmented grid auto-cols-fr grid-flow-col gap-0.5 p-0.5"
     >
       {options.map((o) => {
         const active = o.id === value;
@@ -68,7 +68,7 @@ export function Segmented<T extends string>({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(o.id)}
-            className={`rounded-[12px] px-2 py-2 text-sm font-semibold ${active ? "neo-raised-sm" : "opacity-70"}`}
+            className="px-2 py-1.5 text-[13px] font-semibold"
           >
             {o.label}
           </button>

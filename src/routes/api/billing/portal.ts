@@ -30,7 +30,9 @@ export const Route = createFileRoute("/api/billing/portal")({
           return Response.json({ error: "no_subscription" }, { status: 404 });
         }
         const base = (process.env.PUBLIC_APP_URL ?? new URL(request.url).origin).replace(/\/$/, "");
-        const returnUrl = body.native ? `${base}/api/public/app-return?path=billing` : `${base}/`;
+        const returnUrl = body.native
+          ? `${base}/api/public/app-return?path=billing`
+          : `${base}/app`;
         const { createStripeClient, getStripeErrorMessage } = await import("@/lib/stripe.server");
         try {
           const portal = await createStripeClient(env).billingPortal.sessions.create({

@@ -25,7 +25,7 @@ const CHECKOUT_ERRORS: Record<string, string> = {
 
 export async function startCheckout(tier: PlanSlug): Promise<{ error: string } | null> {
   const native = await isNativeApp();
-  const returnUrl = native ? "co.liveaskew.app://billing" : `${window.location.origin}/`;
+  const returnUrl = native ? "co.liveaskew.app://billing" : `${window.location.origin}/app`;
   try {
     const res = await apiFetch("/api/billing/checkout", {
       method: "POST",

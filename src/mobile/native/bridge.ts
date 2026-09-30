@@ -21,8 +21,11 @@ export async function haptic(kind: "impact" | "success" | "warning" = "impact"):
 export async function configureNativeChrome(): Promise<void> {
   try {
     const { StatusBar, Style } = await import("@capacitor/status-bar");
-    await StatusBar.setStyle({ style: Style.Light });
-    await StatusBar.setBackgroundColor({ color: "#e0e5ec" });
+    // Follow the system appearance, like any iOS app.
+    const dark =
+      typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    await StatusBar.setStyle({ style: Style.Default });
+    await StatusBar.setBackgroundColor({ color: dark ? "#000000" : "#f2f2f7" });
   } catch {
     /* browser preview */
   }

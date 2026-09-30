@@ -3,63 +3,108 @@
 @source "../mobile";
 
 /*
- * Bee — LiveAskew mobile neumorphism
- * Locked: #e0e5ec canvas, dual-shadow depth, rounded rectangles only.
- * No pills. No circular buttons. Black / Gold / White are accents only.
+ * LiveAskew app — Apple-native surfaces.
+ * iOS grouped backgrounds, white cards, hairline separators, SF type, a frosted tab bar,
+ * and light / dark mode from the system. Gold is the tint; black is the brand ink.
+ * Class names (neo-*) are kept so screens don't change; only the look does.
  */
 
 :root {
-  --neo-bg: #e0e5ec;
-  --neo-light: #ffffff;
-  --neo-dark: #a3b1c6;
-  --ink: #111111;
-  /* Text gold on the light canvas (4.97:1). Fills and marks use the crest gold. */
-  --gold: #7d5a0e;
-  --gold-bright: #e2b04a;
-  --ink-soft: #1c1c1c;
+  color-scheme: light dark;
+  /* iOS system colors */
+  --bg: #f2f2f7; /* systemGroupedBackground */
+  --card: #ffffff; /* secondarySystemGroupedBackground */
+  --fill: rgba(118, 118, 128, 0.12); /* tertiarySystemFill */
+  --fill-strong: rgba(118, 118, 128, 0.2);
+  --separator: rgba(60, 60, 67, 0.18);
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.6); /* secondaryLabel */
+  --label-3: rgba(60, 60, 67, 0.3);
+  --bar: rgba(249, 249, 249, 0.78);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+
+  /* LiveAskew brand */
+  --ink: #000000;
   --white: #ffffff;
-  --radius: 16px;
-  --neo-raised: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
-  --neo-raised-sm: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
-  --neo-inset: inset 5px 5px 10px var(--neo-dark), inset -5px -5px 10px var(--neo-light);
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --gold: #8a6412; /* tint for text and icons on light surfaces (5.1:1 on white) */
+  --gold-bright: #e2b04a; /* fills and marks */
+  --on-gold: #1a1204;
+
+  /* Apple's continuous-corner radii */
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  --font-body:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Inter", system-ui,
+    sans-serif;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Inter", system-ui,
+    sans-serif;
+
+  /* Legacy tokens some screens read directly */
+  --neo-bg: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --fill: rgba(118, 118, 128, 0.24);
+    --fill-strong: rgba(118, 118, 128, 0.36);
+    --separator: rgba(84, 84, 88, 0.6);
+    --label: #ffffff;
+    --label-2: rgba(235, 235, 245, 0.6);
+    --label-3: rgba(235, 235, 245, 0.3);
+    --bar: rgba(22, 22, 24, 0.78);
+    --shadow-card: none;
+    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.4);
+    --ink: #ffffff;
+    --gold: #e2b04a;
+  }
 }
 
 html,
 body,
 #root {
   min-height: 100%;
-  background: var(--neo-bg);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--label);
   font-family: var(--font-body);
 }
 
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  font-size: 17px;
+  letter-spacing: -0.01em;
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
 }
+
+/* Tailwind's opacity-* on text reads as a secondary label, as on iOS. */
 
 .la-app {
   /* A fixed-height column: each screen scrolls inside it, the tab bar stays pinned. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   height: 100dvh;
-  background: var(--neo-bg);
+  background: var(--bg);
   overflow: hidden;
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
 .la-web-shell {
   min-height: 100dvh;
-  background: var(--neo-bg);
+  background: var(--bg);
 }
 
 .la-web-aside {
@@ -72,13 +117,19 @@ body {
     place-items: center;
     min-height: 100dvh;
   }
+  .la-web-shell {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(226, 176, 74, 0.12), transparent), var(--bg);
+  }
   .la-app {
     width: 390px;
     height: min(844px, 96dvh);
     min-height: 0;
-    overflow: hidden;
-    border-radius: 28px;
-    box-shadow: var(--neo-raised);
+    border-radius: 44px;
+    box-shadow:
+      0 0 0 10px #1d1d1f,
+      0 0 0 11px #3a3a3c,
+      0 30px 80px rgba(0, 0, 0, 0.28);
   }
 }
 
@@ -88,167 +139,186 @@ body {
   }
   .la-web-shell {
     display: grid;
-    grid-template-columns: minmax(240px, 320px) 390px;
+    grid-template-columns: minmax(260px, 360px) 390px;
     justify-content: center;
     align-items: center;
-    gap: 3rem;
+    gap: 4.5rem;
     padding: 2rem;
   }
   .la-web-aside {
     display: block;
-    color: var(--ink);
+    color: var(--label);
   }
 }
 
-.neo-raised {
-  background: var(--neo-bg);
-  border: 0;
-  border-radius: var(--radius);
-  box-shadow: var(--neo-raised);
-}
+/* ---------- Surfaces ---------- */
 
+.neo-raised,
 .neo-raised-sm {
-  background: var(--neo-bg);
+  background: var(--card);
+  color: var(--label);
   border: 0;
   border-radius: var(--radius);
-  box-shadow: var(--neo-raised-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .neo-inset {
-  background: var(--neo-bg);
+  background: var(--fill);
+  color: var(--label);
   border: 0;
   border-radius: var(--radius);
-  box-shadow: var(--neo-inset);
+  box-shadow: none;
 }
+
+button.neo-raised,
+button.neo-raised-sm {
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+button.neo-raised:active:not(:disabled),
+button.neo-raised-sm:active:not(:disabled) {
+  transform: scale(0.98);
+  background: color-mix(in srgb, var(--card) 88%, var(--label));
+}
+
+/* ---------- Buttons ---------- */
 
 .neo-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   width: 100%;
-  min-height: 52px;
-  padding: 0.9rem 1.1rem;
+  min-height: 50px;
+  padding: 0.8rem 1.1rem;
   border: 0;
   border-radius: var(--radius);
-  background: var(--neo-bg);
-  color: var(--ink);
-  box-shadow: var(--neo-raised);
-  font-family: var(--font-display);
-  font-size: 0.92rem;
+  background: var(--fill);
+  color: var(--gold);
+  box-shadow: none;
+  font-family: var(--font-body);
+  font-size: 17px;
   font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none;
   cursor: pointer;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
 }
 
 .neo-btn:active:not(:disabled) {
-  box-shadow: var(--neo-inset);
-  transform: translateY(1px);
+  opacity: 0.7;
+  transform: scale(0.985);
 }
 
 .neo-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 .neo-btn-gold {
   background: var(--gold-bright);
-  color: var(--ink);
-  box-shadow:
-    6px 6px 12px var(--neo-dark),
-    -4px -4px 8px var(--neo-light);
+  color: var(--on-gold);
 }
 
 .neo-btn-ink {
   background: var(--ink);
-  color: var(--white);
-  box-shadow:
-    6px 6px 12px var(--neo-dark),
-    -4px -4px 8px var(--neo-light);
+  color: var(--bg);
 }
 
 .neo-icon-btn {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border: 0;
-  border-radius: var(--radius);
-  background: var(--neo-bg);
-  color: var(--ink);
-  box-shadow: var(--neo-raised-sm);
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--label);
+  box-shadow: none;
   cursor: pointer;
 }
 
 .neo-icon-btn:active:not(:disabled) {
-  box-shadow: var(--neo-inset);
+  opacity: 0.6;
 }
 
+/* A tappable row in an inset-grouped list. */
 .neo-choice {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  min-height: 56px;
-  padding: 0.85rem 1rem;
+  min-height: 52px;
+  padding: 0.8rem 1rem;
   border: 0;
   border-radius: var(--radius);
-  background: var(--neo-bg);
-  color: var(--ink);
-  box-shadow: var(--neo-raised);
+  background: var(--card);
+  color: var(--label);
+  box-shadow: var(--shadow-card);
   font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 500;
   text-align: left;
   cursor: pointer;
 }
 
-.neo-choice[aria-pressed="true"],
+.neo-choice[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--gold-bright);
+}
+
 .neo-choice:active:not(:disabled) {
-  box-shadow: var(--neo-inset);
+  background: color-mix(in srgb, var(--card) 88%, var(--label));
 }
 
 .neo-input {
   width: 100%;
-  min-height: 52px;
-  padding: 0.85rem 1rem;
+  min-height: 44px;
+  padding: 0.7rem 0.95rem;
   border: 0;
-  border-radius: var(--radius);
-  background: var(--neo-bg);
-  color: var(--ink);
-  box-shadow: var(--neo-inset);
+  border-radius: 12px;
+  background: var(--fill);
+  color: var(--label);
+  box-shadow: none;
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 17px;
+}
+
+.neo-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--gold-bright);
 }
 
 .neo-input::placeholder {
-  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  color: var(--label-3);
 }
+
+/* ---------- Type ---------- */
 
 .la-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
+/* iOS section header: small, uppercase, secondary. */
 .la-kicker {
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--label-2);
 }
+
+/* ---------- Loading ---------- */
 
 .neo-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--neo-bg) 0%,
-    color-mix(in srgb, var(--neo-light) 70%, var(--neo-bg)) 50%,
-    var(--neo-bg) 100%
-  );
+  background: linear-gradient(90deg, var(--fill) 0%, var(--fill-strong) 50%, var(--fill) 100%);
   background-size: 200% 100%;
   animation: neo-shimmer 1.4s ease-in-out infinite;
   border-radius: var(--radius);
-  box-shadow: var(--neo-inset);
 }
 
 @keyframes neo-shimmer {
@@ -266,28 +336,29 @@ body {
   }
   .neo-btn:active,
   .neo-choice:active,
-  .neo-icon-btn:active {
+  button.neo-raised:active,
+  button.neo-raised-sm:active {
     transform: none;
   }
 }
 
-/* ---------- LiveAskew brand layer: crests, editorial ink cards, Today ---------- */
+/* ---------- LiveAskew brand layer: crests, heroes, Today ---------- */
 
 .la-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.75rem 1.25rem 0.25rem;
+  padding: 0.5rem 1.25rem 0.25rem;
 }
 
 .la-wordmark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.32em;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--label);
 }
 
 .la-wordmark b {
@@ -298,14 +369,13 @@ body {
 .la-crest {
   display: block;
   flex: none;
-  filter: drop-shadow(2px 3px 4px rgba(90, 104, 128, 0.45));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 
 .la-ink {
-  background: var(--ink);
-  color: var(--white);
-  border-radius: 22px;
-  box-shadow: var(--neo-raised);
+  background: #000;
+  color: #fff;
+  border-radius: var(--radius-lg);
 }
 
 .la-ink .la-kicker,
@@ -316,10 +386,14 @@ body {
 .la-hero {
   position: relative;
   overflow: hidden;
-  border-radius: 22px;
-  box-shadow: var(--neo-raised);
-  background: var(--ink);
-  color: var(--white);
+  border-radius: var(--radius-lg);
+  background: #000;
+  color: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.la-hero .la-kicker {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .la-hero > img {
@@ -334,25 +408,113 @@ body {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(10, 10, 10, 0) 20%,
-    rgba(10, 10, 10, 0.55) 55%,
-    rgba(10, 10, 10, 0.92) 100%
+    rgba(0, 0, 0, 0) 30%,
+    rgba(0, 0, 0, 0.45) 60%,
+    rgba(0, 0, 0, 0.85) 100%
   );
 }
 
 .la-swatch {
   width: 1.1rem;
   height: 1.1rem;
-  border-radius: 6px;
-  box-shadow: 0 0 0 1.5px rgba(226, 176, 74, 0.7);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85);
 }
 
 .la-rule {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
-  opacity: 0.6;
+  background: var(--separator);
+}
+
+/* Frosted tab bar, pinned to the bottom like UITabBar. */
+.la-tabbar {
+  flex: none;
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
+.la-tabbar button {
+  color: var(--label-2);
+  background: transparent;
+  box-shadow: none;
+  border-radius: 10px;
 }
 
 .la-tabbar button[aria-current="page"] {
   color: var(--gold);
+}
+
+.la-tabbar button:not([aria-current="page"]) .la-crest {
+  filter: grayscale(1) opacity(0.55);
+}
+
+/* Screens without the tab bar (sign-in, interview) keep clear of the home indicator. */
+.la-app:not(:has(.la-tabbar)) {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* UISegmentedControl */
+.la-segmented {
+  background: var(--fill);
+  border-radius: 9px;
+}
+.la-segmented button {
+  border-radius: 7px;
+  color: var(--label);
+  transition: background-color 180ms ease;
+}
+.la-segmented button[aria-selected="true"] {
+  background: var(--card);
+  box-shadow: var(--shadow-lift);
+}
+@media (prefers-color-scheme: dark) {
+  .la-segmented button[aria-selected="true"] {
+    background: #636366;
+  }
+}
+
+/* Messages-style chat */
+.la-bubble {
+  max-width: 85%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 20px;
+  font-size: 16px;
+  line-height: 1.38;
+}
+.la-bubble-bee {
+  align-self: flex-start;
+  background: var(--card);
+  color: var(--label);
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--shadow-card);
+}
+.la-bubble-me {
+  align-self: flex-end;
+  background: var(--gold-bright);
+  color: var(--on-gold);
+  border-bottom-right-radius: 6px;
+}
+.la-bubble-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 0.15rem;
+}
+
+/* Filter chips */
+.la-chip {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--label);
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: var(--shadow-card);
+}
+.la-chip[aria-pressed="true"] {
+  background: var(--label);
+  color: var(--bg);
 }
