@@ -1,5 +1,6 @@
 import type { AuthProvider } from "./storage";
 import { apiUrl } from "./api";
+import { closeExternal, openExternal } from "./external";
 
 export function parseAuthCallbackUrl(raw: string): string | null {
   const query = raw.includes("?")
@@ -101,7 +102,7 @@ export async function signInWithProvider(provider: AuthProvider): Promise<{
         },
       });
       if (!error && data.url && oauthUrlIsLive(data.url)) {
-        window.location.assign(withAuthApiKey(data.url));
+        await openExternal(withAuthApiKey(data.url));
         return { redirected: true, email: null };
       }
     } catch {
@@ -262,6 +263,8 @@ export function bindNativeAuthResume(onResume: (email: string | null) => void): 
       const { Capacitor } = await import("@capacitor/core");
       if (!Capacitor.isNativePlatform()) return;
       const handle = await App.addListener("appUrlOpen", async (event) => {
+        if (!parseAuthCallbackUrl(event.url)) return;
+        void closeExternal();
         const result = await resumeAuthSession(event.url);
         if (result.signedIn) onResume(result.email);
       });

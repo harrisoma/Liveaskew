@@ -1,16 +1,8 @@
 import { apiFetch } from "./api";
+import { isNativeApp, openExternal } from "./external";
 import type { PlanSlug } from "./tiers";
 
 export type Membership = { active: boolean; tier: PlanSlug | null };
-
-async function isNative(): Promise<boolean> {
-  try {
-    const { Capacitor } = await import("@capacitor/core");
-    return Capacitor.isNativePlatform();
-  } catch {
-    return false;
-  }
-}
 
 /** Paid access comes only from the server (Stripe webhook → subscriptions). null = unknown. */
 export async function fetchMembership(): Promise<Membership | null> {
@@ -32,7 +24,7 @@ const CHECKOUT_ERRORS: Record<string, string> = {
 };
 
 export async function startCheckout(tier: PlanSlug): Promise<{ error: string } | null> {
-  const native = await isNative();
+  const native = await isNativeApp();
   const returnUrl = native ? "co.liveaskew.app://billing" : `${window.location.origin}/`;
   try {
     const res = await apiFetch("/api/billing/checkout", {
@@ -43,8 +35,7 @@ export async function startCheckout(tier: PlanSlug): Promise<{ error: string } |
     if (!res.ok || !json.url) {
       return { error: CHECKOUT_ERRORS[json.error ?? ""] ?? "Checkout did not open. Try again." };
     }
-    if (native) window.open(json.url, "_system");
-    else window.location.assign(json.url);
+    await openExternal(json.url);
     return null;
   } catch {
     return { error: "No connection. Try again in a moment." };

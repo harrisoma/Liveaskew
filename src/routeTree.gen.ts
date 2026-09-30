@@ -18,6 +18,7 @@ import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/an
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
+import { Route as ApiPublicAppReturnRouteImport } from './routes/api/public/app-return'
 import { Route as ApiHoneyImportRouteImport } from './routes/api/honey/import'
 import { Route as ApiHiveModerationRouteImport } from './routes/api/hive/moderation'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
@@ -76,6 +77,11 @@ const ApiPushRecommendRoute = ApiPushRecommendRouteImport.update({
 const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
   id: '/api/public/verify',
   path: '/api/public/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAppReturnRoute = ApiPublicAppReturnRouteImport.update({
+  id: '/api/public/app-return',
+  path: '/api/public/app-return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHoneyImportRoute = ApiHoneyImportRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -321,6 +333,7 @@ export interface RootRouteChildren {
   ApiCronPushRoute: typeof ApiCronPushRoute
   ApiHiveModerationRoute: typeof ApiHiveModerationRoute
   ApiHoneyImportRoute: typeof ApiHoneyImportRoute
+  ApiPublicAppReturnRoute: typeof ApiPublicAppReturnRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
   ApiPushRegisterRoute: typeof ApiPushRegisterRoute
@@ -393,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/verify'
       fullPath: '/api/public/verify'
       preLoaderRoute: typeof ApiPublicVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/app-return': {
+      id: '/api/public/app-return'
+      path: '/api/public/app-return'
+      fullPath: '/api/public/app-return'
+      preLoaderRoute: typeof ApiPublicAppReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/honey/import': {
@@ -513,6 +533,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCronPushRoute: ApiCronPushRoute,
   ApiHiveModerationRoute: ApiHiveModerationRoute,
   ApiHoneyImportRoute: ApiHoneyImportRoute,
+  ApiPublicAppReturnRoute: ApiPublicAppReturnRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
   ApiPushRegisterRoute: ApiPushRegisterRoute,

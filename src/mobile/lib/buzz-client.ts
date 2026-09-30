@@ -1,20 +1,12 @@
 import type { ConnectionSummary, NetworkId } from "@/lib/buzz";
 import { apiFetch } from "./api";
+import { isNativeApp, openExternal } from "./external";
 
 export type BuzzAccounts = {
   connections: ConnectionSummary[];
   /** Networks this deployment has app credentials for. */
   available: NetworkId[];
 };
-
-async function isNative(): Promise<boolean> {
-  try {
-    const { Capacitor } = await import("@capacitor/core");
-    return Capacitor.isNativePlatform();
-  } catch {
-    return false;
-  }
-}
 
 export async function fetchBuzzAccounts(): Promise<BuzzAccounts | null> {
   try {
@@ -33,7 +25,7 @@ const CONNECT_ERRORS: Record<string, string> = {
 };
 
 export async function connectNetwork(network: NetworkId): Promise<{ error: string } | null> {
-  const native = await isNative();
+  const native = await isNativeApp();
   const returnTo = native ? "co.liveaskew.app://buzz" : `${window.location.origin}/`;
   try {
     const res = await apiFetch("/api/buzz/connect", {
@@ -46,8 +38,7 @@ export async function connectNetwork(network: NetworkId): Promise<{ error: strin
         error: CONNECT_ERRORS[json.error ?? ""] ?? "Could not open that sign-in. Try again.",
       };
     }
-    if (native) window.open(json.url, "_system");
-    else window.location.assign(json.url);
+    await openExternal(json.url);
     return null;
   } catch {
     return { error: "No connection. Try again in a moment." };

@@ -1,4 +1,5 @@
 import { createSign } from "node:crypto";
+import { apnsConfigured, sendApns } from "./apns.server";
 import { trialDaysLeft } from "@/mobile/lib/trial";
 
 export type PushKind = "trial_countdown" | "bee_recommendation";
@@ -85,11 +86,14 @@ export async function persistTrialStartedAt(userId: string, startedAt: string): 
     .is("trial_started_at", null);
 }
 
-async function tokensForUser(userId: string): Promise<string[]> {
+async function tokensForUser(userId: string): Promise<{ token: string; platform: string }[]> {
   const admin = await getAdmin();
-  const { data, error } = await admin.from("push_tokens").select("token").eq("user_id", userId);
+  const { data, error } = await admin
+    .from("push_tokens")
+    .select("token, platform")
+    .eq("user_id", userId);
   if (error || !data) return [];
-  return (data as { token: string }[]).map((row) => row.token).filter(Boolean);
+  return (data as { token: string; platform: string }[]).filter((row) => row.token);
 }
 
 async function dropInvalidToken(token: string): Promise<void> {
@@ -149,8 +153,12 @@ async function sendToUser(
   if (tokens.length === 0) return { sent: 0 };
   const payload = copyFor(kind, extra);
   let sent = 0;
-  for (const token of tokens) {
-    const ok = await sendFcm(token, payload);
+  for (const { token, platform } of tokens) {
+    // iPhones register an APNs device token (Capacitor), Android an FCM token.
+    const ok =
+      platform === "ios" && apnsConfigured()
+        ? await sendApns(token, payload)
+        : await sendFcm(token, payload);
     if (ok === "invalid") await dropInvalidToken(token);
     else if (ok === "sent") sent += 1;
   }

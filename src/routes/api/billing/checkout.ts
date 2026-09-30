@@ -61,7 +61,15 @@ export const Route = createFileRoute("/api/billing/checkout")({
           const price = prices.data[0];
           if (!price) return Response.json({ error: "price_missing", lookupKey }, { status: 503 });
 
-          const returnUrl = safeReturnUrl(body.returnUrl, request);
+          let returnUrl = safeReturnUrl(body.returnUrl, request);
+          // Stripe needs https; the app-return page hands off to the installed app.
+          if (returnUrl.startsWith("co.liveaskew.app:")) {
+            const base = (process.env.PUBLIC_APP_URL ?? new URL(request.url).origin).replace(
+              /\/$/,
+              "",
+            );
+            returnUrl = `${base}/api/public/app-return?path=billing`;
+          }
           const sep = returnUrl.includes("?") ? "&" : "?";
           const trialEnd = stripeTrialEnd(profile?.trial_started_at);
           const session = await stripe.checkout.sessions.create({
