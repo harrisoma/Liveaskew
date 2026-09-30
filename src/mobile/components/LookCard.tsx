@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { GuideLook, WardrobeItem } from "../lib/storage";
+import { lookPhoto, type GuideLook, type WardrobeItem } from "../lib/storage";
 import { NeoButton, Skeleton } from "./ui";
 
 export function LookCard({
@@ -8,8 +8,10 @@ export function LookCard({
   onAction,
   rendering,
   footer,
+  selfie = null,
 }: {
   look: GuideLook;
+  selfie?: string | null;
   actionLabel?: string;
   onAction?: () => void;
   rendering?: boolean;
@@ -19,9 +21,9 @@ export function LookCard({
     <article className="neo-raised p-4">
       {rendering ? (
         <Skeleton className="mb-3 h-56 w-full" />
-      ) : look.tryOnUrl ? (
+      ) : lookPhoto(look, selfie) ? (
         <img
-          src={look.tryOnUrl}
+          src={lookPhoto(look, selfie) ?? undefined}
           alt={`${look.title} on you — unaltered proportions`}
           className="mb-3 h-56 w-full rounded-[16px] object-cover"
           loading="lazy"
@@ -71,12 +73,18 @@ export function WardrobeCard({ item }: { item: WardrobeItem }) {
           : "Reading";
   return (
     <article className="neo-raised p-4">
-      <img
-        src={item.photo}
-        alt={item.label}
-        className="mb-3 h-40 w-full rounded-[16px] object-cover"
-        loading="lazy"
-      />
+      {item.photo ? (
+        <img
+          src={item.photo}
+          alt={item.label}
+          className="mb-3 h-40 w-full rounded-[16px] object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="mb-3 neo-inset px-4 py-6 text-sm opacity-70">
+          Photo cleared to free space on this device.
+        </div>
+      )}
       <p className="la-kicker">{tone}</p>
       <h2 className="la-display mt-1 text-xl font-semibold">{item.label}</h2>
       {item.error ? (

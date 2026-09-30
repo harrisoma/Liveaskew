@@ -58,7 +58,11 @@ After Google, the app sends an email OTP. After Apple, collect a phone number an
 
 ## Push (FCM)
 
-Capacitor `@capacitor/push-notifications` registers an FCM token on both iOS and Android. `POST /api/push/register` stores it on `push_tokens`. Cron `GET /api/cron/push` (Bearer `CRON_SECRET`) sends trial countdown reminders at 7 / 3 / 1 days left. Saving a new Style Guide look notifies “new Bee recommendation ready.” Set `FCM_SERVICE_ACCOUNT_JSON` (HTTP v1) or `FCM_SERVER_KEY`.
+Capacitor `@capacitor/push-notifications` registers an FCM token on both iOS and Android. `POST /api/push/register` stores it on `push_tokens`. Cron `GET /api/cron/push` (Bearer `CRON_SECRET`) sends trial countdown reminders at 7 / 3 / 1 days left. Saving a new Style Guide look notifies “new Bee recommendation ready.” Android goes through FCM: set `FCM_SERVICE_ACCOUNT_JSON` (HTTP v1) or `FCM_SERVER_KEY`. iPhones register an APNs device token (Capacitor does not return an FCM token on iOS), so iOS pushes go straight to Apple: set `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY` (.p8) and `APNS_ENV`. No Firebase SDK is needed in the iOS app.
+
+## External pages (sign-in, Stripe, social connect)
+
+`@capacitor/browser` opens them in the system browser sheet (Google refuses OAuth inside an app's own web view). They return through `co.liveaskew.app://` links; Stripe, which needs https, returns via `/api/public/app-return`, which only ever redirects into the app.
 
 ## Privacy policy URL
 

@@ -1,11 +1,11 @@
 import type { GuideLook } from "./storage";
-import { cacheKey } from "./storage";
-import { apiUrl } from "./api";
+import { cacheKey, SELF_PHOTO } from "./storage";
+import { apiFetch } from "./api";
 
 export type TryOnResult = {
   url: string;
   cached: boolean;
-  source: "cache" | "n8n" | "identity";
+  source: "cache" | "n8n" | "identity" | "locked" | "limited";
 };
 
 export async function requestTryOn(opts: {
@@ -20,9 +20,8 @@ export async function requestTryOn(opts: {
   }
 
   try {
-    const res = await fetch(apiUrl("/api/tryon"), {
+    const res = await apiFetch("/api/tryon", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         lookId: opts.look.id,
         cacheKey: key,
@@ -40,8 +39,11 @@ export async function requestTryOn(opts: {
         },
       }),
     });
+    if (res.status === 402) return { url: "", cached: false, source: "locked" };
+    if (res.status === 429) return { url: "", cached: false, source: "limited" };
     if (res.ok) {
       const json = (await res.json()) as { url?: string; source?: TryOnResult["source"] };
+      if (json.source === "identity") return { url: SELF_PHOTO, cached: false, source: "identity" };
       if (json.url) {
         return { url: json.url, cached: false, source: json.source ?? "n8n" };
       }
@@ -52,5 +54,5 @@ export async function requestTryOn(opts: {
 
   // Never invent a reshaped body. If the try-on service is down, show her.
   await new Promise((r) => setTimeout(r, 1200));
-  return { url: opts.selfie, cached: false, source: "identity" };
+  return { url: SELF_PHOTO, cached: false, source: "identity" };
 }

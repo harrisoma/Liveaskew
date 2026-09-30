@@ -1,9 +1,6 @@
 import { generateText } from "ai";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
-import {
-  parseGarmentSight,
-  type GarmentSight,
-} from "@/mobile/lib/wardrobe-reset";
+import { parseGarmentSight, type GarmentSight } from "@/mobile/lib/wardrobe-reset";
 
 const VISION_MODEL = "google/gemini-2.5-flash";
 

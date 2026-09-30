@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHash, randomInt, timingSafeEqual } from "node:crypto";
+import { isLocalDev, supabaseAuthConfigured } from "@/lib/api-auth.server";
 
 type Body = {
   channel?: "email" | "sms";
@@ -7,17 +7,20 @@ type Body = {
   code?: string;
 };
 
-function hashCode(code: string, destination: string) {
-  return createHash("sha256").update(`${destination.trim().toLowerCase()}:${code}`).digest("hex");
+const PREVIEW_CODE = "000000";
+
+async function authClient() {
+  const { createClient } = await import("@supabase/supabase-js");
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
-function safeEqual(a: string, b: string) {
-  const ba = Buffer.from(a);
-  const bb = Buffer.from(b);
-  if (ba.length !== bb.length) return false;
-  return timingSafeEqual(ba, bb);
-}
-
+/**
+ * Email / SMS one-time codes. Supabase Auth generates, delivers, and checks the code,
+ * so the code the person receives is the code we verify. The 000000 preview code is
+ * only honoured in local development (`npm run dev`) when Supabase is not configured.
+ */
 export const Route = createFileRoute("/api/public/verify")({
   server: {
     handlers: {
@@ -31,46 +34,23 @@ export const Route = createFileRoute("/api/public/verify")({
           return Response.json({ error: "missing_destination" }, { status: 400 });
         }
 
+        const live = supabaseAuthConfigured();
+        if (!live && !isLocalDev()) {
+          return Response.json({ error: "auth_not_configured" }, { status: 503 });
+        }
+
         if (action === "send") {
-          const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
-          const codeHash = hashCode(code, destination);
-          const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-          let stored = false;
-          try {
-            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-            const { error } = await supabaseAdmin.from("verification_codes").insert({
-              channel,
-              destination,
-              code_hash: codeHash,
-              expires_at: expiresAt,
-            } as never);
-            stored = !error;
-          } catch {
-            stored = false;
+          if (!live) return Response.json({ ok: true, preview: true, hint: PREVIEW_CODE });
+          const supabase = await authClient();
+          const { error } =
+            channel === "email"
+              ? await supabase.auth.signInWithOtp({ email: destination })
+              : await supabase.auth.signInWithOtp({ phone: destination });
+          if (error) {
+            console.error("[verify] send failed", error.message);
+            return Response.json({ error: "send_failed" }, { status: 502 });
           }
-
-          const preview = process.env.NODE_ENV !== "production" || !stored;
-          if (channel === "email") {
-            try {
-              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-              await supabaseAdmin.auth.signInWithOtp({ email: destination });
-            } catch {
-              /* preview path */
-            }
-          } else {
-            try {
-              const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-              await supabaseAdmin.auth.signInWithOtp({ phone: destination });
-            } catch {
-              /* preview path */
-            }
-          }
-
-          return Response.json({
-            ok: true,
-            preview,
-            ...(preview ? { hint: "000000" } : {}),
-          });
+          return Response.json({ ok: true, preview: false });
         }
 
         const code = (body.code ?? "").replace(/\s/g, "");
@@ -78,38 +58,19 @@ export const Route = createFileRoute("/api/public/verify")({
           return Response.json({ error: "invalid_code" }, { status: 400 });
         }
 
-        try {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { data } = await supabaseAdmin
-            .from("verification_codes")
-            .select("id, code_hash, expires_at, consumed_at")
-            .eq("destination", destination)
-            .order("expires_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          const row = data as {
-            id: string;
-            code_hash: string;
-            expires_at: string;
-            consumed_at: string | null;
-          } | null;
-          if (row && !row.consumed_at && Date.parse(row.expires_at) > Date.now()) {
-            if (safeEqual(row.code_hash, hashCode(code, destination))) {
-              await supabaseAdmin
-                .from("verification_codes")
-                .update({ consumed_at: new Date().toISOString() } as never)
-                .eq("id", row.id);
-              return Response.json({ ok: true });
-            }
-          }
-        } catch {
-          /* preview */
+        if (!live) {
+          return code === PREVIEW_CODE
+            ? Response.json({ ok: true, preview: true })
+            : Response.json({ error: "mismatch" }, { status: 401 });
         }
 
-        if (code === "000000" && process.env.NODE_ENV !== "production") {
-          return Response.json({ ok: true, preview: true });
-        }
-        return Response.json({ error: "mismatch" }, { status: 401 });
+        const supabase = await authClient();
+        const { error } =
+          channel === "email"
+            ? await supabase.auth.verifyOtp({ email: destination, token: code, type: "email" })
+            : await supabase.auth.verifyOtp({ phone: destination, token: code, type: "sms" });
+        if (error) return Response.json({ error: "mismatch" }, { status: 401 });
+        return Response.json({ ok: true });
       },
     },
   },

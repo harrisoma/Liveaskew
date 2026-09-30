@@ -41,3 +41,39 @@ export function Screen({
     </div>
   );
 }
+
+export function Segmented<T extends string>({
+  value,
+  options,
+  onChange,
+  label,
+}: {
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (next: T) => void;
+  label: string;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label={label}
+      className="neo-inset grid auto-cols-fr grid-flow-col gap-1 p-1"
+    >
+      {options.map((o) => {
+        const active = o.id === value;
+        return (
+          <button
+            key={o.id}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(o.id)}
+            className={`rounded-[12px] px-2 py-2 text-sm font-semibold ${active ? "neo-raised-sm" : "opacity-70"}`}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}

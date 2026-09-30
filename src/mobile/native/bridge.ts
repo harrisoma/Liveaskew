@@ -1,3 +1,4 @@
+import { downscaleDataUrl, PHOTO_MAX } from "../lib/image";
 /** Capacitor native bridges with web fallbacks. Safe to import on the web. */
 
 export async function haptic(kind: "impact" | "success" | "warning" = "impact"): Promise<void> {
@@ -58,7 +59,10 @@ function pickFileFallback(): Promise<string | null> {
         return;
       }
       const reader = new FileReader();
-      reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : null);
+      reader.onload = () =>
+        resolve(
+          typeof reader.result === "string" ? downscaleDataUrl(reader.result, PHOTO_MAX) : null,
+        );
       reader.onerror = () => resolve(null);
       reader.readAsDataURL(file);
     };
@@ -120,7 +124,12 @@ export function pickWardrobeBatch(): Promise<string[]> {
           (file) =>
             new Promise<string | null>((ok) => {
               const reader = new FileReader();
-              reader.onload = () => ok(typeof reader.result === "string" ? reader.result : null);
+              reader.onload = () =>
+                ok(
+                  typeof reader.result === "string"
+                    ? downscaleDataUrl(reader.result, PHOTO_MAX)
+                    : null,
+                );
               reader.onerror = () => ok(null);
               reader.readAsDataURL(file);
             }),

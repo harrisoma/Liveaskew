@@ -1,13 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Bookmark, MessageCircle, RefreshCw, Settings, Sparkles, WifiOff } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Home, Settings, WifiOff } from "lucide-react";
 import { LookCard, WardrobeCard } from "./components/LookCard";
-import { NeoButton, NeoField, Screen, Skeleton } from "./components/ui";
+import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/ui";
+import { HoneyScreen } from "./screens/Honey";
+import { BuzzScreen } from "./screens/Buzz";
+import { HiveScreen } from "./screens/Hive";
+import { TodayScreen } from "./screens/Today";
+import { Crest, type CrestName } from "./components/Crest";
+import { ModerationScreen } from "./screens/Moderation";
+import { fetchModerationQueue, type ModerationItem } from "./lib/moderation";
 import {
   bindNativeAuthResume,
   confirmVerifyCode,
   resumeAuthSession,
   sendVerifyCode,
   signInWithProvider,
+  signOut,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
 import {
@@ -16,6 +24,29 @@ import {
   looksFromInterview,
   reflectOnAnswer,
 } from "./lib/interview";
+import { generateLooks, toGuideLook } from "./lib/looks";
+import {
+  consumeBillingReturn,
+  fetchMembership,
+  openBillingPortal,
+  requestAtelier,
+  startCheckout,
+} from "./lib/billing";
+import { deleteHoney, importCalendar, pullHoney, pushHoney } from "./lib/honey-sync";
+import {
+  connectNetwork,
+  consumeBuzzReturn,
+  disconnectNetwork,
+  fetchBuzzAccounts,
+  finishConnect,
+  publishNow,
+  uploadPostImage,
+  type BuzzAccounts,
+} from "./lib/buzz-client";
+import { bindReturnLinks } from "./lib/return-links";
+import { mergeLooks, pullLooks, pullStyle, pushLooks, pushStyle } from "./lib/style-sync";
+import { networkById, scheduledInstant } from "@/lib/buzz";
+import { isoDay, mergeHoney, type HoneyItem } from "@/lib/honey";
 import {
   cacheKey,
   emptySnapshot,
@@ -30,10 +61,11 @@ import {
 import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
-import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
+import { deleteMyAccount, persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
 import { askBee } from "./lib/bee-chat";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
+import { downscaleDataUrl, THUMB_MAX } from "./lib/image";
 import {
   configureNativeChrome,
   haptic,
@@ -44,12 +76,16 @@ import {
 } from "./native/bridge";
 import "./styles.css";
 
-type Tab = "home" | "guide" | "reset" | "tier" | "you";
+type Tab = "today" | "bee" | "honey" | "buzz" | "hive" | "you";
+type BeeView = "chat" | "looks" | "reset";
 
 export function MobileApp() {
   const [ready, setReady] = useState(false);
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
-  const [tab, setTab] = useState<Tab>("guide");
+  const snapRef = useRef(snap);
+  snapRef.current = snap;
+  const [tab, setTab] = useState<Tab>("today");
+  const [beeView, setBeeView] = useState<BeeView>("looks");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [online, setOnline] = useState(true);
@@ -57,7 +93,21 @@ export function MobileApp() {
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyErr, setVerifyErr] = useState<string | null>(null);
   const [previewOtp, setPreviewOtp] = useState(false);
-  const [youView, setYouView] = useState<"profile" | "privacy">("profile");
+  const [youView, setYouView] = useState<"profile" | "privacy" | "membership" | "moderation">(
+    "profile",
+  );
+  const [modQueue, setModQueue] = useState<ModerationItem[] | null>(null);
+  const [building, setBuilding] = useState(false);
+  const [dressingId, setDressingId] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [honeyNotice, setHoneyNotice] = useState<string | null>(null);
+  const [tierBusy, setTierBusy] = useState(false);
+  const [tierNotice, setTierNotice] = useState<string | null>(null);
+  const [shareLook, setShareLook] = useState<GuideLook | null>(null);
+  const [guideNotice, setGuideNotice] = useState<string | null>(null);
+  const [buzzAccounts, setBuzzAccounts] = useState<BuzzAccounts | null>(null);
+  const [buzzNotice, setBuzzNotice] = useState<string | null>(null);
+  const [buzzBusy, setBuzzBusy] = useState<string | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
@@ -77,16 +127,57 @@ export function MobileApp() {
         phase: s.phase === "auth" ? "verify" : s.phase,
       }));
     };
+    const handleReturn = (href: string) => {
+      if (consumeBillingReturn(href) === "success") {
+        setTab("you");
+        setYouView("membership");
+        setTierNotice("Payment received. Your tier switches on as soon as Stripe confirms it.");
+        void syncAccount();
+      }
+      const buzz = consumeBuzzReturn(href);
+      if (buzz) {
+        setTab("buzz");
+        const label = (ids: string[]) =>
+          ids
+            .map((id) => networkById(id)?.label)
+            .filter(Boolean)
+            .join(" and ") || "Account";
+        if (buzz.status === "finish" && buzz.token) {
+          setBuzzNotice("Finishing the connection…");
+          void finishConnect(buzz.token).then(async (result) => {
+            setBuzzNotice(
+              "error" in result ? result.error : `${label(result.networks)} connected.`,
+            );
+            setBuzzAccounts(await fetchBuzzAccounts());
+          });
+        } else {
+          setBuzzNotice(
+            buzz.status === "cancelled"
+              ? "Connection cancelled."
+              : buzz.reason || "That connection did not finish. Try again.",
+          );
+        }
+      }
+    };
+    handleReturn(window.location.href);
+    const unbindLinks = bindReturnLinks(handleReturn);
     void resumeAuthSession().then((session) => {
-      if (session.signedIn) applySession(session.email);
+      if (session.signedIn) {
+        applySession(session.email);
+        void syncAccount();
+      }
     });
-    const unbindAuth = bindNativeAuthResume(applySession);
+    const unbindAuth = bindNativeAuthResume((email) => {
+      applySession(email);
+      void syncAccount();
+    });
     const on = () => setOnline(true);
     const off = () => setOnline(false);
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
     return () => {
       unbindAuth();
+      unbindLinks();
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
     };
@@ -95,6 +186,29 @@ export function MobileApp() {
   useEffect(() => {
     if (ready) saveSnapshot(snap);
   }, [snap, ready]);
+
+  // Moderators see the Hive report queue under You; everyone else gets null (403).
+  useEffect(() => {
+    if (snap.phase !== "app" || tab !== "you") return;
+    let live = true;
+    void fetchModerationQueue().then((q) => live && setModQueue(q));
+    return () => {
+      live = false;
+    };
+  }, [tab, snap.phase]);
+
+  // Posts publish on the server; pick up their status when Buzz or Honey opens.
+  useEffect(() => {
+    if (snap.phase !== "app" || (tab !== "buzz" && tab !== "honey")) return;
+    let live = true;
+    void pullHoney().then((remote) => {
+      if (live && remote) setSnap((s) => ({ ...s, honey: mergeHoney(s.honey, remote) }));
+    });
+    if (tab === "buzz") void fetchBuzzAccounts().then((a) => live && setBuzzAccounts(a));
+    return () => {
+      live = false;
+    };
+  }, [tab, snap.phase]);
 
   useEffect(() => {
     if (snap.phase === "app" && snap.notifications.beeReady) {
@@ -106,6 +220,107 @@ export function MobileApp() {
     setSnap((s) => fn(s));
   }, []);
 
+  /** Server truth for paid access and the Honey calendar, once there is a session. */
+  async function syncAccount() {
+    const [membership, remote, accounts, remoteLooks] = await Promise.all([
+      fetchMembership(),
+      pullHoney(),
+      fetchBuzzAccounts(),
+      pullLooks(),
+    ]);
+    if (remoteLooks) {
+      const known = new Set(remoteLooks.map((l) => l.id));
+      void pushLooks(snapRef.current.looks.filter((l) => !known.has(l.id)));
+    }
+    setBuzzAccounts(accounts);
+    setSnap((s) => ({
+      ...s,
+      ...(membership
+        ? { membershipActive: membership.active, tier: membership.tier ?? s.tier }
+        : {}),
+      honey: remote ? mergeHoney(s.honey, remote) : s.honey,
+      looks: remoteLooks ? mergeLooks(s.looks, remoteLooks) : s.looks,
+    }));
+    if (remote) {
+      const remoteIds = new Set(remote.map((r) => r.id));
+      const localOnly = snapRef.current.honey.filter((h) => !remoteIds.has(h.id));
+      void pushHoney(localOnly);
+    }
+  }
+
+  const today = isoDay(new Date());
+
+  function upsertHoney(items: HoneyItem[]) {
+    patch((s) => ({ ...s, honey: mergeHoney(s.honey, items) }));
+    void pushHoney(items);
+  }
+
+  /** Bee builds one look for a Honey event and pins it to that day. */
+  async function dressMe(item: HoneyItem) {
+    if (!looksUnlocked) {
+      setGateOpen(true);
+      openMembership();
+      return;
+    }
+    setDressingId(item.id);
+    const { looks, source } = await generateLooks({
+      interview: snap.interview.answers,
+      occasion: { title: item.title, date: item.date, kind: item.kind },
+      count: 1,
+    });
+    setDressingId(null);
+    if (source === "locked") {
+      setGateOpen(true);
+      openMembership();
+      return;
+    }
+    if (source === "limited") {
+      setHoneyNotice("Bee has dressed a lot this hour. Try again in a few minutes.");
+      return;
+    }
+    const look = looks[0];
+    if (!look) return;
+    const dressed: HoneyItem = {
+      ...item,
+      lookId: look.id,
+      beeNote: `${look.title}: ${look.formula.join(", ")}`,
+    };
+    patch((s) => ({ ...s, looks: [look, ...s.looks] }));
+    void pushLooks([look]);
+    upsertHoney([dressed]);
+    void haptic("success");
+  }
+
+  async function runPublishNow(post: HoneyItem) {
+    setBuzzBusy(post.id);
+    patch((s) => ({
+      ...s,
+      honey: s.honey.map((h) => (h.id === post.id ? { ...h, postStatus: "publishing" } : h)),
+    }));
+    const result = await publishNow(post.id);
+    setBuzzBusy(null);
+    patch((s) => ({
+      ...s,
+      honey: s.honey.map((h) =>
+        h.id === post.id
+          ? {
+              ...h,
+              postStatus: result.post_status ?? (result.ok ? "posted" : "failed"),
+              postError: result.post_error ?? (result.ok ? null : "That did not post. Try again."),
+              postUrl: result.post_url ?? h.postUrl ?? null,
+            }
+          : h,
+      ),
+    }));
+    setBuzzNotice(result.ok ? `Posted to ${post.network}.` : null);
+    void haptic(result.ok ? "success" : "impact");
+  }
+
+  function openMembership() {
+    setTab("you");
+    setYouView("membership");
+  }
+
   const trialText = useMemo(
     () => trialLabel(snap.trialStartedAt),
     [snap.trialStartedAt, snap.lastActiveAt],
@@ -115,25 +330,32 @@ export function MobileApp() {
     membershipActive: snap.membershipActive,
   });
 
-  const startTrial = (looks: GuideLook[]) => {
-    const startedAt = snap.trialStartedAt ?? new Date().toISOString();
+  /** `trialEnded`: the server says this member's 14 days are already used (e.g. new device). */
+  const startTrial = (looks: GuideLook[], opts: { trialEnded?: boolean } = {}) => {
+    const startedAt = opts.trialEnded
+      ? new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+      : (snap.trialStartedAt ?? new Date().toISOString());
     patch((s) => ({
       ...s,
       phase: "app",
       looks,
-      trialStartedAt: s.trialStartedAt ?? startedAt,
+      trialStartedAt: opts.trialEnded ? startedAt : (s.trialStartedAt ?? startedAt),
       messages: [
         {
           id: nid("m"),
           role: "assistant",
-          content:
-            "Your Style Guide is ready. I dressed the looks on you — same body, same proportions. Fourteen days, unlimited looks.",
+          content: opts.trialEnded
+            ? "Your Style Guide is here. Your fourteen days with Bee have ended — choose a tier under You to keep generating looks."
+            : "Your Style Guide is ready. I dressed the looks on you — same body, same proportions. Fourteen days, unlimited looks.",
         },
       ],
     }));
-    setTab("guide");
+    setTab("today");
+    setBeeView("looks");
     void haptic("success");
-    void persistTrialStartedAt(startedAt);
+    if (!opts.trialEnded) void persistTrialStartedAt(startedAt);
+    void pushLooks(looks);
+    void syncAccount();
   };
 
   if (!ready) {
@@ -157,8 +379,35 @@ export function MobileApp() {
           Offline — showing your last session.
         </div>
       )}
-      {snap.phase === "app" && trialText && (
-        <p className="mx-5 mt-3 neo-inset px-3 py-2 text-sm" role="status">
+      {snap.phase === "app" && (
+        <header className="la-topbar">
+          <button
+            type="button"
+            className="flex items-center gap-2"
+            aria-label="LiveAskew — Today"
+            onClick={() => setTab("today")}
+          >
+            <Crest name="bee" size={30} decorative />
+            <span className="la-wordmark">
+              Live<b>Askew</b>
+            </span>
+          </button>
+          <button
+            type="button"
+            className="neo-icon-btn"
+            aria-label="You — profile, membership, privacy"
+            aria-current={tab === "you" ? "page" : undefined}
+            onClick={() => {
+              setTab("you");
+              setYouView("profile");
+            }}
+          >
+            <Settings size={18} aria-hidden />
+          </button>
+        </header>
+      )}
+      {snap.phase === "app" && trialText && tab !== "today" && (
+        <p className="mx-5 mt-2 neo-inset px-3 py-2 text-sm" role="status">
           {trialText}
         </p>
       )}
@@ -232,14 +481,38 @@ export function MobileApp() {
               return;
             }
             void haptic("success");
-            patch((s) => ({
-              ...s,
-              verified: true,
-              email: dest.includes("@") ? dest : s.email,
-              phone: channel === "sms" ? dest : s.phone,
-              phase: "interview",
-              messages: [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
-            }));
+            // A returning member on a new device: bring back the interview and looks.
+            const [style, remoteLooks] = await Promise.all([pullStyle(), pullLooks()]);
+            patch((s) => {
+              const base = {
+                ...s,
+                verified: true,
+                email: dest.includes("@") ? dest : s.email,
+                phone: channel === "sms" ? dest : s.phone,
+              };
+              if (!style) {
+                return {
+                  ...base,
+                  phase: "interview",
+                  messages: [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
+                };
+              }
+              return {
+                ...base,
+                interview: { step: 5, answers: style.interview, completed: true },
+                onboarding: style.onboarding,
+                looks: mergeLooks(s.looks, remoteLooks ?? []),
+                phase: s.selfie ? "app" : "selfie",
+                messages: [
+                  {
+                    id: nid("m"),
+                    role: "assistant",
+                    content: "Welcome back. Your Fit, Feel, and Fabric came with you.",
+                  },
+                ],
+              };
+            });
+            if (style) void syncAccount();
           }}
         />
       )}
@@ -278,6 +551,13 @@ export function MobileApp() {
                 : s.onboarding,
               phase: done ? "selfie" : "interview",
             }));
+            if (done) {
+              const answers = { ...snap.interview.answers, [key]: value };
+              void pushStyle({
+                interview: answers,
+                onboarding: { ...answersFromInterview(answers), completed: true },
+              });
+            }
             setSending(false);
             void haptic("impact");
           }}
@@ -294,24 +574,60 @@ export function MobileApp() {
               void haptic("impact");
             }
           }}
-          onContinue={() => {
-            if (!snap.selfie) return;
-            const cards = looksFromInterview(snap.interview.answers).map((look) => ({
-              ...look,
-              saved: false,
-              createdAt: new Date().toISOString(),
-              garmentNote: look.formula[0] ?? look.title,
-              tryOnUrl: null,
-              tryOnKey: null,
-            }));
-            startTrial(cards);
+          building={building}
+          onContinue={async () => {
+            if (!snap.selfie || building) return;
+            setBuilding(true);
+            const { looks, source } = await generateLooks({ interview: snap.interview.answers });
+            setBuilding(false);
+            startTrial(
+              looks.length > 0
+                ? looks
+                : looksFromInterview(snap.interview.answers).map(toGuideLook),
+              { trialEnded: source === "locked" },
+            );
+            if (source === "locked") setGateOpen(true);
           }}
         />
       )}
 
       {snap.phase === "app" && (
         <>
-          {tab === "home" && (
+          {tab === "today" && (
+            <TodayScreen
+              now={new Date()}
+              today={today}
+              looks={snap.looks}
+              selfie={snap.selfie}
+              honey={snap.honey}
+              dressingId={dressingId}
+              buzzConnected={buzzAccounts ? buzzAccounts.connections.length : null}
+              onOpen={(to) => {
+                setTab(to);
+                if (to === "bee") setBeeView("looks");
+              }}
+              onOpenLook={() => {
+                setTab("bee");
+                setBeeView("looks");
+              }}
+              onDressMe={(item) => void dressMe(item)}
+            />
+          )}
+          {tab === "bee" && (
+            <div className="px-5 pt-4">
+              <Segmented
+                label="Bee"
+                value={beeView}
+                onChange={setBeeView}
+                options={[
+                  { id: "looks", label: "Looks" },
+                  { id: "chat", label: "Chat" },
+                  { id: "reset", label: "Reset" },
+                ]}
+              />
+            </div>
+          )}
+          {tab === "bee" && beeView === "chat" && (
             <HomeChat
               messages={snap.messages}
               sending={sending}
@@ -337,7 +653,7 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "guide" && (
+          {tab === "bee" && beeView === "looks" && (
             <StyleGuide
               looks={snap.looks}
               selfie={snap.selfie}
@@ -345,13 +661,18 @@ export function MobileApp() {
               locked={!looksUnlocked}
               rateOpen={rateOpen}
               onDismissRate={() => setRateOpen(false)}
+              notice={guideNotice}
+              onShare={(look) => {
+                setShareLook(look);
+                setTab("hive");
+              }}
               onSelect={async (look) => {
                 if (!snap.selfie) return;
                 const key = cacheKey(snap.selfie, look.id);
                 if (look.tryOnUrl && look.tryOnKey === key) return;
                 if (!looksUnlocked) {
                   setGateOpen(true);
-                  setTab("tier");
+                  openMembership();
                   return;
                 }
                 setRenderingId(look.id);
@@ -361,14 +682,32 @@ export function MobileApp() {
                   selfie: snap.selfie,
                   cache: snap.tryOnCache,
                 });
+                setRenderingId(null);
+                if (result.source === "locked") {
+                  setGateOpen(true);
+                  openMembership();
+                  return;
+                }
+                if (result.source === "limited") {
+                  setGuideNotice(
+                    "That's a lot of try-ons for one hour. Try again in a few minutes.",
+                  );
+                  void haptic("impact");
+                  return;
+                }
+                setGuideNotice(null);
+                // The unaltered photo is a stand-in, not a render: don't cache it, so the
+                // next tap tries the real try-on again.
+                const isRender = result.source !== "identity";
                 patch((s) => ({
                   ...s,
-                  tryOnCache: { ...s.tryOnCache, [key]: result.url },
+                  tryOnCache: isRender ? { ...s.tryOnCache, [key]: result.url } : s.tryOnCache,
                   looks: s.looks.map((l) =>
-                    l.id === look.id ? { ...l, tryOnUrl: result.url, tryOnKey: key } : l,
+                    l.id === look.id
+                      ? { ...l, tryOnUrl: result.url, tryOnKey: isRender ? key : null }
+                      : l,
                   ),
                 }));
-                setRenderingId(null);
                 void haptic("success");
               }}
               onSave={(look) => {
@@ -379,29 +718,38 @@ export function MobileApp() {
                   looks: s.looks.map((l) => (l.id === look.id ? { ...l, saved: true } : l)),
                   ratingAsked: true,
                 }));
+                void pushLooks([{ ...look, saved: true }]);
                 void notifyRecommendationReady();
                 if (firstSave) setRateOpen(true);
               }}
             />
           )}
-          {tab === "reset" && (
+          {tab === "bee" && beeView === "reset" && (
             <WardrobeReset
               items={snap.wardrobe}
               onUpload={async () => {
                 const photos = await pickWardrobeBatch();
                 if (photos.length === 0) return;
                 const profile = snap.onboarding;
-                const items: AppSnapshot["wardrobe"] = photos.map((photo) => ({
+                // Cards keep a small thumbnail on the device; Bee reads the larger photo.
+                const thumbs = await Promise.all(
+                  photos.map((photo) => downscaleDataUrl(photo, THUMB_MAX, 0.75)),
+                );
+                const items: AppSnapshot["wardrobe"] = photos.map((_, i) => ({
                   id: nid("w"),
-                  photo,
+                  photo: thumbs[i],
                   label: "Looking at the cloth",
                   verdict: null,
                   reason: null,
                   error: null,
                 }));
-                patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe] }));
+                const fullPhoto = new Map(items.map((item, i) => [item.id, photos[i]]));
+                patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe].slice(0, 60) }));
                 for (const item of items) {
-                  const result = await analyzeWardrobePhoto({ photo: item.photo, profile });
+                  const result = await analyzeWardrobePhoto({
+                    photo: fullPhoto.get(item.id) ?? item.photo,
+                    profile,
+                  });
                   patch((s) => ({
                     ...s,
                     wardrobe: s.wardrobe.map((row) => {
@@ -429,18 +777,189 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "tier" && (
-            <Tiers
-              current={snap.tier}
-              gated={gateOpen && !looksUnlocked}
-              onSelect={(tier) => {
-                void haptic("success");
+          {tab === "honey" && (
+            <HoneyScreen
+              items={snap.honey}
+              today={today}
+              looks={snap.looks}
+              dressingId={dressingId}
+              feeds={snap.calendarFeeds}
+              importing={importing}
+              notice={honeyNotice}
+              onAdd={(input) => {
+                setHoneyNotice(null);
+                upsertHoney([
+                  {
+                    id: nid("h"),
+                    ...input,
+                    source: "manual",
+                    network: null,
+                    lookId: null,
+                    caption: null,
+                    postStatus: null,
+                    beeNote: null,
+                  },
+                ]);
+                void haptic("impact");
+              }}
+              onDelete={(item) => {
+                patch((s) => ({ ...s, honey: s.honey.filter((h) => h.id !== item.id) }));
+                void deleteHoney(item.id);
+              }}
+              onDressMe={(item) => void dressMe(item)}
+              onImport={async (url) => {
+                setImporting(true);
+                setHoneyNotice(null);
+                const result = await importCalendar(url);
+                setImporting(false);
+                if ("error" in result) {
+                  setHoneyNotice(result.error);
+                  return;
+                }
                 patch((s) => ({
                   ...s,
-                  tier,
-                  membershipActive: true,
+                  honey: mergeHoney(
+                    s.honey,
+                    result.items.map((item) => {
+                      const mine = s.honey.find((h) => h.id === item.id);
+                      return mine ? { ...item, lookId: mine.lookId, beeNote: mine.beeNote } : item;
+                    }),
+                  ),
+                  calendarFeeds: s.calendarFeeds.includes(url)
+                    ? s.calendarFeeds
+                    : [...s.calendarFeeds, url].slice(-5),
                 }));
-                setGateOpen(false);
+                setHoneyNotice(
+                  result.items.length === 0
+                    ? "Connected. Nothing on that calendar in the next 60 days."
+                    : `Added ${result.items.length} upcoming event${result.items.length === 1 ? "" : "s"}.`,
+                );
+                void haptic("success");
+              }}
+            />
+          )}
+          {tab === "buzz" && (
+            <BuzzScreen
+              looks={snap.looks}
+              posts={snap.honey.filter((h) => h.kind === "post")}
+              today={today}
+              accounts={buzzAccounts}
+              notice={buzzNotice}
+              busyId={buzzBusy}
+              onConnect={async (network) => {
+                setBuzzNotice(null);
+                const result = await connectNetwork(network);
+                if (result) setBuzzNotice(result.error);
+              }}
+              onDisconnect={async (network) => {
+                if (await disconnectNetwork(network)) {
+                  setBuzzAccounts(await fetchBuzzAccounts());
+                  setBuzzNotice(`${networkById(network)?.label} disconnected.`);
+                }
+              }}
+              onPickPhoto={() => pickStylingPhoto()}
+              onCaption={(look, network) =>
+                askBee({
+                  messages: [
+                    {
+                      id: nid("m"),
+                      role: "user",
+                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.${network === "X" ? " Keep it under 260 characters." : network === "Threads" ? " Keep it under 480 characters." : ""}`,
+                    },
+                  ],
+                  profile: snap.onboarding,
+                })
+              }
+              onSchedule={async ({ look, network, date, time, caption, photo, now }) => {
+                setBuzzNotice(null);
+                let mediaUrl: string | null = null;
+                if (photo) {
+                  mediaUrl = await uploadPostImage(photo);
+                  if (!mediaUrl && network.requiresImage) {
+                    setBuzzNotice("Sign in to post photos — the photo could not be uploaded.");
+                    return;
+                  }
+                }
+                const at = now ? new Date() : null;
+                const item: HoneyItem = {
+                  id: nid("p"),
+                  title: `${network.label}: ${look.title}`,
+                  date: at ? isoDay(at) : date,
+                  time: at ? at.toTimeString().slice(0, 5) : time,
+                  kind: "post",
+                  source: "manual",
+                  network: network.label,
+                  lookId: look.id,
+                  caption,
+                  postStatus: "scheduled",
+                  beeNote: null,
+                  scheduledAt: at ? at.toISOString() : scheduledInstant(date, time),
+                  mediaUrl,
+                };
+                patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
+                void haptic("success");
+                const saved = await pushHoney([item]);
+                if (!now) {
+                  if (!saved) {
+                    setBuzzNotice(
+                      "Saved on this device. It posts once you're signed in and the account is connected.",
+                    );
+                  }
+                  return;
+                }
+                if (!saved) {
+                  setBuzzNotice("Could not reach Bee to post. It stays scheduled on Honey.");
+                  return;
+                }
+                await runPublishNow(item);
+              }}
+              onPublishNow={(post) => void runPublishNow(post)}
+            />
+          )}
+          {tab === "hive" && (
+            <HiveScreen
+              looks={snap.looks}
+              shareLook={shareLook}
+              onShared={() => setShareLook(null)}
+              onDiscussWithBee={(look) => {
+                setInput(`Let's talk about "${look.title}" — ${look.formula.join(", ")}. `);
+                setTab("bee");
+                setBeeView("chat");
+              }}
+            />
+          )}
+          {tab === "you" && youView === "moderation" && modQueue && (
+            <ModerationScreen
+              items={modQueue}
+              onBack={() => setYouView("profile")}
+              onChanged={(id) => setModQueue((q) => (q ?? []).filter((i) => i.id !== id))}
+            />
+          )}
+          {tab === "you" && youView === "membership" && (
+            <Tiers
+              current={snap.tier}
+              active={snap.membershipActive}
+              gated={gateOpen && !looksUnlocked}
+              busy={tierBusy}
+              notice={tierNotice}
+              onBack={() => setYouView("profile")}
+              onManage={async () => {
+                setTierBusy(true);
+                const result = await openBillingPortal();
+                setTierBusy(false);
+                if (result) setTierNotice(result.error);
+              }}
+              onSelect={async (tier) => {
+                setTierBusy(true);
+                setTierNotice(null);
+                const plan = TIERS.find((t) => t.slug === tier);
+                const result = plan?.inquiry ? await requestAtelier() : await startCheckout(tier);
+                setTierBusy(false);
+                if (result) setTierNotice(result.error);
+                else if (plan?.inquiry) {
+                  setTierNotice("Thank you. The Atelier team will be in touch.");
+                  void haptic("success");
+                }
               }}
             />
           )}
@@ -462,11 +981,25 @@ export function MobileApp() {
                 patch((s) => ({ ...s, notifications: { ...s.notifications, [key]: value } }));
               }}
               onPrivacy={() => setYouView("privacy")}
+              onMembership={() => setYouView("membership")}
+              moderationCount={modQueue ? modQueue.length : null}
+              onModeration={() => setYouView("moderation")}
               onReset={() => {
+                void signOut();
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
-                setTab("guide");
+                setTab("today");
                 setYouView("profile");
+              }}
+              onDeleteAccount={async () => {
+                const err = await deleteMyAccount();
+                if (err) return err;
+                await signOut();
+                window.localStorage.removeItem("la_mobile_v2");
+                setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
+                setTab("today");
+                setYouView("profile");
+                return null;
               }}
             />
           )}
@@ -649,10 +1182,12 @@ function InterviewScreen({
 
 function SelfieScreen({
   selfie,
+  building,
   onPick,
   onContinue,
 }: {
   selfie: string | null;
+  building: boolean;
   onPick: () => void;
   onContinue: () => void;
 }) {
@@ -661,8 +1196,8 @@ function SelfieScreen({
       kicker="Likeness"
       title="A photo of you"
       footer={
-        <NeoButton variant="ink" disabled={!selfie} onClick={onContinue}>
-          Build my Style Guide
+        <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
+          {building ? "Bee is building your looks…" : "Build my Style Guide"}
         </NeoButton>
       }
     >
@@ -755,6 +1290,8 @@ function StyleGuide({
   onDismissRate,
   onSelect,
   onSave,
+  onShare,
+  notice,
 }: {
   looks: GuideLook[];
   selfie: string | null;
@@ -764,6 +1301,8 @@ function StyleGuide({
   onDismissRate: () => void;
   onSelect: (look: GuideLook) => void;
   onSave: (look: GuideLook) => void;
+  onShare: (look: GuideLook) => void;
+  notice: string | null;
 }) {
   if (!selfie) {
     return (
@@ -777,6 +1316,11 @@ function StyleGuide({
   }
   return (
     <Screen kicker="Style Guide" title="Looks on you">
+      {notice && (
+        <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
+          {notice}
+        </p>
+      )}
       {rateOpen && (
         <div className="mb-4 neo-inset px-3 py-3 text-sm leading-relaxed">
           <p>
@@ -797,13 +1341,21 @@ function StyleGuide({
           <LookCard
             key={look.id}
             look={look}
+            selfie={selfie}
             rendering={renderingId === look.id}
             actionLabel={look.saved ? "Saved" : "Save this look"}
             onAction={() => onSave(look)}
             footer={
-              <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
-                {look.tryOnUrl ? "View try-on" : "See this on me"}
-              </NeoButton>
+              <>
+                <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
+                  {look.tryOnUrl ? "View try-on" : "See this on me"}
+                </NeoButton>
+                {look.saved && (
+                  <NeoButton className="mt-3" onClick={() => onShare(look)}>
+                    Share to the Hive
+                  </NeoButton>
+                )}
+              </>
             }
           />
         ))}
@@ -847,49 +1399,75 @@ function WardrobeReset({
 
 function Tiers({
   current,
+  active,
   gated,
+  busy,
+  notice,
+  onBack,
   onSelect,
+  onManage,
 }: {
   current: string;
+  active: boolean;
   gated: boolean;
-  onSelect: (t: string) => void;
+  busy: boolean;
+  notice: string | null;
+  onBack: () => void;
+  onSelect: (t: PlanSlug) => void;
+  onManage: () => void;
 }) {
   const index = Math.max(0, TIER_ORDER.indexOf(current as PlanSlug));
   const progress = ((index + 1) / TIER_ORDER.length) * 100;
   return (
-    <Screen kicker="Membership" title="Your metal">
+    <Screen
+      kicker="Membership"
+      title="Your metal"
+      footer={
+        <NeoButton onClick={onBack} variant="ink">
+          Back to You
+        </NeoButton>
+      }
+    >
       {gated && (
         <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
           Your 14-day window is done. Pick a tier to keep generating looks.
         </p>
       )}
+      {notice && (
+        <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2" role="status">
+          {notice}
+        </p>
+      )}
       <div className="neo-inset p-4">
-        <p className="text-sm">Progress toward Atelier</p>
+        <p className="text-sm">{active ? "Your membership" : "Progress toward Atelier"}</p>
         <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
-            className="h-full rounded-[8px] bg-[var(--gold)]"
-            style={{ width: `${progress}%` }}
+            className="h-full rounded-[8px] bg-[var(--gold-bright)]"
+            style={{ width: `${active ? progress : 0}%` }}
           />
         </div>
         <p className="mt-2 text-sm">
-          {TIERS[index]?.name ?? "Silver"} · {index + 1} of {TIER_ORDER.length}
+          {active
+            ? `${TIERS[index]?.name ?? "Silver"} · ${index + 1} of ${TIER_ORDER.length}`
+            : "No paid tier yet"}
         </p>
       </div>
       <ol className="mt-5 space-y-3">
         {TIERS.map((plan) => {
-          const active = plan.slug === current;
+          const mine = active && plan.slug === current;
           return (
             <li key={plan.slug}>
               <button
                 type="button"
-                aria-pressed={active}
+                aria-pressed={mine}
+                disabled={busy || mine || (active && !plan.inquiry)}
                 className="neo-choice flex-col items-start"
                 onClick={() => onSelect(plan.slug)}
               >
                 <span className="flex w-full items-center justify-between">
                   <span className="la-display text-lg">{plan.name}</span>
                   <span className="text-sm text-[var(--gold)]">
-                    {plan.inquiry ? "Inquiry" : `$${plan.priceMonthly}/mo`}
+                    {mine ? "Current" : plan.inquiry ? "Inquire" : `$${plan.priceMonthly}/mo`}
                   </span>
                 </span>
                 <span className="mt-1 text-sm font-normal opacity-70">{plan.tagline}</span>
@@ -898,6 +1476,11 @@ function Tiers({
           );
         })}
       </ol>
+      {active && (
+        <NeoButton className="mt-4" disabled={busy} onClick={onManage}>
+          Change or cancel membership
+        </NeoButton>
+      )}
     </Screen>
   );
 }
@@ -907,14 +1490,26 @@ function Profile({
   onSelfie,
   onNotify,
   onPrivacy,
+  onMembership,
+  moderationCount,
+  onModeration,
   onReset,
+  onDeleteAccount,
 }: {
   snap: AppSnapshot;
   onSelfie: () => void;
   onNotify: (key: "beeReady" | "tierUpgrade", value: boolean) => void;
   onPrivacy: () => void;
+  onMembership: () => void;
+  /** null = not a moderator. */
+  moderationCount: number | null;
+  onModeration: () => void;
   onReset: () => void;
+  onDeleteAccount: () => Promise<string | null>;
 }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   return (
     <Screen kicker="You" title="Fit preferences">
       <div className="neo-raised p-4">
@@ -954,12 +1549,64 @@ function Profile({
         </p>
         <p className="mt-2 opacity-70">Running on {platformLabel(currentBeePlatform())}</p>
       </div>
-      <NeoButton className="mt-4" onClick={onPrivacy}>
+      <NeoButton className="mt-4" variant="gold" onClick={onMembership}>
+        {snap.membershipActive
+          ? `Membership · ${TIERS.find((t) => t.slug === snap.tier)?.name ?? "Active"}`
+          : "Membership"}
+      </NeoButton>
+      {moderationCount !== null && (
+        <NeoButton className="mt-3" onClick={onModeration}>
+          Hive moderation{moderationCount > 0 ? ` · ${moderationCount} to review` : ""}
+        </NeoButton>
+      )}
+      <NeoButton className="mt-3" onClick={onPrivacy}>
         Privacy policy
       </NeoButton>
       <NeoButton className="mt-3" onClick={onReset}>
         Sign out
       </NeoButton>
+      {confirmDelete ? (
+        <div
+          className="mt-5 neo-inset p-4 text-sm leading-relaxed"
+          role="alertdialog"
+          aria-labelledby="del-title"
+        >
+          <p id="del-title" className="font-semibold">
+            Delete your LiveAskew account?
+          </p>
+          <p className="mt-2">
+            This permanently removes your profile, looks, photos, Honey calendar, Hive posts,
+            connected social accounts, and cancels any membership. It cannot be undone.
+          </p>
+          {deleteError && <p className="mt-2 font-semibold">{deleteError}</p>}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <NeoButton
+              variant="ink"
+              disabled={deleting}
+              onClick={async () => {
+                setDeleting(true);
+                setDeleteError(null);
+                const err = await onDeleteAccount();
+                setDeleting(false);
+                if (err) setDeleteError(err);
+              }}
+            >
+              {deleting ? "Deleting…" : "Delete forever"}
+            </NeoButton>
+            <NeoButton disabled={deleting} onClick={() => setConfirmDelete(false)}>
+              Keep account
+            </NeoButton>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="mt-5 w-full py-2 text-center text-sm font-semibold underline underline-offset-4"
+          onClick={() => setConfirmDelete(true)}
+        >
+          Delete account
+        </button>
+      )}
     </Screen>
   );
 }
@@ -1015,18 +1662,17 @@ function NotifyRow({
 }
 
 function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: typeof MessageCircle }[] = [
-    { id: "home", label: "Bee", icon: MessageCircle },
-    { id: "guide", label: "Guide", icon: Bookmark },
-    { id: "reset", label: "Reset", icon: RefreshCw },
-    { id: "tier", label: "Tier", icon: Sparkles },
-    { id: "you", label: "You", icon: Settings },
+  const items: { id: Tab; label: string; crest: CrestName | null }[] = [
+    { id: "today", label: "Today", crest: null },
+    { id: "bee", label: "Bee", crest: "bee" },
+    { id: "honey", label: "Honey", crest: "honey" },
+    { id: "buzz", label: "Buzz", crest: "buzz" },
+    { id: "hive", label: "Hive", crest: "hive" },
   ];
   return (
-    <nav aria-label="Main" className="grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
+    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
       {items.map((item) => {
         const active = tab === item.id;
-        const Icon = item.icon;
         return (
           <button
             key={item.id}
@@ -1037,7 +1683,11 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
               active ? "neo-inset" : "neo-raised-sm"
             }`}
           >
-            <Icon size={16} aria-hidden />
+            {item.crest ? (
+              <Crest name={item.crest} size={22} decorative />
+            ) : (
+              <Home size={20} aria-hidden />
+            )}
             {item.label}
           </button>
         );

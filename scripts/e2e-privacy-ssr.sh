@@ -51,8 +51,9 @@ fail() {
 
 for needle in \
   "Privacy policy" \
-  "Bee stores fit answers" \
-  "never used to alter body proportions" \
+  "LiveAskew is one app with four parts" \
+  "never used to slim, reshape, or beautify" \
+  "Delete account" \
   "Play Console"; do
   grep -q "$needle" "$RESP_HTML" || fail "missing server HTML: $needle"
 done

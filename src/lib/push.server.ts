@@ -1,4 +1,5 @@
 import { createSign } from "node:crypto";
+import { apnsConfigured, sendApns } from "./apns.server";
 import { trialDaysLeft } from "@/mobile/lib/trial";
 
 export type PushKind = "trial_countdown" | "bee_recommendation";
@@ -6,7 +7,9 @@ export type PushPlatform = "ios" | "android" | "web";
 
 export const TRIAL_REMINDER_DAYS = [7, 3, 1] as const;
 
-export function trialReminderDay(daysLeft: number | null): (typeof TRIAL_REMINDER_DAYS)[number] | null {
+export function trialReminderDay(
+  daysLeft: number | null,
+): (typeof TRIAL_REMINDER_DAYS)[number] | null {
   if (daysLeft === 7 || daysLeft === 3 || daysLeft === 1) return daysLeft;
   return null;
 }
@@ -83,11 +86,14 @@ export async function persistTrialStartedAt(userId: string, startedAt: string): 
     .is("trial_started_at", null);
 }
 
-async function tokensForUser(userId: string): Promise<string[]> {
+async function tokensForUser(userId: string): Promise<{ token: string; platform: string }[]> {
   const admin = await getAdmin();
-  const { data, error } = await admin.from("push_tokens").select("token").eq("user_id", userId);
+  const { data, error } = await admin
+    .from("push_tokens")
+    .select("token, platform")
+    .eq("user_id", userId);
   if (error || !data) return [];
-  return (data as { token: string }[]).map((row) => row.token).filter(Boolean);
+  return (data as { token: string; platform: string }[]).filter((row) => row.token);
 }
 
 async function dropInvalidToken(token: string): Promise<void> {
@@ -106,7 +112,9 @@ export async function notifyBeeRecommendation(userId: string): Promise<{ sent: n
   return sendToUser(userId, "bee_recommendation");
 }
 
-export async function runTrialCountdownPushes(now = Date.now()): Promise<{ sent: number; skipped: number }> {
+export async function runTrialCountdownPushes(
+  now = Date.now(),
+): Promise<{ sent: number; skipped: number }> {
   const admin = await getAdmin();
   const { data, error } = await admin
     .from("profiles")
@@ -145,8 +153,12 @@ async function sendToUser(
   if (tokens.length === 0) return { sent: 0 };
   const payload = copyFor(kind, extra);
   let sent = 0;
-  for (const token of tokens) {
-    const ok = await sendFcm(token, payload);
+  for (const { token, platform } of tokens) {
+    // iPhones register an APNs device token (Capacitor), Android an FCM token.
+    const ok =
+      platform === "ios" && apnsConfigured()
+        ? await sendApns(token, payload)
+        : await sendFcm(token, payload);
     if (ok === "invalid") await dropInvalidToken(token);
     else if (ok === "sent") sent += 1;
   }
@@ -178,7 +190,11 @@ async function sendFcm(token: string, payload: FcmPayload): Promise<SendResult> 
   return "skipped";
 }
 
-async function sendFcmLegacy(serverKey: string, token: string, payload: FcmPayload): Promise<SendResult> {
+async function sendFcmLegacy(
+  serverKey: string,
+  token: string,
+  payload: FcmPayload,
+): Promise<SendResult> {
   const res = await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
@@ -197,7 +213,10 @@ async function sendFcmLegacy(serverKey: string, token: string, payload: FcmPaylo
     console.error("[push] FCM legacy status", res.status, await res.text().catch(() => ""));
     return "skipped";
   }
-  const json = (await res.json().catch(() => ({}))) as { failure?: number; results?: { error?: string }[] };
+  const json = (await res.json().catch(() => ({}))) as {
+    failure?: number;
+    results?: { error?: string }[];
+  };
   const err = json.results?.[0]?.error;
   if (err === "NotRegistered" || err === "InvalidRegistration") return "invalid";
   if (json.failure && json.failure > 0 && err) return "skipped";
@@ -210,7 +229,11 @@ type ServiceAccount = {
   private_key?: string;
 };
 
-async function sendFcmHttpV1(rawJson: string, token: string, payload: FcmPayload): Promise<SendResult> {
+async function sendFcmHttpV1(
+  rawJson: string,
+  token: string,
+  payload: FcmPayload,
+): Promise<SendResult> {
   const account = JSON.parse(rawJson) as ServiceAccount;
   const projectId = account.project_id;
   if (!projectId || !account.client_email || !account.private_key) {

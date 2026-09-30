@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { requireApiUser } from "@/lib/api-auth.server";
+import { guardAi } from "@/lib/entitlement.server";
+import { ownerCacheKey, safeSegment } from "@/lib/tryon.server";
 
 type Body = {
   lookId?: string;
   cacheKey?: string;
   selfieDataUrl?: string;
-  userId?: string;
   garment?: {
     title?: string;
     formula?: string[];
@@ -31,9 +33,15 @@ export const Route = createFileRoute("/api/tryon")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const caller = await requireApiUser(request);
+        if (caller instanceof Response) return caller;
+        const denied = await guardAi(caller, "tryon");
+        if (denied) return denied;
+        const ownerId = caller === "preview" ? undefined : caller;
         const body = (await request.json().catch(() => ({}))) as Body;
-        const lookId = body.lookId?.trim();
-        const key = body.cacheKey?.trim();
+        // Both end up in storage paths and cache keys: keep them to a safe alphabet.
+        const lookId = safeSegment(body.lookId);
+        const key = safeSegment(body.cacheKey);
         const selfie = body.selfieDataUrl;
         if (!lookId || !key || !selfie) {
           return Response.json({ error: "missing_fields" }, { status: 400 });
@@ -45,17 +53,22 @@ export const Route = createFileRoute("/api/tryon")({
           return Response.json({ error: "reshape_forbidden" }, { status: 422 });
         }
 
-        try {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { data: cached } = await supabaseAdmin
-            .from("tryon_renders")
-            .select("image_url")
-            .eq("cache_key", key)
-            .maybeSingle();
-          const url = (cached as { image_url?: string } | null)?.image_url;
-          if (url) return Response.json({ url, cached: true, source: "cache" });
-        } catch {
-          /* continue */
+        // Renders are private to their owner: the cache is namespaced and checked by user.
+        const storedKey = ownerId ? ownerCacheKey(ownerId, key) : null;
+        if (ownerId && storedKey) {
+          try {
+            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+            const { data: cached } = await supabaseAdmin
+              .from("tryon_renders")
+              .select("image_url")
+              .eq("cache_key", storedKey)
+              .eq("user_id", ownerId)
+              .maybeSingle();
+            const url = (cached as { image_url?: string } | null)?.image_url;
+            if (url) return Response.json({ url, cached: true, source: "cache" });
+          } catch {
+            /* continue */
+          }
         }
 
         const webhook = process.env.N8N_TRYON_WEBHOOK_URL;
@@ -90,7 +103,7 @@ export const Route = createFileRoute("/api/tryon")({
               let url = json.url ?? json.imageUrl ?? null;
               if (!url && json.imageBase64) url = `data:image/jpeg;base64,${json.imageBase64}`;
               if (url) {
-                await persistTryOn(key, lookId, body.userId, url, selfie);
+                if (ownerId) await persistTryOn(key, lookId, ownerId, url, selfie);
                 return Response.json({ url, cached: false, source: "n8n" });
               }
             }
@@ -102,7 +115,7 @@ export const Route = createFileRoute("/api/tryon")({
         }
 
         // Identity passthrough: never generate a reshaped body if the try-on model is unavailable.
-        await persistTryOn(key, lookId, body.userId, selfie, selfie);
+        // Nothing is stored — the app shows the person's own photo it already has.
         return Response.json({
           url: selfie,
           cached: false,
@@ -117,14 +130,14 @@ export const Route = createFileRoute("/api/tryon")({
 async function persistTryOn(
   cacheKey: string,
   lookId: string,
-  userId: string | undefined,
+  userId: string,
   url: string,
   selfie: string,
 ) {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let imageUrl = url;
-    if (url.startsWith("data:") && userId) {
+    if (url.startsWith("data:")) {
       const parsed = dataUrlToBytes(url.startsWith("data:") ? url : selfie);
       if (parsed) {
         const path = `${userId}/${lookId}-${cacheKey}.jpg`;
@@ -142,9 +155,9 @@ async function persistTryOn(
     }
     await supabaseAdmin.from("tryon_renders").upsert(
       {
-        user_id: userId ?? null,
+        user_id: userId,
         look_id: lookId,
-        cache_key: cacheKey,
+        cache_key: ownerCacheKey(userId, cacheKey),
         image_url: imageUrl,
       } as never,
       { onConflict: "cache_key" },

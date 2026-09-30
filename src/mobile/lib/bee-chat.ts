@@ -1,7 +1,7 @@
 import type { OnboardingAnswers } from "./recommend";
 import { localBeeReply } from "./recommend";
 import type { ChatMsg } from "./storage";
-import { apiUrl } from "./api";
+import { apiFetch } from "./api";
 
 export async function askBee(opts: {
   messages: ChatMsg[];
@@ -9,9 +9,8 @@ export async function askBee(opts: {
 }): Promise<string> {
   const lastUser = [...opts.messages].reverse().find((m) => m.role === "user")?.content ?? "";
   try {
-    const res = await fetch(apiUrl("/api/bee/app"), {
+    const res = await apiFetch("/api/bee/app", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         profile: {
           goal: opts.profile.goal,
@@ -24,6 +23,12 @@ export async function askBee(opts: {
         })),
       }),
     });
+    if (res.status === 402) {
+      return "Your fourteen days with Bee have ended. Choose a tier under You and we'll pick up right here.";
+    }
+    if (res.status === 429) {
+      return "We've covered a lot this hour. Give me a few minutes, then tell me what's next.";
+    }
     if (res.ok) {
       const json = (await res.json()) as { text?: string };
       if (json.text?.trim()) return json.text.trim();

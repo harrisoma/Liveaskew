@@ -24,12 +24,8 @@ export function RouteError({
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           LiveAskew
         </p>
-        <h1 className="mt-3 font-serif text-3xl tracking-tight text-foreground">
-          {title}
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {message}
-        </p>
+        <h1 className="mt-3 font-serif text-3xl tracking-tight text-foreground">{title}</h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{message}</p>
 
         {error?.message && (
           <pre className="mt-4 max-h-32 overflow-auto rounded-md bg-muted/60 px-3 py-2 text-left font-mono text-[11px] text-muted-foreground">
