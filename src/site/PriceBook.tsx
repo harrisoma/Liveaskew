@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { SITE_PLANS } from "./plans";
+import { isComingSoon, SITE_PLANS } from "./plans";
 
 function money(priceMonthly: number, inquiry: boolean) {
   return inquiry || priceMonthly === 0 ? "By inquiry" : `$${priceMonthly}`;
@@ -91,7 +91,10 @@ export function PriceBook() {
             <p className="book-kicker">In this membership</p>
             <ul className="book-features">
               {plan.features.map((feature) => (
-                <li key={feature}>{feature}</li>
+                <li key={feature}>
+                  {feature}
+                  {isComingSoon(feature) && <span className="book-soon">Coming soon</span>}
+                </li>
               ))}
             </ul>
           </article>
