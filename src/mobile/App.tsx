@@ -785,7 +785,13 @@ export function MobileApp() {
                 }
                 patch((s) => ({
                   ...s,
-                  honey: mergeHoney(s.honey, result.items),
+                  honey: mergeHoney(
+                    s.honey,
+                    result.items.map((item) => {
+                      const mine = s.honey.find((h) => h.id === item.id);
+                      return mine ? { ...item, lookId: mine.lookId, beeNote: mine.beeNote } : item;
+                    }),
+                  ),
                   calendarFeeds: s.calendarFeeds.includes(url)
                     ? s.calendarFeeds
                     : [...s.calendarFeeds, url].slice(-5),

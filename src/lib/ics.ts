@@ -52,7 +52,7 @@ function parseStart(value: string): { date: string; time: string | null } | null
  */
 export function parseIcs(text: string, from: string, to: string, limit = 300): IcsEvent[] {
   const events: IcsEvent[] = [];
-  let current: (Partial<IcsEvent> & { cancelled?: boolean }) | null = null;
+  let current: (Partial<IcsEvent> & { cancelled?: boolean; recurrence?: string }) | null = null;
   for (const line of unfold(text)) {
     if (line === "BEGIN:VEVENT") {
       current = {};
@@ -67,7 +67,8 @@ export function parseIcs(text: string, from: string, to: string, limit = 300): I
         current.date <= to
       ) {
         events.push({
-          uid: current.uid,
+          // An edited occurrence of a repeating event shares the series UID.
+          uid: current.recurrence ? `${current.uid}#${current.recurrence}` : current.uid,
           title: current.title || "Busy",
           date: current.date,
           time: current.time ?? null,
@@ -83,6 +84,7 @@ export function parseIcs(text: string, from: string, to: string, limit = 300): I
     const name = line.slice(0, colon).split(";")[0].toUpperCase();
     const value = line.slice(colon + 1);
     if (name === "UID") current.uid = value.trim();
+    else if (name === "RECURRENCE-ID") current.recurrence = value.trim();
     else if (name === "SUMMARY") current.title = unescape(value).slice(0, 160);
     else if (name === "STATUS" && value.trim().toUpperCase() === "CANCELLED")
       current.cancelled = true;
@@ -94,5 +96,6 @@ export function parseIcs(text: string, from: string, to: string, limit = 300): I
       }
     }
   }
-  return events;
+  // One row per id: a feed may repeat an event; the last copy wins.
+  return [...new Map(events.map((e) => [e.uid, e])).values()];
 }

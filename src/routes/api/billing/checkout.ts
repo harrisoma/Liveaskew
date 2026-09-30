@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { requireApiUser } from "@/lib/api-auth.server";
+import { trialStart } from "@/lib/entitlement.server";
 import {
   billingConfigured,
   billingEnvironment,
@@ -44,8 +45,8 @@ export const Route = createFileRoute("/api/billing/checkout")({
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const [{ data: profile }, { data: userData }] = await Promise.all([
-          supabaseAdmin.from("profiles").select("trial_started_at").eq("id", caller).maybeSingle(),
+        const [trialStartedAt, { data: userData }] = await Promise.all([
+          trialStart(caller),
           supabaseAdmin.auth.admin.getUserById(caller),
         ]);
 
@@ -71,7 +72,7 @@ export const Route = createFileRoute("/api/billing/checkout")({
             returnUrl = `${base}/api/public/app-return?path=billing`;
           }
           const sep = returnUrl.includes("?") ? "&" : "?";
-          const trialEnd = stripeTrialEnd(profile?.trial_started_at);
+          const trialEnd = stripeTrialEnd(trialStartedAt);
           const session = await stripe.checkout.sessions.create({
             mode: "subscription",
             line_items: [{ price: price.id, quantity: 1 }],

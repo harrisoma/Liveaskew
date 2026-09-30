@@ -2,10 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { requireApiUser } from "@/lib/api-auth.server";
 import { HONEY_NETWORKS } from "@/lib/honey";
+import { isOwnBuzzMedia } from "@/lib/buzz/media.server";
 import { HONEY_COLUMNS, honeyToInsert, rowToHoney } from "@/lib/honey.server";
 
 const itemSchema = z.object({
-  id: z.string().min(1).max(80),
+  id: z.string().min(1).max(120),
   title: z.string().trim().min(1).max(160),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time: z
@@ -68,7 +69,14 @@ export const Route = createFileRoute("/api/honey/")({
           );
         const existing = new Map((existingRows ?? []).map((r) => [r.client_id, r]));
         // Rows with and without post fields go separately so each upsert has one column set.
-        const rows = items.map((item) => honeyToInsert(userId, item, existing.get(item.id)));
+        // Post photos are only accepted from the member's own buzz-media folder.
+        const rows = items.map((item) =>
+          honeyToInsert(
+            userId,
+            { ...item, mediaUrl: isOwnBuzzMedia(item.mediaUrl, userId) ? item.mediaUrl : null },
+            existing.get(item.id),
+          ),
+        );
         const groups = new Map<string, typeof rows>();
         for (const row of rows) {
           const key = Object.keys(row).sort().join(",");

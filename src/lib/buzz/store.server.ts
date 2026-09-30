@@ -1,5 +1,6 @@
 import { networkById, networkByLabel, type ConnectionSummary, type NetworkId } from "./index";
 import { openToken, sealToken } from "./crypto.server";
+import { isOwnBuzzMedia } from "./media.server";
 import {
   publishPost,
   refreshIfNeeded,
@@ -123,6 +124,12 @@ export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; erro
     }
   } catch (err) {
     const error = err instanceof Error ? err.message : "Sign-in expired. Reconnect in Buzz.";
+    await finish({ post_status: "failed", post_error: error });
+    return { ok: false, error };
+  }
+
+  if (post.media_url && !isOwnBuzzMedia(post.media_url, post.user_id)) {
+    const error = "That photo can't be posted. Add it again from Buzz.";
     await finish({ post_status: "failed", post_error: error });
     return { ok: false, error };
   }

@@ -59,7 +59,7 @@ export const Route = createFileRoute("/api/honey/import")({
         until.setDate(until.getDate() + 60);
         const events = parseIcs(text, isoDay(today), isoDay(until));
         const items: HoneyItem[] = events.map((e) => ({
-          id: `${feed.source}_${e.uid}`.slice(0, 80),
+          id: `${feed.source}_${e.uid}`.slice(0, 120),
           title: e.title,
           date: e.date,
           time: e.time,
@@ -74,16 +74,19 @@ export const Route = createFileRoute("/api/honey/import")({
 
         if (caller !== "preview" && items.length > 0) {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { error } = await supabaseAdmin.from("calendar_events").upsert(
-            items.map((item) => ({
-              ...honeyToInsert(caller, item),
-              external_id: item.id,
-              // Keep Bee's note on re-sync.
-              outfit_recommendation: undefined,
-              recommendation_status: undefined,
-            })),
-            { onConflict: "user_id,client_id" },
-          );
+          const rows = items.map((item) => {
+            // Leave Bee's note and its status out entirely so a re-sync never touches them
+            // (sending undefined would still write NULL).
+            const {
+              outfit_recommendation: _note,
+              recommendation_status: _status,
+              ...row
+            } = honeyToInsert(caller, item);
+            return { ...row, external_id: item.id };
+          });
+          const { error } = await supabaseAdmin
+            .from("calendar_events")
+            .upsert(rows, { onConflict: "user_id,client_id" });
           if (error) {
             console.error("[honey] import upsert failed", error.message);
             return Response.json({ error: "honey_unavailable" }, { status: 503 });

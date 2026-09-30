@@ -640,6 +640,21 @@ export type Database = {
         };
         Relationships: [];
       };
+      member_trials: {
+        Row: {
+          started_at: string;
+          user_id: string;
+        };
+        Insert: {
+          started_at?: string;
+          user_id: string;
+        };
+        Update: {
+          started_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       personal_styling_inquiries: {
         Row: {
           best_time_to_call: string | null;

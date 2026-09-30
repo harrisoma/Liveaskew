@@ -67,7 +67,8 @@ export function stripeTrialEnd(
   now = Date.now(),
 ): number | null {
   if (!trialStartedAt) return null;
-  const end = Date.parse(trialStartedAt) + TRIAL_MS;
+  // Never longer than a fresh 14-day trial, whatever the start date says.
+  const end = Math.min(Date.parse(trialStartedAt) + TRIAL_MS, now + TRIAL_MS);
   if (Number.isNaN(end) || end - now < 48 * 60 * 60 * 1000) return null;
   return Math.floor(end / 1000);
 }

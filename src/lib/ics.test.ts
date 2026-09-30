@@ -56,3 +56,37 @@ describe("feedSource", () => {
     expect(feedSource("https://169.254.169.254/latest")).toBeNull();
   });
 });
+
+describe("parseIcs repeating events", () => {
+  it("keeps an edited occurrence separate from its series and drops exact duplicates", () => {
+    const feed = [
+      "BEGIN:VCALENDAR",
+      "BEGIN:VEVENT",
+      "UID:weekly@x",
+      "DTSTART:20261001T090000",
+      "RRULE:FREQ=WEEKLY",
+      "SUMMARY:Standup",
+      "END:VEVENT",
+      "BEGIN:VEVENT",
+      "UID:weekly@x",
+      "RECURRENCE-ID:20261008T090000",
+      "DTSTART:20261008T100000",
+      "SUMMARY:Standup (moved)",
+      "END:VEVENT",
+      "BEGIN:VEVENT",
+      "UID:dup@x",
+      "DTSTART:20261003",
+      "SUMMARY:First copy",
+      "END:VEVENT",
+      "BEGIN:VEVENT",
+      "UID:dup@x",
+      "DTSTART:20261003",
+      "SUMMARY:Second copy",
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\n");
+    const events = parseIcs(feed, "2026-09-29", "2026-12-31");
+    expect(events.map((e) => e.uid)).toEqual(["weekly@x", "weekly@x#20261008T090000", "dup@x"]);
+    expect(events.find((e) => e.uid === "dup@x")?.title).toBe("Second copy");
+  });
+});
