@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CalendarDays, Megaphone, MessagesSquare, Settings, Sparkles, WifiOff } from "lucide-react";
+import { Home, Settings, WifiOff } from "lucide-react";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/ui";
 import { HoneyScreen } from "./screens/Honey";
 import { BuzzScreen } from "./screens/Buzz";
 import { HiveScreen } from "./screens/Hive";
+import { TodayScreen } from "./screens/Today";
+import { Crest, type CrestName } from "./components/Crest";
 import { ModerationScreen } from "./screens/Moderation";
 import { fetchModerationQueue, type ModerationItem } from "./lib/moderation";
 import {
@@ -65,7 +67,7 @@ import {
 } from "./native/bridge";
 import "./styles.css";
 
-type Tab = "bee" | "honey" | "buzz" | "hive" | "you";
+type Tab = "today" | "bee" | "honey" | "buzz" | "hive" | "you";
 type BeeView = "chat" | "looks" | "reset";
 
 export function MobileApp() {
@@ -73,7 +75,7 @@ export function MobileApp() {
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
   const snapRef = useRef(snap);
   snapRef.current = snap;
-  const [tab, setTab] = useState<Tab>("bee");
+  const [tab, setTab] = useState<Tab>("today");
   const [beeView, setBeeView] = useState<BeeView>("looks");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -230,6 +232,32 @@ export function MobileApp() {
     void pushHoney(items);
   }
 
+  /** Bee builds one look for a Honey event and pins it to that day. */
+  async function dressMe(item: HoneyItem) {
+    if (!looksUnlocked) {
+      setGateOpen(true);
+      openMembership();
+      return;
+    }
+    setDressingId(item.id);
+    const { looks } = await generateLooks({
+      interview: snap.interview.answers,
+      occasion: { title: item.title, date: item.date, kind: item.kind },
+      count: 1,
+    });
+    setDressingId(null);
+    const look = looks[0];
+    if (!look) return;
+    const dressed: HoneyItem = {
+      ...item,
+      lookId: look.id,
+      beeNote: `${look.title}: ${look.formula.join(", ")}`,
+    };
+    patch((s) => ({ ...s, looks: [look, ...s.looks] }));
+    upsertHoney([dressed]);
+    void haptic("success");
+  }
+
   async function runPublishNow(post: HoneyItem) {
     setBuzzBusy(post.id);
     patch((s) => ({
@@ -285,7 +313,7 @@ export function MobileApp() {
         },
       ],
     }));
-    setTab("bee");
+    setTab("today");
     setBeeView("looks");
     void haptic("success");
     void persistTrialStartedAt(startedAt);
@@ -313,8 +341,35 @@ export function MobileApp() {
           Offline — showing your last session.
         </div>
       )}
-      {snap.phase === "app" && trialText && (
-        <p className="mx-5 mt-3 neo-inset px-3 py-2 text-sm" role="status">
+      {snap.phase === "app" && (
+        <header className="la-topbar">
+          <button
+            type="button"
+            className="flex items-center gap-2"
+            aria-label="LiveAskew — Today"
+            onClick={() => setTab("today")}
+          >
+            <Crest name="bee" size={30} decorative />
+            <span className="la-wordmark">
+              Live<b>Askew</b>
+            </span>
+          </button>
+          <button
+            type="button"
+            className="neo-icon-btn"
+            aria-label="You — profile, membership, privacy"
+            aria-current={tab === "you" ? "page" : undefined}
+            onClick={() => {
+              setTab("you");
+              setYouView("profile");
+            }}
+          >
+            <Settings size={18} aria-hidden />
+          </button>
+        </header>
+      )}
+      {snap.phase === "app" && trialText && tab !== "today" && (
+        <p className="mx-5 mt-2 neo-inset px-3 py-2 text-sm" role="status">
           {trialText}
         </p>
       )}
@@ -463,6 +518,25 @@ export function MobileApp() {
 
       {snap.phase === "app" && (
         <>
+          {tab === "today" && (
+            <TodayScreen
+              now={new Date()}
+              today={today}
+              looks={snap.looks}
+              honey={snap.honey}
+              dressingId={dressingId}
+              buzzConnected={buzzAccounts ? buzzAccounts.connections.length : null}
+              onOpen={(to) => {
+                setTab(to);
+                if (to === "bee") setBeeView("looks");
+              }}
+              onOpenLook={() => {
+                setTab("bee");
+                setBeeView("looks");
+              }}
+              onDressMe={(item) => void dressMe(item)}
+            />
+          )}
           {tab === "bee" && (
             <div className="px-5 pt-4">
               <Segmented
@@ -628,30 +702,7 @@ export function MobileApp() {
                 patch((s) => ({ ...s, honey: s.honey.filter((h) => h.id !== item.id) }));
                 void deleteHoney(item.id);
               }}
-              onDressMe={async (item) => {
-                if (!looksUnlocked) {
-                  setGateOpen(true);
-                  openMembership();
-                  return;
-                }
-                setDressingId(item.id);
-                const { looks } = await generateLooks({
-                  interview: snap.interview.answers,
-                  occasion: { title: item.title, date: item.date, kind: item.kind },
-                  count: 1,
-                });
-                setDressingId(null);
-                const look = looks[0];
-                if (!look) return;
-                const dressed: HoneyItem = {
-                  ...item,
-                  lookId: look.id,
-                  beeNote: `${look.title}: ${look.formula.join(", ")}`,
-                };
-                patch((s) => ({ ...s, looks: [look, ...s.looks] }));
-                upsertHoney([dressed]);
-                void haptic("success");
-              }}
+              onDressMe={(item) => void dressMe(item)}
               onImport={async (url) => {
                 setImporting(true);
                 setHoneyNotice(null);
@@ -821,7 +872,7 @@ export function MobileApp() {
                 void signOut();
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
-                setTab("bee");
+                setTab("today");
                 setYouView("profile");
               }}
             />
@@ -1255,7 +1306,7 @@ function Tiers({
         <p className="text-sm">{active ? "Your membership" : "Progress toward Atelier"}</p>
         <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
-            className="h-full rounded-[8px] bg-[var(--gold)]"
+            className="h-full rounded-[8px] bg-[var(--gold-bright)]"
             style={{ width: `${active ? progress : 0}%` }}
           />
         </div>
@@ -1428,18 +1479,17 @@ function NotifyRow({
 }
 
 function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
-  const items: { id: Tab; label: string; icon: typeof Sparkles }[] = [
-    { id: "bee", label: "Bee", icon: Sparkles },
-    { id: "honey", label: "Honey", icon: CalendarDays },
-    { id: "buzz", label: "Buzz", icon: Megaphone },
-    { id: "hive", label: "Hive", icon: MessagesSquare },
-    { id: "you", label: "You", icon: Settings },
+  const items: { id: Tab; label: string; crest: CrestName | null }[] = [
+    { id: "today", label: "Today", crest: null },
+    { id: "bee", label: "Bee", crest: "bee" },
+    { id: "honey", label: "Honey", crest: "honey" },
+    { id: "buzz", label: "Buzz", crest: "buzz" },
+    { id: "hive", label: "Hive", crest: "hive" },
   ];
   return (
-    <nav aria-label="Main" className="grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
+    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
       {items.map((item) => {
         const active = tab === item.id;
-        const Icon = item.icon;
         return (
           <button
             key={item.id}
@@ -1450,7 +1500,11 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
               active ? "neo-inset" : "neo-raised-sm"
             }`}
           >
-            <Icon size={16} aria-hidden />
+            {item.crest ? (
+              <Crest name={item.crest} size={22} decorative />
+            ) : (
+              <Home size={20} aria-hidden />
+            )}
             {item.label}
           </button>
         );

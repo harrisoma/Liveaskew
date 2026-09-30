@@ -4,7 +4,7 @@ Bee is one product on three surfaces: **web app**, **iOS**, and **Android**. The
 
 - App ID: `co.liveaskew.app` (permanent on iOS and Android)
 - Web app: `/` and `/app` on this Vercel project
-- Design: neumorphic `#e0e5ec`, rounded rectangles only, Poppins / Nunito
+- Design: neumorphic `#e0e5ec`, rounded rectangles only, Poppins / Nunito. Brand layer: the four black-and-gold crests (Bee, Honey, Buzz, Hive) in `src/assets/brand/`, text gold `#7d5a0e`, fill gold `#e2b04a`.
 
 ```bash
 npm run dev          # Bee web app + API
