@@ -45,8 +45,9 @@ export async function askBee(opts: {
   }
   if (crisis) return CRISIS_RESOURCES;
   if (opts.topic) {
-    const turns = opts.messages.filter((m) => m.role === "user").length;
-    return localTalkReply(opts.topic, turns);
+    // The message being answered is already in the list, so Bee's first reply is turn 0.
+    const turn = opts.messages.filter((m) => m.role === "user").length - 1;
+    return localTalkReply(opts.topic, Math.max(0, turn));
   }
   return localBeeReply(lastUser, opts.profile);
 }

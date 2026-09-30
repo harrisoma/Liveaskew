@@ -118,7 +118,7 @@ export function talkOpener(topic: TalkTopic, seed = Math.random()): string {
   return guide.openers[i];
 }
 
-/** Offline follow-up: acknowledge, then one deeper question for the topic. */
+/** Offline follow-up: acknowledge, then one deeper question. `turn` is 0 for Bee's first reply. */
 export function localTalkReply(topic: TalkTopic, turn: number): string {
   const deeper = TALK_GUIDES[topic].deeper;
   return `Thank you for saying that plainly. ${deeper[turn % deeper.length]}`;
@@ -147,6 +147,18 @@ export function needsCrisisCare(text: string): boolean {
 
 export const CRISIS_RESOURCES =
   "If you're in danger or thinking about ending your life, please reach a person now: in the US call or text 988 (Suicide & Crisis Lifeline), text HOME to 741741, or call the National Domestic Violence Hotline at 1-800-799-7233. Postpartum Support International's helpline is 1-800-944-4773. Outside the US, call your local emergency number. I'm here too — but you deserve a real voice right now.";
+
+const SAFETY_FIRST = `SAFETY — this matters more than anything else: the member's last message suggests they or someone in their care may be in danger. Stop the coaching and the styling. Respond with warmth and directly: say you're glad they told you, ask whether they are safe right now, and give them these resources — call or text 988 (US Suicide & Crisis Lifeline), text HOME to 741741, National Domestic Violence Hotline 1-800-799-7233, Postpartum Support International 1-800-944-4773, or local emergency services. Do not ask probing questions about details. Never use emoji.`;
+
+/**
+ * The prompt for a danger message in any Bee chat, styling included: Bee answers as a person
+ * who cares, never with an outfit.
+ */
+export function crisisSystemPrompt(): string {
+  return `You are Bee — LiveAskew's stylist and confidante. Warm, direct, short sentences.
+
+${SAFETY_FIRST}`;
+}
 
 /** Make sure a crisis reply always carries the resources, whatever the model wrote. */
 export function withCrisisResources(reply: string): string {
@@ -185,7 +197,7 @@ What you never do:
 ${
   crisis
     ? `
-SAFETY — this matters more than anything above: the member's last message suggests they or someone in their care may be in danger. Stop the coaching. Respond with warmth and directly: say you're glad they told you, ask whether they are safe right now, and give them these resources — call or text 988 (US Suicide & Crisis Lifeline), text HOME to 741741, National Domestic Violence Hotline 1-800-799-7233, Postpartum Support International 1-800-944-4773, or local emergency services. Do not ask probing questions about details.`
+${SAFETY_FIRST}`
     : `
 If at any point they mention wanting to harm themselves, being harmed, or a child being in danger, stop and make sure they have a way to reach a real person (988 in the US) before anything else.`
 }`;

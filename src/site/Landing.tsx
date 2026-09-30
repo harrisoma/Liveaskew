@@ -12,24 +12,24 @@ import shotHoney from "@/assets/site/honey.webp";
 import shotTalk from "@/assets/site/realtalk.webp";
 import { TALK_GUIDES, TALK_TOPICS } from "@/lib/bee-talk";
 import { Crest } from "@/mobile/components/Crest";
+import { forwardsToApp } from "./forward";
 import { PriceBook } from "./PriceBook";
 import { SiteFrame } from "./chrome";
 
 /**
- * Sign-in, checkout, and social connections used to land on "/". The app lives at /app now;
- * anything that still arrives here carrying a session or a result is passed straight through.
+ * Sign-in, checkout, and social connections used to land on "/", and home-screen installs
+ * still open "/". The app lives at /app now; anything that arrives here carrying a session,
+ * a result, or an error — or launched from the home screen — is passed straight through.
  */
 function useForwardAppReturns() {
   useEffect(() => {
     const { search, hash } = window.location;
-    const params = new URLSearchParams(search);
-    const carriesAppState =
-      hash.includes("access_token") ||
-      hash.includes("error_description") ||
-      params.has("code") ||
-      params.has("billing") ||
-      params.has("buzz");
-    if (carriesAppState) window.location.replace(`/app${search}${hash}`);
+    const standalone =
+      window.matchMedia?.("(display-mode: standalone)").matches ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (forwardsToApp(search, hash, standalone)) {
+      window.location.replace(`/app${search}${hash}`);
+    }
   }, []);
 }
 

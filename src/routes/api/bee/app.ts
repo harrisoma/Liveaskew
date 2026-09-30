@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import {
   TALK_TOPICS,
+  crisisSystemPrompt,
   needsCrisisCare,
   talkSystemPrompt,
   withCrisisResources,
@@ -82,9 +83,12 @@ export const Route = createFileRoute("/api/bee/app")({
           const lastUser =
             [...parsed.messages].reverse().find((m) => m.role === "user")?.content ?? "";
           const crisis = needsCrisisCare(lastUser);
+          // A danger message gets the safety-first prompt in every chat, not a styling answer.
           const system = parsed.topic
             ? talkSystemPrompt(parsed.topic, parsed.profile ?? {}, crisis)
-            : systemPrompt(parsed.profile ?? {});
+            : crisis
+              ? crisisSystemPrompt()
+              : systemPrompt(parsed.profile ?? {});
           const gateway = createOnixusAiGatewayProvider(ONIXUS_AI_API_KEY);
           const { text } = await generateText({
             model: gateway(BEE_MODEL),

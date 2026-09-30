@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   CRISIS_RESOURCES,
+  crisisSystemPrompt,
   TALK_GUIDES,
   TALK_TOPICS,
   isTalkTopic,
@@ -82,5 +83,18 @@ describe("crisis care", () => {
     expect(calm).toContain("One question per reply");
     expect(crisis).toContain("SAFETY");
     expect(crisis).toContain("988");
+  });
+});
+
+describe("safety in every chat", () => {
+  it("has a safety-first prompt for the styling chat", () => {
+    const prompt = crisisSystemPrompt();
+    expect(prompt).toContain("SAFETY");
+    expect(prompt).toContain("988");
+    expect(prompt).toContain("Stop the coaching and the styling");
+  });
+
+  it("starts offline Real Talk on the first deeper question", () => {
+    expect(localTalkReply("motherhood", 0)).toContain(TALK_GUIDES.motherhood.deeper[0]);
   });
 });
