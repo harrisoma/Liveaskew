@@ -12,23 +12,25 @@ vi.mock("@/integrations/supabase/client.server", () => ({
         pending.set(row.finish_hash, { ...row, created_at: new Date().toISOString() });
         return { error: null };
       },
+      select: () => ({
+        eq: (_col: string, hash: string) => ({
+          maybeSingle: async () => ({ data: pending.get(hash) ?? null }),
+        }),
+      }),
       delete: () => ({
         lt: async () => ({ error: null }),
-        eq: (_col: string, hash: string) => ({
-          select: () => ({
-            maybeSingle: async () => {
-              const row = pending.get(hash) ?? null;
-              pending.delete(hash);
-              return { data: row };
-            },
-          }),
-        }),
+        eq: async (_col: string, hash: string) => {
+          pending.delete(hash);
+          return { error: null };
+        },
       }),
     }),
   },
 }));
+let failSave = false;
 vi.mock("./store.server", () => ({
   saveAccounts: async (userId: string, accounts: { network: string }[]) => {
+    if (failSave) throw new Error("db down");
     saved.push({ userId, networks: accounts.map((a) => a.network) });
   },
 }));
@@ -52,6 +54,7 @@ beforeAll(() => {
 beforeEach(() => {
   pending.clear();
   saved.length = 0;
+  failSave = false;
 });
 
 describe("Buzz connect confirmation", () => {
@@ -74,5 +77,13 @@ describe("Buzz connect confirmation", () => {
     await parkAccounts(ALICE, "instagram", [account]);
     const [row] = [...pending.values()];
     expect(row.accounts_enc).not.toContain("secret");
+  });
+
+  it("keeps the parked account when saving fails, so the member can retry", async () => {
+    const token = await parkAccounts(ALICE, "instagram", [account]);
+    failSave = true;
+    await expect(confirmAccounts(token, ALICE)).rejects.toThrow();
+    failSave = false;
+    expect(await confirmAccounts(token, ALICE)).toEqual({ ok: true, networks: ["instagram"] });
   });
 });

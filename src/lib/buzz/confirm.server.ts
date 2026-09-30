@@ -50,17 +50,24 @@ export type ConfirmResult =
  */
 export async function confirmAccounts(token: string, callerId: string): Promise<ConfirmResult> {
   const db = await admin();
+  const hash = finishHash(token);
   const { data } = await db
     .from("social_oauth_pending")
-    .delete()
-    .eq("finish_hash", finishHash(token))
     .select("user_id, accounts_enc, created_at")
+    .eq("finish_hash", hash)
     .maybeSingle();
   if (!data || Date.parse(data.created_at) < Date.now() - PENDING_MS) {
+    if (data) await db.from("social_oauth_pending").delete().eq("finish_hash", hash);
     return { ok: false, error: "expired" };
   }
-  if (data.user_id !== callerId) return { ok: false, error: "wrong_account" };
+  if (data.user_id !== callerId) {
+    // Someone else's app: burn it so the sender can never claim it either.
+    await db.from("social_oauth_pending").delete().eq("finish_hash", hash);
+    return { ok: false, error: "wrong_account" };
+  }
+  // Save first, then remove the parked copy: a failed save can simply be retried.
   const accounts = JSON.parse(openToken(data.accounts_enc)) as ConnectedAccount[];
   await saveAccounts(callerId, accounts);
+  await db.from("social_oauth_pending").delete().eq("finish_hash", hash);
   return { ok: true, networks: accounts.map((a) => a.network) };
 }
