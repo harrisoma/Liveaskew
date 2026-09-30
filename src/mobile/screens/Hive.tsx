@@ -33,12 +33,17 @@ export function HiveScreen({
   shareLook,
   onShared,
   onDiscussWithBee,
+  openRoomId = null,
+  onRoomOpened,
 }: {
   looks: GuideLook[];
   /** A look sent from the Style Guide, waiting for a room. */
   shareLook: GuideLook | null;
   onShared: () => void;
   onDiscussWithBee: (look: GuideLook) => void;
+  /** A room to open straight away, e.g. from Bee's Real Talk. */
+  openRoomId?: string | null;
+  onRoomOpened?: () => void;
 }) {
   const [session, setSession] = useState<HiveSession | null>(null);
   const [rooms, setRooms] = useState<HiveRoom[]>([]);
@@ -55,6 +60,14 @@ export function HiveScreen({
       live = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!openRoomId) return;
+    const target = rooms.find((r) => r.id === openRoomId);
+    if (!target) return;
+    setRoom(target);
+    onRoomOpened?.();
+  }, [openRoomId, rooms, onRoomOpened]);
 
   if (!session) {
     return (

@@ -2,12 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
+import {
+  TALK_TOPICS,
+  needsCrisisCare,
+  talkSystemPrompt,
+  withCrisisResources,
+} from "@/lib/bee-talk";
 import { requireApiUser } from "@/lib/api-auth.server";
 import { guardAi } from "@/lib/entitlement.server";
 
 const BEE_MODEL = "google/gemini-2.5-flash";
 
 const bodySchema = z.object({
+  /** Real Talk topic; absent means the usual styling chat. */
+  topic: z.enum(TALK_TOPICS).optional(),
   profile: z
     .object({
       goal: z.string().nullable().optional(),
@@ -71,10 +79,16 @@ export const Route = createFileRoute("/api/bee/app")({
         }
 
         try {
+          const lastUser =
+            [...parsed.messages].reverse().find((m) => m.role === "user")?.content ?? "";
+          const crisis = needsCrisisCare(lastUser);
+          const system = parsed.topic
+            ? talkSystemPrompt(parsed.topic, parsed.profile ?? {}, crisis)
+            : systemPrompt(parsed.profile ?? {});
           const gateway = createOnixusAiGatewayProvider(ONIXUS_AI_API_KEY);
           const { text } = await generateText({
             model: gateway(BEE_MODEL),
-            system: systemPrompt(parsed.profile ?? {}),
+            system,
             messages: parsed.messages.map((m) => ({
               role: m.role,
               content: m.content,
@@ -82,7 +96,7 @@ export const Route = createFileRoute("/api/bee/app")({
           });
           const reply = text.trim();
           if (!reply) return Response.json({ error: "empty" }, { status: 502 });
-          return Response.json({ text: reply });
+          return Response.json({ text: crisis ? withCrisisResources(reply) : reply });
         } catch (err) {
           console.error("[bee/app] generate failed", err);
           return Response.json({ error: "bee_unavailable" }, { status: 503 });
