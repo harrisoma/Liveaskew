@@ -43,6 +43,7 @@ import {
   type BuzzAccounts,
 } from "./lib/buzz-client";
 import { bindReturnLinks } from "./lib/return-links";
+import { mergeLooks, pullLooks, pullStyle, pushLooks, pushStyle } from "./lib/style-sync";
 import { networkById, scheduledInstant } from "@/lib/buzz";
 import { isoDay, mergeHoney, type HoneyItem } from "@/lib/honey";
 import {
@@ -212,11 +213,16 @@ export function MobileApp() {
 
   /** Server truth for paid access and the Honey calendar, once there is a session. */
   async function syncAccount() {
-    const [membership, remote, accounts] = await Promise.all([
+    const [membership, remote, accounts, remoteLooks] = await Promise.all([
       fetchMembership(),
       pullHoney(),
       fetchBuzzAccounts(),
+      pullLooks(),
     ]);
+    if (remoteLooks) {
+      const known = new Set(remoteLooks.map((l) => l.id));
+      void pushLooks(snapRef.current.looks.filter((l) => !known.has(l.id)));
+    }
     setBuzzAccounts(accounts);
     setSnap((s) => ({
       ...s,
@@ -224,6 +230,7 @@ export function MobileApp() {
         ? { membershipActive: membership.active, tier: membership.tier ?? s.tier }
         : {}),
       honey: remote ? mergeHoney(s.honey, remote) : s.honey,
+      looks: remoteLooks ? mergeLooks(s.looks, remoteLooks) : s.looks,
     }));
     if (remote) {
       const remoteIds = new Set(remote.map((r) => r.id));
@@ -270,6 +277,7 @@ export function MobileApp() {
       beeNote: `${look.title}: ${look.formula.join(", ")}`,
     };
     patch((s) => ({ ...s, looks: [look, ...s.looks] }));
+    void pushLooks([look]);
     upsertHoney([dressed]);
     void haptic("success");
   }
@@ -333,6 +341,7 @@ export function MobileApp() {
     setBeeView("looks");
     void haptic("success");
     void persistTrialStartedAt(startedAt);
+    void pushLooks(looks);
     void syncAccount();
   };
 
@@ -459,14 +468,38 @@ export function MobileApp() {
               return;
             }
             void haptic("success");
-            patch((s) => ({
-              ...s,
-              verified: true,
-              email: dest.includes("@") ? dest : s.email,
-              phone: channel === "sms" ? dest : s.phone,
-              phase: "interview",
-              messages: [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
-            }));
+            // A returning member on a new device: bring back the interview and looks.
+            const [style, remoteLooks] = await Promise.all([pullStyle(), pullLooks()]);
+            patch((s) => {
+              const base = {
+                ...s,
+                verified: true,
+                email: dest.includes("@") ? dest : s.email,
+                phone: channel === "sms" ? dest : s.phone,
+              };
+              if (!style) {
+                return {
+                  ...base,
+                  phase: "interview",
+                  messages: [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
+                };
+              }
+              return {
+                ...base,
+                interview: { step: 5, answers: style.interview, completed: true },
+                onboarding: style.onboarding,
+                looks: mergeLooks(s.looks, remoteLooks ?? []),
+                phase: s.selfie ? "app" : "selfie",
+                messages: [
+                  {
+                    id: nid("m"),
+                    role: "assistant",
+                    content: "Welcome back. Your Fit, Feel, and Fabric came with you.",
+                  },
+                ],
+              };
+            });
+            if (style) void syncAccount();
           }}
         />
       )}
@@ -505,6 +538,13 @@ export function MobileApp() {
                 : s.onboarding,
               phase: done ? "selfie" : "interview",
             }));
+            if (done) {
+              const answers = { ...snap.interview.answers, [key]: value };
+              void pushStyle({
+                interview: answers,
+                onboarding: { ...answersFromInterview(answers), completed: true },
+              });
+            }
             setSending(false);
             void haptic("impact");
           }}
@@ -645,6 +685,7 @@ export function MobileApp() {
                   looks: s.looks.map((l) => (l.id === look.id ? { ...l, saved: true } : l)),
                   ratingAsked: true,
                 }));
+                void pushLooks([{ ...look, saved: true }]);
                 void notifyRecommendationReady();
                 if (firstSave) setRateOpen(true);
               }}

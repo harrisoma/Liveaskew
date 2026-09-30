@@ -592,6 +592,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      member_looks: {
+        Row: {
+          created_at: string;
+          id: string;
+          look: Json;
+          saved: boolean;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          look: Json;
+          saved?: boolean;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          look?: Json;
+          saved?: boolean;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      member_style: {
+        Row: {
+          interview: Json;
+          onboarding: Json;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          interview?: Json;
+          onboarding?: Json;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          interview?: Json;
+          onboarding?: Json;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       personal_styling_inquiries: {
         Row: {
           best_time_to_call: string | null;
