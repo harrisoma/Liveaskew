@@ -23,7 +23,7 @@ export async function generateLooks(opts: {
   interview: Record<string, string>;
   occasion?: { title: string; date?: string; kind?: string };
   count?: number;
-}): Promise<{ looks: GuideLook[]; source: "bee" | "local" }> {
+}): Promise<{ looks: GuideLook[]; source: "bee" | "local" | "locked" | "limited" }> {
   try {
     const res = await apiFetch("/api/bee/looks", {
       method: "POST",
@@ -33,6 +33,8 @@ export async function generateLooks(opts: {
         count: opts.count ?? 3,
       }),
     });
+    if (res.status === 402) return { looks: [], source: "locked" };
+    if (res.status === 429) return { looks: [], source: "limited" };
     if (res.ok) {
       const json = (await res.json()) as { looks?: GeneratedLook[] };
       const looks = (json.looks ?? []).map((l) => toGuideLook({ ...l, id: lookId(l.title) }));

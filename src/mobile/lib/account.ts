@@ -58,3 +58,23 @@ export async function notifyRecommendationReady(): Promise<void> {
     /* no session / preview */
   }
 }
+
+/** Permanently delete the account on the server. Returns an error message, or null on success. */
+export async function deleteMyAccount(): Promise<string | null> {
+  try {
+    const { apiFetch } = await import("./api");
+    const res = await apiFetch("/api/account/delete", {
+      method: "POST",
+      body: JSON.stringify({ confirm: "DELETE" }),
+    });
+    if (res.ok) return null;
+    const json = (await res.json().catch(() => ({}))) as { error?: string };
+    return json.error === "subscription_cancel_failed"
+      ? "We could not cancel your membership automatically, so nothing was deleted. Try again, or contact us."
+      : json.error === "unauthorized"
+        ? null // not signed in: only this device holds data, which is cleared next
+        : "That did not go through. Try again in a moment.";
+  } catch {
+    return "No connection. Try again in a moment.";
+  }
+}

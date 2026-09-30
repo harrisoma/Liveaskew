@@ -23,6 +23,12 @@ export async function askBee(opts: {
         })),
       }),
     });
+    if (res.status === 402) {
+      return "Your fourteen days with Bee have ended. Choose a tier under You and we'll pick up right here.";
+    }
+    if (res.status === 429) {
+      return "We've covered a lot this hour. Give me a few minutes, then tell me what's next.";
+    }
     if (res.ok) {
       const json = (await res.json()) as { text?: string };
       if (json.text?.trim()) return json.text.trim();

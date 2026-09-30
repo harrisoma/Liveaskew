@@ -31,6 +31,7 @@ import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inqu
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
+import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicBuzzCallbackRouteImport } from './routes/api/public/buzz/callback'
 
@@ -144,6 +145,11 @@ const ApiBeeAppRoute = ApiBeeAppRouteImport.update({
   path: '/api/bee/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
+  id: '/api/account/delete',
+  path: '/api/account/delete',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/privacy'
     | '/api/tryon'
+    | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
     | '/api/billing/checkout'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/privacy'
     | '/api/tryon'
+    | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
     | '/api/billing/checkout'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/privacy'
     | '/api/tryon'
+    | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
     | '/api/billing/checkout'
@@ -321,6 +333,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   PrivacyRoute: typeof PrivacyRoute
   ApiTryonRoute: typeof ApiTryonRoute
+  ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBeeAppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/account/delete': {
+      id: '/api/account/delete'
+      path: '/api/account/delete'
+      fullPath: '/api/account/delete'
+      preLoaderRoute: typeof ApiAccountDeleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -521,6 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   PrivacyRoute: PrivacyRoute,
   ApiTryonRoute: ApiTryonRoute,
+  ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeLooksRoute: ApiBeeLooksRoute,
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,

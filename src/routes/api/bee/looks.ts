@@ -3,6 +3,7 @@ import { generateText } from "ai";
 import { z } from "zod";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { requireApiUser } from "@/lib/api-auth.server";
+import { guardAi } from "@/lib/entitlement.server";
 import { parseLooks } from "@/lib/bee-looks";
 
 const BEE_MODEL = "google/gemini-2.5-flash";
@@ -43,6 +44,8 @@ export const Route = createFileRoute("/api/bee/looks")({
       POST: async ({ request }) => {
         const caller = await requireApiUser(request);
         if (caller instanceof Response) return caller;
+        const denied = await guardAi(caller, "looks");
+        if (denied) return denied;
 
         const key = process.env.ONIXUS_AI_API_KEY;
         if (!key) return Response.json({ error: "not_configured" }, { status: 503 });

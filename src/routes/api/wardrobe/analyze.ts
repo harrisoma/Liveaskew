@@ -3,6 +3,7 @@ import { identifyGarmentFromPhoto } from "@/lib/wardrobe-vision.server";
 import { wardrobeVerdict } from "@/mobile/lib/wardrobe-reset";
 import type { OnboardingAnswers } from "@/mobile/lib/recommend";
 import { requireApiUser } from "@/lib/api-auth.server";
+import { guardAi } from "@/lib/entitlement.server";
 
 type Body = {
   photoDataUrl?: string;
@@ -15,6 +16,8 @@ export const Route = createFileRoute("/api/wardrobe/analyze")({
       POST: async ({ request }) => {
         const caller = await requireApiUser(request);
         if (caller instanceof Response) return caller;
+        const denied = await guardAi(caller, "wardrobe");
+        if (denied) return denied;
         const body = (await request.json().catch(() => ({}))) as Body;
         const photo = body.photoDataUrl?.trim();
         if (!photo || !photo.startsWith("data:image/")) {

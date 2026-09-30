@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { requireApiUser } from "@/lib/api-auth.server";
+import { guardAi } from "@/lib/entitlement.server";
 
 type Body = {
   lookId?: string;
@@ -33,6 +34,8 @@ export const Route = createFileRoute("/api/tryon")({
       POST: async ({ request }) => {
         const caller = await requireApiUser(request);
         if (caller instanceof Response) return caller;
+        const denied = await guardAi(caller, "tryon");
+        if (denied) return denied;
         const ownerId = caller === "preview" ? undefined : caller;
         const body = (await request.json().catch(() => ({}))) as Body;
         const lookId = body.lookId?.trim();

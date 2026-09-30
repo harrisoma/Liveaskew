@@ -34,10 +34,14 @@ export async function analyzeWardrobePhoto(opts: {
     if (!res.ok || json.error || !json.label || !json.verdict || !json.reason) {
       return {
         error:
-          json.error === "vision_unavailable"
-            ? "I couldn't see the cloth clearly. Try another photo in better light."
-            : (json.error ??
-              "I couldn't see the cloth clearly. Try another photo in better light."),
+          res.status === 402
+            ? "Your trial has ended. Choose a tier under You to keep resetting your wardrobe."
+            : res.status === 429
+              ? "That's a lot of pieces for one hour. Try the rest in a few minutes."
+              : json.error === "vision_unavailable"
+                ? "I couldn't see the cloth clearly. Try another photo in better light."
+                : (json.error ??
+                  "I couldn't see the cloth clearly. Try another photo in better light."),
       };
     }
     return {

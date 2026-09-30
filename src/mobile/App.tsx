@@ -18,8 +18,13 @@ import {
   signOut,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
-import { answersFromInterview, interviewOpener, reflectOnAnswer } from "./lib/interview";
-import { generateLooks } from "./lib/looks";
+import {
+  answersFromInterview,
+  interviewOpener,
+  looksFromInterview,
+  reflectOnAnswer,
+} from "./lib/interview";
+import { generateLooks, toGuideLook } from "./lib/looks";
 import {
   consumeBillingReturn,
   fetchMembership,
@@ -53,7 +58,7 @@ import {
 import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
-import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
+import { deleteMyAccount, persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
 import { askBee } from "./lib/bee-chat";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
@@ -241,12 +246,21 @@ export function MobileApp() {
       return;
     }
     setDressingId(item.id);
-    const { looks } = await generateLooks({
+    const { looks, source } = await generateLooks({
       interview: snap.interview.answers,
       occasion: { title: item.title, date: item.date, kind: item.kind },
       count: 1,
     });
     setDressingId(null);
+    if (source === "locked") {
+      setGateOpen(true);
+      openMembership();
+      return;
+    }
+    if (source === "limited") {
+      setHoneyNotice("Bee has dressed a lot this hour. Try again in a few minutes.");
+      return;
+    }
     const look = looks[0];
     if (!look) return;
     const dressed: HoneyItem = {
@@ -510,9 +524,14 @@ export function MobileApp() {
           onContinue={async () => {
             if (!snap.selfie || building) return;
             setBuilding(true);
-            const { looks } = await generateLooks({ interview: snap.interview.answers });
+            const { looks, source } = await generateLooks({ interview: snap.interview.answers });
             setBuilding(false);
-            startTrial(looks);
+            startTrial(
+              looks.length > 0
+                ? looks
+                : looksFromInterview(snap.interview.answers).map(toGuideLook),
+            );
+            if (source === "locked") setGateOpen(true);
           }}
         />
       )}
@@ -884,6 +903,16 @@ export function MobileApp() {
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
                 setTab("today");
                 setYouView("profile");
+              }}
+              onDeleteAccount={async () => {
+                const err = await deleteMyAccount();
+                if (err) return err;
+                await signOut();
+                window.localStorage.removeItem("la_mobile_v2");
+                setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
+                setTab("today");
+                setYouView("profile");
+                return null;
               }}
             />
           )}
@@ -1369,6 +1398,7 @@ function Profile({
   moderationCount,
   onModeration,
   onReset,
+  onDeleteAccount,
 }: {
   snap: AppSnapshot;
   onSelfie: () => void;
@@ -1379,7 +1409,11 @@ function Profile({
   moderationCount: number | null;
   onModeration: () => void;
   onReset: () => void;
+  onDeleteAccount: () => Promise<string | null>;
 }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   return (
     <Screen kicker="You" title="Fit preferences">
       <div className="neo-raised p-4">
@@ -1435,6 +1469,48 @@ function Profile({
       <NeoButton className="mt-3" onClick={onReset}>
         Sign out
       </NeoButton>
+      {confirmDelete ? (
+        <div
+          className="mt-5 neo-inset p-4 text-sm leading-relaxed"
+          role="alertdialog"
+          aria-labelledby="del-title"
+        >
+          <p id="del-title" className="font-semibold">
+            Delete your LiveAskew account?
+          </p>
+          <p className="mt-2">
+            This permanently removes your profile, looks, photos, Honey calendar, Hive posts,
+            connected social accounts, and cancels any membership. It cannot be undone.
+          </p>
+          {deleteError && <p className="mt-2 font-semibold">{deleteError}</p>}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <NeoButton
+              variant="ink"
+              disabled={deleting}
+              onClick={async () => {
+                setDeleting(true);
+                setDeleteError(null);
+                const err = await onDeleteAccount();
+                setDeleting(false);
+                if (err) setDeleteError(err);
+              }}
+            >
+              {deleting ? "Deleting…" : "Delete forever"}
+            </NeoButton>
+            <NeoButton disabled={deleting} onClick={() => setConfirmDelete(false)}>
+              Keep account
+            </NeoButton>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="mt-5 w-full py-2 text-center text-sm font-semibold underline underline-offset-4"
+          onClick={() => setConfirmDelete(true)}
+        >
+          Delete account
+        </button>
+      )}
     </Screen>
   );
 }
