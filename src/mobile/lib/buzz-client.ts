@@ -102,24 +102,55 @@ export async function uploadPostImage(dataUrl: string): Promise<string | null> {
 }
 
 /** Read ?buzz=… after a network sends the person back, and clean the URL. */
-export function consumeBuzzReturn(
-  href: string,
-): { status: "connected" | "cancelled" | "error"; network: string; reason: string } | null {
+export function consumeBuzzReturn(href: string): {
+  status: "finish" | "cancelled" | "error";
+  network: string;
+  reason: string;
+  token: string;
+} | null {
   try {
     const url = new URL(href);
     const status = url.searchParams.get("buzz");
-    if (status !== "connected" && status !== "cancelled" && status !== "error") return null;
+    if (status !== "finish" && status !== "cancelled" && status !== "error") return null;
     const result = {
       status,
       network: url.searchParams.get("network") ?? "",
       reason: url.searchParams.get("reason") ?? "",
+      token: url.searchParams.get("token") ?? "",
     } as const;
     if (typeof window !== "undefined" && url.protocol.startsWith("http")) {
-      for (const k of ["buzz", "network", "reason"]) url.searchParams.delete(k);
+      for (const k of ["buzz", "network", "reason", "token"]) url.searchParams.delete(k);
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
     }
     return result;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Attach the account the network just approved. The server only does it when this app is
+ * signed in as the member who started the connect.
+ */
+export async function finishConnect(
+  token: string,
+): Promise<{ networks: string[] } | { error: string }> {
+  try {
+    const res = await apiFetch("/api/buzz/finish", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+    const json = (await res.json().catch(() => ({}))) as { networks?: string[]; error?: string };
+    if (res.ok && json.networks) return { networks: json.networks };
+    return {
+      error:
+        json.error === "wrong_account"
+          ? "That connection was started from a different LiveAskew account, so it was not added."
+          : json.error === "expired"
+            ? "That connection took too long. Tap Connect again."
+            : "Sign in, then tap Connect again.",
+    };
+  } catch {
+    return { error: "No connection. Try again in a moment." };
   }
 }

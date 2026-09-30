@@ -4,8 +4,12 @@ export function supabaseAuthConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_PUBLISHABLE_KEY);
 }
 
-export function isProductionRuntime(): boolean {
-  return process.env.NODE_ENV === "production" && process.env.VERCEL_ENV !== "preview";
+/**
+ * Only a developer's own machine (`npm run dev`) may run without Supabase. Every Vercel
+ * deployment — production and preview alike — and every production build must be real.
+ */
+export function isLocalDev(): boolean {
+  return !process.env.VERCEL && process.env.NODE_ENV !== "production";
 }
 
 /**
@@ -14,7 +18,7 @@ export function isProductionRuntime(): boolean {
  */
 export async function requireApiUser(request: Request): Promise<string | Response> {
   if (!supabaseAuthConfigured()) {
-    if (!isProductionRuntime()) return "preview";
+    if (isLocalDev()) return "preview";
     return Response.json({ error: "auth_not_configured" }, { status: 503 });
   }
   const userId = await userIdFromAuthHeader(request);

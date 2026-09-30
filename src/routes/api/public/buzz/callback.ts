@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { networkById } from "@/lib/buzz";
 import { buzzRedirectUri, withQuery } from "@/lib/buzz/oauth.server";
 import { exchangeCode } from "@/lib/buzz/providers.server";
-import { saveAccounts } from "@/lib/buzz/store.server";
+import { parkAccounts } from "@/lib/buzz/confirm.server";
 
 /**
- * Networks send the person back here after they approve Bee. The state row proves who
- * started it (single use, 15 minutes); then we store the account and return to the app.
+ * Networks send the person back here after they approve Bee. The state row says who
+ * started it (single use, 15 minutes). The account is parked, not attached: the app that
+ * receives the one-time token must confirm it while signed in as that same member.
  */
 export const Route = createFileRoute("/api/public/buzz/callback")({
   server: {
@@ -44,8 +45,9 @@ export const Route = createFileRoute("/api/public/buzz/callback")({
             redirectUri: buzzRedirectUri(request),
             verifier: pending.code_verifier,
           });
-          await saveAccounts(pending.user_id, accounts);
-          return back({ buzz: "connected", network: accounts.map((a) => a.network).join(",") });
+          // Not attached yet: the member's own signed-in app confirms it with this token.
+          const token = await parkAccounts(pending.user_id, network.id, accounts);
+          return back({ buzz: "finish", token, network: network.id });
         } catch (err) {
           console.error("[buzz] connect failed", network.id, err);
           return back({

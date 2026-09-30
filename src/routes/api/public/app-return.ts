@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 const ALLOWED_PATHS = new Set(["billing", "buzz"]);
-const ALLOWED_PARAMS = new Set(["billing", "buzz", "network", "reason"]);
+const ALLOWED_PARAMS = new Set(["billing", "buzz", "network", "reason", "token"]);
 
 /**
  * Stripe (and some networks) only send people back to an https URL. This hands them to

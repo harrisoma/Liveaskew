@@ -38,6 +38,7 @@ import {
   consumeBuzzReturn,
   disconnectNetwork,
   fetchBuzzAccounts,
+  finishConnect,
   publishNow,
   uploadPostImage,
   type BuzzAccounts,
@@ -135,19 +136,26 @@ export function MobileApp() {
       const buzz = consumeBuzzReturn(href);
       if (buzz) {
         setTab("buzz");
-        const names = buzz.network
-          .split(",")
-          .map((id) => networkById(id)?.label)
-          .filter(Boolean)
-          .join(" and ");
-        setBuzzNotice(
-          buzz.status === "connected"
-            ? `${names || "Account"} connected.`
-            : buzz.status === "cancelled"
+        const label = (ids: string[]) =>
+          ids
+            .map((id) => networkById(id)?.label)
+            .filter(Boolean)
+            .join(" and ") || "Account";
+        if (buzz.status === "finish" && buzz.token) {
+          setBuzzNotice("Finishing the connection…");
+          void finishConnect(buzz.token).then(async (result) => {
+            setBuzzNotice(
+              "error" in result ? result.error : `${label(result.networks)} connected.`,
+            );
+            setBuzzAccounts(await fetchBuzzAccounts());
+          });
+        } else {
+          setBuzzNotice(
+            buzz.status === "cancelled"
               ? "Connection cancelled."
               : buzz.reason || "That connection did not finish. Try again.",
-        );
-        void fetchBuzzAccounts().then(setBuzzAccounts);
+          );
+        }
       }
     };
     handleReturn(window.location.href);

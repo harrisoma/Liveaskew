@@ -868,6 +868,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      social_oauth_pending: {
+        Row: {
+          accounts_enc: string;
+          created_at: string;
+          finish_hash: string;
+          network: string;
+          user_id: string;
+        };
+        Insert: {
+          accounts_enc: string;
+          created_at?: string;
+          finish_hash: string;
+          network: string;
+          user_id: string;
+        };
+        Update: {
+          accounts_enc?: string;
+          created_at?: string;
+          finish_hash?: string;
+          network?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       social_oauth_states: {
         Row: {
           code_verifier: string | null;

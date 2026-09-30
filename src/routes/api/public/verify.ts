@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { isProductionRuntime, supabaseAuthConfigured } from "@/lib/api-auth.server";
+import { isLocalDev, supabaseAuthConfigured } from "@/lib/api-auth.server";
 
 type Body = {
   channel?: "email" | "sms";
@@ -19,7 +19,7 @@ async function authClient() {
 /**
  * Email / SMS one-time codes. Supabase Auth generates, delivers, and checks the code,
  * so the code the person receives is the code we verify. The 000000 preview code is
- * only honoured outside production when Supabase is not configured.
+ * only honoured in local development (`npm run dev`) when Supabase is not configured.
  */
 export const Route = createFileRoute("/api/public/verify")({
   server: {
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/public/verify")({
         }
 
         const live = supabaseAuthConfigured();
-        if (!live && isProductionRuntime()) {
+        if (!live && !isLocalDev()) {
           return Response.json({ error: "auth_not_configured" }, { status: 503 });
         }
 

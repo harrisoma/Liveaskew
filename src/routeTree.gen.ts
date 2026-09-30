@@ -24,6 +24,7 @@ import { Route as ApiHiveModerationRouteImport } from './routes/api/hive/moderat
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiCronBuzzRouteImport } from './routes/api/cron/buzz'
 import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
+import { Route as ApiBuzzFinishRouteImport } from './routes/api/buzz/finish'
 import { Route as ApiBuzzConnectionsRouteImport } from './routes/api/buzz/connections'
 import { Route as ApiBuzzConnectRouteImport } from './routes/api/buzz/connect'
 import { Route as ApiBillingStatusRouteImport } from './routes/api/billing/status'
@@ -111,6 +112,11 @@ const ApiBuzzPublishRoute = ApiBuzzPublishRouteImport.update({
   path: '/api/buzz/publish',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBuzzFinishRoute = ApiBuzzFinishRouteImport.update({
+  id: '/api/buzz/finish',
+  path: '/api/buzz/finish',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBuzzConnectionsRoute = ApiBuzzConnectionsRouteImport.update({
   id: '/api/buzz/connections',
   path: '/api/buzz/connections',
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
+  '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
   '/api/cron/push': typeof ApiCronPushRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
+    | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
+    | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
+    | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
     | '/api/cron/push'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   ApiBillingStatusRoute: typeof ApiBillingStatusRoute
   ApiBuzzConnectRoute: typeof ApiBuzzConnectRoute
   ApiBuzzConnectionsRoute: typeof ApiBuzzConnectionsRoute
+  ApiBuzzFinishRoute: typeof ApiBuzzFinishRoute
   ApiBuzzPublishRoute: typeof ApiBuzzPublishRoute
   ApiCronBuzzRoute: typeof ApiCronBuzzRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
@@ -476,6 +489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBuzzPublishRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/buzz/finish': {
+      id: '/api/buzz/finish'
+      path: '/api/buzz/finish'
+      fullPath: '/api/buzz/finish'
+      preLoaderRoute: typeof ApiBuzzFinishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/buzz/connections': {
       id: '/api/buzz/connections'
       path: '/api/buzz/connections'
@@ -570,6 +590,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBillingStatusRoute: ApiBillingStatusRoute,
   ApiBuzzConnectRoute: ApiBuzzConnectRoute,
   ApiBuzzConnectionsRoute: ApiBuzzConnectionsRoute,
+  ApiBuzzFinishRoute: ApiBuzzFinishRoute,
   ApiBuzzPublishRoute: ApiBuzzPublishRoute,
   ApiCronBuzzRoute: ApiCronBuzzRoute,
   ApiCronPushRoute: ApiCronPushRoute,
