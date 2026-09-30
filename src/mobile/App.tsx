@@ -104,6 +104,7 @@ export function MobileApp() {
   const [tierBusy, setTierBusy] = useState(false);
   const [tierNotice, setTierNotice] = useState<string | null>(null);
   const [shareLook, setShareLook] = useState<GuideLook | null>(null);
+  const [guideNotice, setGuideNotice] = useState<string | null>(null);
   const [buzzAccounts, setBuzzAccounts] = useState<BuzzAccounts | null>(null);
   const [buzzNotice, setBuzzNotice] = useState<string | null>(null);
   const [buzzBusy, setBuzzBusy] = useState<string | null>(null);
@@ -329,26 +330,30 @@ export function MobileApp() {
     membershipActive: snap.membershipActive,
   });
 
-  const startTrial = (looks: GuideLook[]) => {
-    const startedAt = snap.trialStartedAt ?? new Date().toISOString();
+  /** `trialEnded`: the server says this member's 14 days are already used (e.g. new device). */
+  const startTrial = (looks: GuideLook[], opts: { trialEnded?: boolean } = {}) => {
+    const startedAt = opts.trialEnded
+      ? new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+      : (snap.trialStartedAt ?? new Date().toISOString());
     patch((s) => ({
       ...s,
       phase: "app",
       looks,
-      trialStartedAt: s.trialStartedAt ?? startedAt,
+      trialStartedAt: opts.trialEnded ? startedAt : (s.trialStartedAt ?? startedAt),
       messages: [
         {
           id: nid("m"),
           role: "assistant",
-          content:
-            "Your Style Guide is ready. I dressed the looks on you — same body, same proportions. Fourteen days, unlimited looks.",
+          content: opts.trialEnded
+            ? "Your Style Guide is here. Your fourteen days with Bee have ended — choose a tier under You to keep generating looks."
+            : "Your Style Guide is ready. I dressed the looks on you — same body, same proportions. Fourteen days, unlimited looks.",
         },
       ],
     }));
     setTab("today");
     setBeeView("looks");
     void haptic("success");
-    void persistTrialStartedAt(startedAt);
+    if (!opts.trialEnded) void persistTrialStartedAt(startedAt);
     void pushLooks(looks);
     void syncAccount();
   };
@@ -579,6 +584,7 @@ export function MobileApp() {
               looks.length > 0
                 ? looks
                 : looksFromInterview(snap.interview.answers).map(toGuideLook),
+              { trialEnded: source === "locked" },
             );
             if (source === "locked") setGateOpen(true);
           }}
@@ -655,6 +661,7 @@ export function MobileApp() {
               locked={!looksUnlocked}
               rateOpen={rateOpen}
               onDismissRate={() => setRateOpen(false)}
+              notice={guideNotice}
               onShare={(look) => {
                 setShareLook(look);
                 setTab("hive");
@@ -675,14 +682,32 @@ export function MobileApp() {
                   selfie: snap.selfie,
                   cache: snap.tryOnCache,
                 });
+                setRenderingId(null);
+                if (result.source === "locked") {
+                  setGateOpen(true);
+                  openMembership();
+                  return;
+                }
+                if (result.source === "limited") {
+                  setGuideNotice(
+                    "That's a lot of try-ons for one hour. Try again in a few minutes.",
+                  );
+                  void haptic("impact");
+                  return;
+                }
+                setGuideNotice(null);
+                // The unaltered photo is a stand-in, not a render: don't cache it, so the
+                // next tap tries the real try-on again.
+                const isRender = result.source !== "identity";
                 patch((s) => ({
                   ...s,
-                  tryOnCache: { ...s.tryOnCache, [key]: result.url },
+                  tryOnCache: isRender ? { ...s.tryOnCache, [key]: result.url } : s.tryOnCache,
                   looks: s.looks.map((l) =>
-                    l.id === look.id ? { ...l, tryOnUrl: result.url, tryOnKey: key } : l,
+                    l.id === look.id
+                      ? { ...l, tryOnUrl: result.url, tryOnKey: isRender ? key : null }
+                      : l,
                   ),
                 }));
-                setRenderingId(null);
                 void haptic("success");
               }}
               onSave={(look) => {
@@ -1266,6 +1291,7 @@ function StyleGuide({
   onSelect,
   onSave,
   onShare,
+  notice,
 }: {
   looks: GuideLook[];
   selfie: string | null;
@@ -1276,6 +1302,7 @@ function StyleGuide({
   onSelect: (look: GuideLook) => void;
   onSave: (look: GuideLook) => void;
   onShare: (look: GuideLook) => void;
+  notice: string | null;
 }) {
   if (!selfie) {
     return (
@@ -1289,6 +1316,11 @@ function StyleGuide({
   }
   return (
     <Screen kicker="Style Guide" title="Looks on you">
+      {notice && (
+        <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
+          {notice}
+        </p>
+      )}
       {rateOpen && (
         <div className="mb-4 neo-inset px-3 py-3 text-sm leading-relaxed">
           <p>

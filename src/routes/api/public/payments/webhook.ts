@@ -56,6 +56,17 @@ async function upsertSubscription(subscription: Stripe.Subscription, env: Stripe
       { onConflict: "stripe_subscription_id" },
     );
 
+  // A Stripe trial is this member's free trial: record it so the app's own 14 days
+  // cannot be claimed again later (first start wins).
+  if (subscription.status === "trialing") {
+    await getSupabase()
+      .from("member_trials")
+      .upsert(
+        { user_id: userId, started_at: new Date().toISOString() },
+        { onConflict: "user_id", ignoreDuplicates: true },
+      );
+  }
+
   // If this is a trialing subscription, record it in trial_history so the
   // same user/email cannot start another free trial later.
   if (subscription.status === "trialing") {

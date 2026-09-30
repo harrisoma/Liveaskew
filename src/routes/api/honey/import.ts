@@ -75,11 +75,12 @@ export const Route = createFileRoute("/api/honey/import")({
         if (caller !== "preview" && items.length > 0) {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const rows = items.map((item) => {
-            // Leave Bee's note and its status out entirely so a re-sync never touches them
-            // (sending undefined would still write NULL).
+            // Leave Bee's note, its status, and the "Dress me" look out entirely so a
+            // re-sync never touches them (sending undefined would still write NULL).
             const {
               outfit_recommendation: _note,
               recommendation_status: _status,
+              look_id: _look,
               ...row
             } = honeyToInsert(caller, item);
             return { ...row, external_id: item.id };

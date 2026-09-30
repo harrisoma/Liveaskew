@@ -5,7 +5,7 @@ import { apiFetch } from "./api";
 export type TryOnResult = {
   url: string;
   cached: boolean;
-  source: "cache" | "n8n" | "identity";
+  source: "cache" | "n8n" | "identity" | "locked" | "limited";
 };
 
 export async function requestTryOn(opts: {
@@ -39,6 +39,8 @@ export async function requestTryOn(opts: {
         },
       }),
     });
+    if (res.status === 402) return { url: "", cached: false, source: "locked" };
+    if (res.status === 429) return { url: "", cached: false, source: "limited" };
     if (res.ok) {
       const json = (await res.json()) as { url?: string; source?: TryOnResult["source"] };
       if (json.source === "identity") return { url: SELF_PHOTO, cached: false, source: "identity" };

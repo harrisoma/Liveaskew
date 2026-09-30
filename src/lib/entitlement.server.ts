@@ -20,6 +20,17 @@ export function trialActive(trialStartedAt: string | null | undefined, now = Dat
   return now - Math.min(started, now) < TRIAL_MS;
 }
 
+/** When this member's trial began, or null if it has not started. Never starts it. */
+export async function existingTrialStart(userId: string): Promise<string | null> {
+  const db = await admin();
+  const { data } = await db
+    .from("member_trials")
+    .select("started_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.started_at ?? null;
+}
+
 /**
  * When this member's trial began, from the server-only member_trials table. The first
  * call starts it; the row cannot be edited or deleted by the member.

@@ -23,8 +23,8 @@ export const Route = createFileRoute("/api/account/delete")({
           return Response.json(
             {
               error:
-                message === "subscription_cancel_failed"
-                  ? "subscription_cancel_failed"
+                message === "subscription_cancel_failed" || message === "storage_cleanup_failed"
+                  ? message
                   : "delete_failed",
             },
             { status: 502 },

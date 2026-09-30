@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { requireApiUser } from "@/lib/api-auth.server";
-import { trialStart } from "@/lib/entitlement.server";
+import { existingTrialStart } from "@/lib/entitlement.server";
 import {
   billingConfigured,
   billingEnvironment,
@@ -46,7 +46,8 @@ export const Route = createFileRoute("/api/billing/checkout")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const [trialStartedAt, { data: userData }] = await Promise.all([
-          trialStart(caller),
+          // Read only: opening (or abandoning) checkout must not start the free trial.
+          existingTrialStart(caller),
           supabaseAdmin.auth.admin.getUserById(caller),
         ]);
 

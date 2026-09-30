@@ -43,7 +43,7 @@ describe("billing tiers", () => {
       Date.parse("2026-10-09T00:00:00Z") / 1000,
     );
     expect(stripeTrialEnd("2026-09-14T12:00:00Z", now)).toBeNull();
-    expect(stripeTrialEnd(null, now)).toBeNull();
+    expect(stripeTrialEnd(null, now)).toBe((now + 14 * 86_400_000) / 1000);
   });
 
   it("never grants more than 14 days, even from a future start date", () => {

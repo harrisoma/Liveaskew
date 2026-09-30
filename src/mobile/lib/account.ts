@@ -62,7 +62,13 @@ export async function notifyRecommendationReady(): Promise<void> {
 /** Permanently delete the account on the server. Returns an error message, or null on success. */
 export async function deleteMyAccount(): Promise<string | null> {
   try {
-    const { apiFetch } = await import("./api");
+    const { apiFetch, sessionBearer } = await import("./api");
+    // Never signed in: everything lives on this device and is cleared next.
+    if (!(await sessionBearer())) {
+      const { isSupabaseConfigured } = await import("@/integrations/supabase/client");
+      if (!isSupabaseConfigured()) return null;
+      return "Sign in again, then delete your account — so we can remove it everywhere.";
+    }
     const res = await apiFetch("/api/account/delete", {
       method: "POST",
       body: JSON.stringify({ confirm: "DELETE" }),
@@ -71,9 +77,11 @@ export async function deleteMyAccount(): Promise<string | null> {
     const json = (await res.json().catch(() => ({}))) as { error?: string };
     return json.error === "subscription_cancel_failed"
       ? "We could not cancel your membership automatically, so nothing was deleted. Try again, or contact us."
-      : json.error === "unauthorized"
-        ? null // not signed in: only this device holds data, which is cleared next
-        : "That did not go through. Try again in a moment.";
+      : json.error === "storage_cleanup_failed"
+        ? "Some of your photos could not be removed yet, so your account was kept. Try again in a moment."
+        : json.error === "unauthorized"
+          ? "Your sign-in has expired. Sign in again, then delete your account."
+          : "That did not go through. Try again in a moment.";
   } catch {
     return "No connection. Try again in a moment.";
   }
