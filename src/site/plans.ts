@@ -6,6 +6,33 @@ import { TIERS, type PlanSlug } from "@/mobile/lib/tiers";
  */
 type PlanCopy = { tab: string; description: string; features: string[] };
 
+/**
+ * Promised in the price book but not in the app yet. They show a "Coming soon" label until
+ * they ship — delete a line here the day it does.
+ */
+const COMING_SOON = new Set([
+  "Monthly digest",
+  "Bee's full voice",
+  "Monthly Magazine (8 spreads)",
+  "Thumbs feedback — Bee learns your taste",
+  "Give a month, get a month referral",
+  "Shoppable look manifests",
+  "Priority look generation",
+  "Full curated shopping access",
+  "Add a partner seat — their own Bee, face & wardrobe",
+  "Household context switcher",
+  "Quarterly 1-on-1 with Bianca",
+  "Honey dresses the occasion from weather, place, time, and energy",
+  "Up to 3 family seats (partner + children)",
+  "Kids & couples dressing mode",
+  "Shared wardrobe rooms",
+  "Honey for each seat in the household",
+]);
+
+export function isComingSoon(feature: string): boolean {
+  return COMING_SOON.has(feature);
+}
+
 const COPY: Record<PlanSlug, PlanCopy> = {
   silver: {
     tab: "Silver",
