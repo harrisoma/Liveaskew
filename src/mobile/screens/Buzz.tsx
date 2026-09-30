@@ -67,7 +67,7 @@ export function BuzzScreen({
 
   // A try-on render is the natural photo for a look.
   useEffect(() => {
-    setPhoto(look?.tryOnUrl ?? null);
+    setPhoto(look?.tryOnUrl && look.tryOnUrl !== "self" ? look.tryOnUrl : null);
   }, [look?.id, look?.tryOnUrl]);
 
   const connected = new Map((accounts?.connections ?? []).map((c) => [c.network, c]));

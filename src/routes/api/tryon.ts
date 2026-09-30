@@ -105,7 +105,7 @@ export const Route = createFileRoute("/api/tryon")({
         }
 
         // Identity passthrough: never generate a reshaped body if the try-on model is unavailable.
-        await persistTryOn(key, lookId, ownerId, selfie, selfie);
+        // Nothing is stored — the app shows the person's own photo it already has.
         return Response.json({
           url: selfie,
           cached: false,

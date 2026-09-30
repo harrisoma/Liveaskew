@@ -1,5 +1,5 @@
 import type { GuideLook } from "./storage";
-import { cacheKey } from "./storage";
+import { cacheKey, SELF_PHOTO } from "./storage";
 import { apiFetch } from "./api";
 
 export type TryOnResult = {
@@ -41,6 +41,7 @@ export async function requestTryOn(opts: {
     });
     if (res.ok) {
       const json = (await res.json()) as { url?: string; source?: TryOnResult["source"] };
+      if (json.source === "identity") return { url: SELF_PHOTO, cached: false, source: "identity" };
       if (json.url) {
         return { url: json.url, cached: false, source: json.source ?? "n8n" };
       }
@@ -51,5 +52,5 @@ export async function requestTryOn(opts: {
 
   // Never invent a reshaped body. If the try-on service is down, show her.
   await new Promise((r) => setTimeout(r, 1200));
-  return { url: opts.selfie, cached: false, source: "identity" };
+  return { url: SELF_PHOTO, cached: false, source: "identity" };
 }

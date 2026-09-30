@@ -4,7 +4,7 @@ import hiveGathering from "@/assets/brand/hive-gathering.webp";
 import { dayLabel, sortHoney, type HoneyItem } from "@/lib/honey";
 import { Crest, type CrestName } from "../components/Crest";
 import { NeoButton } from "../components/ui";
-import type { GuideLook } from "../lib/storage";
+import { lookPhoto, type GuideLook } from "../lib/storage";
 
 type Destination = "bee" | "honey" | "buzz" | "hive";
 
@@ -23,6 +23,7 @@ export function TodayScreen({
   now,
   today,
   looks,
+  selfie,
   honey,
   dressingId,
   buzzConnected,
@@ -33,6 +34,7 @@ export function TodayScreen({
   now: Date;
   today: string;
   looks: GuideLook[];
+  selfie: string | null;
   honey: HoneyItem[];
   dressingId: string | null;
   /** null = not signed in; otherwise the number of connected social accounts. */
@@ -96,9 +98,11 @@ export function TodayScreen({
       {/* Today's look */}
       <section className="la-hero mt-5 aspect-[4/5]" aria-label="Today's look">
         <img
-          src={look?.tryOnUrl ?? flatlay}
+          src={(look && lookPhoto(look, selfie)) || flatlay}
           alt={
-            look?.tryOnUrl ? `${look.title} on you` : "A look laid out on the bed, ready to wear"
+            look && lookPhoto(look, selfie)
+              ? `${look.title} on you`
+              : "A look laid out on the bed, ready to wear"
           }
         />
         <div className="la-hero-shade" />

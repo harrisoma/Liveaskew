@@ -57,6 +57,7 @@ import { persistTrialStartedAt, notifyRecommendationReady } from "./lib/account"
 import { askBee } from "./lib/bee-chat";
 import { PRIVACY_INTRO, PRIVACY_SECTIONS, PRIVACY_UPDATED } from "@/lib/privacy-policy";
 import { analyzeWardrobePhoto } from "./lib/wardrobe-analyze";
+import { downscaleDataUrl, THUMB_MAX } from "./lib/image";
 import {
   configureNativeChrome,
   haptic,
@@ -523,6 +524,7 @@ export function MobileApp() {
               now={new Date()}
               today={today}
               looks={snap.looks}
+              selfie={snap.selfie}
               honey={snap.honey}
               dressingId={dressingId}
               buzzConnected={buzzAccounts ? buzzAccounts.connections.length : null}
@@ -635,17 +637,25 @@ export function MobileApp() {
                 const photos = await pickWardrobeBatch();
                 if (photos.length === 0) return;
                 const profile = snap.onboarding;
-                const items: AppSnapshot["wardrobe"] = photos.map((photo) => ({
+                // Cards keep a small thumbnail on the device; Bee reads the larger photo.
+                const thumbs = await Promise.all(
+                  photos.map((photo) => downscaleDataUrl(photo, THUMB_MAX, 0.75)),
+                );
+                const items: AppSnapshot["wardrobe"] = photos.map((_, i) => ({
                   id: nid("w"),
-                  photo,
+                  photo: thumbs[i],
                   label: "Looking at the cloth",
                   verdict: null,
                   reason: null,
                   error: null,
                 }));
-                patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe] }));
+                const fullPhoto = new Map(items.map((item, i) => [item.id, photos[i]]));
+                patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe].slice(0, 60) }));
                 for (const item of items) {
-                  const result = await analyzeWardrobePhoto({ photo: item.photo, profile });
+                  const result = await analyzeWardrobePhoto({
+                    photo: fullPhoto.get(item.id) ?? item.photo,
+                    profile,
+                  });
                   patch((s) => ({
                     ...s,
                     wardrobe: s.wardrobe.map((row) => {
@@ -1208,6 +1218,7 @@ function StyleGuide({
           <LookCard
             key={look.id}
             look={look}
+            selfie={selfie}
             rendering={renderingId === look.id}
             actionLabel={look.saved ? "Saved" : "Save this look"}
             onAction={() => onSave(look)}

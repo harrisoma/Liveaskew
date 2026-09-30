@@ -16,6 +16,15 @@ export type WardrobeItem = {
   error?: string | null;
 };
 
+/** tryOnUrl value meaning "no render yet — show the person's own photo unaltered". */
+export const SELF_PHOTO = "self";
+
+/** The picture to show for a look: its try-on render, the selfie, or nothing. */
+export function lookPhoto(look: { tryOnUrl: string | null }, selfie: string | null): string | null {
+  if (!look.tryOnUrl) return null;
+  return look.tryOnUrl === SELF_PHOTO ? selfie : look.tryOnUrl;
+}
+
 export type GuideLook = LookCard & {
   saved: boolean;
   createdAt: string;
@@ -99,6 +108,18 @@ export function loadSnapshot(): AppSnapshot {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return cloneEmpty();
     const parsed = JSON.parse(raw) as Partial<AppSnapshot>;
+    // Older versions stored a full copy of the selfie per look when try-on was offline.
+    const selfie = parsed.selfie ?? null;
+    if (selfie && parsed.looks) {
+      parsed.looks = parsed.looks.map((l) =>
+        l.tryOnUrl === selfie ? { ...l, tryOnUrl: SELF_PHOTO } : l,
+      );
+    }
+    if (selfie && parsed.tryOnCache) {
+      parsed.tryOnCache = Object.fromEntries(
+        Object.entries(parsed.tryOnCache).filter(([, v]) => v !== selfie),
+      );
+    }
     return {
       ...cloneEmpty(),
       ...parsed,
@@ -116,14 +137,42 @@ export function loadSnapshot(): AppSnapshot {
   }
 }
 
-export function saveSnapshot(next: AppSnapshot): void {
-  if (typeof window === "undefined") return;
-  const payload = { ...next, lastActiveAt: new Date().toISOString() };
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(payload));
-  } catch {
-    /* quota or private mode */
+const MAX_MESSAGES = 120;
+
+/**
+ * Progressively lighter copies to try when device storage is full, so a heavy
+ * wardrobe never stops looks, chat, and Honey from being saved.
+ */
+export function snapshotFallbacks(next: AppSnapshot): AppSnapshot[] {
+  const base = { ...next, messages: next.messages.slice(-MAX_MESSAGES) };
+  return [
+    base,
+    { ...base, wardrobe: base.wardrobe.slice(0, 20), tryOnCache: {} },
+    { ...base, wardrobe: base.wardrobe.map((w) => ({ ...w, photo: "" })), tryOnCache: {} },
+    {
+      ...base,
+      wardrobe: base.wardrobe.map((w) => ({ ...w, photo: "" })),
+      tryOnCache: {},
+      looks: base.looks.map((l) =>
+        l.tryOnUrl?.startsWith("data:") ? { ...l, tryOnUrl: null, tryOnKey: null } : l,
+      ),
+      messages: base.messages.slice(-30),
+    },
+  ];
+}
+
+export function saveSnapshot(next: AppSnapshot): boolean {
+  if (typeof window === "undefined") return false;
+  const lastActiveAt = new Date().toISOString();
+  for (const candidate of snapshotFallbacks(next)) {
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify({ ...candidate, lastActiveAt }));
+      return true;
+    } catch {
+      /* quota: try a lighter copy */
+    }
   }
+  return false;
 }
 
 export function nid(prefix: string): string {
