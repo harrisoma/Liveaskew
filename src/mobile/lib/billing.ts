@@ -68,3 +68,27 @@ export function consumeBillingReturn(href: string): "success" | "cancelled" | nu
     return null;
   }
 }
+
+/** Stripe's page for changing tier, updating the card, or cancelling. */
+export async function openBillingPortal(): Promise<{ error: string } | null> {
+  const native = await isNativeApp();
+  try {
+    const res = await apiFetch("/api/billing/portal", {
+      method: "POST",
+      body: JSON.stringify({ native }),
+    });
+    const json = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+    if (!res.ok || !json.url) {
+      return {
+        error:
+          json.error === "no_subscription"
+            ? "No membership found on this account."
+            : "Could not open membership settings. Try again.",
+      };
+    }
+    await openExternal(json.url);
+    return null;
+  } catch {
+    return { error: "No connection. Try again in a moment." };
+  }
+}

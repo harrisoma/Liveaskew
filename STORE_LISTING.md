@@ -26,15 +26,16 @@ Fourteen days to stay with Bee. Clothes follow your life — climate, covering, 
 
 ## Privacy policy (Play Console URL)
 
-Stable URL: **`/privacy`** on this deployment (for example `https://<host>/privacy`). Copy hosted from this listing:
+Stable URL: **`/privacy`** on this deployment (for example `https://<host>/privacy`). The same text is in the app under You → Privacy policy (source: `src/lib/privacy-policy.ts`).
 
-Bee stores fit answers, saved looks, and your last chat on device so an offline session still opens. Account email is saved when you create one. Push is only for a new Bee recommendation, a trial countdown reminder, or a tier upgrade. Styling photos are never used to alter body proportions.
+## Data safety (Play) / App privacy (App Store)
 
-## Data safety (Play)
-
-- Collected: email (if you create an account), optional styling photo, fit preferences, saved looks
-- Not sold
-- Optional photo is used only to dress the body as photographed
+- **Collected, linked to the account:** email; phone number (Apple sign-in path); photos (styling photo, wardrobe photos, post photos); messages and other user content (Bee chat, Hive messages, captions); calendar events; purchase history (membership via Stripe); device push token.
+- **Shared:** posts you publish go to the social networks you connect; nothing is sold or used for advertising.
+- **Public by design:** Buzz post photos are reachable by their exact web address so networks can fetch them. Hive messages are visible to other signed-in members.
+- **Encrypted in transit:** yes. Social network tokens are also encrypted at rest.
+- **Deletion:** in-app (You → Delete account), which also cancels membership.
+- Styling photos are used only to dress the body as photographed.
 
 ## Rating prompt
 

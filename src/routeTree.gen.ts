@@ -27,6 +27,7 @@ import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
 import { Route as ApiBuzzConnectionsRouteImport } from './routes/api/buzz/connections'
 import { Route as ApiBuzzConnectRouteImport } from './routes/api/buzz/connect'
 import { Route as ApiBillingStatusRouteImport } from './routes/api/billing/status'
+import { Route as ApiBillingPortalRouteImport } from './routes/api/billing/portal'
 import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inquiry'
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
@@ -125,6 +126,11 @@ const ApiBillingStatusRoute = ApiBillingStatusRouteImport.update({
   path: '/api/billing/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBillingPortalRoute = ApiBillingPortalRouteImport.update({
+  id: '/api/billing/portal',
+  path: '/api/billing/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBillingInquiryRoute = ApiBillingInquiryRouteImport.update({
   id: '/api/billing/inquiry',
   path: '/api/billing/inquiry',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/api/bee/looks': typeof ApiBeeLooksRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
+  '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/api/bee/looks'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
+    | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/api/bee/looks'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
+    | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/api/bee/looks'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
+    | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
     | '/api/buzz/connections'
@@ -338,6 +350,7 @@ export interface RootRouteChildren {
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
+  ApiBillingPortalRoute: typeof ApiBillingPortalRoute
   ApiBillingStatusRoute: typeof ApiBillingStatusRoute
   ApiBuzzConnectRoute: typeof ApiBuzzConnectRoute
   ApiBuzzConnectionsRoute: typeof ApiBuzzConnectionsRoute
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBillingStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/billing/portal': {
+      id: '/api/billing/portal'
+      path: '/api/billing/portal'
+      fullPath: '/api/billing/portal'
+      preLoaderRoute: typeof ApiBillingPortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/billing/inquiry': {
       id: '/api/billing/inquiry'
       path: '/api/billing/inquiry'
@@ -546,6 +566,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBeeLooksRoute: ApiBeeLooksRoute,
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingInquiryRoute: ApiBillingInquiryRoute,
+  ApiBillingPortalRoute: ApiBillingPortalRoute,
   ApiBillingStatusRoute: ApiBillingStatusRoute,
   ApiBuzzConnectRoute: ApiBuzzConnectRoute,
   ApiBuzzConnectionsRoute: ApiBuzzConnectionsRoute,

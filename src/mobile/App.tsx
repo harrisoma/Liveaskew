@@ -28,6 +28,7 @@ import { generateLooks, toGuideLook } from "./lib/looks";
 import {
   consumeBillingReturn,
   fetchMembership,
+  openBillingPortal,
   requestAtelier,
   startCheckout,
 } from "./lib/billing";
@@ -862,6 +863,12 @@ export function MobileApp() {
               busy={tierBusy}
               notice={tierNotice}
               onBack={() => setYouView("profile")}
+              onManage={async () => {
+                setTierBusy(true);
+                const result = await openBillingPortal();
+                setTierBusy(false);
+                if (result) setTierNotice(result.error);
+              }}
               onSelect={async (tier) => {
                 setTierBusy(true);
                 setTierNotice(null);
@@ -1311,6 +1318,7 @@ function Tiers({
   notice,
   onBack,
   onSelect,
+  onManage,
 }: {
   current: string;
   active: boolean;
@@ -1319,6 +1327,7 @@ function Tiers({
   notice: string | null;
   onBack: () => void;
   onSelect: (t: PlanSlug) => void;
+  onManage: () => void;
 }) {
   const index = Math.max(0, TIER_ORDER.indexOf(current as PlanSlug));
   const progress = ((index + 1) / TIER_ORDER.length) * 100;
@@ -1381,9 +1390,9 @@ function Tiers({
         })}
       </ol>
       {active && (
-        <p className="mt-4 text-sm opacity-70">
-          To change or cancel your tier, use the link in your Stripe receipt email.
-        </p>
+        <NeoButton className="mt-4" disabled={busy} onClick={onManage}>
+          Change or cancel membership
+        </NeoButton>
       )}
     </Screen>
   );
