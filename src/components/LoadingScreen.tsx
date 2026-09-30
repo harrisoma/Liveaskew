@@ -10,22 +10,20 @@ export function LoadingScreen({ label = "Loading", fullscreen = true }: Props) {
     <div
       className={
         fullscreen
-          ? "flex min-h-screen w-full items-center justify-center bg-cream"
+          ? "flex min-h-screen w-full items-center justify-center bg-background"
           : "flex w-full items-center justify-center py-24"
       }
       role="status"
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="flex flex-col items-center gap-6 rounded-[2rem] bg-cream px-12 py-10 shadow-neo">
+      <div className="flex flex-col items-center gap-6">
         <img
           src={logo}
           alt="LiveAskew"
-          className="h-24 w-auto animate-pulse opacity-90 [animation-duration:1.6s]"
+          className="h-20 w-auto animate-pulse opacity-90 [animation-duration:1.6s]"
         />
-        <span className="text-[0.65rem] font-medium uppercase tracking-[0.35em] text-ink/50">
-          {label}
-        </span>
+        <span className="text-sm text-muted-foreground">{label}</span>
       </div>
     </div>
   );

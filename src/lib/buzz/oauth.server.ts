@@ -17,7 +17,7 @@ export function safeBuzzReturn(raw: string | undefined, request: Request): strin
       /* fall through */
     }
   }
-  return `${origin}/`;
+  return `${origin}/app`;
 }
 
 export function withQuery(url: string, params: Record<string, string>): string {

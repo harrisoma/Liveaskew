@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import crestBee from "@/assets/brand/crest-bee.webp";
 import { isNativeApp } from "./lib/platform";
 import "./styles.css";
 
@@ -7,21 +8,23 @@ export function PlatformShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="la-web-shell">
-      <aside className="la-web-aside" aria-label="Bee platforms">
-        <p className="la-kicker">LiveAskew</p>
-        <p className="la-display mt-2 text-4xl">Bee</p>
-        <p className="mt-4 text-sm leading-relaxed">
-          The same personal stylist on the web app, iPhone, and Android. Clothes follow your body —
-          we never alter it.
+      <aside className="la-web-aside" aria-label="About LiveAskew">
+        <img src={crestBee} alt="" className="h-16 w-16" />
+        <p className="la-display mt-6 text-[2.5rem] leading-[1.05] font-bold">
+          Dressed for the day you actually have.
         </p>
-        <ul className="mt-6 space-y-2 text-sm">
-          <li className="neo-raised-sm px-3 py-2">Web app — this browser</li>
-          <li className="neo-raised-sm px-3 py-2">iOS — Bee, bundle co.liveaskew.app</li>
-          <li className="neo-raised-sm px-3 py-2">Android — Bee, applicationId co.liveaskew.app</li>
-        </ul>
-        <a className="mt-6 inline-block text-sm underline underline-offset-4" href="/privacy">
-          Privacy policy
-        </a>
+        <p className="mt-4 text-[1.0625rem] leading-relaxed opacity-60">
+          Bee styles you, Honey plans your days, Buzz shares your looks, and the Hive talks it
+          through. The same app on the web, iPhone, and Android.
+        </p>
+        <div className="mt-8 flex gap-6 text-[0.95rem] font-medium">
+          <a href="/" style={{ color: "var(--gold)" }}>
+            About LiveAskew
+          </a>
+          <a href="/privacy" style={{ color: "var(--gold)" }}>
+            Privacy
+          </a>
+        </div>
       </aside>
       {children}
     </div>

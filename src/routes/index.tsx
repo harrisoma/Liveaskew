@@ -1,35 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MobileApp } from "@/mobile/App";
-import { PlatformShell } from "@/mobile/PlatformShell";
+import { Landing } from "@/site/Landing";
+
+const TITLE = "LiveAskew — Bee, Honey, Buzz, and the Hive";
+const DESCRIPTION =
+  "Bee styles you, Honey plans your days, Buzz shares your looks, and the Hive talks it through. Clothes follow your body — we never alter it. Free for 14 days.";
 
 export const Route = createFileRoute("/")({
-  ssr: false,
   head: () => ({
     meta: [
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1",
-      },
-      { name: "theme-color", content: "#e0e5ec" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "Bee" },
-      { name: "mobile-web-app-capable", content: "yes" },
-      { title: "Bee — AI stylist by LiveAskew" },
-      {
-        name: "description",
-        content:
-          "Bee by LiveAskew is a personal styling web app, iPhone app, and Android app built on Fit, Feel, and Fabric. Clothes follow your body — we never alter it.",
-      },
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "https://www.liveaskew.com/" },
     ],
-    links: [{ rel: "manifest", href: "/manifest.webmanifest" }],
+    links: [{ rel: "canonical", href: "https://www.liveaskew.com/" }],
   }),
-  component: WebAppHome,
+  component: Landing,
 });
-
-function WebAppHome() {
-  return (
-    <PlatformShell>
-      <MobileApp />
-    </PlatformShell>
-  );
-}

@@ -26,7 +26,7 @@ const CONNECT_ERRORS: Record<string, string> = {
 
 export async function connectNetwork(network: NetworkId): Promise<{ error: string } | null> {
   const native = await isNativeApp();
-  const returnTo = native ? "co.liveaskew.app://buzz" : `${window.location.origin}/`;
+  const returnTo = native ? "co.liveaskew.app://buzz" : `${window.location.origin}/app`;
   try {
     const res = await apiFetch("/api/buzz/connect", {
       method: "POST",

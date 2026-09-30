@@ -91,9 +91,7 @@ export function TodayScreen({
       <p className="la-kicker">
         {now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
       </p>
-      <h1 className="la-display mt-1 text-[1.75rem] leading-tight font-semibold">
-        {greeting(now)}.
-      </h1>
+      <h1 className="la-display mt-1 text-[2.125rem] leading-[1.1] font-bold">{greeting(now)}.</h1>
 
       {/* Today's look */}
       <section className="la-hero mt-5 aspect-[4/5]" aria-label="Today's look">
@@ -108,7 +106,7 @@ export function TodayScreen({
         <div className="la-hero-shade" />
         <div className="absolute inset-x-0 bottom-0 p-5">
           <p className="la-kicker la-gold">{look ? "Today's look" : "Your Style Guide"}</p>
-          <h2 className="la-display mt-1 text-2xl font-semibold">
+          <h2 className="la-display mt-1 text-[1.75rem] leading-tight font-bold">
             {look ? look.title : "Dressed for the day you actually have"}
           </h2>
           {look ? (

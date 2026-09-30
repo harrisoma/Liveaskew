@@ -1,7 +1,7 @@
 # Capacitor — Bee by LiveAskew
 
 Bee is one product: **web app**, **iOS**, and **Android**. App ID is permanent: `co.liveaskew.app`.
-The web app is `/` (and `/app`) on Vercel. These native projects wrap the same UI.
+The web app is `/app` on Vercel (`/` is the website). These native projects wrap the same UI.
 
 ## Commands
 
@@ -24,7 +24,7 @@ Bundle identifier must stay `co.liveaskew.app`.
 | `@capacitor/camera`             | Styling photo. Never alter proportions.  |
 | `@capacitor/push-notifications` | Recommendation ready / tier upgrade only |
 | `@capacitor/haptics`            | Save, upgrade, Bee reply                 |
-| `@capacitor/status-bar`         | Full-bleed `#e0e5ec` under the notch     |
+| `@capacitor/status-bar`         | Follows light / dark under the notch     |
 | `@capacitor/keyboard`           | Chat composer above the keyboard         |
 | `@capacitor/app`                | Background / resume                      |
 
@@ -43,7 +43,7 @@ Leave both unset for `npm run dev`.
 
 Supabase OAuth with PKCE.
 
-- Web: redirect is the page origin (`/` or `/app`). The app exchanges `?code=` on load.
+- Web: redirect is `/app` on the page origin (add `<origin>/app` to Supabase → Auth → URL Configuration → Redirect URLs). The app exchanges `?code=` on load.
 - iOS / Android: redirect is `co.liveaskew.app://`. Android has a VIEW/BROWSABLE intent filter; iOS registers the URL scheme. `App.appUrlOpen` resumes the session.
 
 After Google, the app sends an email OTP. After Apple, collect a phone number and send a 6-digit SMS (private relay hides the real inbox).

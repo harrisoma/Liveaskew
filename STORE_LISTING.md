@@ -1,7 +1,7 @@
 # Bee by LiveAskew — App Store / Play Store listing
 
 Honest keywords only: **AI stylist**, **personal styling app**, **Fit Feel Fabric**.
-Screenshots should show the `#e0e5ec` neumorphic UI — that is the visual differentiator.
+Screenshots should show the Apple-native UI in light and dark, with the gold crests — that is the visual differentiator.
 
 ## Name
 

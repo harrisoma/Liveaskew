@@ -411,7 +411,7 @@ export function MobileApp() {
         </header>
       )}
       {snap.phase === "app" && trialText && tab !== "today" && (
-        <p className="mx-5 mt-2 neo-inset px-3 py-2 text-sm" role="status">
+        <p className="mx-5 mt-1 text-[13px] opacity-60" role="status">
           {trialText}
         </p>
       )}
@@ -1185,17 +1185,13 @@ function InterviewScreen({
         </form>
       }
     >
-      <ul className="space-y-3">
+      <ul className="flex flex-col gap-2">
         {messages.map((m) => (
           <li
             key={m.id}
-            className={
-              m.role === "user"
-                ? "neo-inset px-4 py-3 text-sm"
-                : "neo-raised px-4 py-3 text-sm leading-relaxed"
-            }
+            className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
           >
-            <p className="la-kicker mb-1">{m.role === "user" ? "You" : "Bee"}</p>
+            {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
             <p className="whitespace-pre-wrap">{m.content}</p>
           </li>
         ))}
@@ -1297,8 +1293,8 @@ function HomeChat({
       }
     >
       <section aria-label="Real Talk" className="mb-4">
-        <p className="la-kicker">Real Talk</p>
-        <p className="mt-1 text-sm opacity-80">
+        {!topic && <p className="la-kicker">Real Talk</p>}
+        <p className="mt-1 text-[15px] opacity-70">
           {topic
             ? TALK_GUIDES[topic].blurb
             : "Bee asks the questions that are hard to say out loud. Pick one."}
@@ -1310,7 +1306,7 @@ function HomeChat({
               type="button"
               aria-pressed={topic === t}
               disabled={sending}
-              className={`${topic === t ? "neo-inset font-semibold" : "neo-raised"} px-3 py-2 text-sm`}
+              className="la-chip"
               onClick={() => onTopic(t)}
             >
               {TALK_GUIDES[t].label}
@@ -1319,7 +1315,8 @@ function HomeChat({
           {topic && (
             <button
               type="button"
-              className="px-3 py-2 text-sm underline"
+              className="px-2 py-2 text-[15px] font-medium"
+              style={{ color: "var(--gold)" }}
               onClick={() => onTopic(null)}
             >
               Back to styling
@@ -1335,17 +1332,13 @@ function HomeChat({
           </p>
         )}
       </section>
-      <ul className="space-y-3">
+      <ul className="flex flex-col gap-2">
         {messages.map((m) => (
           <li
             key={m.id}
-            className={
-              m.role === "user"
-                ? "neo-inset px-4 py-3 text-sm"
-                : "neo-raised px-4 py-3 text-sm leading-relaxed"
-            }
+            className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
           >
-            <p className="la-kicker mb-1">{m.role === "user" ? "You" : "Bee"}</p>
+            {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
             <p className="whitespace-pre-wrap">{m.content}</p>
           </li>
         ))}
@@ -1749,7 +1742,7 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
     { id: "hive", label: "Hive", crest: "hive" },
   ];
   return (
-    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 gap-1 px-3 pt-2 pb-3">
+    <nav aria-label="Main" className="la-tabbar grid grid-cols-5 px-2 pt-1.5">
       {items.map((item) => {
         const active = tab === item.id;
         return (
@@ -1758,14 +1751,12 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
             type="button"
             aria-current={active ? "page" : undefined}
             onClick={() => onChange(item.id)}
-            className={`flex flex-col items-center gap-1 px-1 py-2 text-[0.65rem] font-semibold ${
-              active ? "neo-inset" : "neo-raised-sm"
-            }`}
+            className="flex flex-col items-center gap-0.5 px-1 py-1 text-[0.66rem] font-medium"
           >
             {item.crest ? (
-              <Crest name={item.crest} size={22} decorative />
+              <Crest name={item.crest} size={26} decorative />
             ) : (
-              <Home size={20} aria-hidden />
+              <Home size={26} strokeWidth={active ? 2.2 : 1.8} aria-hidden />
             )}
             {item.label}
           </button>

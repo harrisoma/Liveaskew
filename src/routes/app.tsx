@@ -6,7 +6,12 @@ export const Route = createFileRoute("/app")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Bee web app — LiveAskew" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1",
+      },
+      { name: "theme-color", content: "#f2f2f7" },
+      { title: "LiveAskew — Bee, Honey, Buzz, and the Hive" },
       {
         name: "description",
         content: "Open Bee in the browser — the same stylist as the iOS and Android apps.",
@@ -14,10 +19,10 @@ export const Route = createFileRoute("/app")({
     ],
     links: [{ rel: "manifest", href: "/manifest.webmanifest" }],
   }),
-  component: WebAppAlias,
+  component: WebApp,
 });
 
-function WebAppAlias() {
+function WebApp() {
   return (
     <PlatformShell>
       <MobileApp />

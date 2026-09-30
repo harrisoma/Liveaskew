@@ -83,7 +83,7 @@ async function oauthRedirect(): Promise<string> {
   } catch {
     /* web */
   }
-  return `${window.location.origin}/`;
+  return `${window.location.origin}/app`;
 }
 
 export async function signInWithProvider(provider: AuthProvider): Promise<{

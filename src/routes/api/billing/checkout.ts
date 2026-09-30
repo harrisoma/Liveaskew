@@ -12,7 +12,7 @@ import {
 type Body = { tier?: string; returnUrl?: string };
 
 function safeReturnUrl(raw: string | undefined, request: Request): string {
-  const fallback = new URL("/", request.url).toString();
+  const fallback = new URL("/app", request.url).toString();
   if (!raw) return fallback;
   try {
     const url = new URL(raw);
