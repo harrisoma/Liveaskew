@@ -12,7 +12,7 @@ import { RouteError, RouteNotFound } from "@/components/RouteError";
 
 import appCss from "../styles.css?url";
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   return <RouteError error={error} reset={reset} />;
 }
