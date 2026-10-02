@@ -4,7 +4,7 @@ import { beeOpensWith, localBeeReply, recommendLook } from "./recommend";
 describe("recommendLook", () => {
   it("returns a Fit/Feel/Fabric look from onboarding answers", () => {
     const look = recommendLook({ goal: "work", fit: "structured", budget: "mid" });
-    expect(look.title).toBe("The Monday column");
+    expect(look.title).toBe("The Golden Hour");
     expect(look.formula.length).toBeGreaterThan(2);
     expect(look.fit.toLowerCase()).toContain("waist");
     expect(look.palette).toHaveLength(3);

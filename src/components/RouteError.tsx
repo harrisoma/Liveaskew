@@ -4,7 +4,8 @@ import { RefreshCcw, Home } from "lucide-react";
 type RouteErrorProps = {
   title?: string;
   message?: string;
-  error?: Error;
+  /** Whatever was thrown; the router no longer promises it is an Error. */
+  error?: unknown;
   reset?: () => void;
   showHome?: boolean;
 };
@@ -17,6 +18,7 @@ export function RouteError({
   showHome = true,
 }: RouteErrorProps) {
   const router = useRouter();
+  const detail = error instanceof Error ? error.message : error ? String(error) : "";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-16">
@@ -27,9 +29,9 @@ export function RouteError({
         <h1 className="mt-3 font-serif text-3xl tracking-tight text-foreground">{title}</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{message}</p>
 
-        {error?.message && (
+        {detail && (
           <pre className="mt-4 max-h-32 overflow-auto rounded-md bg-muted/60 px-3 py-2 text-left font-mono text-[11px] text-muted-foreground">
-            {error.message}
+            {detail}
           </pre>
         )}
 
