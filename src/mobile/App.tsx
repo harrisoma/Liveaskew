@@ -1537,7 +1537,9 @@ function Tiers({
         <p className="mt-2 text-sm">
           {active
             ? `${TIERS[index]?.name ?? "Silver"} · ${index + 1} of ${TIER_ORDER.length}`
-            : "You're on the free trial"}
+            : gated
+              ? "No membership yet"
+              : "You're on the free trial"}
         </p>
       </div>
       <ol className="mt-5 space-y-3">
