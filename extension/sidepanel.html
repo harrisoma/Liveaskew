@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bee</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <img src="icons/48.png" alt="" width="28" height="28" />
+        <span>Live<b>Askew</b></span>
+      </div>
+      <button id="signout" class="link" hidden>Sign out</button>
+    </header>
+
+    <section id="welcome" class="screen" hidden>
+      <h1>Bee, beside every page</h1>
+      <p>
+        Ask Bee about a piece while you shop, plan what to wear for what's coming up, and see your
+        day — all from your LiveAskew account.
+      </p>
+      <button id="signin" class="primary">Sign in with LiveAskew</button>
+      <p id="signin-note" class="note" role="alert"></p>
+      <label class="server">
+        Server
+        <select id="server"></select>
+      </label>
+    </section>
+
+    <section id="main" class="screen" hidden>
+      <nav class="segmented" role="tablist">
+        <button role="tab" data-tab="today" aria-selected="true">Today</button>
+        <button role="tab" data-tab="bee" aria-selected="false">Ask Bee</button>
+        <button role="tab" data-tab="looks" aria-selected="false">Looks</button>
+      </nav>
+
+      <div id="tab-today" class="tab">
+        <div id="today" class="card muted">Loading your day…</div>
+      </div>
+
+      <div id="tab-bee" class="tab" hidden>
+        <div id="thread" class="thread" aria-live="polite"></div>
+        <div class="chips" id="topics">
+          <button data-topic="">Styling</button>
+          <button data-topic="motherhood">Motherhood</button>
+          <button data-topic="relationships">Relationships</button>
+          <button data-topic="work">Work</button>
+          <button data-topic="style">Style &amp; self</button>
+        </div>
+        <form id="ask" class="composer">
+          <textarea
+            id="message"
+            rows="2"
+            maxlength="2000"
+            placeholder="Ask Bee…"
+            required
+          ></textarea>
+          <button class="primary" type="submit">Ask</button>
+        </form>
+      </div>
+
+      <div id="tab-looks" class="tab" hidden>
+        <label class="toggle"><input type="checkbox" id="saved-only" /> Saved only</label>
+        <div id="looks"></div>
+      </div>
+    </section>
+
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

@@ -68,3 +68,18 @@ npm test
 ```
 
 Environment files are intentionally excluded from Git. Configure production values in Vercel Project Settings.
+
+## LiveAskew in Claude, ChatGPT, and other assistants (MCP)
+
+LiveAskew is a remote MCP server at `/api/mcp` (Streamable HTTP, stateless JSON-RPC), with its
+own OAuth 2.1 authorization server (dynamic client registration, PKCE S256, public clients).
+
+- Connect: in Claude, **Settings → Connectors → Add custom connector** with
+  `https://www.liveaskew.com/api/mcp`; in ChatGPT, add it as a connector in developer mode.
+- The member signs in at `/oauth/authorize` with her LiveAskew email (a one-time code) and
+  allows the assistant. Tokens: 1-hour access, 30-day rotating refresh, stored only as hashes
+  in `mcp_tokens`.
+- Tools: `get_today`, `list_looks`, `get_calendar`, `ask_bee` (counts toward the member's
+  Bee use and follows the same trial/membership gate and crisis-safety prompt as the app).
+- Code: `src/lib/mcp/` (protocol, tools, OAuth), routes under `src/routes/api/mcp.ts`,
+  `src/routes/api/oauth/`, `src/routes/[.]well-known/`, `src/routes/oauth/authorize.tsx`.

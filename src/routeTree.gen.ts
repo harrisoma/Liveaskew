@@ -12,7 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
+import { Route as DotwellKnownOauthProtectedResourceRouteImport } from './routes/[.]well-known/oauth-protected-resource'
+import { Route as ApiMcpRouteImport } from './routes/api/mcp'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
+import { Route as OauthAuthorizeRouteImport } from './routes/oauth/authorize'
 import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
@@ -29,11 +33,17 @@ import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiHiveModerationRouteImport } from './routes/api/hive/moderation'
 import { Route as ApiHoneyIndexRouteImport } from './routes/api/honey/index'
 import { Route as ApiHoneyImportRouteImport } from './routes/api/honey/import'
+import { Route as ApiOauthApproveRouteImport } from './routes/api/oauth/approve'
+import { Route as ApiOauthClientRouteImport } from './routes/api/oauth/client'
+import { Route as ApiOauthRegisterRouteImport } from './routes/api/oauth/register'
+import { Route as ApiOauthRevokeRouteImport } from './routes/api/oauth/revoke'
+import { Route as ApiOauthTokenRouteImport } from './routes/api/oauth/token'
 import { Route as ApiPublicAppReturnRouteImport } from './routes/api/public/app-return'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
+import { Route as DotwellKnownOauthProtectedResourceApiMcpRouteImport } from './routes/[.]well-known/oauth-protected-resource/api/mcp'
 import { Route as ApiPublicBuzzCallbackRouteImport } from './routes/api/public/buzz/callback'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
@@ -52,9 +62,31 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownOauthAuthorizationServerRoute =
+  DotwellKnownOauthAuthorizationServerRouteImport.update({
+    id: '/.well-known/oauth-authorization-server',
+    path: '/.well-known/oauth-authorization-server',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotwellKnownOauthProtectedResourceRoute =
+  DotwellKnownOauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiMcpRoute = ApiMcpRouteImport.update({
+  id: '/api/mcp',
+  path: '/api/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTryonRoute = ApiTryonRouteImport.update({
   id: '/api/tryon',
   path: '/api/tryon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OauthAuthorizeRoute = OauthAuthorizeRouteImport.update({
+  id: '/oauth/authorize',
+  path: '/oauth/authorize',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
@@ -137,6 +169,31 @@ const ApiHoneyImportRoute = ApiHoneyImportRouteImport.update({
   path: '/api/honey/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOauthApproveRoute = ApiOauthApproveRouteImport.update({
+  id: '/api/oauth/approve',
+  path: '/api/oauth/approve',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthClientRoute = ApiOauthClientRouteImport.update({
+  id: '/api/oauth/client',
+  path: '/api/oauth/client',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthRegisterRoute = ApiOauthRegisterRouteImport.update({
+  id: '/api/oauth/register',
+  path: '/api/oauth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthRevokeRoute = ApiOauthRevokeRouteImport.update({
+  id: '/api/oauth/revoke',
+  path: '/api/oauth/revoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthTokenRoute = ApiOauthTokenRouteImport.update({
+  id: '/api/oauth/token',
+  path: '/api/oauth/token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAppReturnRoute = ApiPublicAppReturnRouteImport.update({
   id: '/api/public/app-return',
   path: '/api/public/app-return',
@@ -162,6 +219,12 @@ const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
   path: '/api/wardrobe/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownOauthProtectedResourceApiMcpRoute =
+  DotwellKnownOauthProtectedResourceApiMcpRouteImport.update({
+    id: '/api/mcp',
+    path: '/api/mcp',
+    getParentRoute: () => DotwellKnownOauthProtectedResourceRoute,
+  } as any)
 const ApiPublicBuzzCallbackRoute = ApiPublicBuzzCallbackRouteImport.update({
   id: '/api/public/buzz/callback',
   path: '/api/public/buzz/callback',
@@ -178,7 +241,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
+  '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/oauth/authorize': typeof OauthAuthorizeRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
@@ -194,12 +261,18 @@ export interface FileRoutesByFullPath {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/oauth/approve': typeof ApiOauthApproveRoute
+  '/api/oauth/client': typeof ApiOauthClientRoute
+  '/api/oauth/register': typeof ApiOauthRegisterRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
+  '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -207,7 +280,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
+  '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/oauth/authorize': typeof OauthAuthorizeRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
@@ -223,12 +300,18 @@ export interface FileRoutesByTo {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/oauth/approve': typeof ApiOauthApproveRoute
+  '/api/oauth/client': typeof ApiOauthClientRoute
+  '/api/oauth/register': typeof ApiOauthRegisterRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey': typeof ApiHoneyIndexRoute
+  '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -237,7 +320,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
+  '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
+  '/oauth/authorize': typeof OauthAuthorizeRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
@@ -253,12 +340,18 @@ export interface FileRoutesById {
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
+  '/api/oauth/approve': typeof ApiOauthApproveRoute
+  '/api/oauth/client': typeof ApiOauthClientRoute
+  '/api/oauth/register': typeof ApiOauthRegisterRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
+  '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -268,7 +361,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/.well-known/oauth-authorization-server'
+    | '/.well-known/oauth-protected-resource'
+    | '/api/mcp'
     | '/api/tryon'
+    | '/oauth/authorize'
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
@@ -284,12 +381,18 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/oauth/approve'
+    | '/api/oauth/client'
+    | '/api/oauth/register'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
     | '/api/honey/'
+    | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -297,7 +400,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/.well-known/oauth-authorization-server'
+    | '/.well-known/oauth-protected-resource'
+    | '/api/mcp'
     | '/api/tryon'
+    | '/oauth/authorize'
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
@@ -313,12 +420,18 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/oauth/approve'
+    | '/api/oauth/client'
+    | '/api/oauth/register'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
     | '/api/honey'
+    | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   id:
@@ -326,7 +439,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/.well-known/oauth-authorization-server'
+    | '/.well-known/oauth-protected-resource'
+    | '/api/mcp'
     | '/api/tryon'
+    | '/oauth/authorize'
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
@@ -342,12 +459,18 @@ export interface FileRouteTypes {
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
+    | '/api/oauth/approve'
+    | '/api/oauth/client'
+    | '/api/oauth/register'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
     | '/api/honey/'
+    | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -356,7 +479,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
   PrivacyRoute: typeof PrivacyRoute
+  DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
+  DotwellKnownOauthProtectedResourceRoute: typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  ApiMcpRoute: typeof ApiMcpRoute
   ApiTryonRoute: typeof ApiTryonRoute
+  OauthAuthorizeRoute: typeof OauthAuthorizeRoute
   ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
@@ -372,6 +499,11 @@ export interface RootRouteChildren {
   ApiCronPushRoute: typeof ApiCronPushRoute
   ApiHiveModerationRoute: typeof ApiHiveModerationRoute
   ApiHoneyImportRoute: typeof ApiHoneyImportRoute
+  ApiOauthApproveRoute: typeof ApiOauthApproveRoute
+  ApiOauthClientRoute: typeof ApiOauthClientRoute
+  ApiOauthRegisterRoute: typeof ApiOauthRegisterRoute
+  ApiOauthRevokeRoute: typeof ApiOauthRevokeRoute
+  ApiOauthTokenRoute: typeof ApiOauthTokenRoute
   ApiPublicAppReturnRoute: typeof ApiPublicAppReturnRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
@@ -405,11 +537,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-authorization-server': {
+      id: '/.well-known/oauth-authorization-server'
+      path: '/.well-known/oauth-authorization-server'
+      fullPath: '/.well-known/oauth-authorization-server'
+      preLoaderRoute: typeof DotwellKnownOauthAuthorizationServerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof DotwellKnownOauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mcp': {
+      id: '/api/mcp'
+      path: '/api/mcp'
+      fullPath: '/api/mcp'
+      preLoaderRoute: typeof ApiMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tryon': {
       id: '/api/tryon'
       path: '/api/tryon'
       fullPath: '/api/tryon'
       preLoaderRoute: typeof ApiTryonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oauth/authorize': {
+      id: '/oauth/authorize'
+      path: '/oauth/authorize'
+      fullPath: '/oauth/authorize'
+      preLoaderRoute: typeof OauthAuthorizeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/account/delete': {
@@ -524,6 +684,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHoneyImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/oauth/approve': {
+      id: '/api/oauth/approve'
+      path: '/api/oauth/approve'
+      fullPath: '/api/oauth/approve'
+      preLoaderRoute: typeof ApiOauthApproveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/client': {
+      id: '/api/oauth/client'
+      path: '/api/oauth/client'
+      fullPath: '/api/oauth/client'
+      preLoaderRoute: typeof ApiOauthClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/register': {
+      id: '/api/oauth/register'
+      path: '/api/oauth/register'
+      fullPath: '/api/oauth/register'
+      preLoaderRoute: typeof ApiOauthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/revoke': {
+      id: '/api/oauth/revoke'
+      path: '/api/oauth/revoke'
+      fullPath: '/api/oauth/revoke'
+      preLoaderRoute: typeof ApiOauthRevokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/token': {
+      id: '/api/oauth/token'
+      path: '/api/oauth/token'
+      fullPath: '/api/oauth/token'
+      preLoaderRoute: typeof ApiOauthTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/app-return': {
       id: '/api/public/app-return'
       path: '/api/public/app-return'
@@ -559,6 +754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWardrobeAnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource/api/mcp': {
+      id: '/.well-known/oauth-protected-resource/api/mcp'
+      path: '/api/mcp'
+      fullPath: '/.well-known/oauth-protected-resource/api/mcp'
+      preLoaderRoute: typeof DotwellKnownOauthProtectedResourceApiMcpRouteImport
+      parentRoute: typeof DotwellKnownOauthProtectedResourceRoute
+    }
     '/api/public/buzz/callback': {
       id: '/api/public/buzz/callback'
       path: '/api/public/buzz/callback'
@@ -576,11 +778,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DotwellKnownOauthProtectedResourceRouteChildren {
+  DotwellKnownOauthProtectedResourceApiMcpRoute: typeof DotwellKnownOauthProtectedResourceApiMcpRoute
+}
+
+const DotwellKnownOauthProtectedResourceRouteChildren: DotwellKnownOauthProtectedResourceRouteChildren =
+  {
+    DotwellKnownOauthProtectedResourceApiMcpRoute:
+      DotwellKnownOauthProtectedResourceApiMcpRoute,
+  }
+
+const DotwellKnownOauthProtectedResourceRouteWithChildren =
+  DotwellKnownOauthProtectedResourceRoute._addFileChildren(
+    DotwellKnownOauthProtectedResourceRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
   PrivacyRoute: PrivacyRoute,
+  DotwellKnownOauthAuthorizationServerRoute:
+    DotwellKnownOauthAuthorizationServerRoute,
+  DotwellKnownOauthProtectedResourceRoute:
+    DotwellKnownOauthProtectedResourceRouteWithChildren,
+  ApiMcpRoute: ApiMcpRoute,
   ApiTryonRoute: ApiTryonRoute,
+  OauthAuthorizeRoute: OauthAuthorizeRoute,
   ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeLooksRoute: ApiBeeLooksRoute,
@@ -596,6 +819,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCronPushRoute: ApiCronPushRoute,
   ApiHiveModerationRoute: ApiHiveModerationRoute,
   ApiHoneyImportRoute: ApiHoneyImportRoute,
+  ApiOauthApproveRoute: ApiOauthApproveRoute,
+  ApiOauthClientRoute: ApiOauthClientRoute,
+  ApiOauthRegisterRoute: ApiOauthRegisterRoute,
+  ApiOauthRevokeRoute: ApiOauthRevokeRoute,
+  ApiOauthTokenRoute: ApiOauthTokenRoute,
   ApiPublicAppReturnRoute: ApiPublicAppReturnRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
