@@ -84,6 +84,14 @@ describe("crisis care", () => {
     expect(crisis).toContain("SAFETY");
     expect(crisis).toContain("988");
   });
+
+  it("drops the playful voice in a crisis", () => {
+    const calm = talkSystemPrompt("motherhood", {}, false);
+    const crisis = talkSystemPrompt("motherhood", {}, true);
+    expect(calm).toContain("a little cheeky");
+    expect(crisis).not.toMatch(/cheeky|cheer her on/i);
+    expect(crisis).toContain("no jokes");
+  });
 });
 
 describe("safety in every chat", () => {

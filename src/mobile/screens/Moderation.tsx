@@ -29,7 +29,7 @@ export function ModerationScreen({
     setBusy(null);
     setConfirmBan(null);
     if (!ok) {
-      setNotice("That did not go through. Try again.");
+      setNotice("That didn't go through. Try again?");
       return;
     }
     setNotice(

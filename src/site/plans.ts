@@ -37,7 +37,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   silver: {
     tab: "Silver",
     description:
-      "Bee in writing, your wardrobe in one place, and a calendar that dresses you for what's actually on it.",
+      "Chat with Bee any time, keep your whole wardrobe in one place, and get a calendar that knows what you're wearing to everything on it.",
     features: [
       "Bee in writing",
       "Full wardrobe vault",
@@ -50,7 +50,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   gold: {
     tab: "Gold",
     description:
-      "Bee's voice, your private monthly Magazine, and the Selfie-AI engine that models every look on your own likeness.",
+      "Everything in Silver, plus every look on your own photo. Bee's voice and your own monthly Magazine are on the way.",
     features: [
       "Everything in Silver",
       "Bee's full voice",
@@ -63,7 +63,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   platinum: {
     tab: "Platinum",
     description:
-      "Everything in Gold, plus shoppable manifests, priority generation, and full curated shopping access.",
+      "Everything in Gold, plus The Hive right inside Bee. Shopping lists for every look and express looks are on the way.",
     features: [
       "Everything in Gold",
       "Shoppable look manifests",
@@ -75,7 +75,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   platinum_plus: {
     tab: "Plus",
     description:
-      "Everything in Platinum, plus a dedicated partner seat with their own Bee, face, and wardrobe — and a quarterly hour with Bianca.",
+      "Everything in Platinum, plus Buzz to post your looks. A seat for your partner and an hour with Bianca every quarter are on the way.",
     features: [
       "Everything in Platinum",
       "Add a partner seat — their own Bee, face & wardrobe",
@@ -88,7 +88,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   platinum_plus_family: {
     tab: "Family",
     description:
-      "The full household experience — up to three family seats, kids & couples dressing mode, shared wardrobe rooms, and Bianca on your calendar.",
+      "The whole household, sorted. Family seats, outfits for the kids and for the two of you, and shared wardrobes are on the way.",
     features: [
       "Everything in Platinum Plus",
       "Up to 3 family seats (partner + children)",
@@ -101,7 +101,7 @@ const COPY: Record<PlanSlug, PlanCopy> = {
   atelier: {
     tab: "Atelier",
     description:
-      "Work 1-on-1 with a live human stylist — not the chat. Price is set with you after a conversation, not published as a rate card.",
+      "A real human stylist, just for you. We have a proper chat first, then agree a price that fits what you need.",
     features: [
       "Live 1-on-1 with a human stylist",
       "Price negotiated to your brief",

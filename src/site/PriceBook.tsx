@@ -78,13 +78,13 @@ export function PriceBook() {
             </p>
             <p className="book-note">
               {plan.inquiry
-                ? "Set with you, after a conversation."
-                : "14 days free, then monthly. Cancel any time."}
+                ? "We agree it together, after a chat."
+                : "14 days on us, then monthly. Cancel any time."}
             </p>
             <p className="book-tagline font-semibold">{plan.tagline}</p>
             <p className="book-description">{plan.description}</p>
             <a href="/app" className="glass-btn mt-8">
-              {plan.inquiry ? "Inquire in the app" : "Start 14 days free"}
+              {plan.inquiry ? "Let's talk" : "Start your 14 days free"}
             </a>
           </article>
           <article className="book-page book-page-right">

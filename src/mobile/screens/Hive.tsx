@@ -84,8 +84,8 @@ export function HiveScreen({
       <Screen kicker="The Hive" title="Talk about your looks">
         <div className="neo-inset px-4 py-4 text-sm leading-relaxed">
           {session.state === "offline"
-            ? "The Hive is where members talk through their looks together. It opens once this app is connected to your LiveAskew account."
-            : "Sign in with Google or Apple to join the Hive rooms."}
+            ? "The Hive is where members swap looks and talk things through. It opens once you're signed in to LiveAskew."
+            : "Sign in with Google or Apple and come join us."}
         </div>
         {saved.length > 0 && (
           <>
@@ -171,7 +171,8 @@ function NameStep({ userId, onSaved }: { userId: string; onSaved: (name: string)
   return (
     <Screen kicker="The Hive" title="Your Hive name">
       <p className="mb-4 text-sm leading-relaxed">
-        This is the name other members see next to what you post. Your email and phone stay private.
+        Pick the name other members will see next to your posts. Your email and number always stay
+        private.
       </p>
       <form
         className="space-y-3"
@@ -192,7 +193,7 @@ function NameStep({ userId, onSaved }: { userId: string; onSaved: (name: string)
         />
         {error && <p className="text-sm">{error}</p>}
         <NeoButton type="submit" variant="ink" disabled={busy || name.trim().length < 2}>
-          Enter the Hive
+          Join the Hive
         </NeoButton>
       </form>
     </Screen>
@@ -347,7 +348,7 @@ function RoomView({
         <Skeleton className="h-24" />
       ) : visible.length === 0 ? (
         <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
-          Nobody has spoken yet. Share a look and start it.
+          It's quiet in here. Share a look and get the conversation going!
         </div>
       ) : (
         <ul className="space-y-3" aria-live="polite">
@@ -401,8 +402,8 @@ function RoomView({
                       const ok = await reportMessage(m.id, userId, reason);
                       setNotice(
                         ok
-                          ? "Thank you. The team will look at it, and it hides if others report it too."
-                          : "That report did not go through. Try again.",
+                          ? "Thanks for telling us. Our team will take a look, and it's hidden if others report it too."
+                          : "That report didn't go through. Try again?",
                       );
                     }}
                     onBlock={async () => {

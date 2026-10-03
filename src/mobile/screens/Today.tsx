@@ -107,7 +107,7 @@ export function TodayScreen({
         <div className="absolute inset-x-0 bottom-0 p-5">
           <p className="la-kicker la-gold">{look ? "Today's look" : "Your Style Guide"}</p>
           <h2 className="la-display mt-1 text-[1.75rem] leading-tight font-bold">
-            {look ? look.title : "Dressed for the day you actually have"}
+            {look ? look.title : "Dressed for the day you've actually got"}
           </h2>
           {look ? (
             <>
@@ -122,7 +122,7 @@ export function TodayScreen({
             </>
           ) : (
             <p className="mt-2 text-sm leading-relaxed opacity-90">
-              Fit, Feel, and Fabric — on your body, never a retouched one.
+              Fit, Feel and Fabric, styled on the real you. Never a retouched one.
             </p>
           )}
           <NeoButton
@@ -151,7 +151,8 @@ export function TodayScreen({
           >
             <Crest name="honey" size={40} decorative />
             <span>
-              Nothing planned yet. Connect your calendar and Bee dresses you for each day.
+              Nothing planned yet. Connect your calendar and Bee will have an outfit ready for every
+              day.
             </span>
           </button>
         ) : (
@@ -225,7 +226,7 @@ export function TodayScreen({
           <span>
             <span className="la-kicker la-gold block">The Hive</span>
             <span className="la-display block text-lg font-semibold">
-              One community, every side of you.
+              Your people, every side of you.
             </span>
           </span>
           <Crest name="hive" size={44} decorative />
@@ -236,7 +237,7 @@ export function TodayScreen({
       <p className="mt-4 text-center text-sm leading-relaxed">
         <span className="la-display font-semibold">Fit · Feel · Fabric</span>
         <br />
-        Clothes follow your body. We never alter it.
+        Clothes should fit you. Not the other way round.
       </p>
     </div>
   );

@@ -133,7 +133,7 @@ export function BuzzScreen({
 
       {saved.length === 0 ? (
         <div className="mt-6 neo-inset px-4 py-8 text-sm leading-relaxed">
-          Save a look in Bee first — Buzz shares the looks you keep.
+          Save a look in Bee first, then come back here to show it off.
         </div>
       ) : (
         <div className="mt-6 space-y-3">
@@ -226,7 +226,7 @@ export function BuzzScreen({
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             rows={4}
-            placeholder="Write it yourself, or ask Bee."
+            placeholder="Write it yourself, or let Bee have a go."
             className="neo-input resize-none"
           />
           <p
@@ -243,7 +243,7 @@ export function BuzzScreen({
               setWriting(false);
             }}
           >
-            {writing ? "Bee is writing…" : "Bee, write the caption"}
+            {writing ? "Bee is writing…" : "Bee, write it for me"}
           </NeoButton>
           {problem && caption.trim() && <p className="text-sm">{problem}</p>}
           <div className="grid grid-cols-2 gap-2">

@@ -4,6 +4,8 @@
  * reflects, and goes one layer deeper; it does not lecture or diagnose.
  */
 
+import { BEE_VOICE } from "./bee-voice";
+
 export const TALK_TOPICS = ["motherhood", "style", "relationships", "work"] as const;
 export type TalkTopic = (typeof TALK_TOPICS)[number];
 
@@ -121,7 +123,13 @@ export function talkOpener(topic: TalkTopic, seed = Math.random()): string {
 /** Offline follow-up: acknowledge, then one deeper question. `turn` is 0 for Bee's first reply. */
 export function localTalkReply(topic: TalkTopic, turn: number): string {
   const deeper = TALK_GUIDES[topic].deeper;
-  return `Thank you for saying that plainly. ${deeper[turn % deeper.length]}`;
+  const nods = [
+    "I'm really glad you said that.",
+    "Thank you for being honest with me.",
+    "Oof, I hear you.",
+    "That's a lot to carry.",
+  ];
+  return `${nods[turn % nods.length]} ${deeper[turn % deeper.length]}`;
 }
 
 /**
@@ -155,7 +163,7 @@ const SAFETY_FIRST = `SAFETY — this matters more than anything else: the membe
  * who cares, never with an outfit.
  */
 export function crisisSystemPrompt(): string {
-  return `You are Bee — LiveAskew's stylist and confidante. Warm, direct, short sentences.
+  return `You are Bee, LiveAskew's stylist and her friend. Warm, direct, short sentences. This is not the moment for jokes or style.
 
 ${SAFETY_FIRST}`;
 }
@@ -173,7 +181,13 @@ export function talkSystemPrompt(
   const guide = TALK_GUIDES[topic];
   const feel = profile.goal?.trim() || "not named yet";
   const fit = profile.fit?.trim() || "not named yet";
-  return `You are Bee — LiveAskew's stylist and confidante. Right now you are in Real Talk: ${guide.label}. The member chose this conversation. Your job is to lead it: ask the hard, necessary question, listen, and help them hear themselves.
+  return `You are Bee, LiveAskew's stylist and her friend. Right now you're in Real Talk: ${guide.label}. She chose this conversation. Your job is to lead it: ask the brave, honest question, really listen, and help her hear herself.
+
+${
+  crisis
+    ? 'Right now, drop the playfulness completely: no jokes, no cheering on, no style. Be calm, warm and direct. Talk to her as "you" and never use emoji.'
+    : `${BEE_VOICE} In Real Talk, keep the cheekiness gentle and follow her mood: playful when she is, soft when she isn't.`
+}
 
 Ground you can walk together: ${guide.territory}.
 
