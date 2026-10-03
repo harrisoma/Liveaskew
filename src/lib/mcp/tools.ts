@@ -74,6 +74,21 @@ export const MCP_TOOLS = [
           enum: [...TALK_TOPICS],
           description: "A Real Talk topic. Leave out for styling.",
         },
+        history: {
+          type: "array",
+          maxItems: 12,
+          description:
+            "Earlier turns of this conversation with Bee, oldest first, so she can follow on.",
+          items: {
+            type: "object",
+            properties: {
+              role: { type: "string", enum: ["user", "assistant"] },
+              content: { type: "string", minLength: 1, maxLength: 2000 },
+            },
+            required: ["role", "content"],
+            additionalProperties: false,
+          },
+        },
       },
       required: ["message"],
       additionalProperties: false,

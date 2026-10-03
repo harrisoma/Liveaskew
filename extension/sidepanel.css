@@ -1,0 +1,226 @@
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: rgba(0, 0, 0, 0.08);
+  --gold: #b8860b;
+  --bubble: #ececf0;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --ink: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: rgba(255, 255, 255, 0.12);
+    --gold: #d4a52a;
+    --bubble: #2c2c2e;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font:
+    15px/1.45 -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+[hidden] {
+  display: none !important;
+}
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.brand img {
+  border-radius: 7px;
+}
+.brand b {
+  color: var(--gold);
+  font-weight: 600;
+}
+.screen {
+  padding: 16px;
+}
+h1 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 16px 0 8px;
+}
+p {
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.primary {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+}
+.primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.link {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+.note {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.server {
+  display: block;
+  margin-top: 28px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.server select {
+  display: block;
+  margin-top: 4px;
+  font: inherit;
+}
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--bubble);
+  border-radius: 10px;
+  padding: 2px;
+  margin-bottom: 14px;
+}
+.segmented button {
+  border: 0;
+  background: none;
+  border-radius: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+.segmented button[aria-selected="true"] {
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  border: 1px solid var(--line);
+}
+.card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+.card .meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+.muted {
+  color: var(--muted);
+}
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.bubble {
+  max-width: 88%;
+  padding: 9px 13px;
+  border-radius: 18px;
+  white-space: pre-wrap;
+}
+.bubble.me {
+  align-self: flex-end;
+  background: var(--ink);
+  color: var(--bg);
+  border-bottom-right-radius: 6px;
+}
+.bubble.bee {
+  align-self: flex-start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 6px;
+}
+.bubble.wait {
+  color: var(--muted);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.chips button {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 12.5px;
+}
+.chips button[aria-pressed="true"] {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.composer {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  position: sticky;
+  bottom: 0;
+  background: var(--bg);
+  padding-bottom: 8px;
+}
+.composer textarea {
+  flex: 1;
+  resize: none;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 9px 13px;
+}
+.toggle {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}

@@ -1,4 +1,4 @@
-export const PRIVACY_UPDATED = "September 30, 2026";
+export const PRIVACY_UPDATED = "October 3, 2026";
 
 export const PRIVACY_TITLE = "Privacy Policy — LiveAskew (Bee, Honey, Buzz, and the Hive)";
 
@@ -55,6 +55,15 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
       "A push token, only if you turn notifications on — used for a new Bee recommendation, trial reminders, or a tier upgrade, never marketing blasts.",
       "Bee keeps a copy of your answers, looks, chat, and calendar on the device so it still opens offline.",
       "We count how often each AI feature is used per account to keep fair limits and costs in check.",
+    ],
+  },
+  {
+    title: "Assistants and the Chrome extension",
+    paragraphs: [
+      "You can connect LiveAskew to an AI assistant (such as Claude or ChatGPT) or to the LiveAskew Chrome extension. Nothing connects until you sign in and choose Allow.",
+      "A connected assistant can read your style profile, your looks, and your Honey calendar, and can ask Bee questions for you. It cannot change your wardrobe, post to Buzz, or see your photos. What it does with that answer is governed by that assistant's own privacy policy.",
+      "The Chrome extension only sees a page when you right-click it and choose to ask Bee; it then sends the page title, address, and any text you selected. It does not read your browsing in the background.",
+      "Each connection holds a token we store only in hashed form. Disconnect it in the assistant, sign out of the extension, or delete your account to end it.",
     ],
   },
   {

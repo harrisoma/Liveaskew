@@ -1,5 +1,5 @@
 import { isTalkTopic } from "@/lib/bee-talk";
-import { beeReply, type BeeProfile } from "@/lib/bee-chat.server";
+import { beeReply, type BeeMessage, type BeeProfile } from "@/lib/bee-chat.server";
 import { guardAi } from "@/lib/entitlement.server";
 import { HONEY_COLUMNS, rowToHoney } from "@/lib/honey.server";
 import type { HoneyItem } from "@/lib/honey";
@@ -110,6 +110,22 @@ function profileText(p: BeeProfile): string {
   return `Fit: ${p.fit ?? "not named yet"} · Feel: ${p.goal ?? "not named yet"} · Budget: ${p.budget ?? "not named yet"}`;
 }
 
+/** Earlier turns an assistant passed along: well-formed ones only, the last twelve. */
+export function historyFrom(raw: unknown): BeeMessage[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (m): m is BeeMessage =>
+        typeof m === "object" &&
+        m !== null &&
+        (m.role === "user" || m.role === "assistant") &&
+        typeof m.content === "string" &&
+        m.content.trim().length > 0,
+    )
+    .slice(-12)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
+}
+
 const AI_DENIED: Record<number, string> = {
   402: "Her LiveAskew trial has ended. Bee needs a membership — she can choose one in the app at liveaskew.com/app.",
   429: "Bee has had a lot of questions this hour. Try again in a few minutes.",
@@ -171,7 +187,7 @@ export async function callTool(
       if (denied) return toolError(AI_DENIED[denied.status] ?? "Bee is not available right now.");
       const result = await beeReply({
         profile: await profileFor(userId),
-        messages: [{ role: "user", content: message }],
+        messages: [...historyFrom(args.history), { role: "user", content: message }],
         topic,
       });
       if ("error" in result) return toolError("Bee is not available right now. Try again soon.");
