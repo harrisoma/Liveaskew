@@ -67,14 +67,19 @@ async function saveTokens(server, out) {
   });
 }
 
+/** The token endpoint's answer: the new pair, or the OAuth error code ("network" if none). */
 async function token(server, body) {
-  const res = await fetch(`${server}/api/oauth/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(body),
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`${server}/api/oauth/token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(body),
+    });
+    const out = await res.json().catch(() => ({}));
+    return res.ok ? out : { error: out.error ?? "server_error" };
+  } catch {
+    return { error: "network" };
+  }
 }
 
 export async function signIn() {
@@ -103,7 +108,7 @@ export async function signIn() {
     client_id: id,
     code_verifier: verifier,
   });
-  if (!out) throw new Error("token_failed");
+  if (out.error) throw new Error("token_failed");
   await saveTokens(server, out);
 }
 
@@ -147,12 +152,19 @@ async function refresh(tokens) {
     refresh_token: tokens.refresh,
     client_id: id,
   });
-  if (out) {
+  if (!out.error) {
     await saveTokens(tokens.server, out);
     return out.access_token;
   }
-  const { tokens: now } = await chrome.storage.local.get("tokens");
-  if (now && now.refresh !== tokens.refresh) return now.access; // another window refreshed
+  // A hiccup is not a sign-out: the refresh token still works, so try again later.
+  if (out.error !== "invalid_grant") throw new Error("Bee can't be reached right now. Try again.");
+  // Rejected. Another window may have just rotated it — give its save a moment to land.
+  for (const wait of [0, 400, 1200]) {
+    if (wait) await new Promise((r) => setTimeout(r, wait));
+    const { tokens: now } = await chrome.storage.local.get("tokens");
+    if (!now) return null;
+    if (now.refresh !== tokens.refresh) return now.access;
+  }
   await chrome.storage.local.remove("tokens");
   return null;
 }
