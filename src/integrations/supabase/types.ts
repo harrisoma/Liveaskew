@@ -592,6 +592,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      mcp_clients: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          redirect_uris: string[];
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          name?: string;
+          redirect_uris: string[];
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          redirect_uris?: string[];
+        };
+        Relationships: [];
+      };
+      mcp_codes: {
+        Row: {
+          client_id: string;
+          code_challenge: string;
+          code_hash: string;
+          created_at: string;
+          expires_at: string;
+          redirect_uri: string;
+          scope: string;
+          user_id: string;
+        };
+        Insert: {
+          client_id: string;
+          code_challenge: string;
+          code_hash: string;
+          created_at?: string;
+          expires_at: string;
+          redirect_uri: string;
+          scope?: string;
+          user_id: string;
+        };
+        Update: {
+          client_id?: string;
+          code_challenge?: string;
+          code_hash?: string;
+          created_at?: string;
+          expires_at?: string;
+          redirect_uri?: string;
+          scope?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      mcp_tokens: {
+        Row: {
+          client_id: string;
+          created_at: string;
+          expires_at: string;
+          kind: string;
+          revoked_at: string | null;
+          scope: string;
+          token_hash: string;
+          user_id: string;
+        };
+        Insert: {
+          client_id: string;
+          created_at?: string;
+          expires_at: string;
+          kind: string;
+          revoked_at?: string | null;
+          scope?: string;
+          token_hash: string;
+          user_id: string;
+        };
+        Update: {
+          client_id?: string;
+          created_at?: string;
+          expires_at?: string;
+          kind?: string;
+          revoked_at?: string | null;
+          scope?: string;
+          token_hash?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       member_looks: {
         Row: {
           created_at: string;
