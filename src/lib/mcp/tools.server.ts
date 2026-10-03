@@ -101,6 +101,10 @@ function addDays(date: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
+function isDate(v: unknown): v is string {
+  return typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v));
+}
+
 function int(v: unknown, fallback: number, min: number, max: number): number {
   const n = typeof v === "number" && Number.isFinite(v) ? Math.trunc(v) : fallback;
   return Math.min(max, Math.max(min, n));
@@ -138,12 +142,12 @@ export async function callTool(
   args: Record<string, unknown>,
 ): Promise<ToolResult | null> {
   if (!isToolName(name)) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  // The member's own date when the assistant knows it; UTC otherwise.
+  const today = isDate(args.date) ? args.date : new Date().toISOString().slice(0, 10);
 
   switch (name) {
     case "get_today": {
-      const date =
-        typeof args.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(args.date) ? args.date : today;
+      const date = today;
       const [profile, events, looks] = await Promise.all([
         profileFor(userId),
         eventsFor(userId, date, date),

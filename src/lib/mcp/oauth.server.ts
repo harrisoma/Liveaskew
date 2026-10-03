@@ -162,24 +162,44 @@ export async function exchangeCode(input: {
   return (await issueTokens(row.client_id, row.user_id)) ?? { error: "server_error" };
 }
 
-/** refresh_token grant: rotates — the old refresh token stops working. */
+/**
+ * refresh_token grant, rotating: the old refresh token stops working once a new pair is
+ * issued. A wrong client, an expired token, or a failed issue never burns it.
+ */
 export async function refreshTokens(input: {
   refreshToken: string;
   clientId: string;
 }): Promise<TokenResponse | OAuthError> {
   const supabase = await db();
-  const { data: rows } = await supabase
+  const invalid: OAuthError = {
+    error: "invalid_grant",
+    error_description: "Refresh token is not valid.",
+  };
+  const hash = sha256Hex(input.refreshToken);
+  const { data: row } = await supabase
     .from("mcp_tokens")
-    .update({ revoked_at: new Date().toISOString() })
-    .eq("token_hash", sha256Hex(input.refreshToken))
+    .select("client_id, user_id, expires_at")
+    .eq("token_hash", hash)
     .eq("kind", "refresh")
     .is("revoked_at", null)
-    .select("client_id, user_id, expires_at");
-  const row = rows?.[0];
+    .maybeSingle();
   if (!row || row.client_id !== input.clientId || Date.parse(row.expires_at) < Date.now()) {
-    return { error: "invalid_grant", error_description: "Refresh token is not valid." };
+    return invalid;
   }
-  return (await issueTokens(row.client_id, row.user_id)) ?? { error: "server_error" };
+  // Claim it: only one of two concurrent refreshes can flip revoked_at from null.
+  const { data: claimed } = await supabase
+    .from("mcp_tokens")
+    .update({ revoked_at: new Date().toISOString() })
+    .eq("token_hash", hash)
+    .is("revoked_at", null)
+    .select("token_hash");
+  if (!claimed?.length) return invalid;
+  const issued = await issueTokens(row.client_id, row.user_id);
+  if (!issued) {
+    await supabase.from("mcp_tokens").update({ revoked_at: null }).eq("token_hash", hash);
+    return { error: "server_error" };
+  }
+  return issued;
 }
 
 /** RFC 7009: revoking either token of a pair is enough to end that connection's access. */

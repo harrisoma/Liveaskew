@@ -18,6 +18,12 @@ let history = [];
 /** Bee writes light markdown; the panel shows it as calm plain text. */
 const plain = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/^#+\s*/gm, "");
 
+function localDate() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -45,9 +51,7 @@ async function loadToday() {
   const box = $("today");
   box.textContent = "Loading your day…";
   try {
-    const now = new Date();
-    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    const { text } = await callTool("get_today", { date });
+    const { text } = await callTool("get_today", { date: localDate() });
     box.classList.remove("muted");
     box.textContent = text;
   } catch (err) {
@@ -120,15 +124,25 @@ async function ask(message) {
 async function takePendingAsk() {
   const { pendingAsk } = await chrome.storage.session.get("pendingAsk");
   if (!pendingAsk || Date.now() - pendingAsk.at > 5 * 60_000) return;
+  // Signed out: keep the question for after sign-in (render() picks it up again).
+  if (!(await signedIn())) return render();
   await chrome.storage.session.remove("pendingAsk");
   let host = "";
   try {
     host = new URL(pendingAsk.pageUrl).hostname.replace(/^www\./, "");
   } catch {}
-  const message =
+  const quoted = pendingAsk.text ? `"${pendingAsk.text}"` : `"${pendingAsk.title}"`;
+  const lines = [
     pendingAsk.kind === "occasion"
-      ? `What should I wear to this? "${pendingAsk.text}"`
-      : `I'm looking at ${pendingAsk.text ? `"${pendingAsk.text}"` : `"${pendingAsk.title}"`}${host ? ` on ${host}` : ""}. Would this work for me, and what would I wear it with?`;
+      ? `What should I wear to this? ${quoted}`
+      : `I'm looking at ${quoted}${host ? ` on ${host}` : ""}. Would this work for me, and what would I wear it with?`,
+  ];
+  if (pendingAsk.kind === "piece") {
+    if (pendingAsk.image?.startsWith("http")) lines.push(`Image of the piece: ${pendingAsk.image.slice(0, 500)}`);
+    if (pendingAsk.link) lines.push(`Link to the piece: ${pendingAsk.link.slice(0, 500)}`);
+    if (pendingAsk.pageUrl) lines.push(`Page: ${pendingAsk.pageUrl.slice(0, 500)}`);
+  }
+  const message = lines.join("\n").slice(0, 2000);
   topic = "";
   history = [];
   syncTopics();

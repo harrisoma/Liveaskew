@@ -16,7 +16,8 @@ export const MCP_TOOLS = [
         date: {
           type: "string",
           pattern: "^\\d{4}-\\d{2}-\\d{2}$",
-          description: "The member's local date, YYYY-MM-DD. Defaults to today in UTC.",
+          description:
+            "The member's local date, YYYY-MM-DD. Pass it when you know her time zone; defaults to today in UTC.",
         },
       },
       additionalProperties: false,
@@ -54,6 +55,11 @@ export const MCP_TOOLS = [
           minimum: 1,
           maximum: 60,
           description: "How many days ahead to include, starting today. Default 14.",
+        },
+        date: {
+          type: "string",
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$",
+          description: "The member's local date for today, YYYY-MM-DD. Defaults to today in UTC.",
         },
       },
       additionalProperties: false,

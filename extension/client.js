@@ -124,22 +124,37 @@ export async function signedIn() {
   return Boolean(tokens?.refresh) && tokens.server === (await getServer());
 }
 
+let refreshing = null;
+
+/**
+ * A live access token, refreshing when it has expired. One refresh at a time: concurrent
+ * callers share it, and a panel that loses a race to another window keeps the winner's pair.
+ */
 async function accessToken(forceRefresh = false) {
   const { tokens } = await chrome.storage.local.get("tokens");
   if (!tokens) return null;
   if (!forceRefresh && tokens.expiresAt > Date.now()) return tokens.access;
+  refreshing ??= refresh(tokens).finally(() => {
+    refreshing = null;
+  });
+  return refreshing;
+}
+
+async function refresh(tokens) {
   const id = await clientId(tokens.server);
   const out = await token(tokens.server, {
     grant_type: "refresh_token",
     refresh_token: tokens.refresh,
     client_id: id,
   });
-  if (!out) {
-    await chrome.storage.local.remove("tokens");
-    return null;
+  if (out) {
+    await saveTokens(tokens.server, out);
+    return out.access_token;
   }
-  await saveTokens(tokens.server, out);
-  return out.access_token;
+  const { tokens: now } = await chrome.storage.local.get("tokens");
+  if (now && now.refresh !== tokens.refresh) return now.access; // another window refreshed
+  await chrome.storage.local.remove("tokens");
+  return null;
 }
 
 export class SignedOut extends Error {}
