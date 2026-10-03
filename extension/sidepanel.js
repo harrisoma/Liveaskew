@@ -138,7 +138,8 @@ async function takePendingAsk() {
       : `I'm looking at ${quoted}${host ? ` on ${host}` : ""}. Would this work for me, and what would I wear it with?`,
   ];
   if (pendingAsk.kind === "piece") {
-    if (pendingAsk.image?.startsWith("http")) lines.push(`Image of the piece: ${pendingAsk.image.slice(0, 500)}`);
+    if (pendingAsk.image?.startsWith("http"))
+      lines.push(`Image of the piece: ${pendingAsk.image.slice(0, 500)}`);
     if (pendingAsk.link) lines.push(`Link to the piece: ${pendingAsk.link.slice(0, 500)}`);
     if (pendingAsk.pageUrl) lines.push(`Page: ${pendingAsk.pageUrl.slice(0, 500)}`);
   }
