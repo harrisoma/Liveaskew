@@ -135,7 +135,9 @@ export function MobileApp() {
       if (consumeBillingReturn(href) === "success") {
         setTab("you");
         setYouView("membership");
-        setTierNotice("Payment received. Your tier switches on as soon as Stripe confirms it.");
+        setTierNotice(
+          "Payment's in, thank you! Your new membership switches on the moment Stripe confirms it.",
+        );
         void syncAccount();
       }
       const buzz = consumeBuzzReturn(href);
@@ -147,7 +149,7 @@ export function MobileApp() {
             .filter(Boolean)
             .join(" and ") || "Account";
         if (buzz.status === "finish" && buzz.token) {
-          setBuzzNotice("Finishing the connection…");
+          setBuzzNotice("Nearly there, just finishing the connection…");
           void finishConnect(buzz.token).then(async (result) => {
             setBuzzNotice(
               "error" in result ? result.error : `${label(result.networks)} connected.`,
@@ -157,8 +159,8 @@ export function MobileApp() {
         } else {
           setBuzzNotice(
             buzz.status === "cancelled"
-              ? "Connection cancelled."
-              : buzz.reason || "That connection did not finish. Try again.",
+              ? "No problem, nothing was connected."
+              : buzz.reason || "Hmm, that didn't connect. Want to try again?",
           );
         }
       }
@@ -279,7 +281,9 @@ export function MobileApp() {
       return;
     }
     if (source === "limited") {
-      setHoneyNotice("Bee has dressed a lot this hour. Try again in a few minutes.");
+      setHoneyNotice(
+        "Bee's been busy dressing you this hour! Give her a few minutes and try again.",
+      );
       return;
     }
     const look = looks[0];
@@ -310,13 +314,14 @@ export function MobileApp() {
           ? {
               ...h,
               postStatus: result.post_status ?? (result.ok ? "posted" : "failed"),
-              postError: result.post_error ?? (result.ok ? null : "That did not post. Try again."),
+              postError:
+                result.post_error ?? (result.ok ? null : "That one didn't post. Try again?"),
               postUrl: result.post_url ?? h.postUrl ?? null,
             }
           : h,
       ),
     }));
-    setBuzzNotice(result.ok ? `Posted to ${post.network}.` : null);
+    setBuzzNotice(result.ok ? `It's live on ${post.network}!` : null);
     void haptic(result.ok ? "success" : "impact");
   }
 
@@ -349,8 +354,8 @@ export function MobileApp() {
           id: nid("m"),
           role: "assistant",
           content: opts.trialEnded
-            ? "Your Style Guide is here. Your fourteen days with Bee have ended — choose a tier under You to keep generating looks."
-            : "Your Style Guide is ready. I dressed the looks on you — same body, same proportions. Fourteen days, unlimited looks.",
+            ? "Your Style Guide is here! Your 14 free days have wrapped up, so pick a membership under You and I'll keep the looks coming."
+            : "Your Style Guide is ready! I dressed every look on you, exactly as you are. You've got 14 days of as many looks as you like, so have fun.",
         },
       ],
     }));
@@ -380,7 +385,7 @@ export function MobileApp() {
           role="status"
         >
           <WifiOff size={16} aria-hidden />
-          Offline — showing your last session.
+          You're offline, so here's what you had last time.
         </div>
       )}
       {snap.phase === "app" && (
@@ -463,7 +468,7 @@ export function MobileApp() {
             const res = await sendVerifyCode(channel, dest);
             setVerifyBusy(false);
             setPreviewOtp(res.preview);
-            if (!res.ok) setVerifyErr(res.error ?? "Could not send a code.");
+            if (!res.ok) setVerifyErr(res.error ?? "We couldn't send a code just now. Try again?");
             else {
               patch((s) => ({
                 ...s,
@@ -481,7 +486,7 @@ export function MobileApp() {
             const ok = await confirmVerifyCode(channel, dest, verifyCode);
             setVerifyBusy(false);
             if (!ok) {
-              setVerifyErr("That code did not match.");
+              setVerifyErr("That code doesn't match. Check it and try again.");
               return;
             }
             void haptic("success");
@@ -511,7 +516,8 @@ export function MobileApp() {
                   {
                     id: nid("m"),
                     role: "assistant",
-                    content: "Welcome back. Your Fit, Feel, and Fabric came with you.",
+                    content:
+                      "Welcome back! Your Fit, Feel and Fabric came with you, so we can pick up right where we left off.",
                   },
                 ],
               };
@@ -717,7 +723,7 @@ export function MobileApp() {
                 }
                 if (result.source === "limited") {
                   setGuideNotice(
-                    "That's a lot of try-ons for one hour. Try again in a few minutes.",
+                    "That's a lot of try-ons for one hour! Take a breather and try again in a few minutes.",
                   );
                   void haptic("impact");
                   return;
@@ -765,7 +771,7 @@ export function MobileApp() {
                 const items: AppSnapshot["wardrobe"] = photos.map((_, i) => ({
                   id: nid("w"),
                   photo: thumbs[i],
-                  label: "Looking at the cloth",
+                  label: "Taking a closer look",
                   verdict: null,
                   reason: null,
                   error: null,
@@ -784,7 +790,7 @@ export function MobileApp() {
                       if ("error" in result) {
                         return {
                           ...row,
-                          label: "Could not read this piece",
+                          label: "Bee couldn't make this one out",
                           error: result.error,
                           reason: null,
                           verdict: null,
@@ -858,8 +864,8 @@ export function MobileApp() {
                 }));
                 setHoneyNotice(
                   result.items.length === 0
-                    ? "Connected. Nothing on that calendar in the next 60 days."
-                    : `Added ${result.items.length} upcoming event${result.items.length === 1 ? "" : "s"}.`,
+                    ? "You're connected! Nothing on that calendar for the next 60 days, so enjoy the breathing room."
+                    : `Done! ${result.items.length} upcoming event${result.items.length === 1 ? "" : "s"} added to Honey.`,
                 );
                 void haptic("success");
               }}
@@ -903,7 +909,7 @@ export function MobileApp() {
                 if (photo) {
                   mediaUrl = await uploadPostImage(photo);
                   if (!mediaUrl && network.requiresImage) {
-                    setBuzzNotice("Sign in to post photos — the photo could not be uploaded.");
+                    setBuzzNotice("Sign in to post photos. That one couldn't upload yet.");
                     return;
                   }
                 }
@@ -929,13 +935,15 @@ export function MobileApp() {
                 if (!now) {
                   if (!saved) {
                     setBuzzNotice(
-                      "Saved on this device. It posts once you're signed in and the account is connected.",
+                      "Saved on this phone. It'll post once you're signed in and the account is connected.",
                     );
                   }
                   return;
                 }
                 if (!saved) {
-                  setBuzzNotice("Could not reach Bee to post. It stays scheduled on Honey.");
+                  setBuzzNotice(
+                    "Bee couldn't post that just now, but don't worry, it's still scheduled on Honey.",
+                  );
                   return;
                 }
                 await runPublishNow(item);
@@ -986,7 +994,7 @@ export function MobileApp() {
                 setTierBusy(false);
                 if (result) setTierNotice(result.error);
                 else if (plan?.inquiry) {
-                  setTierNotice("Thank you. The Atelier team will be in touch.");
+                  setTierNotice("Thank you! The Atelier team will be in touch very soon.");
                   void haptic("success");
                 }
               }}
@@ -1047,10 +1055,11 @@ export function MobileApp() {
 
 function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () => void }) {
   return (
-    <Screen kicker="Bee" title="Sign in to begin">
+    <Screen kicker="Bee" title="Let's get you started">
       <p className="mb-5 text-sm leading-relaxed">
-        Google or Apple only. After this, a short verification — then Bee interviews you in Fit,
-        Feel, and Fabric. Same app on web, iOS, and Android. No email-and-password wall.
+        Sign in with Google or Apple. No new password to remember. We'll do a quick check, then Bee
+        gets to know you: how you like things to fit, how you want to feel, and the fabrics you
+        love.
       </p>
       <NeoButton variant="ink" onClick={onGoogle}>
         Continue with Google
@@ -1093,11 +1102,11 @@ function VerifyScreen({
   return (
     <Screen
       kicker="Verify"
-      title={apple ? "A code to your phone" : "A code to your email"}
+      title={apple ? "Quick check: your phone" : "Quick check: your email"}
       footer={
         <div className="space-y-3">
           <NeoButton variant="ink" disabled={busy} onClick={onSend}>
-            Send 6-digit code
+            Send my code
           </NeoButton>
           <NeoButton variant="gold" disabled={busy || code.length < 6} onClick={onConfirm}>
             Confirm
@@ -1107,8 +1116,8 @@ function VerifyScreen({
     >
       <p className="mb-4 text-sm leading-relaxed">
         {apple
-          ? "Apple's private relay can hide the real inbox. We collect a phone number and send SMS."
-          : "Google path: we confirm the email with a one-time code before Bee starts."}
+          ? "Apple sometimes hides your real email, so we'll text you a code instead."
+          : "We'll email you a code to make sure it's really you. Then you're in."}
       </p>
       {apple ? (
         <NeoField
@@ -1176,7 +1185,7 @@ function InterviewScreen({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
-            placeholder="Answer Bee…"
+            placeholder="Tell Bee…"
             className="neo-input resize-none"
           />
           <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
@@ -1218,17 +1227,17 @@ function SelfieScreen({
 }) {
   return (
     <Screen
-      kicker="Likeness"
-      title="A photo of you"
+      kicker="Your photo"
+      title="Let's see you"
       footer={
         <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
-          {building ? "Bee is building your looks…" : "Build my Style Guide"}
+          {building ? "Bee is putting your looks together…" : "Build my Style Guide"}
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
-        Bee dresses this body. We never slim, smooth, or change proportions. The Style Guide will
-        not render without it.
+        Bee dresses you, exactly as you are. We never slim, smooth or reshape anything. Your Style
+        Guide needs one photo to get started.
       </p>
       {selfie ? (
         <img
@@ -1237,7 +1246,9 @@ function SelfieScreen({
           className="mb-4 h-64 w-full rounded-[16px] object-cover"
         />
       ) : (
-        <div className="mb-4 neo-inset px-4 py-16 text-sm">No photo yet.</div>
+        <div className="mb-4 neo-inset px-4 py-16 text-sm">
+          No photo yet. Any clear, full-length one works.
+        </div>
       )}
       <NeoButton onClick={onPick}>{selfie ? "Replace photo" : "Upload a selfie"}</NeoButton>
     </Screen>
@@ -1283,7 +1294,9 @@ function HomeChat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
-            placeholder={topic ? "Say it plainly…" : "Tell Bee what you're dressing for…"}
+            placeholder={
+              topic ? "Say it however it comes out…" : "What are you getting dressed for?"
+            }
             className="neo-input resize-none"
           />
           <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
@@ -1297,7 +1310,7 @@ function HomeChat({
         <p className="mt-1 text-[15px] opacity-70">
           {topic
             ? TALK_GUIDES[topic].blurb
-            : "Bee asks the questions that are hard to say out loud. Pick one."}
+            : "Bee asks the questions most people skip. Pick whatever's on your mind."}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {TALK_TOPICS.map((t) => (
@@ -1325,7 +1338,8 @@ function HomeChat({
         </div>
         {topic && (
           <p className="mt-3 text-xs leading-relaxed opacity-70">
-            Bee listens and asks; it is not a therapist. In danger or crisis? Call or text 988.{" "}
+            Bee's a great listener, but she isn't a therapist. In danger or crisis? Call or text
+            988.{" "}
             <button type="button" className="underline" onClick={() => onOpenHive(topic)}>
               Talk it through in the Hive
             </button>
@@ -1378,10 +1392,10 @@ function StyleGuide({
 }) {
   if (!selfie) {
     return (
-      <Screen kicker="Style Guide" title="Needs your likeness">
+      <Screen kicker="Style Guide" title="First, a photo of you">
         <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
-          Upload a selfie in You before Bee can dress you. Looks sit on your body — never a
-          retouched one.
+          Add a selfie under You and Bee can start dressing you. Every look goes on the real you,
+          never a retouched one.
         </div>
       </Screen>
     );
@@ -1395,9 +1409,7 @@ function StyleGuide({
       )}
       {rateOpen && (
         <div className="mb-4 neo-inset px-3 py-3 text-sm leading-relaxed">
-          <p>
-            If this look feels like you, that is when Bee asks for a rating — never on cold start.
-          </p>
+          <p>Bee only asks what you think once a look really feels like you.</p>
           <NeoButton className="mt-3" onClick={onDismissRate}>
             Got it
           </NeoButton>
@@ -1405,7 +1417,8 @@ function StyleGuide({
       )}
       {locked && (
         <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
-          Trial ended. Choose a metal tier to render further looks. Saved try-ons stay.
+          Your free trial has ended. Pick a membership to keep the new looks coming. Everything you
+          saved stays right here.
         </p>
       )}
       <div className="grid grid-cols-1 gap-4">
@@ -1446,7 +1459,7 @@ function WardrobeReset({
   return (
     <Screen
       kicker="Wardrobe Reset"
-      title="Keep, toss, maybe"
+      title="Keep, toss or maybe"
       footer={
         <NeoButton variant="ink" onClick={onUpload}>
           Upload wardrobe photos
@@ -1454,10 +1467,13 @@ function WardrobeReset({
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
-        Batch your closet. Bee reads each piece against your Fit/Feel/Fabric — not a trend list.
+        Snap your closet a few pieces at a time. Bee checks each one against your Fit, Feel and
+        Fabric, not some trend list.
       </p>
       {items.length === 0 ? (
-        <div className="neo-inset px-4 py-8 text-sm leading-relaxed">Nothing uploaded yet.</div>
+        <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
+          Nothing here yet. Start with the pieces you reach for most.
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {items.map((item) => (
@@ -1493,7 +1509,7 @@ function Tiers({
   return (
     <Screen
       kicker="Membership"
-      title="Your metal"
+      title="Your membership"
       footer={
         <NeoButton onClick={onBack} variant="ink">
           Back to You
@@ -1502,7 +1518,7 @@ function Tiers({
     >
       {gated && (
         <p className="mb-4 text-sm leading-relaxed neo-inset px-3 py-2">
-          Your 14-day window is done. Pick a tier to keep generating looks.
+          Your 14 free days are up. Pick a membership and Bee will keep the looks coming.
         </p>
       )}
       {notice && (
@@ -1511,7 +1527,7 @@ function Tiers({
         </p>
       )}
       <div className="neo-inset p-4">
-        <p className="text-sm">{active ? "Your membership" : "Progress toward Atelier"}</p>
+        <p className="text-sm">{active ? "Your membership" : "Your path to the Atelier"}</p>
         <div className="mt-3 h-3 overflow-hidden rounded-[8px] neo-inset">
           <div
             className="h-full rounded-[8px] bg-[var(--gold-bright)]"
@@ -1521,7 +1537,7 @@ function Tiers({
         <p className="mt-2 text-sm">
           {active
             ? `${TIERS[index]?.name ?? "Silver"} · ${index + 1} of ${TIER_ORDER.length}`
-            : "No paid tier yet"}
+            : "You're on the free trial"}
         </p>
       </div>
       <ol className="mt-5 space-y-3">
@@ -1583,7 +1599,7 @@ function Profile({
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   return (
-    <Screen kicker="You" title="Fit preferences">
+    <Screen kicker="You" title="All about you">
       <div className="neo-raised p-4">
         {snap.selfie ? (
           <img
@@ -1593,7 +1609,7 @@ function Profile({
           />
         ) : (
           <p className="text-sm leading-relaxed">
-            Add a photo Bee can dress — proportions stay yours.
+            Add a photo for Bee to dress. You stay exactly you.
           </p>
         )}
         <NeoButton onClick={onSelfie}>
@@ -1647,8 +1663,9 @@ function Profile({
             Delete your LiveAskew account?
           </p>
           <p className="mt-2">
-            This permanently removes your profile, looks, photos, Honey calendar, Hive posts,
-            connected social accounts, and cancels any membership. It cannot be undone.
+            We'll be sorry to see you go. This removes your profile, looks, photos, Honey calendar,
+            Hive posts and connected social accounts, and cancels any membership. It can't be
+            undone.
           </p>
           {deleteError && <p className="mt-2 font-semibold">{deleteError}</p>}
           <div className="mt-3 grid grid-cols-2 gap-2">

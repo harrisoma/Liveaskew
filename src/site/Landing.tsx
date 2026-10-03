@@ -110,21 +110,21 @@ export function Landing() {
               className="h-24 w-auto md:h-32"
               style={{ aspectRatio: "866 / 1610" }}
             />
-            <p className="kicker mt-5">The styling house</p>
+            <p className="kicker mt-5">Your styling bestie</p>
             <h1 className={`${HEADLINE} mt-2 text-[2.9rem] leading-[1] md:text-[4.5rem]`}>
-              Dressed for the day she has.
+              Let's get you dressed.
             </h1>
             <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/90">
-              LiveAskew is for the woman between a school run and a room that requires a shoulder.
-              Bee builds the look from her body and the closet she owns. Honey holds the day. Buzz
-              shares the look. The Hive is where she talks it through.
+              You've got a lot on. School run at 8, boardroom at 10, the dinner you almost cancelled
+              at 7. Bee knows your body, your closet and your calendar, so the outfit's ready before
+              your coffee goes cold.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <a href="/app" className="glass-btn glass-btn-gold">
-                Start 14 days free
+                Start your 14 days free
               </a>
               <a href="#bee" className="glass-btn glass-btn-light">
-                See what we offer
+                Show me around
               </a>
             </div>
           </div>
@@ -152,9 +152,9 @@ export function Landing() {
                   Bee
                 </h2>
                 <p className="mt-3 text-[0.95rem] leading-relaxed text-black/80 md:mt-4 md:text-[1.0625rem]">
-                  Bee interviews her before it dresses her. Fit, how she wants to feel, and the
-                  cloth. The clothes follow the body she has. The photograph stays the woman in
-                  front of it.
+                  Bee is the friend who always knows what to wear, and she listens first. How do you
+                  like things to fit? How do you want to feel? Then she dresses the body you have,
+                  not one you're &ldquo;working towards.&rdquo;
                 </p>
               </div>
             </div>
@@ -163,25 +163,25 @@ export function Landing() {
         <Offers
           items={[
             {
-              title: "The day she is actually having",
-              text: "A school run and a board meeting are one closet with two jobs. Bee plans the hour in front of her, from maternity through the workday, instead of a mood board.",
+              title: "For the day you're actually having",
+              text: "School run, then the big meeting? Same closet, two jobs. Bee plans the outfit for the hour in front of you, from bump to boardroom. Not a mood board you'll never wear.",
             },
             {
-              title: "What she already owns",
-              text: "Wardrobe Reset looks at what is in the closet and says keep, toss, or maybe. Bee builds from what stays, then names the one thing that is missing.",
+              title: "Shop your own closet first",
+              text: "Wardrobe Reset goes through what you've got: keep, toss, or maybe. Bee styles from the keepers and tells you the one piece that's actually missing. Just one. Promise.",
             },
             {
-              title: "Her, in the look",
-              text: "When she wants to see it on herself, Bee renders the outfit on her own photo. No slimming, no smoothing, no reshaping. The body stays hers.",
+              title: "See it on you",
+              text: "Curious how it'll look? Bee puts the outfit on your own photo. No slimming, no smoothing, no sneaky edits. Just you, wearing it.",
             },
             {
-              title: "A person, when the brief is bigger",
-              text: "The Private Atelier is a human stylist, one to one. The price is set after a conversation. It is not a published rate.",
+              title: "When you want a real person",
+              text: "Big event? Whole new chapter? The Private Atelier pairs you with a human stylist, one to one. We talk first, then agree a price that fits what you need.",
             },
           ]}
           cta={
             <a href="/app" className="glass-btn">
-              Enter Bee
+              Meet Bee
             </a>
           }
         />
@@ -193,12 +193,11 @@ export function Landing() {
           <div>
             <p className="kicker">Real Talk, with Bee</p>
             <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
-              The questions worth asking.
+              The stuff we don't say out loud.
             </h2>
             <p className="mt-5 max-w-lg text-[1.125rem] leading-relaxed text-white/75">
-              Motherhood, the mirror, the marriage, the meeting. Bee opens the conversations that
-              are hard to start, asks one honest question at a time, and stays with her through the
-              answer.
+              Motherhood, the mirror, the marriage, the meeting. Bee asks the questions most people
+              skip, one at a time and with zero judgment, and she sticks around for the answer.
             </p>
             <ul className="mt-10 grid gap-3 sm:grid-cols-2">
               {TALK_TOPICS.map((t) => (
@@ -209,7 +208,8 @@ export function Landing() {
               ))}
             </ul>
             <p className="mt-6 text-[0.85rem] text-white/55">
-              Bee listens and asks; it is not a therapist. In crisis in the US, call or text 988.
+              Bee's a great listener, but she isn't a therapist. If you're in crisis in the US, call
+              or text 988.
             </p>
           </div>
           <Phone src={shotTalk} alt="Real Talk in Bee: a conversation about motherhood" />
@@ -231,9 +231,9 @@ export function Landing() {
                   Honey
                 </h2>
                 <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/80">
-                  Schedule the event, the meeting, and the post. Honey holds the day the way a
-                  calendar does, Bee dresses every hour of it, and it records the social post and
-                  the hour it hits.
+                  Honey is your calendar with a wardrobe attached. Meetings, birthday parties, the
+                  post you want out on Friday: it's all here, and Bee has already picked what you're
+                  wearing to each one.
                 </p>
               </div>
             </div>
@@ -248,20 +248,20 @@ export function Landing() {
         <Offers
           items={[
             {
-              title: "Her calendar, brought in",
-              text: "Connect Google, iCloud, or Outlook. The school run, the dinner, the thing already on the day, all in one place.",
+              title: "Bring your calendar",
+              text: "Hook up Google, iCloud or Outlook and everything you've already got lands in one place. Nothing to retype.",
             },
             {
               title: "Dress me for this",
-              text: "Tap any event and Bee chooses the look for that hour, from the room and the reason.",
+              text: "Tap any event and Bee picks the look, based on where you're going and why.",
             },
             {
-              title: "Social posting schedule",
-              text: "The post lands on the same calendar, with the network and the hour.",
+              title: "Your posts, on the same page",
+              text: "Scheduled a Buzz post? It sits right there on the day, next to everything else.",
             },
             {
-              title: "When it hits",
-              text: "A post that has gone out is marked. The hour it hit stays on the day.",
+              title: "Know when it went live",
+              text: 'Once a post goes out, Honey marks the time, so you\'re never wondering "did that actually post?"',
             },
           ]}
           cta={
@@ -293,8 +293,8 @@ export function Landing() {
                 Buzz
               </h2>
               <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                The look goes out on her schedule. Bee writes the caption in her voice, and Buzz
-                posts it at the hour she chose — even when the app is closed.
+                Love the look? Share it without the faff. Bee writes the caption in your voice, and
+                Buzz posts it when you say, even if your phone's at the bottom of your bag.
               </p>
               <ul className="mt-6 flex flex-wrap gap-2">
                 {NETWORKS.map((n) => (
@@ -312,20 +312,20 @@ export function Landing() {
         <Offers
           items={[
             {
-              title: "Captions in her voice",
-              text: "Bee drafts the words for each network — short for X, fuller for LinkedIn — and she edits or keeps them.",
+              title: "Captions that sound like you",
+              text: "Bee drafts one for each network: snappy for X, a little fuller for LinkedIn. Keep it, tweak it, make it yours.",
             },
             {
-              title: "On her hour",
-              text: "Pick the day and time. Buzz publishes it then, and the post appears on Honey beside everything else.",
+              title: "Post on your time",
+              text: "Pick the day and time and you're done. Buzz handles it, and the post shows up on Honey too.",
             },
             {
-              title: "Her accounts stay hers",
-              text: "Sign in to each network once. Access is encrypted, and any account disconnects in one tap.",
+              title: "Your accounts, your rules",
+              text: "Sign in to each network once. Everything's encrypted, and you can disconnect any account in one tap.",
             },
             {
-              title: "From the look to the feed",
-              text: "Any look in Bee can be scheduled in a few taps, with her own photo or the look itself.",
+              title: "From outfit to feed in seconds",
+              text: "Any look in Bee can be scheduled in a few taps, with your own photo or the look itself.",
             },
           ]}
           cta={
@@ -359,9 +359,9 @@ export function Landing() {
                 Every side of you.
               </h2>
               <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                A warm, unified space for motherhood, style, work, everyday life, and what's next.
-                No juggling five apps. No performing perfect. Just real women, real wardrobes, real
-                work.
+                Your people, all in one place: motherhood, style, work, everyday life and whatever's
+                next. No juggling five apps. No pretending it's all perfect. Just real women, real
+                wardrobes, real life.
               </p>
             </div>
           </div>
@@ -369,25 +369,25 @@ export function Landing() {
         <Offers
           items={[
             {
-              title: "Rooms with a subject",
-              text: "Style, Motherhood, Working mom, Family, and Editorial. Walk into the conversation that fits the week.",
+              title: "A room for every part of you",
+              text: "Style, Motherhood, Working Mom, Family and Editorial. Pop into whichever one fits your week.",
             },
             {
-              title: "Share the look, ask the question",
-              text: "Bring a look from Bee into a room and hear from women dressing the same kind of life.",
+              title: "Share a look, ask a question",
+              text: "Bring an outfit from Bee into a room and get honest takes from women living a life like yours.",
             },
             {
-              title: "Challenges, not a stranger's feed",
-              text: "Style challenges sit with women dressing the same kind of week — school, work, weather, a cloth that has to hold.",
+              title: "Challenges with your people",
+              text: "Style challenges with women juggling the same school runs, deadlines and weather. Not a stranger's highlight reel.",
             },
             {
-              title: "Kind by design",
-              text: "Members choose a Hive name; email and phone are never shown. Reports reach real moderators, and anyone can be blocked.",
+              title: "Kind, on purpose",
+              text: "You pick a Hive name, and your email and number are never shown. Real moderators read every report, and you can block anyone, any time.",
             },
           ]}
           cta={
             <a href="/app" className="glass-btn">
-              Enter The Hive
+              Join The Hive
             </a>
           }
         />
@@ -398,10 +398,10 @@ export function Landing() {
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <p className="kicker">Membership</p>
           <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
-            Start free. Stay for you.
+            Try it free. Fall in love.
           </h2>
           <p className="mt-4 text-[1.125rem] text-black/65">
-            Every membership opens with 14 days free. Cancel any time.
+            Every membership starts with 14 days on us. Cancel any time, no hard feelings.
           </p>
         </div>
         <PriceBook />
@@ -413,25 +413,25 @@ export function Landing() {
           <div>
             <p className="kicker">Fit · Feel · Fabric</p>
             <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
-              Clothes follow your body. We never alter it.
+              Clothes should fit you. Not the other way round.
             </h2>
             <p className="mt-5 max-w-lg text-[1.125rem] leading-relaxed text-black/65">
-              Your styling photo stays on your device. We never sell your data. Delete your account
-              in one tap and everything goes with it.
+              Your styling photo stays on your phone. We never sell your data. And if you ever want
+              to leave, one tap deletes your account and everything in it.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <a href="/app" className="glass-btn">
-                Start 14 days free
+                Start your 14 days free
               </a>
               <a
                 href="/privacy"
                 className="inline-flex items-center text-[1rem] font-medium text-[var(--gold)] hover:underline"
               >
-                How we protect you <ChevronRight size={18} aria-hidden />
+                How we keep you safe <ChevronRight size={18} aria-hidden />
               </a>
             </div>
             <p className="mt-6 text-[0.9rem] text-black/55">
-              On the web today. iPhone and Android are on the way.
+              Live on the web today. iPhone and Android are coming soon.
             </p>
           </div>
           <Phone src={shotToday} alt="The LiveAskew app's Today screen" />

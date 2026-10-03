@@ -5,29 +5,31 @@ export const INTERVIEW = [
     id: "life",
     pillar: "Feel",
     prompt:
-      "I'm Bee. I style from Fit, Feel, and Fabric — never a type, never a retouched body. What does a typical week ask of your clothes?",
+      "Hi, I'm Bee! I'm going to be your stylist, and I start with you: how things fit, how you want to feel, and the fabrics you love. No body \"types\", no retouching. So tell me, what does a normal week look like for you?",
   },
   {
     id: "fit",
     pillar: "Fit",
     prompt:
-      "How should clothes sit on you — structured, soft, relaxed, or a waist you set yourself?",
+      "Love that. Now, how do you like your clothes to fit? Sharp and structured, soft, relaxed, or nipped in at the waist?",
   },
   {
     id: "feel",
     pillar: "Feel",
-    prompt: "How do you want to feel when you walk in? Quiet, decided, covered, easy — your words.",
+    prompt:
+      "When you walk into a room, how do you want to feel? Calm, unstoppable, covered, comfy… use your own words.",
   },
   {
     id: "fabric",
     pillar: "Fabric",
     prompt:
-      "What should the cloth against your skin do — breathe, hold a line, drape, or carry weight?",
+      "And the fabric against your skin: something that breathes, something crisp that holds its shape, something that drapes, or something with a bit of weight to it?",
   },
   {
     id: "goal",
     pillar: "Feel",
-    prompt: "What should I dress first — work, weekend, a specific occasion, or everyday?",
+    prompt:
+      "Last one! Where should I start dressing you: work, weekends, a special occasion, or just everyday life?",
   },
 ] as const;
 

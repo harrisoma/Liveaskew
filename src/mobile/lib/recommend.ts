@@ -142,27 +142,26 @@ export function beeOpensWith(look: LookCard, answers: OnboardingAnswers): string
   const budget =
     BUDGETS[(answers.budget ?? "mid") as keyof typeof BUDGETS] ?? "a budget we can work with";
   return [
-    `I'm Bee. I style from Fit, Feel, and Fabric — never a type, never a retouched body.`,
-    `For ${goal}, I started you with **${look.title}**. ${look.feel}`,
-    `Fit: ${look.fit}`,
-    `Fabric: ${look.fabric} That sits with ${budget}.`,
-    `Tell me what you're dressing for next, or save this look and we'll keep building.`,
+    `Okay, I've got you! I've put together your Fit, Feel and Fabric, and for ${goal}, let's start with **${look.title}**. ${look.feel}`,
+    `How it fits: ${look.fit}`,
+    `The fabric: ${look.fabric} And it works with ${budget}.`,
+    `What are you getting dressed for next? Or save this one and we'll keep going.`,
   ].join("\n\n");
 }
 
 export function localBeeReply(userText: string, answers: OnboardingAnswers): string {
   const t = userText.toLowerCase();
   if (t.includes("wedding") || t.includes("event") || t.includes("party")) {
-    return "For an occasion: start with the cloth against your skin, then the line. A covered sleeve if you want it. A waist you control. Color from your own palette — not a catalog's. What is the hour, and how covered do you want to be?";
+    return "Ooh, an occasion! Let's start with a fabric that feels good on your skin, then the shape: a sleeve if you want one, a waist you choose. Colours from your palette, not some catalogue's. What time is it, and how covered do you want to be?";
   }
   if (t.includes("work") || t.includes("job") || t.includes("office")) {
-    return "Work reads in the shoulder and the shoe. Keep the torso calm; let one metal or one texture speak. What climate are you dressing in this week?";
+    return "For work, it's all in the shoulder and the shoe. Keep the middle simple and let one gold piece or one great texture do the talking. What's the weather doing this week?";
   }
   if (t.includes("hijab") || t.includes("modest") || t.includes("sari") || t.includes("kente")) {
-    return "I dress heritage with you, never around it. Tell me the cloth and the covering you want held — I'll build the rest of the line from Fit and Fabric first.";
+    return "I'll style your heritage with you, never around it. Tell me the fabric and the covering you want to keep, and I'll build everything else around how you like things to fit.";
   }
   if (t.includes("budget") || t.includes("cheap") || t.includes("afford")) {
-    return "We spend where the skin notices. One honest fabric can carry three cheaper shapes. What do you already own that still feels like you?";
+    return "Let's spend where your skin notices. One really good fabric can carry three cheaper pieces. What do you already own that still feels like you?";
   }
-  return `I hear you. ${answers.fit ? "We'll keep the fit you asked for. " : ""}Give me the day, the weather, and how you want to feel when you walk in — I'll answer with pieces, not adjectives.`;
+  return `Got it. ${answers.fit ? "I'll keep the fit you like. " : ""}Tell me the day, the weather and how you want to feel when you walk in, and I'll give you actual pieces, not fluffy adjectives.`;
 }

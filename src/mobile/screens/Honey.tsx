@@ -63,8 +63,8 @@ export function HoneyScreen({
         <div className="mt-5 space-y-5">
           {days.length === 0 && (
             <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
-              Nothing on the calendar yet. Connect Google, iCloud, or Outlook to fill it in, or add
-              the day yourself. Buzz posts land here too.
+              Your calendar's looking wide open! Connect Google, iCloud or Outlook to fill it in, or
+              add the day yourself. Buzz posts land here too.
             </div>
           )}
           {days.map((day) => (
@@ -141,7 +141,7 @@ export function HoneyScreen({
           }}
         >
           <NeoField
-            placeholder="What's happening?"
+            placeholder="What's coming up?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -210,7 +210,7 @@ export function HoneyScreen({
             }}
           >
             <Link2 size={14} aria-hidden className="mr-1 inline" />
-            {importing ? "Reading your calendar…" : "Connect calendar"}
+            {importing ? "Bringing your calendar in…" : "Connect calendar"}
           </NeoButton>
           {feeds.length > 0 && (
             <div>

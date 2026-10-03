@@ -21,7 +21,7 @@ describe("bee voice", () => {
   it("opens with the look and the three pillars", () => {
     const look = recommendLook({ goal: "everyday", fit: "soft", budget: "value" });
     const open = beeOpensWith(look, { goal: "everyday", fit: "soft", budget: "value" });
-    expect(open).toMatch(/Fit, Feel, and Fabric/i);
+    expect(open).toMatch(/Fit, Feel,? and Fabric/i);
     expect(open).toContain(look.title);
     expect(open).not.toMatch(/must-have|elevate your|flattering/i);
   });
