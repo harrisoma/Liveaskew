@@ -3,9 +3,9 @@ import { ChevronRight } from "lucide-react";
 import crestBee from "@/assets/brand/crest-bee.webp";
 import crestBuzz from "@/assets/brand/crest-buzz.webp";
 import crestHive from "@/assets/brand/crest-hive.webp";
-import hiveGathering from "@/assets/brand/hive-gathering.webp";
-import heroEditorial from "@/assets/site/hero-editorial.webp";
-import beeFlatlay from "@/assets/site/bee-flatlay-app.webp";
+import hiveGathering from "@/assets/site/miami-women-hive.jpg";
+import heroEditorial from "@/assets/site/miami-women-hero.jpg";
+import beeFlatlay from "@/assets/site/miami-wardrobe.jpg";
 import buzzBroadcast from "@/assets/site/buzz-broadcast.webp";
 import shotToday from "@/assets/site/today.webp";
 import { Crest } from "@/mobile/components/Crest";
@@ -97,28 +97,28 @@ export function Landing() {
     <SiteFrame>
       <div className="miami-home">
         {/* Hero */}
-        <section className="relative min-h-[100svh]">
+        <section className="miami-hero relative min-h-[100svh]">
           <img
             src={heroEditorial}
-            alt="A woman in a tailored black and gold ensemble, standing in a modern interior among framed looks"
-            className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+            alt="Women in coral and lilac dresses, bright shirts and skirts on a Miami waterfront terrace"
+            className="miami-hero-photo absolute inset-0 h-full w-full object-cover object-right"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/30" />
-          <div className="relative z-10 flex min-h-[100svh] items-end px-5 pt-36 pb-12 md:items-center md:px-16 md:pb-16">
-            <div className="glass-dark max-w-xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
+          <div className="miami-hero-shade absolute inset-0" />
+          <div className="miami-hero-content relative z-10 flex min-h-[100svh] items-end px-5 pt-36 pb-12 md:items-center md:px-16 md:pb-16">
+            <div className="miami-hero-card glass-dark max-w-xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
               <img
                 src="/liveaskew-signature.png"
                 alt="LiveAskew"
                 className="h-24 w-auto md:h-32"
                 style={{ aspectRatio: "866 / 1610" }}
               />
-              <p className="kicker mt-5">Miami-born. Your personal AI stylist.</p>
+              <p className="kicker mt-5">Miami-born. Styling for women.</p>
               <h1 className={`${HEADLINE} mt-2 text-[2.9rem] leading-[1] md:text-[4.5rem]`}>
                 Let's get you dressed.
               </h1>
               <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/90">
-                Every body. Every style. Every kind of day. Bee brings your taste, your wardrobe and
-                your plans together—so getting dressed feels like you.
+                For women of every age, body and personal style. Bee brings your taste, your
+                wardrobe and your plans together—so getting dressed feels like you.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
@@ -146,10 +146,10 @@ export function Landing() {
         {/* Bee */}
         <section id="bee" className="scroll-mt-28 bg-white">
           <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-            <article className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] sm:aspect-[2752/1536]">
+            <article className="miami-wardrobe relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] sm:aspect-[2752/1536]">
               <img
                 src={beeFlatlay}
-                alt="A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open in Bee"
+                alt="Coral dress, cobalt and teal shirts, white skirt, lilac scarf and accessories laid out for sunny days"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
               />
@@ -166,7 +166,7 @@ export function Landing() {
                   <p className="mt-3 text-[0.95rem] leading-relaxed text-black/80 md:mt-4 md:text-[1.0625rem]">
                     Dresses, shirts, denim, tailoring, modest looks or something bold. Bee listens
                     to your fit, your feel and your favourite fabrics, then helps you find your own
-                    way to wear them. Your body and your identity set the brief.
+                    way to wear them. Your body, your taste, your rules.
                   </p>
                 </div>
               </div>
@@ -322,15 +322,15 @@ export function Landing() {
 
         {/* The Hive */}
         <section id="hive" className="scroll-mt-28 bg-white">
-          <div className="relative min-h-[78svh]">
+          <div className="miami-hive-scene relative min-h-[78svh]">
             <img
               src={hiveGathering}
-              alt="Friends gathered on a sofa in a bright room, laughing and talking"
+              alt="Women of different generations sharing a conversation in a bright Miami waterfront lounge"
               className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
+            <div className="miami-hive-content relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
               <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
                 <ProductMark
                   crest={<img src={crestHive} alt="" className="h-14 w-14" />}
@@ -343,9 +343,9 @@ export function Landing() {
                   Real talk. Real you.
                 </h2>
                 <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                  Style starts a conversation. The Hive keeps it going. Talk about confidence,
-                  relationships, family, work and whatever life looks like for you. Every identity,
-                  every perspective, room to be yourself.
+                  A community for women, beyond the outfit. Talk about confidence, relationships,
+                  family, work and whatever life looks like for you. Different perspectives, shared
+                  experiences, room to be yourself.
                 </p>
               </div>
             </div>
