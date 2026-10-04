@@ -39,6 +39,7 @@ import { Route as ApiOauthRegisterRouteImport } from './routes/api/oauth/registe
 import { Route as ApiOauthRevokeRouteImport } from './routes/api/oauth/revoke'
 import { Route as ApiOauthTokenRouteImport } from './routes/api/oauth/token'
 import { Route as ApiPublicAppReturnRouteImport } from './routes/api/public/app-return'
+import { Route as ApiPublicBeeSalesRouteImport } from './routes/api/public/bee-sales'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
@@ -199,6 +200,11 @@ const ApiPublicAppReturnRoute = ApiPublicAppReturnRouteImport.update({
   path: '/api/public/app-return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBeeSalesRoute = ApiPublicBeeSalesRouteImport.update({
+  id: '/api/public/bee-sales',
+  path: '/api/public/bee-sales',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicVerifyRoute = ApiPublicVerifyRouteImport.update({
   id: '/api/public/verify',
   path: '/api/public/verify',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/api/oauth/revoke': typeof ApiOauthRevokeRoute
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
+  '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/api/oauth/revoke': typeof ApiOauthRevokeRoute
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
+  '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/api/oauth/revoke': typeof ApiOauthRevokeRoute
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
+  '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/api/oauth/revoke'
     | '/api/oauth/token'
     | '/api/public/app-return'
+    | '/api/public/bee-sales'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/api/oauth/revoke'
     | '/api/oauth/token'
     | '/api/public/app-return'
+    | '/api/public/bee-sales'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -465,6 +476,7 @@ export interface FileRouteTypes {
     | '/api/oauth/revoke'
     | '/api/oauth/token'
     | '/api/public/app-return'
+    | '/api/public/bee-sales'
     | '/api/public/verify'
     | '/api/push/recommend'
     | '/api/push/register'
@@ -505,6 +517,7 @@ export interface RootRouteChildren {
   ApiOauthRevokeRoute: typeof ApiOauthRevokeRoute
   ApiOauthTokenRoute: typeof ApiOauthTokenRoute
   ApiPublicAppReturnRoute: typeof ApiPublicAppReturnRoute
+  ApiPublicBeeSalesRoute: typeof ApiPublicBeeSalesRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
   ApiPushRegisterRoute: typeof ApiPushRegisterRoute
@@ -726,6 +739,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAppReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bee-sales': {
+      id: '/api/public/bee-sales'
+      path: '/api/public/bee-sales'
+      fullPath: '/api/public/bee-sales'
+      preLoaderRoute: typeof ApiPublicBeeSalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/verify': {
       id: '/api/public/verify'
       path: '/api/public/verify'
@@ -825,6 +845,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOauthRevokeRoute: ApiOauthRevokeRoute,
   ApiOauthTokenRoute: ApiOauthTokenRoute,
   ApiPublicAppReturnRoute: ApiPublicAppReturnRoute,
+  ApiPublicBeeSalesRoute: ApiPublicBeeSalesRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
   ApiPushRegisterRoute: ApiPushRegisterRoute,

@@ -5,6 +5,7 @@ import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/u
 import { HoneyScreen } from "./screens/Honey";
 import { BuzzScreen } from "./screens/Buzz";
 import { HiveScreen } from "./screens/Hive";
+import { TrialActivation } from "./screens/TrialActivation";
 import { TodayScreen } from "./screens/Today";
 import { Crest, type CrestName } from "./components/Crest";
 import { ModerationScreen } from "./screens/Moderation";
@@ -136,7 +137,7 @@ export function MobileApp() {
         setTab("you");
         setYouView("membership");
         setTierNotice(
-          "Payment's in, thank you! Your new membership switches on the moment Stripe confirms it.",
+          "Checkout returned successfully. We are checking your subscription; access activates only after Stripe confirms it.",
         );
         void syncAccount();
       }
@@ -574,6 +575,15 @@ export function MobileApp() {
         />
       )}
 
+      {snap.phase === "membership" && (
+        <TrialActivation
+          onContinue={() => {
+            void syncAccount();
+            patch((s) => ({ ...s, phase: s.selfie ? "selfie" : "interview" }));
+          }}
+        />
+      )}
+
       {snap.phase === "selfie" && (
         <SelfieScreen
           selfie={snap.selfie}
@@ -588,6 +598,12 @@ export function MobileApp() {
           onContinue={async () => {
             if (!snap.selfie || building) return;
             setBuilding(true);
+            const membership = await fetchMembership();
+            if (!membership || (!membership.active && !membership.legacyTrialActive)) {
+              setBuilding(false);
+              patch((s) => ({ ...s, phase: "membership" }));
+              return;
+            }
             const { looks, source } = await generateLooks({ interview: snap.interview.answers });
             setBuilding(false);
             startTrial(
@@ -1066,9 +1082,13 @@ function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () =
         <ol className="mt-2 list-decimal space-y-1 pl-5">
           <li>Sign in and complete the account check.</li>
           <li>Answer five short questions about your style.</li>
-          <li>Add a full-length photo to build your Style Guide.</li>
+          <li>Add a full-length photo for your Style Guide.</li>
+          <li>Choose a plan, add your card securely, and activate your trial.</li>
         </ol>
-        <p className="mt-3">Try Bee for 14 days. No card required to get started.</p>
+        <p className="mt-3">
+          Choose a plan and add your card securely to activate your 14-day trial. Monthly billing
+          starts after the trial unless cancelled.
+        </p>
         <a href="/privacy" className="mt-2 inline-block underline underline-offset-4">
           How your photo is processed
         </a>
@@ -1243,7 +1263,7 @@ function SelfieScreen({
       title="Let's see you"
       footer={
         <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
-          {building ? "Bee is putting your looks together…" : "Build my Style Guide"}
+          {building ? "Bee is putting your looks together…" : "Continue to my Style Guide"}
         </NeoButton>
       }
     >

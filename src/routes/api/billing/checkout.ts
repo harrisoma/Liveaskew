@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { requireApiUser } from "@/lib/api-auth.server";
-import { existingTrialStart } from "@/lib/entitlement.server";
+import { signupStatus } from "@/lib/signup-status.server";
 import {
   billingConfigured,
   billingEnvironment,
@@ -9,7 +9,7 @@ import {
   tierLookupKey,
 } from "@/lib/billing.server";
 
-type Body = { tier?: string; returnUrl?: string };
+type Body = { tier?: string; returnUrl?: string; trialOnly?: boolean };
 
 function safeReturnUrl(raw: string | undefined, request: Request): string {
   const fallback = new URL("/app", request.url).toString();
@@ -44,15 +44,13 @@ export const Route = createFileRoute("/api/billing/checkout")({
           return Response.json({ error: "billing_not_configured" }, { status: 503 });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const [trialStartedAt, { data: userData }] = await Promise.all([
-          // Read only: opening (or abandoning) checkout must not start the free trial.
-          existingTrialStart(caller),
-          supabaseAdmin.auth.admin.getUserById(caller),
-        ]);
-
         const { createStripeClient, getStripeErrorMessage } = await import("@/lib/stripe.server");
         try {
+          const state = await signupStatus(caller);
+          if (state.membership)
+            return Response.json({ error: "already_subscribed" }, { status: 409 });
+          if (body.trialOnly && !state.trialEligible)
+            return Response.json({ error: "trial_unavailable" }, { status: 409 });
           const stripe = createStripeClient(env);
           const lookupKey = tierLookupKey(body.tier);
           const prices = await stripe.prices.list({
@@ -73,17 +71,23 @@ export const Route = createFileRoute("/api/billing/checkout")({
             returnUrl = `${base}/api/public/app-return?path=billing`;
           }
           const sep = returnUrl.includes("?") ? "&" : "?";
-          const trialEnd = stripeTrialEnd(trialStartedAt);
+          const trialEnd = stripeTrialEnd(state.trialStartedAt);
           const session = await stripe.checkout.sessions.create({
             mode: "subscription",
+            payment_method_collection: "always",
+            payment_method_types: ["card"],
             line_items: [{ price: price.id, quantity: 1 }],
-            customer_email: userData?.user?.email ?? undefined,
+            customer_email: state.email,
             client_reference_id: caller,
             success_url: `${returnUrl}${sep}billing=success`,
             cancel_url: `${returnUrl}${sep}billing=cancelled`,
             subscription_data: {
               metadata: { userId: caller, tier: body.tier },
-              ...(trialEnd ? { trial_end: trialEnd } : {}),
+              ...(state.trialEligible
+                ? { trial_period_days: 14 }
+                : state.legacyTrialActive && trialEnd
+                  ? { trial_end: trialEnd }
+                  : {}),
             },
             metadata: { userId: caller, price_id: lookupKey },
           });

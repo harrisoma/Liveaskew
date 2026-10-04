@@ -3,7 +3,7 @@ import type { LookCard, OnboardingAnswers } from "./recommend";
 
 export type AuthProvider = "google" | "apple";
 export type WardrobeVerdict = "keep" | "toss" | "maybe";
-export type Phase = "auth" | "verify" | "interview" | "selfie" | "app";
+export type Phase = "auth" | "verify" | "interview" | "selfie" | "membership" | "app";
 
 export type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
 
