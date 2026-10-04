@@ -128,9 +128,7 @@ export function Landing() {
                 LiveAskew is your personal styling app. Meet Bee, your AI stylist inside it. Turn
                 the clothes you own into outfits for your body, your plans, and your personal style.
               </p>
-              <p className="mt-3 text-sm text-white/80">
-                14 days free. No card to get started.
-              </p>
+              <p className="mt-3 text-sm text-white/80">14 days free. No card to get started.</p>
               <div className="hero-actions mt-7 grid grid-cols-2 gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
                   Start your free trial
