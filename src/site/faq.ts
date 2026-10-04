@@ -25,8 +25,8 @@ export const FAQ: { q: string; a: string }[] = [
     a: "Never. When Bee shows a look on your photo, there's no slimming, smoothing or reshaping. Clothes should fit you, not the other way round. It works for every size, shape, age and style, including modest and heritage dressing.",
   },
   {
-    q: "Is LiveAskew good for busy moms and working women?",
-    a: "It's made for you. One app keeps your outfits, your calendar, your social posts and your people together, from maternity to the boardroom, so getting dressed is one less thing to think about.",
+    q: "Who is LiveAskew for?",
+    a: "LiveAskew is based in Miami and made for every body, identity and personal style. From dresses and shirts to tailoring, streetwear and modest looks, Bee starts with your preferences and the life you lead.",
   },
   {
     q: "Can I schedule my outfit posts to Instagram and other socials?",

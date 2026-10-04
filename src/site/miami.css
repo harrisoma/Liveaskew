@@ -1,0 +1,38 @@
+/* Preserve LiveAskew's original liquid-glass identity. */
+.miami-home {
+  font-family: var(--font-sans);
+}
+.miami-inspirations {
+  padding: 40px 20px;
+  background:
+    radial-gradient(at 10% 20%, #ddf5fc, transparent 60%),
+    radial-gradient(at 90% 80%, #f1eafa, transparent 60%), #fff;
+}
+.miami-home #honey {
+  background:
+    radial-gradient(at 90% 30%, #e5f7fc, transparent 55%),
+    radial-gradient(at 5% 80%, #f5eefe, transparent 45%), #fff;
+}
+.miami-home #hive > div:last-child {
+  background: linear-gradient(135deg, #f4fbff, #fff, #f5f0fc);
+}
+.miami-home .book-tabs {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+.miami-home .book-tab {
+  min-height: 44px;
+}
+.miami-home :is(a, button, summary):focus-visible {
+  outline: 2px solid #8a6412;
+  outline-offset: 4px;
+}
+@media (max-width: 640px) {
+  .miami-home .book-tabs {
+    gap: 4px;
+  }
+  .miami-home .book-tab {
+    flex: 1 1 28%;
+    padding-inline: 8px;
+  }
+}

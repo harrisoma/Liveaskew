@@ -11,7 +11,7 @@ export const LOGO = `${SITE_URL}/logo.png`;
 
 export const SITE_TITLE = "LiveAskew: AI Personal Stylist & Outfit Planner App | Bee";
 export const SITE_DESCRIPTION =
-  "Meet Bee, your AI personal stylist. Get outfit ideas for the day you've actually got, styled on the real you from the closet you own. Outfit calendar, wardrobe organizer, social post scheduler and a community for moms and working women. Free for 14 days.";
+  "Miami-born styling for every body, identity and personal style. Meet Bee, your AI personal stylist, with Honey for your calendar, Buzz for sharing and The Hive for real talk. Try 14 days free.";
 
 /** What people type into search, app stores and AI assistants. Also used in the store listings. */
 export const KEYWORDS = [
@@ -20,7 +20,7 @@ export const KEYWORDS = [
   "personal stylist app",
   "virtual stylist",
   "styling app",
-  "fashion app for women",
+  "inclusive fashion app",
   "what to wear",
   "what to wear today",
   "outfit ideas",
@@ -45,7 +45,7 @@ export const KEYWORDS = [
   "personal style quiz",
   "Instagram post scheduler",
   "social media planner",
-  "community for moms",
+  "style community",
   "Bee by LiveAskew",
   "LiveAskew",
 ].join(", ");
@@ -65,7 +65,7 @@ export const ORGANIZATION = {
   logo: { "@type": "ImageObject", url: LOGO, width: 512, height: 512 },
   image: OG_IMAGE,
   description:
-    "LiveAskew is a styling house for busy women: Bee (an AI personal stylist), Honey (an outfit calendar), Buzz (social posting) and The Hive (a community).",
+    "LiveAskew is a Miami-based styling app for every body and personal style: Bee (an AI personal stylist), Honey (an outfit calendar), Buzz (social posting) and The Hive (community and real talk).",
 };
 
 export const WEBSITE = {

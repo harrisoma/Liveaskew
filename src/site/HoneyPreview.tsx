@@ -1,93 +1,90 @@
 import { useState } from "react";
-import { ArrowUpRight, Check } from "lucide-react";
-import outfits from "@/assets/site/honey-outfits.jpg";
+import { ArrowUpRight, CalendarDays, Check, Shirt } from "lucide-react";
 
 const EVENTS = [
   {
-    time: "09:00",
+    time: "8:00",
     title: "A morning out",
-    city: "Miami / California",
-    look: "A sunlit start.",
-    pieces: "Terracotta midi dress · Flat sandals · Woven bag",
-    why: "An easy dress and comfortable flats, with warm textures for a relaxed morning.",
-    position: "0%",
-    alt: "Terracotta midi dress with tan sandals and a woven shoulder bag",
+    occasion: "A comfortable start",
+    look: "A breezy dress. Flat sandals. A favourite bag.",
+    why: "Miami ease: light fabrics and comfortable shoes for a relaxed start.",
+    colors: ["#fc907f", "#a9e0e4", "#ffffff"],
   },
   {
     time: "10:00",
-    title: "The big meeting",
-    city: "New York / Milan",
-    look: "A fresh perspective.",
-    pieces: "Blue button-down shirt · Chocolate skirt · Loafers",
-    why: "A crisp shirt and a flowing skirt bring structure and movement to the working day.",
-    position: "50%",
-    alt: "Pale blue shirt, chocolate A-line skirt, black loafers and structured tan bag",
+    title: "Board meeting",
+    occasion: "A little more polished",
+    look: "A crisp shirt. Your favourite skirt or trousers.",
+    why: "New York and Milan inspiration, adapted to your fit and personal style.",
+    colors: ["#72b9ed", "#ffffff", "#e2b04a"],
   },
   {
     time: "19:00",
     title: "Dinner with friends",
-    city: "Paris",
-    look: "Make an evening of it.",
-    pieces: "Black midi dress · Burgundy slingbacks · Gold earrings",
-    why: "A simple dress, rich accents and a little shine. An evening look with room to be yourself.",
-    position: "100%",
-    alt: "Black midi dress with burgundy slingbacks, evening bag and gold earrings",
+    occasion: "An easy evening switch",
+    look: "A statement dress. A silk shirt. Your own take.",
+    why: "A little Paris inspiration, with the freedom to dress it your way.",
+    colors: ["#b7a7e5", "#222222", "#e2b04a"],
   },
 ];
 
+/** A self-contained sample, never a representation of a connected user's calendar. */
 export function HoneyPreview() {
   const [selected, setSelected] = useState(1);
   const event = EVENTS[selected];
   return (
-    <div className="honey-story">
-      <div className="honey-agenda">
-        <p className="ed-eyebrow">A day, beautifully put together</p>
-        <h3>
-          Your plans. <br />
-          Your possibilities.
-        </h3>
-        <p className="ed-copy">Choose an occasion to explore a look.</p>
-        <div className="honey-events" aria-label="Example calendar events">
-          {EVENTS.map((item, i) => (
-            <button
-              key={item.title}
-              type="button"
-              aria-pressed={i === selected}
-              aria-controls="honey-example-look"
-              onClick={() => setSelected(i)}
-            >
-              <span>{item.time}</span>
-              <strong>{item.title}</strong>
-              {i === selected ? (
-                <Check size={18} aria-hidden />
-              ) : (
-                <ArrowUpRight size={18} aria-hidden />
-              )}
-            </button>
+    <figure className="min-w-0 rounded-[1.6rem] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 sm:p-7">
+      <figcaption className="mb-6 flex items-center justify-between gap-3 border-b border-black/10 pb-4">
+        <span className="flex items-center gap-2 font-semibold">
+          <CalendarDays size={18} aria-hidden /> A day with Honey
+        </span>
+        <span className="text-xs text-black/60">Illustrative preview</span>
+      </figcaption>
+      <p className="mb-3 text-sm text-black/65">Pick an event. See how the outfit changes.</p>
+      <div className="grid gap-2" aria-label="Example calendar events">
+        {EVENTS.map((item, index) => (
+          <button
+            key={item.title}
+            type="button"
+            aria-pressed={selected === index}
+            aria-controls="honey-example-look"
+            onClick={() => setSelected(index)}
+            className={`flex min-h-16 w-full items-center gap-4 rounded-xl border px-4 py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black ${selected === index ? "border-[#b88c37] bg-[#faf3e3]" : "border-black/10 bg-white hover:bg-black/5"}`}
+          >
+            <span className="w-10 shrink-0 text-sm tabular-nums text-black/60">{item.time}</span>
+            <span className="flex-1 font-semibold">{item.title}</span>
+            {selected === index ? (
+              <Check size={18} aria-hidden />
+            ) : (
+              <ArrowUpRight size={18} aria-hidden className="text-black/40" />
+            )}
+          </button>
+        ))}
+      </div>
+      <div
+        id="honey-example-look"
+        aria-live="polite"
+        aria-atomic="true"
+        className="mt-5 rounded-xl bg-[#171714] p-5 text-white"
+      >
+        <p className="flex items-center gap-2 text-sm text-[#e2b04a]">
+          <Shirt size={18} aria-hidden /> {event.occasion}
+        </p>
+        <h3 className="mt-3 text-xl font-semibold leading-snug">{event.look}</h3>
+        <div className="my-4 flex gap-2" aria-hidden>
+          {event.colors.map((color, i) => (
+            <span
+              key={i}
+              className="h-7 w-7 rounded-full border border-white/30"
+              style={{ backgroundColor: color }}
+            />
           ))}
         </div>
-        <p className="ed-note">
-          Illustrative preview with AI-created imagery. Your own looks are tailored in Bee.
-        </p>
+        <p className="text-sm leading-relaxed text-white/75">{event.why}</p>
       </div>
-      <figure id="honey-example-look" className="honey-look" aria-live="polite" aria-atomic="true">
-        <div className="honey-outfit">
-          <img
-            src={outfits}
-            alt={event.alt}
-            width={2172}
-            height={724}
-            loading="lazy"
-            style={{ objectPosition: `${event.position} center` }}
-          />
-        </div>
-        <figcaption>
-          <p className="ed-eyebrow">Inspired by {event.city}</p>
-          <h3>{event.look}</h3>
-          <p className="honey-pieces">{event.pieces}</p>
-          <p>{event.why}</p>
-        </figcaption>
-      </figure>
-    </div>
+      <p className="mt-4 text-xs leading-relaxed text-black/55">
+        Sample events and styling ideas. Your recommendations are tailored in Bee.
+      </p>
+    </figure>
   );
 }
