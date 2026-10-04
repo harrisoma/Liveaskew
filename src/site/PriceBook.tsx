@@ -1,66 +1,107 @@
-import { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useRef, useState } from "react";
 import { isComingSoon, SITE_PLANS } from "./plans";
 
+function money(priceMonthly: number, inquiry: boolean) {
+  return inquiry || priceMonthly === 0 ? "By inquiry" : `$${priceMonthly}`;
+}
+
+/** Pricing as a book: a cover, then one spread per membership with tabs down the edge. */
 export function PriceBook() {
+  const [open, setOpen] = useState(true);
   const [index, setIndex] = useState(0);
-  const plan = SITE_PLANS[index];
-  const available = plan.features.filter((f) => !isComingSoon(f));
-  const upcoming = plan.features.filter(isComingSoon);
-  return (
-    <div className="ed-membership">
-      <div className="ed-plan-options" aria-label="Choose a membership">
-        {SITE_PLANS.map((p, i) => (
-          <button
-            key={p.slug}
-            type="button"
-            aria-pressed={i === index}
-            aria-controls="membership-detail"
-            onClick={() => setIndex(i)}
-          >
-            <span>{p.tab}</span>
-            <strong>
-              {p.inquiry ? "By inquiry" : `$${p.priceMonthly}`}
-              <small>{p.inquiry ? "" : " / mo"}</small>
-            </strong>
-          </button>
-        ))}
+  const [turning, setTurning] = useState(false);
+  const busy = useRef(false);
+  const plan = SITE_PLANS[index] ?? SITE_PLANS[0];
+
+  function show(next: number) {
+    if (next === index || next < 0 || next >= SITE_PLANS.length || busy.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIndex(next);
+      return;
+    }
+    busy.current = true;
+    setTurning(true);
+    window.setTimeout(() => setIndex(next), 260);
+    window.setTimeout(() => {
+      busy.current = false;
+      setTurning(false);
+    }, 560);
+  }
+
+  if (!open) {
+    return (
+      <div className="price-book">
+        <button type="button" className="book-cover" onClick={() => setOpen(true)}>
+          <span className="book-cover-kicker">LiveAskew</span>
+          <span className="book-cover-title">
+            14 Day
+            <br />
+            Free Trial
+          </span>
+          <span className="book-cover-cta">See pricing</span>
+        </button>
       </div>
-      <div id="membership-detail" className="ed-plan-detail" aria-live="polite">
-        <div>
-          <p className="ed-eyebrow">{plan.name}</p>
-          <h3>{plan.tagline}</h3>
-          <p className="ed-copy">{plan.description}</p>
-          <p className="ed-note">
-            {plan.inquiry
-              ? "Your brief, your quote. Agreed after a conversation."
-              : "14 days free, then billed monthly. Cancel any time."}
-          </p>
-          <a href="/app" className="ed-button">
-            {plan.inquiry ? "Meet your stylist" : "Start your 14 days free"}
-            <ArrowUpRight size={18} aria-hidden />
-          </a>
+    );
+  }
+
+  return (
+    <div className="price-book">
+      <div className={`book-open ${turning ? "is-turning" : ""}`}>
+        <div className="book-tabs" role="tablist" aria-label="Memberships">
+          {SITE_PLANS.map((p, i) => (
+            <button
+              key={p.slug}
+              type="button"
+              role="tab"
+              id={`plan-tab-${p.slug}`}
+              aria-selected={i === index}
+              aria-controls="plan-spread"
+              className="book-tab"
+              onClick={() => show(i)}
+            >
+              {p.tab}
+            </button>
+          ))}
         </div>
-        <div>
-          <h4>Available now</h4>
-          <ul>
-            {available.map((f) => (
-              <li key={f}>{f}</li>
-            ))}
-          </ul>
-          {upcoming.length > 0 && (
-            <details>
-              <summary>
-                Coming soon · {upcoming.length} {upcoming.length === 1 ? "feature" : "features"}
-              </summary>
-              <ul>
-                {upcoming.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </details>
-          )}
+        <div
+          id="plan-spread"
+          className="book-spread"
+          role="tabpanel"
+          aria-labelledby={`plan-tab-${plan.slug}`}
+        >
+          <article className="book-page book-page-left">
+            <p className="book-kicker">Membership</p>
+            <h3 className="font-display book-plan">{plan.name}</h3>
+            <p className="book-price">
+              {money(plan.priceMonthly, plan.inquiry)}
+              {!plan.inquiry && <span className="book-cadence">/ month</span>}
+            </p>
+            <p className="book-note">
+              {plan.inquiry
+                ? "We agree it together, after a chat."
+                : "14 days on us, then monthly. Cancel any time."}
+            </p>
+            <p className="book-tagline font-semibold">{plan.tagline}</p>
+            <p className="book-description">{plan.description}</p>
+            <a href="/app" className="glass-btn mt-8">
+              {plan.inquiry ? "Let's talk" : "Start your 14 days free"}
+            </a>
+          </article>
+          <article className="book-page book-page-right">
+            <p className="book-kicker">In this membership</p>
+            <ul className="book-features">
+              {plan.features.map((feature) => (
+                <li key={feature}>
+                  {feature}
+                  {isComingSoon(feature) && <span className="book-soon">Coming soon</span>}
+                </li>
+              ))}
+            </ul>
+          </article>
         </div>
+        <button type="button" className="book-close" onClick={() => setOpen(false)}>
+          Close the book
+        </button>
       </div>
     </div>
   );
