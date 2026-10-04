@@ -129,7 +129,7 @@ export function Landing() {
                 the clothes you own into outfits for your body, your plans, and your personal style.
               </p>
               <p className="mt-3 text-sm text-white/80">
-                14 days free for new members. Card required. Cancel before billing starts.
+                14 days free. No card to get started.
               </p>
               <div className="hero-actions mt-7 grid grid-cols-2 gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
@@ -430,8 +430,7 @@ export function Landing() {
               Try it free. Fall in love.
             </h2>
             <p className="mt-4 text-[1.125rem] text-black/65">
-              Choose your plan and add your card securely. New eligible members get 14 days free,
-              then monthly billing unless cancelled.
+              Try Bee for 14 days without a card. Choose a paid membership when you are ready.
             </p>
           </div>
           <PriceBook />
