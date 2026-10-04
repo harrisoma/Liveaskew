@@ -465,6 +465,11 @@ export function MobileApp() {
 
       {snap.phase === "verify" && snap.authProvider && (
         <VerifyScreen
+          onBack={() => {
+            setVerifyErr(null);
+            setVerifyCode("");
+            patch((s) => ({ ...s, phase: "auth" }));
+          }}
           provider={snap.authProvider}
           email={emailDraft || snap.email || ""}
           phone={phoneDraft || snap.phone || ""}
@@ -1122,6 +1127,7 @@ function AuthScreen({
 }
 
 function VerifyScreen({
+  onBack,
   provider,
   email,
   phone,
@@ -1135,6 +1141,7 @@ function VerifyScreen({
   onSend,
   onConfirm,
 }: {
+  onBack: () => void;
   provider: AuthProvider;
   email: string;
   phone: string;
@@ -1155,6 +1162,9 @@ function VerifyScreen({
       title={apple ? "Quick check: your phone" : "Quick check: your email"}
       footer={
         <div className="space-y-3">
+          <NeoButton disabled={busy} onClick={onBack}>
+            Choose another sign-in method
+          </NeoButton>
           <NeoButton variant="ink" disabled={busy} onClick={onSend}>
             Send sign-in email or code
           </NeoButton>
@@ -1182,6 +1192,7 @@ function VerifyScreen({
         <NeoField
           type="email"
           autoComplete="email"
+          aria-label="Email address"
           placeholder="Email"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
@@ -1191,6 +1202,7 @@ function VerifyScreen({
         className="mt-3"
         inputMode="numeric"
         autoComplete="one-time-code"
+        aria-label="Verification code"
         placeholder="Code (if your email includes one)"
         maxLength={8}
         value={code}
