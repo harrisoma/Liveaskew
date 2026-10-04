@@ -8,12 +8,12 @@ import heroEditorial from "@/assets/site/hero-editorial.webp";
 import beeFlatlay from "@/assets/site/bee-flatlay-app.webp";
 import buzzBroadcast from "@/assets/site/buzz-broadcast.webp";
 import shotToday from "@/assets/site/today.webp";
-import shotHoney from "@/assets/site/honey.webp";
-import shotTalk from "@/assets/site/realtalk.webp";
 import { TALK_GUIDES, TALK_TOPICS } from "@/lib/bee-talk";
 import { Crest } from "@/mobile/components/Crest";
 import { FAQ } from "./faq";
 import { forwardsToApp } from "./forward";
+import { HoneyPreview } from "./HoneyPreview";
+import { SocialIcon } from "./SocialIcon";
 import { PriceBook } from "./PriceBook";
 import { SiteFrame } from "./chrome";
 
@@ -190,7 +190,7 @@ export function Landing() {
 
       {/* Real Talk */}
       <section id="real-talk" className="on-dark scroll-mt-28 bg-black text-white">
-        <div className="mx-auto grid max-w-[1180px] items-center gap-14 px-5 py-24 md:grid-cols-[1.1fr_0.9fr] md:px-8 md:py-32">
+        <div className="mx-auto grid max-w-[900px] items-center gap-14 px-5 py-20 md:px-8 md:py-32">
           <div>
             <p className="kicker">Real Talk, with Bee</p>
             <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
@@ -213,14 +213,13 @@ export function Landing() {
               or text 988.
             </p>
           </div>
-          <Phone src={shotTalk} alt="Real Talk in Bee: a conversation about motherhood" />
         </div>
       </section>
 
       {/* Honey */}
       <section id="honey" className="scroll-mt-28 bg-white">
         <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-          <article className="glass overflow-hidden rounded-[2rem] bg-[radial-gradient(900px_500px_at_100%_0%,rgba(226,176,74,0.2),transparent)] md:grid md:grid-cols-[1.1fr_0.9fr]">
+          <article className="glass overflow-hidden rounded-[2rem] bg-[radial-gradient(900px_500px_at_100%_0%,rgba(226,176,74,0.2),transparent)] md:grid md:grid-cols-2">
             <div className="flex items-center px-7 py-10 md:px-12 md:py-14">
               <div className="max-w-xl">
                 <ProductMark
@@ -231,18 +230,17 @@ export function Landing() {
                 <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
                   Honey
                 </h2>
+                <p className="mt-4 text-2xl font-semibold tracking-tight md:text-3xl">
+                  Your day, already dressed.
+                </p>
                 <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/80">
-                  Honey is your calendar with a wardrobe attached. Meetings, birthday parties, the
-                  post you want out on Friday: it's all here, and Bee has already picked what you're
-                  wearing to each one.
+                  A full day. One less thing to think about. Bring your plans into Honey, then ask
+                  Bee for a look that fits each occasion—from the school run to dinner out.
                 </p>
               </div>
             </div>
-            <div className="h-[420px] overflow-hidden px-6 pt-4 md:h-auto md:pt-12">
-              <Phone
-                src={shotHoney}
-                alt="Honey in the app: today's board meeting, already dressed"
-              />
+            <div className="min-w-0 px-4 pb-6 sm:px-6 md:py-10 md:pr-8">
+              <HoneyPreview />
             </div>
           </article>
         </div>
@@ -301,8 +299,9 @@ export function Landing() {
                 {NETWORKS.map((n) => (
                   <li
                     key={n}
-                    className="rounded-full border border-white/30 px-3.5 py-1.5 text-[0.85rem]"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/20 px-3.5 py-2 text-[0.85rem]"
                   >
+                    <SocialIcon network={n} />
                     {n}
                   </li>
                 ))}
