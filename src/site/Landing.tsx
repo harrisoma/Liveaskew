@@ -115,20 +115,20 @@ export function Landing() {
                 style={{ aspectRatio: "866 / 1610" }}
               />
               <p className="kicker mt-5">Miami-born. Styling for women.</p>
-              <h1 className={`${HEADLINE} mt-2 text-[2.9rem] leading-[1] md:text-[4.5rem]`}>
-                Let's get you dressed.
+              <h1 className={`${HEADLINE} mt-2 text-[2.6rem] leading-[1.05] md:text-[3.5rem]`}>
+                Get dressed for your life. Feel like yourself.
               </h1>
               <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/90">
-                Your AI personal stylist for the clothes you own, the plans you make, and the woman
-                you are.
+                LiveAskew is your personal styling app. Meet Bee, your AI stylist inside it. Turn
+                the clothes you own into outfits for your body, your plans, and your personal style.
               </p>
               <p className="mt-3 text-sm text-white/80">14 days free. No card to get started.</p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
-                  Start your 14 days free
+                  Start your free trial
                 </a>
                 <a href="#bee" className="glass-btn glass-btn-light">
-                  Show me around
+                  See how Bee works
                 </a>
               </div>
             </div>
@@ -149,27 +149,31 @@ export function Landing() {
         {/* Bee */}
         <section id="bee" className="scroll-mt-28 bg-white">
           <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-            <article className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] sm:aspect-[2752/1536]">
+            <article className="relative min-h-[520px] w-full overflow-hidden rounded-[2rem] md:aspect-[2752/1536]">
               <img
                 src={beeFlatlay}
                 alt="A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open in Bee"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
               />
-              <div className="absolute top-4 left-4 z-10 max-w-[calc(100%-2rem)] sm:max-w-[52%] md:top-6 md:left-6">
+              <div className="absolute top-4 left-4 z-10 max-w-[calc(100%-2rem)] sm:max-w-[70%] lg:max-w-[52%] md:top-6 md:left-6">
                 <div className="glass rounded-[2rem] px-5 py-5 md:px-8 md:py-7">
                   <ProductMark
                     crest={<img src={crestBee} alt="" className="h-14 w-14" />}
                     index="01"
-                    kicker="The styling app"
+                    kicker="Your AI stylist inside LiveAskew"
                   />
                   <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
-                    Bee
+                    Meet Bee.
                   </h2>
+                  <p className="mt-4 text-xl font-semibold tracking-tight md:text-2xl">
+                    Less second-guessing. More getting on with your day.
+                  </p>
                   <p className="mt-3 text-[0.95rem] leading-relaxed text-black/80 md:mt-4 md:text-[1.0625rem]">
-                    Dresses, shirts, denim, tailoring, modest looks or something bold. Bee listens
-                    to your fit, your feel and your favourite fabrics, then helps you find your own
-                    way to wear them. Your body, your taste, your rules.
+                    Bee is the voice and styling intelligence behind LiveAskew. Share what you own,
+                    where you are going, and how you want to feel. She helps you put a look
+                    together, then refine it through conversation. Your body. Your style. Your
+                    rules.
                   </p>
                 </div>
               </div>
@@ -179,25 +183,25 @@ export function Landing() {
           <Offers
             items={[
               {
-                title: "For the day you're actually having",
-                text: "Work, weekends, celebrations or a fresh start. Tell Bee what is on your calendar and how you want to feel.",
+                title: "Clothes, but nothing to wear?",
+                text: "Find fresh combinations in your own wardrobe. Bee helps turn the pieces you already love into a look for today.",
               },
               {
-                title: "Shop your own closet first",
-                text: "Rediscover the pieces you own and new ways to wear them. Build a wardrobe that works for your life.",
+                title: "A plan, but no outfit?",
+                text: "A meeting, dinner, or an ordinary Tuesday. Tell Bee the occasion and your comfort preferences to shape the suggestion.",
               },
               {
-                title: "See it on you",
-                text: "Curious how it'll look? Bee puts the outfit on your own photo. No slimming, no smoothing, no sneaky edits. Just you, wearing it.",
+                title: "Not quite your style?",
+                text: "Say what you would change: softer fabrics, more coverage, or flats instead of heels. Refine the look with Bee until it feels like you.",
               },
               {
-                title: "When you want a real person",
-                text: "Big event? Whole new chapter? The Private Atelier pairs you with a human stylist, one to one. We talk first, then agree a price that fits what you need.",
+                title: "Want to picture the whole look?",
+                text: "Use a virtual try-on to preview an outfit on your photo. Explore the idea before deciding what to wear.",
               },
             ]}
             cta={
               <a href="/app" className="glass-btn">
-                Meet Bee
+                Start styling with Bee
               </a>
             }
           />
