@@ -36,3 +36,13 @@
     padding-inline: 8px;
   }
 }
+
+.styling-example-steps {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .styling-example-steps {
+    grid-template-columns: 1fr 1fr 1.2fr;
+  }
+}
