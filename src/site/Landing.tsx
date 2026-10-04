@@ -122,6 +122,7 @@ export function Landing() {
                 Your AI personal stylist for the clothes you own, the plans you make, and the woman
                 you are.
               </p>
+              <p className="mt-3 text-sm text-white/80">14 days free. No card to get started.</p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
                   Start your 14 days free
@@ -413,7 +414,7 @@ export function Landing() {
               Try it free. Fall in love.
             </h2>
             <p className="mt-4 text-[1.125rem] text-black/65">
-              Every membership starts with 14 days on us. Cancel any time, no hard feelings.
+              Try Bee for 14 days without a card. Choose a paid membership when you are ready.
             </p>
           </div>
           <PriceBook />
