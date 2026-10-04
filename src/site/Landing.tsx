@@ -257,7 +257,7 @@ export function Landing() {
 
         {/* Buzz */}
         <section id="buzz" className="scroll-mt-28 bg-white">
-          <div className="miami-hive-scene relative min-h-[78svh]">
+          <div className="relative min-h-[78svh]">
             <img
               src={buzzBroadcast}
               alt="A woman smiling at her phone as her look goes out to her social networks"
@@ -265,7 +265,7 @@ export function Landing() {
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            <div className="miami-hive-content relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
+            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
               <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
                 <ProductMark
                   crest={<img src={crestBuzz} alt="" className="h-14 w-14" />}
@@ -322,7 +322,7 @@ export function Landing() {
 
         {/* The Hive */}
         <section id="hive" className="scroll-mt-28 bg-white">
-          <div className="relative min-h-[78svh]">
+          <div className="miami-hive-scene relative min-h-[78svh]">
             <img
               src={hiveGathering}
               alt="Women of different generations sharing a conversation in a bright Miami waterfront lounge"
@@ -330,7 +330,7 @@ export function Landing() {
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
+            <div className="miami-hive-content relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
               <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
                 <ProductMark
                   crest={<img src={crestHive} alt="" className="h-14 w-14" />}
