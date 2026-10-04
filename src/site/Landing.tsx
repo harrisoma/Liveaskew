@@ -149,14 +149,14 @@ export function Landing() {
         {/* Bee */}
         <section id="bee" className="scroll-mt-28 bg-white">
           <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-            <article className="relative min-h-[520px] w-full overflow-hidden rounded-[2rem] md:aspect-[2752/1536]">
+            <article className="relative min-h-[520px] w-full overflow-hidden rounded-[2rem] p-4 md:aspect-[2752/1536] md:p-6">
               <img
                 src={beeFlatlay}
                 alt="A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open in Bee"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
               />
-              <div className="absolute top-4 left-4 z-10 max-w-[calc(100%-2rem)] sm:max-w-[70%] lg:max-w-[52%] md:top-6 md:left-6">
+              <div className="relative z-10 sm:max-w-[70%] lg:max-w-[52%]">
                 <div className="glass rounded-[2rem] px-5 py-5 md:px-8 md:py-7">
                   <ProductMark
                     crest={<img src={crestBee} alt="" className="h-14 w-14" />}
