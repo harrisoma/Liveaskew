@@ -60,7 +60,7 @@ export function withAuthApiKey(url: string, apiKey?: string): string {
   }
 }
 
-async function providerEnabled(provider: AuthProvider): Promise<boolean> {
+async function providerEnabled(provider: Exclude<AuthProvider, "email">): Promise<boolean> {
   const url = String(import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
   const key = String(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "").trim();
   if (!url || !key) return false;
@@ -86,7 +86,7 @@ async function oauthRedirect(): Promise<string> {
   return `${window.location.origin}/app`;
 }
 
-export async function signInWithProvider(provider: AuthProvider): Promise<{
+export async function signInWithProvider(provider: Exclude<AuthProvider, "email">): Promise<{
   redirected: boolean;
   email: string | null;
 }> {
@@ -138,7 +138,10 @@ async function startOtp(
   }
   const { error } =
     channel === "email"
-      ? await supabase.auth.signInWithOtp({ email: destination })
+      ? await supabase.auth.signInWithOtp({
+          email: destination,
+          options: { emailRedirectTo: await oauthRedirect() },
+        })
       : await supabase.auth.signInWithOtp({ phone: destination });
   return { type: channel, error: error?.message ?? null };
 }

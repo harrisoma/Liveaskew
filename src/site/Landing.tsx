@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import crestBee from "@/assets/brand/crest-bee.webp";
 import crestBuzz from "@/assets/brand/crest-buzz.webp";
@@ -11,6 +11,7 @@ import shotToday from "@/assets/site/today.webp";
 import { Crest } from "@/mobile/components/Crest";
 import { FAQ } from "./faq";
 import { forwardsToApp } from "./forward";
+import { BeeSalesChat } from "./BeeSalesChat";
 import { StylingExample } from "./StylingExample";
 import { HoneyPreview } from "./HoneyPreview";
 import { SocialIcon } from "./SocialIcon";
@@ -93,9 +94,14 @@ const NETWORKS = ["Instagram", "Facebook", "LinkedIn", "X", "Threads"];
 
 export function Landing() {
   useForwardAppReturns();
+  const [meetBeeOpen, setMeetBeeOpen] = useState(false);
 
   return (
     <SiteFrame>
+      <button className="bee-chat-launcher" onClick={() => setMeetBeeOpen(true)}>
+        Chat with Bee
+      </button>
+      <BeeSalesChat open={meetBeeOpen} onClose={() => setMeetBeeOpen(false)} />
       <div className="miami-home">
         {/* Hero */}
         <section className="relative min-h-[100svh]">
@@ -123,13 +129,17 @@ export function Landing() {
                 the clothes you own into outfits for your body, your plans, and your personal style.
               </p>
               <p className="mt-3 text-sm text-white/80">14 days free. No card to get started.</p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
+              <div className="hero-actions mt-7 grid grid-cols-2 gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
                   Start your free trial
                 </a>
-                <a href="#bee" className="glass-btn glass-btn-light">
-                  See how Bee works
-                </a>
+                <button
+                  type="button"
+                  onClick={() => setMeetBeeOpen(true)}
+                  className="glass-btn glass-btn-light"
+                >
+                  Meet Bee
+                </button>
               </div>
             </div>
           </div>

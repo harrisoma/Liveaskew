@@ -1,7 +1,7 @@
 import type { HoneyItem } from "@/lib/honey";
 import type { LookCard, OnboardingAnswers } from "./recommend";
 
-export type AuthProvider = "google" | "apple";
+export type AuthProvider = "google" | "apple" | "email";
 export type WardrobeVerdict = "keep" | "toss" | "maybe";
 export type Phase = "auth" | "verify" | "interview" | "selfie" | "app";
 

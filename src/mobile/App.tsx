@@ -123,12 +123,32 @@ export function MobileApp() {
     setReady(true);
     void configureNativeChrome();
     setOnline(isOnline());
-    const applySession = (email: string | null) => {
+    const applySession = async (email: string | null) => {
+      const [style, remoteLooks] = await Promise.all([pullStyle(), pullLooks()]);
       setSnap((s) => ({
         ...s,
         email: email ?? s.email,
-        authProvider: s.authProvider ?? "google",
-        phase: s.phase === "auth" ? "verify" : s.phase,
+        verified: true,
+        authProvider: s.authProvider ?? "email",
+        ...(style
+          ? {
+              interview: { step: 5, answers: style.interview, completed: true },
+              onboarding: style.onboarding,
+              looks: mergeLooks(s.looks, remoteLooks ?? []),
+            }
+          : {}),
+        phase:
+          s.phase === "auth" || s.phase === "verify"
+            ? style
+              ? s.selfie
+                ? "app"
+                : "selfie"
+              : "interview"
+            : s.phase,
+        messages:
+          !style && (s.phase === "auth" || s.phase === "verify")
+            ? [{ id: nid("m"), role: "assistant", content: interviewOpener() }]
+            : s.messages,
       }));
     };
     const handleReturn = (href: string) => {
@@ -423,33 +443,33 @@ export function MobileApp() {
 
       {snap.phase === "auth" && (
         <AuthScreen
+          error={verifyErr}
+          onEmail={() => {
+            setVerifyErr(null);
+            patch((s) => ({ ...s, authProvider: "email", phase: "verify" }));
+          }}
           onGoogle={async () => {
+            setVerifyErr(null);
             const result = await signInWithProvider("google");
-            if (result.redirected) return;
-            patch((s) => ({
-              ...s,
-              authProvider: "google",
-              email: result.email,
-              phase: "verify",
-            }));
-            setEmailDraft(result.email ?? "");
-            void haptic("impact");
+            if (!result.redirected)
+              setVerifyErr("This provider is unavailable right now. Please continue with email.");
           }}
           onApple={async () => {
+            setVerifyErr(null);
             const result = await signInWithProvider("apple");
-            if (result.redirected) return;
-            patch((s) => ({
-              ...s,
-              authProvider: "apple",
-              phase: "verify",
-            }));
-            void haptic("impact");
+            if (!result.redirected)
+              setVerifyErr("This provider is unavailable right now. Please continue with email.");
           }}
         />
       )}
 
       {snap.phase === "verify" && snap.authProvider && (
         <VerifyScreen
+          onBack={() => {
+            setVerifyErr(null);
+            setVerifyCode("");
+            patch((s) => ({ ...s, phase: "auth" }));
+          }}
           provider={snap.authProvider}
           email={emailDraft || snap.email || ""}
           phone={phoneDraft || snap.phone || ""}
@@ -464,10 +484,15 @@ export function MobileApp() {
             setVerifyErr(null);
             setVerifyBusy(true);
             const channel = snap.authProvider === "apple" ? "sms" : "email";
-            const dest = channel === "sms" ? phoneDraft : emailDraft;
+            const dest =
+              channel === "sms" ? phoneDraft || snap.phone || "" : emailDraft || snap.email || "";
             const res = await sendVerifyCode(channel, dest);
             setVerifyBusy(false);
             setPreviewOtp(res.preview);
+            if (res.ok)
+              setVerifyErr(
+                "Check your inbox and spam folder. Open the sign-in link, or enter the code if your email includes one.",
+              );
             if (!res.ok) setVerifyErr(res.error ?? "We couldn't send a code just now. Try again?");
             else {
               patch((s) => ({
@@ -1053,13 +1078,23 @@ export function MobileApp() {
   );
 }
 
-function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () => void }) {
+function AuthScreen({
+  onGoogle,
+  onApple,
+  onEmail,
+  error,
+}: {
+  onGoogle: () => void;
+  onApple: () => void;
+  onEmail: () => void;
+  error: string | null;
+}) {
   return (
     <Screen kicker="Bee" title="Let's get you started">
       <p className="mb-5 text-sm leading-relaxed">
-        Sign in with Google or Apple. No new password to remember. We'll do a quick check, then Bee
-        gets to know you: how you like things to fit, how you want to feel, and the fabrics you
-        love.
+        Use any email address you can access—Gmail, Outlook, Yahoo or your own domain. No new
+        password to remember. We'll do a quick check, then Bee gets to know you: how you like things
+        to fit, how you want to feel, and the fabrics you love.
       </p>
       <div className="neo-inset mb-5 p-4 text-sm leading-relaxed">
         <p className="font-semibold">Your first look starts here.</p>
@@ -1073,7 +1108,15 @@ function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () =
           How your photo is processed
         </a>
       </div>
-      <NeoButton variant="ink" onClick={onGoogle}>
+      <NeoButton variant="gold" onClick={onEmail}>
+        Continue with email
+      </NeoButton>
+      {error && (
+        <p role="alert" className="my-3 text-sm">
+          {error}
+        </p>
+      )}
+      <NeoButton className="mt-3" variant="ink" onClick={onGoogle}>
         Continue with Google
       </NeoButton>
       <NeoButton className="mt-3" onClick={onApple}>
@@ -1084,6 +1127,7 @@ function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () =
 }
 
 function VerifyScreen({
+  onBack,
   provider,
   email,
   phone,
@@ -1097,6 +1141,7 @@ function VerifyScreen({
   onSend,
   onConfirm,
 }: {
+  onBack: () => void;
   provider: AuthProvider;
   email: string;
   phone: string;
@@ -1117,8 +1162,11 @@ function VerifyScreen({
       title={apple ? "Quick check: your phone" : "Quick check: your email"}
       footer={
         <div className="space-y-3">
+          <NeoButton disabled={busy} onClick={onBack}>
+            Choose another sign-in method
+          </NeoButton>
           <NeoButton variant="ink" disabled={busy} onClick={onSend}>
-            Send my code
+            Send sign-in email or code
           </NeoButton>
           <NeoButton variant="gold" disabled={busy || code.length < 6} onClick={onConfirm}>
             Confirm
@@ -1129,7 +1177,7 @@ function VerifyScreen({
       <p className="mb-4 text-sm leading-relaxed">
         {apple
           ? "Apple sometimes hides your real email, so we'll text you a code instead."
-          : "We'll email you a code to make sure it's really you. Then you're in."}
+          : "We'll email you a secure sign-in link. Open it in this browser, or enter the code below if your email includes one."}
       </p>
       {apple ? (
         <NeoField
@@ -1144,6 +1192,7 @@ function VerifyScreen({
         <NeoField
           type="email"
           autoComplete="email"
+          aria-label="Email address"
           placeholder="Email"
           value={email}
           onChange={(e) => onEmail(e.target.value)}
@@ -1153,10 +1202,11 @@ function VerifyScreen({
         className="mt-3"
         inputMode="numeric"
         autoComplete="one-time-code"
-        placeholder="6-digit code"
-        maxLength={6}
+        aria-label="Verification code"
+        placeholder="Code (if your email includes one)"
+        maxLength={8}
         value={code}
-        onChange={(e) => onCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+        onChange={(e) => onCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
       />
       {preview && (
         <p className="mt-3 text-sm">
