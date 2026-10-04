@@ -63,19 +63,41 @@ export function SiteFooter() {
       <div className="glass mx-auto max-w-[1180px] rounded-[2rem] p-7 md:p-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]">
           <div>
-            <a href="/" className="inline-flex min-h-11 items-center gap-3" aria-label="LiveAskew home">
-              <img src="/liveaskew-signature.png" alt="" className="h-12 w-auto" width="26" height="48" />
-              <span className="font-display text-2xl font-semibold tracking-tight text-black">Live<span className="text-[var(--gold)]">Askew</span></span>
+            <a
+              href="/"
+              className="inline-flex min-h-11 items-center gap-3"
+              aria-label="LiveAskew home"
+            >
+              <img
+                src="/liveaskew-signature.png"
+                alt=""
+                className="h-12 w-auto"
+                width="26"
+                height="48"
+              />
+              <span className="font-display text-2xl font-semibold tracking-tight text-black">
+                Live<span className="text-[var(--gold)]">Askew</span>
+              </span>
             </a>
-            <p className="mt-4 max-w-sm text-base leading-relaxed">Miami-born. Styling for women. Your wardrobe, your plans, your own way of getting dressed.</p>
-            <a href="/app" className="glass-btn mt-6">Meet Bee</a>
+            <p className="mt-4 max-w-sm text-base leading-relaxed">
+              Miami-born. Styling for women. Your wardrobe, your plans, your own way of getting
+              dressed.
+            </p>
+            <a href="/app" className="glass-btn mt-6">
+              Meet Bee
+            </a>
           </div>
           <nav aria-label="Explore LiveAskew">
             <h2 className="font-semibold text-black">Explore</h2>
             <ul className="mt-3 space-y-1">
               {LINKS.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="inline-flex min-h-11 items-center underline-offset-4 hover:underline">{link.label}</a>
+                  <a
+                    href={link.href}
+                    className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                  >
+                    {link.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -83,16 +105,49 @@ export function SiteFooter() {
           <nav aria-label="Help and contact">
             <h2 className="font-semibold text-black">Let's connect</h2>
             <ul className="mt-3 space-y-1">
-              <li><a href="mailto:hello@liveaskew.co" className="inline-flex min-h-11 items-center break-all underline-offset-4 hover:underline">hello@liveaskew.co</a></li>
-              <li><a href="/#faq" className="inline-flex min-h-11 items-center underline-offset-4 hover:underline">Questions &amp; answers</a></li>
-              <li><a href="/privacy" className="inline-flex min-h-11 items-center underline-offset-4 hover:underline">Privacy policy</a></li>
-              <li><a href="mailto:hello@liveaskew.co?subject=Private%20Atelier%20inquiry" className="inline-flex min-h-11 items-center underline-offset-4 hover:underline">Private styling inquiries</a></li>
+              <li>
+                <a
+                  href="mailto:hello@liveaskew.co"
+                  className="inline-flex min-h-11 items-center break-all underline-offset-4 hover:underline"
+                >
+                  hello@liveaskew.co
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#faq"
+                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                >
+                  Questions &amp; answers
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/privacy"
+                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                >
+                  Privacy policy
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:hello@liveaskew.co?subject=Private%20Atelier%20inquiry"
+                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                >
+                  Private styling inquiries
+                </a>
+              </li>
             </ul>
           </nav>
         </div>
         <div className="mt-9 border-t border-black/10 pt-6 text-xs leading-relaxed text-black/60">
-          <p>© {new Date().getFullYear()} LiveAskew. Clothes follow your body. We never alter it.</p>
-          <p className="mt-3 max-w-3xl">Bee is a styling companion, not medical, legal, or mental-health advice. In the US, if you are in crisis, call or text 988.</p>
+          <p>
+            © {new Date().getFullYear()} LiveAskew. Clothes follow your body. We never alter it.
+          </p>
+          <p className="mt-3 max-w-3xl">
+            Bee is a styling companion, not medical, legal, or mental-health advice. In the US, if
+            you are in crisis, call or text 988.
+          </p>
         </div>
       </div>
     </footer>
