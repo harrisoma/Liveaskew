@@ -84,7 +84,7 @@ export function HoneyPreview() {
           width="800"
           height="800"
           loading="lazy"
-          className="my-4 aspect-square w-full rounded-xl bg-white object-contain"
+          className="my-4 h-56 w-full rounded-xl bg-[#f8f7f3] object-contain"
         />
         <p className="text-sm leading-relaxed text-white/75">{event.why}</p>
       </div>

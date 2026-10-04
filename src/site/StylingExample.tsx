@@ -46,7 +46,7 @@ export function StylingExample() {
               width="800"
               height="800"
               loading="lazy"
-              className="mt-3 aspect-square w-full object-contain"
+              className="mt-3 h-56 w-full object-contain"
             />
             <p className="p-5 text-sm leading-relaxed text-black/70">
               Bring the pieces together: tuck the shirt, add your loafers, and you're ready.
