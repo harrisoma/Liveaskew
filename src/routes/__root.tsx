@@ -10,6 +10,15 @@ import { useEffect, type ReactNode } from "react";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { RouteError, RouteNotFound } from "@/components/RouteError";
 
+import {
+  KEYWORDS,
+  OG_IMAGE,
+  ORGANIZATION,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  WEBSITE,
+  jsonLd,
+} from "@/site/seo";
 import appCss from "../styles.css?url";
 
 function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
@@ -23,36 +32,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#fbfbfd" },
-      { title: "Bee — AI stylist by LiveAskew" },
-      {
-        name: "description",
-        content:
-          "Bee by LiveAskew is a personal styling app and AI stylist built on Fit, Feel, and Fabric.",
-      },
-      { property: "og:title", content: "Bee by LiveAskew — Inclusive Personal AI Stylist" },
-      {
-        property: "og:description",
-        content:
-          "Conversational AI styling. Monthly looks, colour palette, wardrobe blueprint. Free for 14 days.",
-      },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
+      { name: "keywords", content: KEYWORDS },
+      { name: "application-name", content: "Bee by LiveAskew" },
+      { name: "author", content: "LiveAskew" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:site_name", content: "LiveAskew" },
+      { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "LiveAskew — Personal AI Stylist" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       {
-        name: "twitter:description",
-        content:
-          "Conversational AI styling. Monthly looks, colour palette, wardrobe blueprint. Free for 14 days.",
+        property: "og:image:alt",
+        content: "LiveAskew: Bee, your AI personal stylist. Let's get you dressed.",
       },
-      { property: "og:image", content: "/og.png" },
-      { name: "twitter:image", content: "/og.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Bee" },
       { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "icon", href: "/bee-icon.svg", type: "image/svg+xml" },
-      { rel: "apple-touch-icon", href: "/bee-icon.svg" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", href: "/icons/icon-32.png", type: "image/png", sizes: "32x32" },
+      { rel: "icon", href: "/icons/icon-16.png", type: "image/png", sizes: "16x16" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -61,6 +72,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: appCss },
     ],
+    scripts: [jsonLd(ORGANIZATION), jsonLd(WEBSITE)],
   }),
   shellComponent: RootShell,
   component: RootComponent,

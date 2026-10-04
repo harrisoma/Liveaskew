@@ -6,6 +6,7 @@ import {
   PRIVACY_UPDATED,
 } from "@/lib/privacy-policy";
 import { SiteFrame } from "@/site/chrome";
+import { SITE_URL } from "@/site/seo";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -14,7 +15,9 @@ export const Route = createFileRoute("/privacy")({
       { name: "description", content: PRIVACY_INTRO },
       { property: "og:title", content: PRIVACY_TITLE },
       { property: "og:description", content: PRIVACY_INTRO },
+      { property: "og:url", content: `${SITE_URL}/privacy` },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/privacy` }],
   }),
   component: PrivacyPage,
 });

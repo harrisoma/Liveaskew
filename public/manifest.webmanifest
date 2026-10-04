@@ -1,18 +1,22 @@
 {
   "name": "Bee by LiveAskew",
   "short_name": "Bee",
-  "description": "Personal AI stylist on Fit, Feel, and Fabric. Web, iOS, and Android.",
+  "description": "Bee, your AI personal stylist: outfit ideas, an outfit calendar and Wardrobe Reset, styled on the real you.",
+  "id": "/app",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f2f2f7",
-  "theme_color": "#f2f2f7",
+  "background_color": "#fbfbfd",
+  "theme_color": "#fbfbfd",
+  "categories": ["lifestyle", "shopping", "social"],
   "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     {
-      "src": "/bee-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

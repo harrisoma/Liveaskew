@@ -12,6 +12,7 @@ import shotHoney from "@/assets/site/honey.webp";
 import shotTalk from "@/assets/site/realtalk.webp";
 import { TALK_GUIDES, TALK_TOPICS } from "@/lib/bee-talk";
 import { Crest } from "@/mobile/components/Crest";
+import { FAQ } from "./faq";
 import { forwardsToApp } from "./forward";
 import { PriceBook } from "./PriceBook";
 import { SiteFrame } from "./chrome";
@@ -110,7 +111,7 @@ export function Landing() {
               className="h-24 w-auto md:h-32"
               style={{ aspectRatio: "866 / 1610" }}
             />
-            <p className="kicker mt-5">Your styling bestie</p>
+            <p className="kicker mt-5">Bee, your AI personal stylist</p>
             <h1 className={`${HEADLINE} mt-2 text-[2.9rem] leading-[1] md:text-[4.5rem]`}>
               Let's get you dressed.
             </h1>
@@ -405,6 +406,31 @@ export function Landing() {
           </p>
         </div>
         <PriceBook />
+      </section>
+
+      {/* Questions */}
+      <section id="faq" className="scroll-mt-28 bg-white px-5 py-24 md:px-8 md:py-32">
+        <div className="mx-auto max-w-3xl">
+          <p className="kicker">Good questions</p>
+          <h2 className={`${HEADLINE} mt-3 text-[2.5rem] leading-[1.02] md:text-[3.5rem]`}>
+            Everything you're wondering.
+          </h2>
+          <div className="mt-10 divide-y divide-black/10 border-y border-black/10">
+            {FAQ.map((item) => (
+              <details key={item.q} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.15rem] font-semibold">
+                  <h3>{item.q}</h3>
+                  <ChevronRight
+                    size={20}
+                    aria-hidden
+                    className="shrink-0 text-[var(--gold)] transition-transform group-open:rotate-90"
+                  />
+                </summary>
+                <p className="mt-3 text-[1.0625rem] leading-relaxed text-black/70">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Close */}

@@ -7,6 +7,33 @@ Screenshots should show the Apple-native UI in light and dark, with the gold cre
 
 Bee by LiveAskew
 
+## Search keywords
+
+**App Store keyword field** (100 characters, comma-separated, no spaces, and no words already in the name):
+
+```
+stylist,AI stylist,outfit planner,what to wear,wardrobe,closet,outfit ideas,try-on,mom style,fashion
+```
+
+**Google Play and the Chrome Web Store** have no keyword field; they read the title and description. Work these phrases into the description naturally:
+
+- AI personal stylist
+- personal stylist app
+- outfit planner
+- outfit ideas
+- what to wear today
+- wardrobe organizer
+- closet organizer
+- outfit calendar
+- virtual try-on
+- work outfits for women
+- outfits for busy moms
+- size-inclusive styling
+- modest fashion
+- Instagram post scheduler
+
+The website's full keyword list is in `src/site/seo.ts` (`KEYWORDS`).
+
 ## Subtitle (iOS) / Short description (Play)
 
 AI stylist. Personal styling on Fit, Feel, Fabric.

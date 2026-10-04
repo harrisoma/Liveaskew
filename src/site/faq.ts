@@ -1,0 +1,47 @@
+/**
+ * Questions people actually type into Google (and ask AI assistants) about a styling app.
+ * Shown on the website and published as FAQ structured data. Written in the LiveAskew voice
+ * (docs/VOICE.md), and only claims what is live today.
+ */
+import { TIERS } from "@/mobile/lib/tiers";
+
+const silver = TIERS.find((t) => t.slug === "silver")?.priceMonthly ?? 20;
+
+export const FAQ: { q: string; a: string }[] = [
+  {
+    q: "What is an AI personal stylist?",
+    a: "It's a stylist in your pocket. Bee asks how you like your clothes to fit, how you want to feel and which fabrics you love, then tells you exactly what to wear: the pieces, the fabric and why they work for your day. Like a friend with great taste who's always free.",
+  },
+  {
+    q: "Can Bee tell me what to wear today?",
+    a: "That's her favourite question. Tell her what's on (the school run, a big meeting, dinner out) or connect your calendar to Honey, and Bee picks an outfit for each event before you've finished your coffee.",
+  },
+  {
+    q: "Does it work with clothes I already own?",
+    a: "Yes. Wardrobe Reset goes through your closet with you: keep, toss or maybe. Bee styles outfits from what you keep and only suggests the one piece that's actually missing.",
+  },
+  {
+    q: "Will Bee change how my body looks?",
+    a: "Never. When Bee shows a look on your photo, there's no slimming, smoothing or reshaping. Clothes should fit you, not the other way round. It works for every size, shape, age and style, including modest and heritage dressing.",
+  },
+  {
+    q: "Is LiveAskew good for busy moms and working women?",
+    a: "It's made for you. One app keeps your outfits, your calendar, your social posts and your people together, from maternity to the boardroom, so getting dressed is one less thing to think about.",
+  },
+  {
+    q: "Can I schedule my outfit posts to Instagram and other socials?",
+    a: "Yes. Buzz writes a caption in your voice and posts your look to Instagram, Facebook, LinkedIn, X or Threads at the time you choose, and it shows up on your Honey calendar too.",
+  },
+  {
+    q: "How much does LiveAskew cost?",
+    a: `Every membership starts with 14 days free. After that, Silver is $${silver} a month, and you can cancel any time. The Private Atelier, with a real human stylist, is priced with you after a chat.`,
+  },
+  {
+    q: "Is there an iPhone or Android app?",
+    a: "Bee works in your browser today on any phone or computer, and you can add it to your home screen. The iPhone and Android apps are coming soon. You can also use Bee inside Claude and ChatGPT.",
+  },
+  {
+    q: "Is my data private?",
+    a: "Yes. Your styling photo stays on your phone, we never sell your data, and you can delete your account and everything in it with one tap.",
+  },
+];

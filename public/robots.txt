@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /oauth/
+
+Sitemap: https://www.liveaskew.com/sitemap.xml
