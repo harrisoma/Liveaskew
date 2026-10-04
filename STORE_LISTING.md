@@ -5,7 +5,7 @@ Screenshots should show the Apple-native UI in light and dark, with the gold cre
 
 ## Name
 
-Bee — LiveAskew
+Bee by LiveAskew
 
 ## Subtitle (iOS) / Short description (Play)
 

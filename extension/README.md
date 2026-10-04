@@ -1,4 +1,4 @@
-# LiveAskew — Bee for Chrome
+# Bee by LiveAskew — for Chrome
 
 A side panel with Bee beside every page. It's a client of the LiveAskew MCP connector
 (`/api/mcp`), signing in with the same OAuth flow as Claude and ChatGPT, so there is no separate
