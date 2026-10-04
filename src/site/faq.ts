@@ -34,11 +34,11 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "How much does LiveAskew cost?",
-    a: `Try Bee for 14 days without entering payment details. Paid memberships are optional; Silver is $${silver} a month. If you subscribe, checkout shows the first charge date and your membership renews monthly until cancelled. Manage or cancel it in You → Membership → Change or cancel membership. The Private Atelier, with a real human stylist, is priced with you after a chat.`,
+    a: `New eligible members get 14 days free after adding a card in secure checkout. Silver is $${silver} a month. Checkout shows the first charge date and your membership renews monthly until cancelled. Manage or cancel it in You → Membership → Change or cancel membership. The Private Atelier, with a real human stylist, is priced with you after a chat.`,
   },
   {
     q: "What happens when I get started?",
-    a: "Sign in with Google or Apple, complete the account check, then answer five short questions about your life and style. Add a clear full-length photo to build your first Style Guide. Your free trial starts with your first AI use; starting a paid membership does not restart it.",
+    a: "Sign in with Google or Apple, complete the account check, then answer five short questions about your life and style. Add a clear full-length photo to build your first Style Guide. Then choose a plan and add your card in secure Stripe checkout to activate your 14-day trial. Billing starts after the trial unless cancelled. Existing trials are not restarted.",
   },
   {
     q: "Is there an iPhone or Android app?",

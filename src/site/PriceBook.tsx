@@ -102,7 +102,7 @@ export function PriceBook() {
               <p className="book-note">
                 {plan.inquiry
                   ? "We agree it together, after a chat."
-                  : "Try Bee for 14 days without a card. Paid membership is optional."}
+                  : "New members get 14 days free. Card required; monthly billing starts after your trial unless cancelled."}
               </p>
               <p className="book-tagline font-semibold">{plan.tagline}</p>
               <p className="book-description">{plan.description}</p>

@@ -75,15 +75,17 @@ export async function guardAi(
   if (userId === "preview") return null;
   const db = await admin();
 
-  const { data: subs } = await db
+  const { data: subs, error: subscriptionError } = await db
     .from("subscriptions")
     .select("status, price_id, current_period_end")
     .eq("user_id", userId)
     .eq("environment", billingEnvironment());
+  if (subscriptionError) return Response.json({ error: "status_unavailable" }, { status: 503 });
   const paid = Boolean(activeMembership(subs ?? [], now));
   if (!paid) {
-    const startedAt = await trialStart(userId, now);
-    if (!trialActive(startedAt, now)) {
+    const startedAt = await existingTrialStart(userId);
+    // Existing card-free trials keep their original access. New trials require checkout.
+    if (subs?.length || !startedAt || !trialActive(startedAt, now)) {
       return Response.json({ error: "membership_required" }, { status: 402 });
     }
   }

@@ -81,7 +81,7 @@ export function StylingExample() {
             Find my first look
           </a>
           <p className="text-sm text-black/65">
-            Create your account. Try it free for 14 days. No card needed.
+            Create your account, choose a plan, and add your card. New members get 14 days free.
           </p>
         </div>
       </div>
