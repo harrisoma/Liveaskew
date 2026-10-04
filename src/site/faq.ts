@@ -42,6 +42,6 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. Your styling photo stays on your phone, we never sell your data, and you can delete your account and everything in it with one tap.",
+    a: "We never sell your data. AI providers receive the text or images needed for features you use, including try-on. You can delete your account in the app. Our privacy policy explains photo processing, storage and connected accounts.",
   },
 ];
