@@ -43,7 +43,7 @@ export function BeeSalesChat({ open, onClose }: { open: boolean; onClose: () => 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next.slice(-8) }),
-        signal: AbortSignal.timeout(25000),
+        signal: AbortSignal.timeout(35000),
       });
       const result = (await response.json()) as { text?: string };
       if (!response.ok || !result.text) throw new Error("unavailable");
