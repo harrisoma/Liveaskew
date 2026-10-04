@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { ArrowUpRight, CalendarDays, Check, Shirt } from "lucide-react";
 
+import morningLook from "@/assets/site/sample-morning-look.jpg";
+import workLook from "@/assets/site/sample-work-look.jpg";
+import eveningLook from "@/assets/site/sample-evening-look.jpg";
+
 const EVENTS = [
   {
     time: "8:00",
@@ -8,23 +12,26 @@ const EVENTS = [
     occasion: "A comfortable start",
     look: "A breezy dress. Flat sandals. A favourite bag.",
     why: "Miami ease: light fabrics and comfortable shoes for a relaxed start.",
-    colors: ["#fc907f", "#a9e0e4", "#ffffff"],
+    image: morningLook,
+    alt: "Coral midi dress with tan flat sandals and a woven bag",
   },
   {
     time: "10:00",
     title: "Board meeting",
     occasion: "A little more polished",
-    look: "A crisp shirt. Your favourite skirt or trousers.",
+    look: "A crisp shirt. A navy skirt. Tan loafers.",
     why: "New York and Milan inspiration, adapted to your fit and personal style.",
-    colors: ["#72b9ed", "#ffffff", "#e2b04a"],
+    image: workLook,
+    alt: "Ivory shirt with a navy midi skirt, tan loafers and tan bag",
   },
   {
     time: "19:00",
     title: "Dinner with friends",
     occasion: "An easy evening switch",
-    look: "A statement dress. A silk shirt. Your own take.",
+    look: "A black midi dress. Gold accents. Low heels.",
     why: "A little Paris inspiration, with the freedom to dress it your way.",
-    colors: ["#b7a7e5", "#222222", "#e2b04a"],
+    image: eveningLook,
+    alt: "Black midi dress with gold earrings, black low heels and a small gold clutch",
   },
 ];
 
@@ -71,19 +78,18 @@ export function HoneyPreview() {
           <Shirt size={18} aria-hidden /> {event.occasion}
         </p>
         <h3 className="mt-3 text-xl font-semibold leading-snug">{event.look}</h3>
-        <div className="my-4 flex gap-2" aria-hidden>
-          {event.colors.map((color, i) => (
-            <span
-              key={i}
-              className="h-7 w-7 rounded-full border border-white/30"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
+        <img
+          src={event.image}
+          alt={event.alt}
+          width="800"
+          height="800"
+          loading="lazy"
+          className="my-4 aspect-square w-full rounded-xl bg-white object-contain"
+        />
         <p className="text-sm leading-relaxed text-white/75">{event.why}</p>
       </div>
       <p className="mt-4 text-xs leading-relaxed text-black/55">
-        Sample events and styling ideas. Your recommendations are tailored in Bee.
+        Sample events with AI-generated outfit imagery. Your recommendations are tailored in Bee.
       </p>
     </figure>
   );

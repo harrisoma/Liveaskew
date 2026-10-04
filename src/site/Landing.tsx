@@ -11,6 +11,7 @@ import shotToday from "@/assets/site/today.webp";
 import { Crest } from "@/mobile/components/Crest";
 import { FAQ } from "./faq";
 import { forwardsToApp } from "./forward";
+import { StylingExample } from "./StylingExample";
 import { HoneyPreview } from "./HoneyPreview";
 import { SocialIcon } from "./SocialIcon";
 import { PriceBook } from "./PriceBook";
@@ -118,8 +119,8 @@ export function Landing() {
                 Let's get you dressed.
               </h1>
               <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/90">
-                For women of every age, body and personal style. Bee brings your taste, your
-                wardrobe and your plans together—so getting dressed feels like you.
+                Your AI personal stylist for the clothes you own, the plans you make, and the woman
+                you are.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a href="/app" className="glass-btn glass-btn-gold">
@@ -173,6 +174,7 @@ export function Landing() {
               </div>
             </article>
           </div>
+          <StylingExample />
           <Offers
             items={[
               {
