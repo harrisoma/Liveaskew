@@ -26,7 +26,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Who is LiveAskew for?",
-    a: "LiveAskew is based in Miami and made for every body, identity and personal style. From dresses and shirts to tailoring, streetwear and modest looks, Bee starts with your preferences and the life you lead.",
+    a: "LiveAskew is based in Miami and made for women of every age, body and personal style. From dresses and shirts to tailoring, streetwear and modest looks, Bee starts with your preferences and the life you lead.",
   },
   {
     q: "Can I schedule my outfit posts to Instagram and other socials?",
