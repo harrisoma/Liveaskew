@@ -1061,6 +1061,18 @@ function AuthScreen({ onGoogle, onApple }: { onGoogle: () => void; onApple: () =
         gets to know you: how you like things to fit, how you want to feel, and the fabrics you
         love.
       </p>
+      <div className="neo-inset mb-5 p-4 text-sm leading-relaxed">
+        <p className="font-semibold">Your first look starts here.</p>
+        <ol className="mt-2 list-decimal space-y-1 pl-5">
+          <li>Sign in and complete the account check.</li>
+          <li>Answer five short questions about your style.</li>
+          <li>Add a full-length photo to build your Style Guide.</li>
+        </ol>
+        <p className="mt-3">Try Bee for 14 days. No card required to get started.</p>
+        <a href="/privacy" className="mt-2 inline-block underline underline-offset-4">
+          How your photo is processed
+        </a>
+      </div>
       <NeoButton variant="ink" onClick={onGoogle}>
         Continue with Google
       </NeoButton>
