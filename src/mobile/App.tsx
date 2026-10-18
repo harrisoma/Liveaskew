@@ -651,10 +651,17 @@ export function MobileApp() {
           selfie={snap.selfie}
           error={guideError}
           onPick={async (source) => {
+            setGuideError(null);
             const data = await pickStylingPhoto(source);
             if (data) {
               patch((s) => ({ ...s, selfie: data }));
               void haptic("impact");
+            } else {
+              setGuideError(
+                source === "camera"
+                  ? "Camera did not provide a photo. Allow camera access, or choose Upload a photo instead."
+                  : "No photo was selected. Choose a clear JPG, PNG or WebP photo, then build your guide. Your interview is saved.",
+              );
             }
           }}
           building={building}
@@ -1358,7 +1365,8 @@ function SelfieScreen({
         />
       ) : (
         <div className="mb-4 neo-inset px-4 py-16 text-sm">
-          No photo yet. Any clear, full-length one works.
+          Choose or take a clear, full-length photo to enable the guide button. Your interview is
+          saved; no payment is needed to begin your free trial.
         </div>
       )}
       {error && (
