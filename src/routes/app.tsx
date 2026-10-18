@@ -16,7 +16,7 @@ export const Route = createFileRoute("/app")({
     meta: [
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
       { name: "theme-color", content: "#f2f2f7" },
       ...APP_META.meta,

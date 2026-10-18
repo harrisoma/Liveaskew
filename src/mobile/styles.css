@@ -111,43 +111,66 @@ body {
   display: none;
 }
 
+/* Web adapts to the available screen; no simulated phone frame. */
 @media (min-width: 540px) {
-  body {
-    display: grid;
-    place-items: center;
-    min-height: 100dvh;
-  }
   .la-web-shell {
-    background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(226, 176, 74, 0.12), transparent), var(--bg);
+    width: 100%;
   }
   .la-app {
-    width: 390px;
-    height: min(844px, 96dvh);
-    min-height: 0;
-    border-radius: 44px;
-    box-shadow:
-      0 0 0 10px #1d1d1f,
-      0 0 0 11px #3a3a3c,
-      0 30px 80px rgba(0, 0, 0, 0.28);
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
-
 @media (min-width: 960px) {
-  body {
-    display: block;
-  }
   .la-web-shell {
     display: grid;
-    grid-template-columns: minmax(260px, 360px) 390px;
-    justify-content: center;
-    align-items: center;
-    gap: 4.5rem;
-    padding: 2rem;
+    grid-template-columns: 260px minmax(0, 1fr);
   }
   .la-web-aside {
-    display: block;
-    color: var(--label);
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    padding: 40px 28px;
+    border-right: 1px solid var(--separator);
+  }
+  .la-web-aside .la-display {
+    font-size: 2rem;
+  }
+  .la-web-aside > p:not(.la-display) {
+    font-size: 0.95rem;
+  }
+  .la-web-shell .la-app {
+    min-width: 0;
+    height: 100dvh;
+  }
+  .la-web-shell .la-app > .flex > .overflow-y-auto {
+    padding: 32px 40px;
+  }
+  .la-web-shell .la-app > .flex > .overflow-y-auto > div {
+    max-width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .la-web-shell .la-guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .la-web-shell .la-tabbar {
+    padding: 12px 24px;
+  }
+  .la-web-shell .la-topbar {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .la-web-shell .la-hero {
+    max-height: 480px;
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (min-width: 1440px) {
+  .la-web-shell .la-guide-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -517,4 +540,35 @@ button.neo-raised-sm:active:not(:disabled) {
 .la-chip[aria-pressed="true"] {
   background: var(--label);
   color: var(--bg);
+}
+
+.la-camera-dialog {
+  width: min(680px, calc(100vw - 32px));
+  max-height: 90dvh;
+  overflow-y: auto;
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  background: var(--card);
+  color: var(--label);
+}
+.la-camera-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+.la-camera-dialog h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.la-camera-dialog p {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+.la-camera-dialog video {
+  width: 100%;
+  max-height: 50dvh;
+  margin-bottom: 16px;
+  object-fit: contain;
+}
+.la-camera-dialog button + button {
+  margin-top: 10px;
 }

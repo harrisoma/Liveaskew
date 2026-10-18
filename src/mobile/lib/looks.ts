@@ -1,4 +1,4 @@
-import type { GeneratedLook } from "@/lib/bee-looks";
+import { completeWeeklyGuide, type GeneratedLook } from "@/lib/bee-looks";
 import { apiFetch } from "./api";
 import { looksFromInterview } from "./interview";
 import { lookId, type LookCard } from "./recommend";
@@ -23,7 +23,10 @@ export async function generateLooks(opts: {
   interview: Record<string, string>;
   occasion?: { title: string; date?: string; kind?: string };
   count?: number;
-}): Promise<{ looks: GuideLook[]; source: "bee" | "local" | "locked" | "limited" }> {
+}): Promise<{
+  looks: GuideLook[];
+  source: "bee" | "local" | "locked" | "limited" | "unavailable";
+}> {
   try {
     const res = await apiFetch("/api/bee/looks", {
       method: "POST",
@@ -38,11 +41,20 @@ export async function generateLooks(opts: {
     if (res.ok) {
       const json = (await res.json()) as { looks?: GeneratedLook[] };
       const looks = (json.looks ?? []).map((l) => toGuideLook({ ...l, id: lookId(l.title) }));
+      if (opts.count === 7) {
+        if (!completeWeeklyGuide(json.looks ?? [])) return { looks: [], source: "unavailable" };
+        return {
+          looks: looks.map((look, index) => ({ ...look, guideDay: index + 1 })),
+          source: "bee",
+        };
+      }
       if (looks.length > 0) return { looks, source: "bee" };
     }
   } catch {
     /* offline — local guide */
   }
+  // Never substitute an offline sample for a requested seven-day guide.
+  if (opts.count === 7) return { looks: [], source: "unavailable" };
   const local = looksFromInterview(opts.interview).map(toGuideLook);
   const count = opts.count ?? local.length;
   return {

@@ -83,19 +83,24 @@ export async function pullLooks(): Promise<GuideLook[] | null> {
   return (data ?? []).map((r) => ({ ...(r.look as unknown as GuideLook), saved: r.saved }));
 }
 
-export async function pushLooks(looks: GuideLook[]): Promise<void> {
-  if (looks.length === 0) return;
+export async function pushLooks(looks: GuideLook[]): Promise<boolean> {
+  if (looks.length === 0) return true;
   const c = await client();
-  if (!c) return;
+  if (!c) return false;
   const now = new Date().toISOString();
-  await c.supabase.from("member_looks").upsert(
-    looks.slice(0, 100).map((l) => ({
-      user_id: c.userId,
-      id: l.id.slice(0, 120),
-      look: lookForSync(l) as unknown as Json,
-      saved: l.saved,
-      updated_at: now,
-    })),
-    { onConflict: "user_id,id" },
-  );
+  try {
+    const { error } = await c.supabase.from("member_looks").upsert(
+      looks.slice(0, 100).map((l) => ({
+        user_id: c.userId,
+        id: l.id.slice(0, 120),
+        look: lookForSync(l) as unknown as Json,
+        saved: l.saved,
+        updated_at: now,
+      })),
+      { onConflict: "user_id,id" },
+    );
+    return !error;
+  } catch {
+    return false;
+  }
 }

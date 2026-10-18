@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseLooks } from "./bee-looks";
+import { completeWeeklyGuide, parseLooks } from "./bee-looks";
 
 const look = {
   title: "Monday column",
@@ -23,5 +23,29 @@ describe("parseLooks", () => {
 
   it("returns nothing for prose", () => {
     expect(parseLooks("I could not do that.", 3)).toEqual([]);
+  });
+});
+
+describe("completeWeeklyGuide", () => {
+  const week = Array.from({ length: 7 }, (_, i) => ({
+    ...look,
+    title: `Day ${i + 1}`,
+    formula: [`Day ${i + 1} blouse`, "Charcoal wool trouser", "Leather loafer"],
+  }));
+  it("requires all seven different looks", () => {
+    expect(completeWeeklyGuide(week)).toBe(true);
+    expect(completeWeeklyGuide(week.slice(0, 6))).toBe(false);
+    expect(completeWeeklyGuide([...week.slice(0, 6), week[0]])).toBe(false);
+  });
+  it("rejects reordered duplicate outfit formulas and duplicate titles", () => {
+    expect(
+      completeWeeklyGuide([
+        ...week.slice(0, 6),
+        { ...week[6], formula: [...week[0].formula].reverse() },
+      ]),
+    ).toBe(false);
+    expect(completeWeeklyGuide([...week.slice(0, 6), { ...week[6], title: week[0].title }])).toBe(
+      false,
+    );
   });
 });
