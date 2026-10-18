@@ -41,3 +41,18 @@ export function parseLooks(text: string, max: number): GeneratedLook[] {
   }
   return looks;
 }
+
+/** A weekly guide is complete only when it contains seven different outfit formulas. */
+export function completeWeeklyGuide(looks: GeneratedLook[]): boolean {
+  const formulas = looks.map((look) =>
+    look.formula
+      .map((piece) => piece.toLowerCase().trim())
+      .sort()
+      .join("|"),
+  );
+  return (
+    looks.length === 7 &&
+    new Set(formulas).size === 7 &&
+    new Set(looks.map((look) => look.title.toLowerCase().trim())).size === 7
+  );
+}

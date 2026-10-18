@@ -31,22 +31,99 @@ export async function configureNativeChrome(): Promise<void> {
   }
 }
 
-export async function pickStylingPhoto(): Promise<string | null> {
+export async function pickStylingPhoto(source?: "camera" | "photos"): Promise<string | null> {
   try {
+    const { Capacitor } = await import("@capacitor/core");
+    if (!Capacitor.isNativePlatform())
+      return source === "camera" ? takeWebPhoto() : pickFileFallback();
     const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
     const photo = await Camera.getPhoto({
       quality: 70,
       width: 1200,
       resultType: CameraResultType.DataUrl,
-      source: CameraSource.Prompt,
+      source:
+        source === "camera"
+          ? CameraSource.Camera
+          : source === "photos"
+            ? CameraSource.Photos
+            : CameraSource.Prompt,
     });
     return photo.dataUrl ?? null;
   } catch {
-    return pickFileFallback();
+    return null;
   }
 }
 
-function pickFileFallback(): Promise<string | null> {
+/** Camera access starts only after Take a photo; nothing is uploaded here. */
+async function takeWebPhoto(): Promise<string | null> {
+  if (typeof document === "undefined" || !navigator.mediaDevices?.getUserMedia) return null;
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user" },
+    audio: false,
+  });
+  return new Promise((resolve) => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "la-camera-dialog";
+    dialog.setAttribute("aria-label", "Take your styling photo");
+    const title = document.createElement("h2");
+    title.textContent = "Your styling photo";
+    const note = document.createElement("p");
+    note.textContent =
+      "Step back so your full outfit is visible. Your photo stays on this device until you request a try-on.";
+    const video = document.createElement("video");
+    video.autoplay = true;
+    video.playsInline = true;
+    video.muted = true;
+    video.srcObject = stream;
+    const capture = document.createElement("button");
+    capture.type = "button";
+    capture.className = "neo-btn neo-btn-gold";
+    capture.textContent = "Use this photo";
+    capture.disabled = true;
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "neo-btn";
+    cancel.textContent = "Cancel";
+    let finished = false;
+    const finish = (photo: string | null) => {
+      if (finished) return;
+      finished = true;
+      stream.getTracks().forEach((track) => track.stop());
+      video.srcObject = null;
+      dialog.close();
+      dialog.remove();
+      resolve(photo);
+    };
+    video.addEventListener("loadeddata", () => {
+      capture.disabled = false;
+    });
+    capture.addEventListener("click", async () => {
+      capture.disabled = true;
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext("2d");
+      if (!context || !canvas.width || !canvas.height) return finish(null);
+      context.drawImage(video, 0, 0);
+      finish(await downscaleDataUrl(canvas.toDataURL("image/jpeg", 0.82), PHOTO_MAX));
+    });
+    cancel.addEventListener("click", () => finish(null));
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish(null);
+    });
+    dialog.append(title, note, video, capture, cancel);
+    document.body.append(dialog);
+    try {
+      dialog.showModal();
+      void video.play().catch(() => finish(null));
+    } catch {
+      finish(null);
+    }
+  });
+}
+
+function pickFileFallback(camera = false): Promise<string | null> {
   return new Promise((resolve) => {
     if (typeof document === "undefined") {
       resolve(null);
@@ -55,6 +132,8 @@ function pickFileFallback(): Promise<string | null> {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
+    if (camera) input.capture = "user";
+    input.addEventListener("cancel", () => resolve(null), { once: true });
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) {

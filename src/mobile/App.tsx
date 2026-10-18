@@ -18,13 +18,8 @@ import {
   signOut,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
-import {
-  answersFromInterview,
-  interviewOpener,
-  looksFromInterview,
-  reflectOnAnswer,
-} from "./lib/interview";
-import { generateLooks, toGuideLook } from "./lib/looks";
+import { answersFromInterview, interviewOpener, reflectOnAnswer } from "./lib/interview";
+import { generateLooks } from "./lib/looks";
 import {
   consumeBillingReturn,
   fetchMembership,
@@ -102,6 +97,7 @@ export function MobileApp() {
   );
   const [modQueue, setModQueue] = useState<ModerationItem[] | null>(null);
   const [building, setBuilding] = useState(false);
+  const [guideError, setGuideError] = useState<string | null>(null);
   const [dressingId, setDressingId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   const [honeyNotice, setHoneyNotice] = useState<string | null>(null);
@@ -374,16 +370,21 @@ export function MobileApp() {
           id: nid("m"),
           role: "assistant",
           content: opts.trialEnded
-            ? "Your Style Guide is here! Your 14 free days have wrapped up, so pick a membership under You and I'll keep the looks coming."
-            : "Your Style Guide is ready! I dressed every look on you, exactly as you are. You've got 14 days of as many looks as you like, so have fun.",
+            ? "Your 14 free days have wrapped up. Pick a membership under You to build your seven-day Style Guide."
+            : "Your seven-day Style Guide is ready! Each day has an outfit with Fit, Feel and Fabric notes. Choose “See this on me” to request a preview using your photo. You've got 14 days of as many looks as you like, so have fun.",
         },
       ],
     }));
-    setTab("today");
+    setTab("bee");
     setBeeView("looks");
     void haptic("success");
     if (!opts.trialEnded) void persistTrialStartedAt(startedAt);
-    void pushLooks(looks);
+    void pushLooks(looks).then((saved) => {
+      if (!saved)
+        setGuideNotice(
+          "Your guide is saved on this device, but account sync did not finish. Keep this device copy and try again when connected.",
+        );
+    });
     void syncAccount();
   };
 
@@ -602,8 +603,9 @@ export function MobileApp() {
       {snap.phase === "selfie" && (
         <SelfieScreen
           selfie={snap.selfie}
-          onPick={async () => {
-            const data = await pickStylingPhoto();
+          error={guideError}
+          onPick={async (source) => {
+            const data = await pickStylingPhoto(source);
             if (data) {
               patch((s) => ({ ...s, selfie: data }));
               void haptic("impact");
@@ -613,15 +615,33 @@ export function MobileApp() {
           onContinue={async () => {
             if (!snap.selfie || building) return;
             setBuilding(true);
-            const { looks, source } = await generateLooks({ interview: snap.interview.answers });
-            setBuilding(false);
-            startTrial(
-              looks.length > 0
-                ? looks
-                : looksFromInterview(snap.interview.answers).map(toGuideLook),
-              { trialEnded: source === "locked" },
-            );
-            if (source === "locked") setGateOpen(true);
+            setGuideError(null);
+            try {
+              const { looks, source } = await generateLooks({
+                interview: snap.interview.answers,
+                count: 7,
+              });
+              if (source === "locked") {
+                startTrial([], { trialEnded: true });
+                setGateOpen(true);
+              } else if (source === "limited") {
+                setGuideError(
+                  "Bee has reached your hourly limit. Please try again in a few minutes.",
+                );
+              } else if (source !== "bee" || looks.length !== 7) {
+                setGuideError(
+                  "Bee could not finish all seven days. Your interview and photo are still here. Try building your guide again.",
+                );
+              } else {
+                startTrial(looks);
+              }
+            } catch {
+              setGuideError(
+                "Your guide could not finish. Your interview and photo are still here; please try again.",
+              );
+            } finally {
+              setBuilding(false);
+            }
           }}
         />
       )}
@@ -1279,12 +1299,14 @@ function InterviewScreen({
 function SelfieScreen({
   selfie,
   building,
+  error,
   onPick,
   onContinue,
 }: {
   selfie: string | null;
   building: boolean;
-  onPick: () => void;
+  error: string | null;
+  onPick: (source?: "camera" | "photos") => void;
   onContinue: () => void;
 }) {
   return (
@@ -1293,13 +1315,14 @@ function SelfieScreen({
       title="Let's see you"
       footer={
         <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
-          {building ? "Bee is putting your looks together…" : "Build my Style Guide"}
+          {building ? "Bee is putting your week together…" : "Build my seven-day Style Guide"}
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
         Bee dresses you, exactly as you are. We never slim, smooth or reshape anything. Your Style
-        Guide needs one photo to get started.
+        Guide includes seven daily outfit suggestions. Add a clear, full-length photo for your
+        optional try-on previews.
       </p>
       {selfie ? (
         <img
@@ -1312,7 +1335,19 @@ function SelfieScreen({
           No photo yet. Any clear, full-length one works.
         </div>
       )}
-      <NeoButton onClick={onPick}>{selfie ? "Replace photo" : "Upload a selfie"}</NeoButton>
+      {error && (
+        <p className="mb-4 neo-inset px-4 py-3 text-sm" role="alert">
+          {error}
+        </p>
+      )}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <NeoButton disabled={building} onClick={() => onPick("camera")}>
+          Take a photo
+        </NeoButton>
+        <NeoButton disabled={building} onClick={() => onPick("photos")}>
+          {selfie ? "Replace photo" : "Upload a photo"}
+        </NeoButton>
+      </div>
     </Screen>
   );
 }
@@ -1463,7 +1498,10 @@ function StyleGuide({
     );
   }
   return (
-    <Screen kicker="Style Guide" title="Looks on you">
+    <Screen
+      kicker="Style Guide"
+      title={looks.some((look) => look.guideDay) ? "Your week, styled" : "Looks on you"}
+    >
       {notice && (
         <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
           {notice}
@@ -1483,29 +1521,31 @@ function StyleGuide({
           saved stays right here.
         </p>
       )}
-      <div className="grid grid-cols-1 gap-4">
-        {looks.map((look) => (
-          <LookCard
-            key={look.id}
-            look={look}
-            selfie={selfie}
-            rendering={renderingId === look.id}
-            actionLabel={look.saved ? "Saved" : "Save this look"}
-            onAction={() => onSave(look)}
-            footer={
-              <>
-                <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
-                  {look.tryOnUrl ? "View try-on" : "See this on me"}
-                </NeoButton>
-                {look.saved && (
-                  <NeoButton className="mt-3" onClick={() => onShare(look)}>
-                    Share to the Hive
+      <div className="la-guide-grid grid grid-cols-1 gap-4">
+        {[...looks]
+          .sort((a, b) => (a.guideDay ?? 99) - (b.guideDay ?? 99))
+          .map((look) => (
+            <LookCard
+              key={look.id}
+              look={look}
+              selfie={selfie}
+              rendering={renderingId === look.id}
+              actionLabel={look.saved ? "Saved" : "Save this look"}
+              onAction={() => onSave(look)}
+              footer={
+                <>
+                  <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
+                    {look.tryOnUrl ? "View try-on" : "See this on me"}
                   </NeoButton>
-                )}
-              </>
-            }
-          />
-        ))}
+                  {look.saved && (
+                    <NeoButton className="mt-3" onClick={() => onShare(look)}>
+                      Share to the Hive
+                    </NeoButton>
+                  )}
+                </>
+              }
+            />
+          ))}
       </div>
     </Screen>
   );

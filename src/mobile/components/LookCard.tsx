@@ -35,7 +35,10 @@ export function LookCard({
           ))}
         </div>
       )}
-      <p className="la-kicker">{look.occasion}</p>
+      <p className="la-kicker">
+        {look.guideDay ? `Day ${look.guideDay} · ` : ""}
+        {look.occasion}
+      </p>
       <h2 className="la-display mt-1 text-xl font-semibold">{look.title}</h2>
       <ul className="mt-3 space-y-1 text-sm">
         {look.formula.map((piece) => (

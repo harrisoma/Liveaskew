@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { requireApiUser } from "@/lib/api-auth.server";
 import { guardAi } from "@/lib/entitlement.server";
-import { parseLooks } from "@/lib/bee-looks";
+import { completeWeeklyGuide, parseLooks } from "@/lib/bee-looks";
 
 const BEE_MODEL = "google/gemini-2.5-flash";
 
@@ -18,7 +18,7 @@ const bodySchema = z.object({
       kind: z.string().max(20).optional(),
     })
     .optional(),
-  count: z.number().int().min(1).max(4).default(3),
+  count: z.number().int().min(1).max(7).default(3),
 });
 
 function prompt(body: z.infer<typeof bodySchema>): string {
@@ -33,7 +33,7 @@ ${answers || "- (no answers yet)"}
 
 ${occasion}
 
-Return ONLY a JSON array of ${body.count} looks. Each look:
+Return ONLY a JSON array of ${body.count} distinct looks. ${body.count === 7 ? "This is a seven-day Style Guide: one different outfit for each day, Day 1 through Day 7 in order. Match the normal week and occasions described; reuse individual garments sensibly but do not repeat an entire outfit. Do not assume their schedule when it is not stated." : ""} Each look:
 {"title": short name, "occasion": 1-3 words, "formula": 3-6 specific garments with cloth and colour, "fit": how it sits on their body, "feel": how they will feel, "fabric": what the cloth does, "palette": 2-4 hex colours like "#1a1a1a"}`;
 }
 
@@ -68,6 +68,8 @@ export const Route = createFileRoute("/api/bee/looks")({
             prompt: prompt(body),
           });
           const looks = parseLooks(text, body.count);
+          if (body.count === 7 && !completeWeeklyGuide(looks))
+            return Response.json({ error: "incomplete_weekly_guide" }, { status: 502 });
           if (looks.length === 0) return Response.json({ error: "no_looks" }, { status: 502 });
           return Response.json({ looks });
         } catch (err) {
