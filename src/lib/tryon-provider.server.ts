@@ -19,7 +19,7 @@ export async function generateTryOn(
     form = new FormData();
   form.set(
     "image",
-    new Blob([input.bytes], { type: input.type }),
+    new Blob([Uint8Array.from(input.bytes)], { type: input.type }),
     "reference." + (input.type === "image/jpeg" ? "jpg" : input.type.split("/")[1]),
   );
   form.set("prompt", tryOnPrompt(look));
