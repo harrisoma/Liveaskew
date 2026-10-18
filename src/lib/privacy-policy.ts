@@ -1,4 +1,4 @@
-export const PRIVACY_UPDATED = "October 3, 2026";
+export const PRIVACY_UPDATED = "October 18, 2026";
 
 export const PRIVACY_TITLE = "Privacy Policy — LiveAskew (Bee, Honey, Buzz, and the Hive)";
 
@@ -23,7 +23,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     title: "Bee — styling",
     paragraphs: [
       "Your Fit, Feel, and Fabric interview answers, the looks Bee writes for you, the looks you save, and your chat with Bee.",
-      "An optional styling photo, used only to show looks on your body as photographed. Try-on renders are cached so they are not made twice.",
+      "A styling photo, used to create AI outfit previews of you. When you choose to build your guide and previews, your photo is sent to Onixus AI and its image provider for all seven looks, including shoes and accessories. Previews are approximations and may have errors; they are not a fit guarantee. Private renders are cached to avoid duplicate generation.",
       "Wardrobe Reset photos, used only to identify each garment and suggest Keep, Toss, or Maybe.",
     ],
   },

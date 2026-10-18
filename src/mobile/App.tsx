@@ -111,6 +111,7 @@ export function MobileApp() {
   const [emailDraft, setEmailDraft] = useState("");
   const [phoneDraft, setPhoneDraft] = useState("");
   const [renderingId, setRenderingId] = useState<string | null>(null);
+  const [renderProgress, setRenderProgress] = useState<string | null>(null);
   const [gateOpen, setGateOpen] = useState(false);
   const [rateOpen, setRateOpen] = useState(false);
 
@@ -270,6 +271,51 @@ export function MobileApp() {
     }
   }
 
+  async function renderLook(look: GuideLook, selfie: string, retry = false) {
+    setRenderingId(look.id);
+    const result = await requestTryOn({ look, selfie, cache: snapRef.current.tryOnCache, retry });
+    const key = cacheKey(selfie, look.id);
+    const error =
+      result.source === "locked"
+        ? "A membership is needed to create this preview."
+        : result.source === "limited"
+          ? "Hourly limit reached. Try again later."
+          : (result.error ?? null);
+    const next = {
+      ...look,
+      tryOnUrl: result.url || null,
+      tryOnKey: result.url ? key : null,
+      renderError: error,
+    };
+    patch((s) => ({
+      ...s,
+      looks: s.looks.map((l) => (l.id === look.id ? next : l)),
+      tryOnCache: result.url ? { ...s.tryOnCache, [key]: result.url } : s.tryOnCache,
+    }));
+    await pushLooks([next]);
+    setRenderingId(null);
+    return result.source;
+  }
+  async function renderWeek(looks: GuideLook[], selfie: string, retry = false) {
+    try {
+      for (let index = 0; index < looks.length; index++) {
+        setRenderProgress(
+          `Creating outfit ${index + 1} of ${looks.length}, including shoes and accessories…`,
+        );
+        const source = await renderLook(looks[index], selfie, retry);
+        if (source === "locked" || source === "limited") {
+          setGuideNotice(
+            "Your outfit guide is saved. Rendering paused because your membership or hourly allowance needs attention.",
+          );
+          break;
+        }
+      }
+    } finally {
+      setRenderingId(null);
+      setRenderProgress(null);
+    }
+  }
+
   const today = isoDay(new Date());
 
   function upsertHoney(items: HoneyItem[]) {
@@ -371,7 +417,7 @@ export function MobileApp() {
           role: "assistant",
           content: opts.trialEnded
             ? "Your 14 free days have wrapped up. Pick a membership under You to build your seven-day Style Guide."
-            : "Your seven-day Style Guide is ready! Each day has an outfit with Fit, Feel and Fabric notes. Choose “See this on me” to request a preview using your photo. You've got 14 days of as many looks as you like, so have fun.",
+            : "Your seven-day Style Guide is ready! Each day has an outfit with Fit, Feel and Fabric notes. Bee is creating all seven outfit previews using your photo, including shoes and accessories. You've got 14 days of as many looks as you like, so have fun.",
         },
       ],
     }));
@@ -633,7 +679,15 @@ export function MobileApp() {
                   "Bee could not finish all seven days. Your interview and photo are still here. Try building your guide again.",
                 );
               } else {
+                const saved = await pushLooks(looks);
+                if (!saved) {
+                  setGuideError(
+                    "Your guide could not sync. Please try again before starting previews.",
+                  );
+                  return;
+                }
                 startTrial(looks);
+                await renderWeek(looks, snap.selfie);
               }
             } catch {
               setGuideError(
@@ -733,60 +787,28 @@ export function MobileApp() {
           )}
           {tab === "bee" && beeView === "looks" && (
             <StyleGuide
+              onRenderAll={async () => {
+                if (snap.selfie && !renderingId)
+                  await renderWeek(
+                    snap.looks.filter((l) => l.guideDay && (!l.tryOnUrl || l.tryOnUrl === "self")),
+                    snap.selfie,
+                    true,
+                  );
+              }}
               looks={snap.looks}
               selfie={snap.selfie}
               renderingId={renderingId}
               locked={!looksUnlocked}
               rateOpen={rateOpen}
               onDismissRate={() => setRateOpen(false)}
-              notice={guideNotice}
+              notice={renderProgress ?? guideNotice}
               onShare={(look) => {
                 setShareLook(look);
                 setTab("hive");
               }}
               onSelect={async (look) => {
-                if (!snap.selfie) return;
-                const key = cacheKey(snap.selfie, look.id);
-                if (look.tryOnUrl && look.tryOnKey === key) return;
-                if (!looksUnlocked) {
-                  setGateOpen(true);
-                  openMembership();
-                  return;
-                }
-                setRenderingId(look.id);
-                void haptic("impact");
-                const result = await requestTryOn({
-                  look,
-                  selfie: snap.selfie,
-                  cache: snap.tryOnCache,
-                });
-                setRenderingId(null);
-                if (result.source === "locked") {
-                  setGateOpen(true);
-                  openMembership();
-                  return;
-                }
-                if (result.source === "limited") {
-                  setGuideNotice(
-                    "That's a lot of try-ons for one hour! Take a breather and try again in a few minutes.",
-                  );
-                  void haptic("impact");
-                  return;
-                }
-                setGuideNotice(null);
-                // The unaltered photo is a stand-in, not a render: don't cache it, so the
-                // next tap tries the real try-on again.
-                const isRender = result.source !== "identity";
-                patch((s) => ({
-                  ...s,
-                  tryOnCache: isRender ? { ...s.tryOnCache, [key]: result.url } : s.tryOnCache,
-                  looks: s.looks.map((l) =>
-                    l.id === look.id
-                      ? { ...l, tryOnUrl: result.url, tryOnKey: isRender ? key : null }
-                      : l,
-                  ),
-                }));
-                void haptic("success");
+                if (!snap.selfie || renderingId) return;
+                await renderLook(look, snap.selfie, Boolean(look.renderError));
               }}
               onSave={(look) => {
                 void haptic("success");
@@ -1316,14 +1338,17 @@ function SelfieScreen({
       title="Let's see you"
       footer={
         <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
-          {building ? "Bee is putting your week together…" : "Build my seven-day Style Guide"}
+          {building
+            ? "Bee is putting your week together…"
+            : "Build my guide and all seven previews"}
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
-        Bee dresses you, exactly as you are. We never slim, smooth or reshape anything. Your Style
-        Guide includes seven daily outfit suggestions. Add a clear, full-length photo for your
-        optional try-on previews.
+        Bee styles the body you have. AI previews can make mistakes in likeness, detail and fit.
+        Your Style Guide includes seven complete outfits with shoes and accessories. Use a clear,
+        full-length photo. Building previews sends your photo to Onixus AI and its image provider
+        for all seven looks.
       </p>
       {selfie ? (
         <img
@@ -1466,6 +1491,7 @@ function HomeChat({
 }
 
 function StyleGuide({
+  onRenderAll,
   looks,
   selfie,
   renderingId,
@@ -1478,6 +1504,7 @@ function StyleGuide({
   notice,
 }: {
   looks: GuideLook[];
+  onRenderAll: () => void;
   selfie: string | null;
   renderingId: string | null;
   locked: boolean;
@@ -1503,6 +1530,11 @@ function StyleGuide({
       kicker="Style Guide"
       title={looks.some((look) => look.guideDay) ? "Your week, styled" : "Looks on you"}
     >
+      {looks.some((l) => l.guideDay && (!l.tryOnUrl || l.tryOnUrl === "self")) && (
+        <NeoButton disabled={Boolean(renderingId)} onClick={onRenderAll}>
+          Create remaining outfit previews
+        </NeoButton>
+      )}
       {notice && (
         <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
           {notice}
@@ -1535,8 +1567,19 @@ function StyleGuide({
               onAction={() => onSave(look)}
               footer={
                 <>
-                  <NeoButton className="mt-3" variant="ink" onClick={() => onSelect(look)}>
-                    {look.tryOnUrl ? "View try-on" : "See this on me"}
+                  <NeoButton
+                    className="mt-3"
+                    variant="ink"
+                    disabled={Boolean(renderingId)}
+                    onClick={() => onSelect(look)}
+                  >
+                    {renderingId
+                      ? "Creating previews…"
+                      : look.renderError
+                        ? "Retry this preview"
+                        : look.tryOnUrl
+                          ? "Refresh preview"
+                          : "Create my preview"}
                   </NeoButton>
                   {look.saved && (
                     <NeoButton className="mt-3" onClick={() => onShare(look)}>
@@ -1565,13 +1608,13 @@ function WardrobeReset({
       title="Keep, toss or maybe"
       footer={
         <NeoButton variant="ink" onClick={onUpload}>
-          Upload wardrobe photos
+          Add clothes, shoes or accessories
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
-        Snap your closet a few pieces at a time. Bee checks each one against your Fit, Feel and
-        Fabric, not some trend list.
+        Add one item per photo: clothes, shoes, bags, jewellery or other accessories. Bee checks
+        each one against your Fit, Feel and Fabric, not some trend list.
       </p>
       {items.length === 0 ? (
         <div className="neo-inset px-4 py-8 text-sm leading-relaxed">

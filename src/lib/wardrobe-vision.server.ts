@@ -1,18 +1,16 @@
-import { generateText } from "ai";
-import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { getOnixusAiConfig, getOnixusAiHeaders } from "@/lib/ai-gateway.server";
 import { parseGarmentSight, type GarmentSight } from "@/mobile/lib/wardrobe-reset";
 
-const VISION_MODEL = "google/gemini-2.5-flash";
-
-const IDENTIFY_PROMPT = `You are Bee, a senior stylist looking at ONE uploaded garment photo.
-Identify only what the photograph actually shows. Do not guess from a fixed list. Do not invent a trendy name.
+const IDENTIFY_PROMPT = `You are Bee, a senior stylist looking at ONE uploaded wardrobe item: clothing, a pair of shoes, a bag, jewellery, a belt, a scarf or a hat.
+Identify only what the photograph actually shows. Do not guess from a fixed list. Do not invent a trendy name. Do not claim exact fibre composition, comfort or how an unworn item fits a person from the photo alone. If it is unclear say uncertain. Describe visible damage without guessing.
 
 Return STRICT JSON only, no markdown:
 {"label": string (short name of the actual piece, e.g. "navy wool trouser"),
  "type": string (garment type: shirt, trouser, jean, dress, knit, jacket, etc.),
  "fabric": string (what the cloth looks and likely feels like — wool, silk, linen, cotton, stretch jersey, polyester shine, stiff, scratchy…),
  "fit": string (fit signals you can see — skinny, tight, oversized, slouch, structured, wrap, tailored…),
- "notes": string (any logo, stretch, shine, evening, wrap, or other Fit/Feel/Fabric signals)}`;
+ "notes": string (visible condition, logo, stretch, shine, evening, wrap, or other Fit/Feel/Fabric signals),
+ "category": "clothing" | "footwear" | "accessory"}`;
 
 function parseJsonObject(text: string): unknown {
   const trimmed = text
@@ -61,19 +59,20 @@ async function identifyViaOnixus(photoDataUrl: string): Promise<GarmentSight | n
   if (!apiKey || !process.env.ONIXUS_AI_BASE_URL || !process.env.ONIXUS_AI_ORGANIZATION_ID) {
     return null;
   }
-  const gateway = createOnixusAiGatewayProvider(apiKey);
-  const { text } = await generateText({
-    model: gateway(VISION_MODEL),
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: IDENTIFY_PROMPT },
-          { type: "image", image: photoDataUrl },
-        ],
-      },
-    ],
+  const config = getOnixusAiConfig();
+  const mediaUrl = config.baseURL.replace(/\/onixus-ai-gateway(?:\/v1)?$/, "/liveaskew-media");
+  if (mediaUrl === config.baseURL) throw Error("media_not_configured");
+  const response = await fetch(mediaUrl, {
+    method: "POST",
+    headers: { ...getOnixusAiHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: IDENTIFY_PROMPT, photoDataUrl }),
+    redirect: "error",
+    signal: AbortSignal.timeout(65000),
   });
+  if (!response.ok) return null;
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content;
+  if (typeof text !== "string") return null;
   return parseGarmentSight(parseJsonObject(text));
 }
 

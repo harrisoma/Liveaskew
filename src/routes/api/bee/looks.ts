@@ -34,7 +34,7 @@ ${answers || "- (no answers yet)"}
 ${occasion}
 
 Return ONLY a JSON array of ${body.count} distinct looks. ${body.count === 7 ? "This is a seven-day Style Guide: one different outfit for each day, Day 1 through Day 7 in order. Match the normal week and occasions described; reuse individual garments sensibly but do not repeat an entire outfit. Do not assume their schedule when it is not stated." : ""} Each look:
-{"title": short name, "occasion": 1-3 words, "formula": 3-6 specific garments with cloth and colour, "fit": how it sits on their body, "feel": how they will feel, "fabric": what the cloth does, "palette": 2-4 hex colours like "#1a1a1a"}`;
+{"title": short name, "occasion": 1-3 words, "formula": 4-6 specific pieces with cloth and colour, including a pair of shoes and at least one appropriate accessory such as a bag, jewellery, belt or scarf, "fit": how it sits on their body, "feel": how they will feel, "fabric": what the cloth does, "palette": 2-4 hex colours like "#1a1a1a"}`;
 }
 
 const SYSTEM = `You are Bee, LiveAskew's personal stylist. You style from Fit, Feel, and Fabric. Clothes follow the body the person has — never slim, reshape, or suggest changing their body. Respect covering, heritage, climate, and budget exactly as they state them. LiveAskew dresses women: lean feminine — dresses, skirts, silk and soft blouses, wrap shapes, soft colour, delicate gold jewellery, heels or pretty flats — unless she asks for something else. Name real garment types and cloth; never invent brands, prices, or stock. Write every look note to her as "you", like a friend with great taste: warm, specific, a little playful.

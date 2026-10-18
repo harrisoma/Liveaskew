@@ -24,10 +24,8 @@ const look = (tryOnUrl: string | null) => ({
 });
 
 describe("lookPhoto", () => {
-  it("resolves the self marker to the selfie without storing a copy", () => {
-    expect(lookPhoto(look(SELF_PHOTO), "data:image/jpeg;base64,AAA")).toBe(
-      "data:image/jpeg;base64,AAA",
-    );
+  it("never presents the original selfie as a generated outfit", () => {
+    expect(lookPhoto(look(SELF_PHOTO), "data:image/jpeg;base64,AAA")).toBeNull();
     expect(lookPhoto(look("https://r/1.jpg"), "x")).toBe("https://r/1.jpg");
     expect(lookPhoto(look(null), "x")).toBeNull();
   });

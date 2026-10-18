@@ -22,11 +22,12 @@ export const SELF_PHOTO = "self";
 /** The picture to show for a look: its try-on render, the selfie, or nothing. */
 export function lookPhoto(look: { tryOnUrl: string | null }, selfie: string | null): string | null {
   if (!look.tryOnUrl) return null;
-  return look.tryOnUrl === SELF_PHOTO ? selfie : look.tryOnUrl;
+  return look.tryOnUrl === SELF_PHOTO ? null : look.tryOnUrl;
 }
 
 export type GuideLook = LookCard & {
   guideDay?: number;
+  renderError?: string | null;
   saved: boolean;
   createdAt: string;
   garmentNote: string;
@@ -181,8 +182,12 @@ export function nid(prefix: string): string {
 }
 
 export function cacheKey(selfie: string, lookId: string): string {
-  let h = 0;
-  const sample = `${lookId}:${selfie.length}:${selfie.slice(18, 48)}:${selfie.slice(-24)}`;
-  for (let i = 0; i < sample.length; i++) h = (h * 31 + sample.charCodeAt(i)) | 0;
-  return `tryon_${lookId}_${h.toString(36)}`;
+  let a = 2166136261,
+    b = 5381;
+  const sample = `${lookId}:${selfie}`;
+  for (let i = 0; i < sample.length; i++) {
+    a = Math.imul(a ^ sample.charCodeAt(i), 16777619);
+    b = Math.imul(b, 33) ^ sample.charCodeAt(i);
+  }
+  return `tryon_${lookId}_${(a >>> 0).toString(36)}_${(b >>> 0).toString(36)}`;
 }
