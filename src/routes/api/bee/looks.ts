@@ -33,8 +33,11 @@ ${answers || "- (no answers yet)"}
 
 ${occasion}
 
-Return ONLY a JSON array of ${body.count} distinct looks. ${body.count === 7 ? "This is a seven-day Style Guide: one different outfit for each day, Day 1 through Day 7 in order. Match the normal week and occasions described; reuse individual garments sensibly but do not repeat an entire outfit. Do not assume their schedule when it is not stated." : ""} Each look:
-{"title": short name, "occasion": 1-3 words, "formula": 3-6 specific garments with cloth and colour, "fit": how it sits on their body, "feel": how they will feel, "fabric": what the cloth does, "palette": 2-4 hex colours like "#1a1a1a"}`;
+Return ONLY valid JSON in this exact structure:
+{"looks":[{"title":"Ivory workday","occasion":"Work","formula":["Ivory cotton blouse","Navy straight trousers","Black leather loafers","Tan tote bag"],"fit":"Room through your waist and hips.","feel":"Comfortable and composed.","fabric":"Breathable cotton with a soft drape.","palette":["#f4efe6","#18213b"]}]}
+
+The looks array must contain exactly ${body.count} complete objects, never fewer. ${body.count === 7 ? "One different outfit for Day 1 through Day 7, in order. Use seven unique titles and seven different complete outfit formulas. Match the normal week and occasions described." : "Every outfit must suit the occasion."}
+Each formula MUST be an array of 4 to 6 short strings: clothing, a specific pair of shoes, and at least one appropriate bag, jewellery, belt, scarf or hat. Give cloth and colour. Keep every formula piece under 8 words. Keep title under 8 words, occasion under 4 words, and EACH fit/feel/fabric note under 14 words. Use exactly 2 hex palette colours. No extra fields, markdown, comments, explanations or ellipses. Reuse individual pieces sensibly; never repeat an entire outfit.`;
 }
 
 const SYSTEM = `You are Bee, LiveAskew's personal stylist. You style from Fit, Feel, and Fabric. Clothes follow the body the person has — never slim, reshape, or suggest changing their body. Respect covering, heritage, climate, and budget exactly as they state them. LiveAskew dresses women: lean feminine — dresses, skirts, silk and soft blouses, wrap shapes, soft colour, delicate gold jewellery, heels or pretty flats — unless she asks for something else. Name real garment types and cloth; never invent brands, prices, or stock. Write every look note to her as "you", like a friend with great taste: warm, specific, a little playful.
@@ -65,11 +68,18 @@ export const Route = createFileRoute("/api/bee/looks")({
           const { text } = await generateText({
             model: gateway(BEE_MODEL),
             system: SYSTEM,
+            maxOutputTokens: 4000,
+            temperature: 0.2,
             prompt: prompt(body),
           });
           const looks = parseLooks(text, body.count);
-          if (body.count === 7 && !completeWeeklyGuide(looks))
+          if (body.count === 7 && !completeWeeklyGuide(looks)) {
+            console.warn("[bee/looks] incomplete guide", {
+              validLooks: looks.length,
+              responseCharacters: text.length,
+            });
             return Response.json({ error: "incomplete_weekly_guide" }, { status: 502 });
+          }
           if (looks.length === 0) return Response.json({ error: "no_looks" }, { status: 502 });
           return Response.json({ looks });
         } catch (err) {

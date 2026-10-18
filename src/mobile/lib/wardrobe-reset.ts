@@ -3,6 +3,7 @@ import type { WardrobeVerdict } from "./storage";
 
 /** What vision actually saw in the uploaded photo — never a canned label. */
 export type GarmentSight = {
+  category?: "clothing" | "footwear" | "accessory";
   label: string;
   type: string;
   fabric: string;
@@ -25,6 +26,10 @@ export function parseGarmentSight(raw: unknown): GarmentSight | null {
   if (!label) return null;
   return {
     label,
+    ...(typeof nested.category === "string" &&
+    ["clothing", "footwear", "accessory"].includes(nested.category)
+      ? { category: nested.category as GarmentSight["category"] }
+      : {}),
     type: str(nested.type) || str(nested.category),
     fabric: str(nested.fabric) || str(nested.cloth),
     fit: str(nested.fit) || str(nested.silhouette),
@@ -42,6 +47,12 @@ export function wardrobeVerdict(
 ): { verdict: WardrobeVerdict; reason: string } {
   const t = sightHaystack(sight);
   const fit = profile.fit ?? "soft";
+  if (sight.category === "footwear" || sight.category === "accessory")
+    return {
+      verdict: "maybe",
+      reason:
+        "Keep it if it is comfortable, usable and works with your outfits. A photo cannot confirm comfort or hidden wear; check soles, fastenings and fit before deciding.",
+    };
 
   if (t.includes("stretch") && t.includes("logo")) {
     return {

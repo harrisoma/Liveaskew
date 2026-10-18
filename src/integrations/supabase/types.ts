@@ -1200,6 +1200,10 @@ export type Database = {
       };
       tryon_renders: {
         Row: {
+          status: string;
+          operation_id: string | null;
+          error_code: string | null;
+          updated_at: string;
           cache_key: string;
           created_at: string;
           id: string;
@@ -1209,6 +1213,10 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
+          status?: string;
+          operation_id?: string | null;
+          error_code?: string | null;
+          updated_at?: string;
           cache_key: string;
           created_at?: string;
           id?: string;
@@ -1218,6 +1226,10 @@ export type Database = {
           user_id?: string | null;
         };
         Update: {
+          status?: string;
+          operation_id?: string | null;
+          error_code?: string | null;
+          updated_at?: string;
           cache_key?: string;
           created_at?: string;
           id?: string;

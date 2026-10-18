@@ -74,6 +74,18 @@ describe("wardrobeVerdict", () => {
 });
 
 describe("parseGarmentSight", () => {
+  it("recognizes shoes and accessories without guessing comfort or hidden condition", () => {
+    for (const [category, label] of [
+      ["footwear", "Black loafers"],
+      ["accessory", "Gold necklace"],
+    ] as const) {
+      const sight = parseGarmentSight({ category, label, notes: "Condition uncertain" });
+      expect(sight?.category).toBe(category);
+      const advice = wardrobeVerdict(sight!, { goal: "everyday", fit: "soft", budget: "mid" });
+      expect(advice.verdict).toBe("maybe");
+      expect(advice.reason).toContain("photo cannot confirm");
+    }
+  });
   it("accepts nested or flat vision JSON and rejects empty labels", () => {
     expect(
       parseGarmentSight({

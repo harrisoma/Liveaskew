@@ -24,8 +24,8 @@ export function LookCard({
       ) : lookPhoto(look, selfie) ? (
         <img
           src={lookPhoto(look, selfie) ?? undefined}
-          alt={`${look.title} on you — unaltered proportions`}
-          className="mb-3 h-56 w-full rounded-[16px] object-cover"
+          alt={`${look.title} — AI outfit preview using your reference photo`}
+          className="mb-3 h-56 w-full rounded-[16px] object-contain"
           loading="lazy"
         />
       ) : (
@@ -34,6 +34,16 @@ export function LookCard({
             <span key={c} className="h-10 flex-1 rounded-[8px]" style={{ background: c }} />
           ))}
         </div>
+      )}
+      {rendering && (
+        <p role="status" className="mb-3 text-sm">
+          Creating your outfit preview…
+        </p>
+      )}
+      {look.renderError && (
+        <p role="alert" className="mb-3 text-sm">
+          {look.renderError}
+        </p>
       )}
       <p className="la-kicker">
         {look.guideDay ? `Day ${look.guideDay} · ` : ""}
@@ -80,7 +90,7 @@ export function WardrobeCard({ item }: { item: WardrobeItem }) {
         <img
           src={item.photo}
           alt={item.label}
-          className="mb-3 h-40 w-full rounded-[16px] object-cover"
+          className="mb-3 h-40 w-full rounded-[16px] object-contain"
           loading="lazy"
         />
       ) : (
