@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { downscaleDataUrl, PHOTO_MAX } from "../lib/image";
 /** Capacitor native bridges with web fallbacks. Safe to import on the web. */
 
@@ -33,7 +34,6 @@ export async function configureNativeChrome(): Promise<void> {
 
 export async function pickStylingPhoto(source?: "camera" | "photos"): Promise<string | null> {
   try {
-    const { Capacitor } = await import("@capacitor/core");
     if (!Capacitor.isNativePlatform())
       return await (source === "camera" ? takeWebPhoto() : pickFileFallback());
     const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
@@ -148,6 +148,10 @@ function pickFileFallback(camera = false): Promise<string | null> {
       reader.onerror = () => resolve(null);
       reader.readAsDataURL(file);
     };
+    input.style.display = "none";
+    document.body.append(input);
+    input.addEventListener("change", () => input.remove(), { once: true });
+    input.addEventListener("cancel", () => input.remove(), { once: true });
     input.click();
   });
 }
