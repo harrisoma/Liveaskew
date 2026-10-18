@@ -60,8 +60,12 @@ class Query {
   single() {
     return Promise.resolve(this.result());
   }
-  then(resolve: (value: ReturnType<Query["result"]>) => unknown) {
-    return Promise.resolve(this.result()).then(resolve);
+  then(resolve: (value: { data: unknown; error: null }) => unknown) {
+    const result = this.result();
+    return Promise.resolve({
+      ...result,
+      data: this.changes && result.data ? [result.data] : result.data,
+    }).then(resolve);
   }
 }
 beforeEach(() => {
