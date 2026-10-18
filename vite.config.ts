@@ -19,7 +19,14 @@ export default defineConfig(({ command }) => ({
       },
       server: { entry: "server" },
     }),
-    ...(command === "build" ? [nitro({ preset: process.env.NITRO_PRESET ?? "vercel" })] : []),
+    ...(command === "build"
+      ? [
+          nitro({
+            preset: process.env.NITRO_PRESET ?? "vercel",
+            vercel: { functions: { maxDuration: 300 } },
+          }),
+        ]
+      : []),
     viteReact(),
   ],
   resolve: {

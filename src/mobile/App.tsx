@@ -54,6 +54,7 @@ import {
   type GuideLook,
 } from "./lib/storage";
 import { TIER_ORDER, TIERS, type PlanSlug } from "./lib/tiers";
+import { queueWeeklyGuide, readWeeklyGuide } from "./lib/weekly-guide";
 import { canGenerateLook, trialLabel } from "./lib/trial";
 import { requestTryOn } from "./lib/tryon";
 import { deleteMyAccount, persistTrialStartedAt, notifyRecommendationReady } from "./lib/account";
@@ -137,7 +138,7 @@ export function MobileApp() {
         phase:
           s.phase === "auth" || s.phase === "verify"
             ? style
-              ? s.selfie
+              ? s.selfie || remoteLooks?.some((l) => l.guideDay)
                 ? "app"
                 : "selfie"
               : "interview"
@@ -243,6 +244,80 @@ export function MobileApp() {
     setSnap((s) => fn(s));
   }, []);
 
+  const weeklyIds = snap.looks
+    .filter((l) => l.guideDay)
+    .sort((a, b) => a.guideDay! - b.guideDay!)
+    .slice(0, 7)
+    .map((l) => l.id)
+    .join("|");
+  useEffect(() => {
+    if (!ready || !snap.verified || snap.phase !== "app" || weeklyIds.split("|").length !== 7)
+      return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    async function refresh() {
+      try {
+        const current = snapRef.current;
+        const looks = weeklyIds
+          .split("|")
+          .map((id) => current.looks.find((l) => l.id === id)!)
+          .filter(Boolean);
+        let guide = await readWeeklyGuide();
+        const matches = guide && guide.lookIds.join("|") === weeklyIds;
+        if (
+          (!guide || !matches) &&
+          current.selfie &&
+          looks.some((l) => !l.tryOnUrl || l.tryOnUrl === "self")
+        ) {
+          await queueWeeklyGuide(looks, current.selfie);
+          guide = await readWeeklyGuide();
+        }
+        if (!active) return;
+        if (guide && guide.lookIds.join("|") === weeklyIds) {
+          setSnap((s) => ({
+            ...s,
+            looks: s.looks.map((l) =>
+              guide!.images[l.id]
+                ? {
+                    ...l,
+                    tryOnUrl: guide!.images[l.id],
+                    tryOnKey: guide!.keys[l.id],
+                    renderError: null,
+                  }
+                : l,
+            ),
+          }));
+          setRenderProgress(
+            guide.status === "ready"
+              ? "All seven outfit images are ready, including shoes and accessories."
+              : guide.status === "attention"
+                ? "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
+                : guide.status === "expired"
+                  ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
+                  : `${guide.completed} of 7 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
+          );
+          setRenderingId(["queued", "running"].includes(guide.status) ? guide.id : null);
+          if (["ready", "attention", "expired"].includes(guide.status)) return;
+        }
+      } catch {
+        if (active)
+          setRenderProgress("Bee will keep working on your guide. Reconnecting to its progress…");
+      }
+      if (active) timer = setTimeout(refresh, 10000);
+    }
+    void refresh();
+    const resume = () => {
+      clearTimeout(timer);
+      void refresh();
+    };
+    window.addEventListener("online", resume);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      window.removeEventListener("online", resume);
+    };
+  }, [ready, snap.verified, snap.phase, snap.selfie, weeklyIds]);
+
   /** Server truth for paid access and the Honey calendar, once there is a session. */
   async function syncAccount() {
     const [membership, remote, accounts, remoteLooks] = await Promise.all([
@@ -295,25 +370,6 @@ export function MobileApp() {
     await pushLooks([next]);
     setRenderingId(null);
     return result.source;
-  }
-  async function renderWeek(looks: GuideLook[], selfie: string, retry = false) {
-    try {
-      for (let index = 0; index < looks.length; index++) {
-        setRenderProgress(
-          `Creating outfit ${index + 1} of ${looks.length}, including shoes and accessories…`,
-        );
-        const source = await renderLook(looks[index], selfie, retry);
-        if (source === "locked" || source === "limited") {
-          setGuideNotice(
-            "Your outfit guide is saved. Rendering paused because your membership or hourly allowance needs attention.",
-          );
-          break;
-        }
-      }
-    } finally {
-      setRenderingId(null);
-      setRenderProgress(null);
-    }
   }
 
   const today = isoDay(new Date());
@@ -583,7 +639,7 @@ export function MobileApp() {
                 interview: { step: 5, answers: style.interview, completed: true },
                 onboarding: style.onboarding,
                 looks: mergeLooks(s.looks, remoteLooks ?? []),
-                phase: s.selfie ? "app" : "selfie",
+                phase: s.selfie || remoteLooks?.some((l) => l.guideDay) ? "app" : "selfie",
                 messages: [
                   {
                     id: nid("m"),
@@ -694,7 +750,10 @@ export function MobileApp() {
                   return;
                 }
                 startTrial(looks);
-                await renderWeek(looks, snap.selfie);
+                await queueWeeklyGuide(looks, snap.selfie);
+                setGuideNotice(
+                  "Your seven outfit previews are queued. Bee will finish them automatically, even if you close this page.",
+                );
               }
             } catch {
               setGuideError(
@@ -794,14 +853,6 @@ export function MobileApp() {
           )}
           {tab === "bee" && beeView === "looks" && (
             <StyleGuide
-              onRenderAll={async () => {
-                if (snap.selfie && !renderingId)
-                  await renderWeek(
-                    snap.looks.filter((l) => l.guideDay && (!l.tryOnUrl || l.tryOnUrl === "self")),
-                    snap.selfie,
-                    true,
-                  );
-              }}
               looks={snap.looks}
               selfie={snap.selfie}
               renderingId={renderingId}
@@ -1355,7 +1406,8 @@ function SelfieScreen({
         Bee styles the body you have. AI previews can make mistakes in likeness, detail and fit.
         Your Style Guide includes seven complete outfits with shoes and accessories. Use a clear,
         full-length photo. Building previews sends your photo to Onixus AI and its image provider
-        for all seven looks.
+        for all seven looks. Your reference is stored privately for up to 24 hours so Bee can finish
+        even when this page closes, then deleted.
       </p>
       {selfie ? (
         <img
@@ -1499,7 +1551,6 @@ function HomeChat({
 }
 
 function StyleGuide({
-  onRenderAll,
   looks,
   selfie,
   renderingId,
@@ -1512,7 +1563,6 @@ function StyleGuide({
   notice,
 }: {
   looks: GuideLook[];
-  onRenderAll: () => void;
   selfie: string | null;
   renderingId: string | null;
   locked: boolean;
@@ -1523,7 +1573,7 @@ function StyleGuide({
   onShare: (look: GuideLook) => void;
   notice: string | null;
 }) {
-  if (!selfie) {
+  if (!selfie && !looks.some((l) => l.guideDay)) {
     return (
       <Screen kicker="Style Guide" title="First, a photo of you">
         <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
@@ -1538,11 +1588,6 @@ function StyleGuide({
       kicker="Style Guide"
       title={looks.some((look) => look.guideDay) ? "Your week, styled" : "Looks on you"}
     >
-      {looks.some((l) => l.guideDay && (!l.tryOnUrl || l.tryOnUrl === "self")) && (
-        <NeoButton disabled={Boolean(renderingId)} onClick={onRenderAll}>
-          Create remaining outfit previews
-        </NeoButton>
-      )}
       {notice && (
         <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
           {notice}

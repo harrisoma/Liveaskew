@@ -1198,6 +1198,35 @@ export type Database = {
         };
         Relationships: [];
       };
+      weekly_guides: {
+        Row: {
+          id: string;
+          user_id: string;
+          request_key: string;
+          look_ids: string[];
+          photo_path: string;
+          photo_type: string;
+          results: Json;
+          status: string;
+          attempts: number;
+          lease_token: string | null;
+          lease_until: string | null;
+          not_before: string;
+          expires_at: string;
+          last_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["weekly_guides"]["Row"]> & {
+          user_id: string;
+          request_key: string;
+          look_ids: string[];
+          photo_path: string;
+          photo_type: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["weekly_guides"]["Row"]>;
+        Relationships: [];
+      };
       tryon_renders: {
         Row: {
           status: string;
@@ -1407,6 +1436,11 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      claim_weekly_guides: {
+        Args: { p_user?: string; p_limit?: number };
+        Returns: Database["public"]["Tables"]["weekly_guides"]["Row"][];
+      };
+
       delete_email: {
         Args: { message_id: number; queue_name: string };
         Returns: boolean;

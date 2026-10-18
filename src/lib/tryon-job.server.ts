@@ -127,7 +127,13 @@ export async function renderOwnedLook(
     const uncertain =
       providerCompleted ||
       (error instanceof Error &&
-        (["TimeoutError", "AbortError"].includes(error.name) ||
+        ([
+          "TimeoutError",
+          "AbortError",
+          "TypeError",
+          "SyntaxError",
+          "ProviderUncertainError",
+        ].includes(error.name) ||
           error.message === "invalid_render"));
     await db
       .from("tryon_renders")
