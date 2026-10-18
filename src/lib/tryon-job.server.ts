@@ -83,15 +83,13 @@ export async function renderOwnedLook(
       .select("id");
     if (error || !data?.length) return out({ status: "processing" }, 202);
   } else {
-    const { error } = await db
-      .from("tryon_renders")
-      .insert({
-        user_id: user,
-        look_id: input.lookId,
-        cache_key: key,
-        status: "running",
-        operation_id: op,
-      });
+    const { error } = await db.from("tryon_renders").insert({
+      user_id: user,
+      look_id: input.lookId,
+      cache_key: key,
+      status: "running",
+      operation_id: op,
+    });
     if (error) return out({ status: "processing" }, 202);
   }
   let providerCompleted = false;
