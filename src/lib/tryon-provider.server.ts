@@ -31,7 +31,13 @@ export async function generateTryOn(
     redirect: "error",
     signal: AbortSignal.timeout(135000),
   });
-  if (!response.ok) throw Error(response.status === 429 ? "provider_limited" : "tryon_unavailable");
+  if (!response.ok) {
+    console.error("[tryon] provider response", {
+      status: response.status,
+      requestId: response.headers.get("X-Onixus-Request-ID"),
+    });
+    throw Error(response.status === 429 ? "provider_limited" : "tryon_unavailable");
+  }
   const data = await response.json();
   const image = data.data?.[0];
   if (typeof image?.b64_json !== "string" || image.b64_json.length > 16000000)
