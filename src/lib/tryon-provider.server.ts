@@ -32,8 +32,22 @@ export async function generateTryOn(
     signal: AbortSignal.timeout(135000),
   });
   if (!response.ok) {
+    const failure = await response.json().catch(() => null);
+    const detail = typeof failure?.error?.message === "string" ? failure.error.message : "";
+    const upstream = /OpenRouter image (\d{3})/.exec(detail)?.[1];
+    const cause = /credit|balance|payment/i.test(detail)
+      ? "balance"
+      : /model|provider|endpoint|not found/i.test(detail)
+        ? "routing"
+        : /size|large|length/i.test(detail)
+          ? "request_size"
+          : /credential|api key|unauthor/i.test(detail)
+            ? "authentication"
+            : "unspecified";
     console.error("[tryon] provider response", {
       status: response.status,
+      upstreamStatus: upstream,
+      cause,
       requestId: response.headers.get("X-Onixus-Request-ID"),
     });
     throw Error(response.status === 429 ? "provider_limited" : "tryon_unavailable");
