@@ -19,7 +19,7 @@ try {
     Authorization: `Bearer ${data.session.access_token}`,
     "Content-Type": "application/json",
   };
-  const response = await fetch("https://www.liveaskew.com/api/bee/looks", {
+  const request = new Request("https://www.liveaskew.com/api/bee/looks", {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -33,6 +33,11 @@ try {
     }),
     signal: AbortSignal.timeout(90000),
   });
+  const response = process.argv.includes("--local-handler")
+    ? await (
+        await import("../src/routes/api/bee/looks")
+      ).Route.options.server.handlers.POST({ request })
+    : await fetch(request);
   const body = await response.json();
   if (!response.ok || !Array.isArray(body.looks) || body.looks.length !== 7) {
     console.error("MEDIA_QA_GUIDE_ERROR", { status: response.status, error: body.error });
@@ -51,6 +56,9 @@ try {
   console.log("MEDIA_QA_HTTP_OWNERSHIP", "PASS");
 } finally {
   const { error: cleanup } = await db.auth.admin.deleteUser(created.user.id);
-  if (cleanup) throw Error("qa_cleanup_failed");
+  if (cleanup) {
+    console.error("MEDIA_QA_HTTP_CLEANUP_FAILED");
+    process.exitCode = 1;
+  }
   console.log("MEDIA_QA_HTTP_ACCOUNT_REMOVED");
 }
