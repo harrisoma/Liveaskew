@@ -265,7 +265,7 @@ export function MobileApp() {
         let guide = await readWeeklyGuide();
         const matches = guide && guide.lookIds.join("|") === weeklyIds;
         if (
-          (!guide || !matches) &&
+          (!guide || !matches || guide.status === "expired") &&
           current.selfie &&
           looks.some((l) => !l.tryOnUrl || l.tryOnUrl === "self")
         ) {
@@ -288,13 +288,15 @@ export function MobileApp() {
             ),
           }));
           setRenderProgress(
-            guide.status === "ready"
-              ? "All seven outfit images are ready, including shoes and accessories."
-              : guide.status === "attention"
-                ? "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
-                : guide.status === "expired"
-                  ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
-                  : `${guide.completed} of 7 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
+            guide.error === "membership_required" && guide.status === "queued"
+              ? "Your guide is saved. Previews will resume automatically when your membership is active."
+              : guide.status === "ready"
+                ? "All seven outfit images are ready, including shoes and accessories."
+                : guide.status === "attention"
+                  ? "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
+                  : guide.status === "expired"
+                    ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
+                    : `${guide.completed} of 7 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
           );
           setRenderingId(["queued", "running"].includes(guide.status) ? guide.id : null);
           if (["ready", "attention", "expired"].includes(guide.status)) return;
