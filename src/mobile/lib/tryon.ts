@@ -28,7 +28,7 @@ export async function requestTryOn(opts: {
     }
   }
   try {
-    for (let attempt = 0; attempt < 45; attempt++) {
+    for (let attempt = 0; attempt < 100; attempt++) {
       const r = await apiFetch("/api/tryon", {
         method: "POST",
         body: JSON.stringify({
