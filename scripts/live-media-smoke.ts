@@ -26,6 +26,11 @@ try {
       password: randomUUID() + randomUUID(),
       email_confirm: true,
     });
+    if (error)
+      console.error(
+        "MEDIA_QA_ACCOUNT_ERROR",
+        JSON.stringify({ code: error.code, status: error.status, message: error.message }),
+      );
     check(!error && data.user, "qa_account_failed");
     users.push(data.user!.id);
   }
