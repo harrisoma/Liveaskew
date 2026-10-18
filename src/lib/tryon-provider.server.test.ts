@@ -11,6 +11,25 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 describe("reference outfit rendering", () => {
+  it("marks an uncertain gateway failure so automatic workers cannot pay for it twice", async () => {
+    vi.stubEnv("ONIXUS_AI_API_KEY", "test");
+    vi.stubEnv("ONIXUS_AI_ORGANIZATION_ID", "test");
+    vi.stubEnv("ONIXUS_AI_BASE_URL", "https://example.test/v1");
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          Response.json(
+            { error: { message: "AI generation temporarily unavailable" } },
+            { status: 502 },
+          ),
+        ),
+    );
+    await expect(generateTryOn("data:image/png;base64,AAAA", look)).rejects.toMatchObject({
+      name: "ProviderUncertainError",
+    });
+  });
   it("includes shoes and every accessory in the edit instructions", () => {
     const prompt = tryOnPrompt(look);
     for (const piece of look.formula) expect(prompt).toContain(piece);

@@ -58,7 +58,11 @@ export async function generateTryOn(
       cause,
       requestId: response.headers.get("X-Onixus-Request-ID"),
     });
-    throw Error(response.status === 429 ? "provider_limited" : "tryon_unavailable");
+    const failureError = Error(response.status === 429 ? "provider_limited" : "tryon_unavailable");
+    // A gateway 5xx may follow an accepted paid generation. Never automatically pay twice.
+    if (response.status >= 500 && !(upstream && Number(upstream) >= 400 && Number(upstream) < 500))
+      failureError.name = "ProviderUncertainError";
+    throw failureError;
   }
   const data = await response.json();
   const image = data.data?.[0];

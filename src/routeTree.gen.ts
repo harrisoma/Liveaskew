@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
 import { Route as DotwellKnownOauthProtectedResourceRouteImport } from './routes/[.]well-known/oauth-protected-resource'
+import { Route as ApiGuideRouteImport } from './routes/api/guide'
 import { Route as ApiMcpRouteImport } from './routes/api/mcp'
 import { Route as ApiTryonRouteImport } from './routes/api/tryon'
 import { Route as OauthAuthorizeRouteImport } from './routes/oauth/authorize'
@@ -29,6 +30,7 @@ import { Route as ApiBuzzConnectionsRouteImport } from './routes/api/buzz/connec
 import { Route as ApiBuzzFinishRouteImport } from './routes/api/buzz/finish'
 import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
 import { Route as ApiCronBuzzRouteImport } from './routes/api/cron/buzz'
+import { Route as ApiCronGuidesRouteImport } from './routes/api/cron/guides'
 import { Route as ApiCronPushRouteImport } from './routes/api/cron/push'
 import { Route as ApiHiveModerationRouteImport } from './routes/api/hive/moderation'
 import { Route as ApiHoneyIndexRouteImport } from './routes/api/honey/index'
@@ -75,6 +77,11 @@ const DotwellKnownOauthProtectedResourceRoute =
     path: '/.well-known/oauth-protected-resource',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiGuideRoute = ApiGuideRouteImport.update({
+  id: '/api/guide',
+  path: '/api/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMcpRoute = ApiMcpRouteImport.update({
   id: '/api/mcp',
   path: '/api/mcp',
@@ -148,6 +155,11 @@ const ApiBuzzPublishRoute = ApiBuzzPublishRouteImport.update({
 const ApiCronBuzzRoute = ApiCronBuzzRouteImport.update({
   id: '/api/cron/buzz',
   path: '/api/cron/buzz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronGuidesRoute = ApiCronGuidesRouteImport.update({
+  id: '/api/cron/guides',
+  path: '/api/cron/guides',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCronPushRoute = ApiCronPushRouteImport.update({
@@ -249,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/guide': typeof ApiGuideRoute
   '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
@@ -264,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
+  '/api/cron/guides': typeof ApiCronGuidesRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
@@ -289,6 +303,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/guide': typeof ApiGuideRoute
   '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
@@ -304,6 +319,7 @@ export interface FileRoutesByTo {
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
+  '/api/cron/guides': typeof ApiCronGuidesRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
@@ -330,6 +346,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  '/api/guide': typeof ApiGuideRoute
   '/api/mcp': typeof ApiMcpRoute
   '/api/tryon': typeof ApiTryonRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
@@ -345,6 +362,7 @@ export interface FileRoutesById {
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
   '/api/cron/buzz': typeof ApiCronBuzzRoute
+  '/api/cron/guides': typeof ApiCronGuidesRoute
   '/api/cron/push': typeof ApiCronPushRoute
   '/api/hive/moderation': typeof ApiHiveModerationRoute
   '/api/honey/import': typeof ApiHoneyImportRoute
@@ -372,6 +390,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/api/guide'
     | '/api/mcp'
     | '/api/tryon'
     | '/oauth/authorize'
@@ -387,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
+    | '/api/cron/guides'
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
@@ -412,6 +432,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/api/guide'
     | '/api/mcp'
     | '/api/tryon'
     | '/oauth/authorize'
@@ -427,6 +448,7 @@ export interface FileRouteTypes {
     | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
+    | '/api/cron/guides'
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
@@ -452,6 +474,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/api/guide'
     | '/api/mcp'
     | '/api/tryon'
     | '/oauth/authorize'
@@ -467,6 +490,7 @@ export interface FileRouteTypes {
     | '/api/buzz/finish'
     | '/api/buzz/publish'
     | '/api/cron/buzz'
+    | '/api/cron/guides'
     | '/api/cron/push'
     | '/api/hive/moderation'
     | '/api/honey/import'
@@ -493,6 +517,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
   DotwellKnownOauthProtectedResourceRoute: typeof DotwellKnownOauthProtectedResourceRouteWithChildren
+  ApiGuideRoute: typeof ApiGuideRoute
   ApiMcpRoute: typeof ApiMcpRoute
   ApiTryonRoute: typeof ApiTryonRoute
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
@@ -508,6 +533,7 @@ export interface RootRouteChildren {
   ApiBuzzFinishRoute: typeof ApiBuzzFinishRoute
   ApiBuzzPublishRoute: typeof ApiBuzzPublishRoute
   ApiCronBuzzRoute: typeof ApiCronBuzzRoute
+  ApiCronGuidesRoute: typeof ApiCronGuidesRoute
   ApiCronPushRoute: typeof ApiCronPushRoute
   ApiHiveModerationRoute: typeof ApiHiveModerationRoute
   ApiHoneyImportRoute: typeof ApiHoneyImportRoute
@@ -562,6 +588,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/oauth-protected-resource'
       fullPath: '/.well-known/oauth-protected-resource'
       preLoaderRoute: typeof DotwellKnownOauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/guide': {
+      id: '/api/guide'
+      path: '/api/guide'
+      fullPath: '/api/guide'
+      preLoaderRoute: typeof ApiGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/mcp': {
@@ -667,6 +700,13 @@ declare module '@tanstack/react-router' {
       path: '/api/cron/buzz'
       fullPath: '/api/cron/buzz'
       preLoaderRoute: typeof ApiCronBuzzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/guides': {
+      id: '/api/cron/guides'
+      path: '/api/cron/guides'
+      fullPath: '/api/cron/guides'
+      preLoaderRoute: typeof ApiCronGuidesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/cron/push': {
@@ -821,6 +861,7 @@ const rootRouteChildren: RootRouteChildren = {
     DotwellKnownOauthAuthorizationServerRoute,
   DotwellKnownOauthProtectedResourceRoute:
     DotwellKnownOauthProtectedResourceRouteWithChildren,
+  ApiGuideRoute: ApiGuideRoute,
   ApiMcpRoute: ApiMcpRoute,
   ApiTryonRoute: ApiTryonRoute,
   OauthAuthorizeRoute: OauthAuthorizeRoute,
@@ -836,6 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBuzzFinishRoute: ApiBuzzFinishRoute,
   ApiBuzzPublishRoute: ApiBuzzPublishRoute,
   ApiCronBuzzRoute: ApiCronBuzzRoute,
+  ApiCronGuidesRoute: ApiCronGuidesRoute,
   ApiCronPushRoute: ApiCronPushRoute,
   ApiHiveModerationRoute: ApiHiveModerationRoute,
   ApiHoneyImportRoute: ApiHoneyImportRoute,
@@ -857,13 +899,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

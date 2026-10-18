@@ -23,7 +23,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     title: "Bee — styling",
     paragraphs: [
       "Your Fit, Feel, and Fabric interview answers, the looks Bee writes for you, the looks you save, and your chat with Bee.",
-      "A styling photo, used to create AI outfit previews of you. When you choose to build your guide and previews, your photo is sent to Onixus AI and its image provider for all seven looks, including shoes and accessories. Previews are approximations and may have errors; they are not a fit guarantee. Private renders are cached to avoid duplicate generation.",
+      "A styling photo, used to create AI outfit previews of you. When you choose to build your guide and previews, your photo is sent to Onixus AI and its image provider for all seven looks, including shoes and accessories. Previews are approximations and may have errors; they are not a fit guarantee. Private renders are cached to avoid duplicate generation. To finish your seven previews even when you leave the page, your reference photo is held in private server storage while the guide runs, for at most 24 hours. The reference is deleted when the guide finishes or expires; your completed previews stay in your account.",
       "Wardrobe Reset photos, used only to identify each garment and suggest Keep, Toss, or Maybe.",
     ],
   },
