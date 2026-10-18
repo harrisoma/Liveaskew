@@ -60,7 +60,11 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     .select("*")
     .eq("request_key", requestKey)
     .maybeSingle();
-  if (existing) return existing as unknown as WeeklyGuideRow;
+  const restartable =
+    existing?.status === "expired" ||
+    (existing?.status === "attention" &&
+      ["membership_required", "guide_photo_unavailable"].includes(existing.last_error ?? ""));
+  if (existing && !restartable) return existing as unknown as WeeklyGuideRow;
   const { data: active } = await db
     .from("weekly_guides")
     .select("*")
@@ -90,30 +94,46 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     .eq("status", "ready")
     .in("cache_key", cacheKeys);
   const results: Record<string, Result> = {};
-  for (const render of cached ?? [])
-    if (render.image_path && render.look_id && ids.includes(render.look_id))
-      results[render.look_id] = { path: render.image_path, key: cacheKey(photo, render.look_id) };
-  const id = randomUUID(),
-    path = `${user}/guide-input/${id}.${image.type.split("/")[1]}`;
+  for (const render of cached ?? []) {
+    const index = cacheKeys.indexOf(render.cache_key);
+    if (render.image_path && index >= 0) {
+      const lookId = ids[index];
+      results[lookId] = { path: render.image_path, key: cacheKey(photo, lookId) };
+    }
+  }
+  const id = existing?.id ?? randomUUID(),
+    path = `${user}/guide-input/${id}-${randomUUID()}.${image.type.split("/")[1]}`;
   const uploaded = await store().upload(path, image.bytes, {
     contentType: image.type,
     upsert: false,
   });
   if (uploaded.error) throw Error("guide_photo_unavailable");
-  const saved = await db
-    .from("weekly_guides")
-    .insert({
-      id,
-      user_id: user,
-      request_key: requestKey,
-      look_ids: ids,
-      photo_path: path,
-      photo_type: image.type,
-      results,
-      status: Object.keys(results).length === 7 ? "ready" : "queued",
-    })
-    .select("*")
-    .single();
+  const values = {
+    photo_path: path,
+    photo_type: image.type,
+    results,
+    status: Object.keys(results).length === 7 ? "ready" : "queued",
+    attempts: 0,
+    lease_token: null,
+    lease_until: null,
+    last_error: null,
+    not_before: new Date().toISOString(),
+    expires_at: new Date(Date.now() + 86400000).toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  const saved = existing
+    ? await db
+        .from("weekly_guides")
+        .update(values)
+        .eq("id", existing.id)
+        .eq("status", existing.status)
+        .select("*")
+        .single()
+    : await db
+        .from("weekly_guides")
+        .insert({ id, user_id: user, request_key: requestKey, look_ids: ids, ...values })
+        .select("*")
+        .single();
   if (saved.error) {
     await store().remove([path]);
     const { data: winner } = await db
@@ -270,11 +290,11 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
   }
   if (rendered.status === 429 || rendered.status === 402) {
     await update({
-      status: rendered.status === 402 ? "attention" : "queued",
+      status: "queued",
       last_error: body.error,
       lease_token: null,
       lease_until: null,
-      not_before: new Date(Date.now() + 3600000).toISOString(),
+      not_before: new Date(Date.now() + (rendered.status === 402 ? 300000 : 3600000)).toISOString(),
     });
     return;
   }
@@ -292,12 +312,26 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
 
 export async function processWeeklyGuides(user?: string) {
   // Delete terminal references promptly, and all references after 24 hours, including failed jobs.
-  const { data: cleanup } = await db
-    .from("weekly_guides")
-    .select("id,photo_path,status,expires_at")
-    .neq("photo_path", "")
-    .or(`status.in.(ready,attention,expired),expires_at.lt.${new Date().toISOString()}`)
-    .limit(20);
+  const [terminal, expired] = await Promise.all([
+    db
+      .from("weekly_guides")
+      .select("id,photo_path,status,expires_at")
+      .neq("photo_path", "")
+      .in("status", ["ready", "attention", "expired"])
+      .limit(20),
+    db
+      .from("weekly_guides")
+      .select("id,photo_path,status,expires_at")
+      .neq("photo_path", "")
+      .lt("expires_at", new Date().toISOString())
+      .limit(20),
+  ]);
+  if (terminal.error || expired.error) throw Error("guide_cleanup_unavailable");
+  const cleanup = [
+    ...new Map(
+      [...(terminal.data ?? []), ...(expired.data ?? [])].map((row) => [row.id, row]),
+    ).values(),
+  ];
   for (const row of cleanup ?? []) {
     const removed = await store().remove([row.photo_path]);
     if (!removed.error)
@@ -315,5 +349,12 @@ export async function processWeeklyGuides(user?: string) {
   if (error) throw Error("guide_claim_unavailable");
   const rows = (data ?? []) as unknown as WeeklyGuideRow[];
   const results = await Promise.allSettled(rows.map(advanceWeeklyGuide));
+  results.forEach((result, index) => {
+    if (result.status === "rejected")
+      console.error("[weekly-guides] worker retry pending", {
+        id: rows[index].id,
+        error: result.reason instanceof Error ? result.reason.message : "worker_failed",
+      });
+  });
   return { claimed: rows.length, advanced: results.filter((r) => r.status === "fulfilled").length };
 }
