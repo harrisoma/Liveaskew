@@ -69,7 +69,26 @@ async function identifyViaOnixus(photoDataUrl: string): Promise<GarmentSight | n
     redirect: "error",
     signal: AbortSignal.timeout(65000),
   });
-  if (!response.ok) return null;
+  if (!response.ok) {
+    if (process.env.MEDIA_ACCEPTANCE === "1") {
+      const failure = await response.json().catch(() => null);
+      const message =
+        typeof failure?.error?.message === "string"
+          ? failure.error.message
+          : String(failure?.error ?? "unavailable");
+      console.error(
+        "MEDIA_QA_VISION_ERROR",
+        JSON.stringify({
+          status: response.status,
+          message: message
+            .replace(/sk-[A-Za-z0-9_-]+/g, "[redacted]")
+            .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
+            .slice(0, 1600),
+        }),
+      );
+    }
+    return null;
+  }
   const data = await response.json();
   const text = data.choices?.[0]?.message?.content;
   if (typeof text !== "string") return null;
