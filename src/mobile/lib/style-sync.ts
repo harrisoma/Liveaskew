@@ -88,15 +88,19 @@ export async function pushLooks(looks: GuideLook[]): Promise<boolean> {
   const c = await client();
   if (!c) return false;
   const now = new Date().toISOString();
-  const { error } = await c.supabase.from("member_looks").upsert(
-    looks.slice(0, 100).map((l) => ({
-      user_id: c.userId,
-      id: l.id.slice(0, 120),
-      look: lookForSync(l) as unknown as Json,
-      saved: l.saved,
-      updated_at: now,
-    })),
-    { onConflict: "user_id,id" },
-  );
-  return !error;
+  try {
+    const { error } = await c.supabase.from("member_looks").upsert(
+      looks.slice(0, 100).map((l) => ({
+        user_id: c.userId,
+        id: l.id.slice(0, 120),
+        look: lookForSync(l) as unknown as Json,
+        saved: l.saved,
+        updated_at: now,
+      })),
+      { onConflict: "user_id,id" },
+    );
+    return !error;
+  } catch {
+    return false;
+  }
 }

@@ -1121,7 +1121,8 @@ function AuthScreen({
         <ol className="mt-2 list-decimal space-y-1 pl-5">
           <li>Sign in and complete the account check.</li>
           <li>Answer five short questions about your style.</li>
-          <li>Add a full-length photo to build your Style Guide.</li>
+          <li>Take or upload a full-length photo.</li>
+          <li>Build your seven-day Style Guide.</li>
         </ol>
         <p className="mt-3">Try Bee for 14 days. No card required to get started.</p>
         <a href="/privacy" className="mt-2 inline-block underline underline-offset-4">

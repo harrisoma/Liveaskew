@@ -35,7 +35,7 @@ export async function pickStylingPhoto(source?: "camera" | "photos"): Promise<st
   try {
     const { Capacitor } = await import("@capacitor/core");
     if (!Capacitor.isNativePlatform())
-      return source === "camera" ? takeWebPhoto() : pickFileFallback();
+      return await (source === "camera" ? takeWebPhoto() : pickFileFallback());
     const { Camera, CameraResultType, CameraSource } = await import("@capacitor/camera");
     const photo = await Camera.getPhoto({
       quality: 70,
