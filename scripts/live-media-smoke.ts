@@ -6,6 +6,7 @@ import { renderOwnedLook } from "../src/lib/tryon-job.server";
 import { identifyGarmentFromPhoto } from "../src/lib/wardrobe-vision.server";
 import { wardrobeVerdict } from "../src/mobile/lib/wardrobe-reset";
 import { getOnixusAiConfig, getOnixusAiHeaders } from "../src/lib/ai-gateway.server";
+process.env.MEDIA_ACCEPTANCE = "1";
 const run = randomUUID(),
   users: string[] = [];
 const report: { renders: object[]; wardrobe: object[]; assets: string[] } = {
@@ -33,6 +34,30 @@ try {
       );
     check(!error && data.user, "qa_account_failed");
     users.push(data.user!.id);
+  }
+  const wardrobeFailures: string[] = [];
+  for (const [name, fit, expected] of [
+    ["cotton", "soft", "keep"],
+    ["jeans", "relaxed", "toss"],
+    ["hoodie", "structured", "maybe"],
+    ["bag", "soft", "maybe"],
+  ] as const) {
+    const sight = await identifyGarmentFromPhoto(await photo(name));
+    if (!sight) {
+      wardrobeFailures.push(name + ":vision_failed");
+      console.log("MEDIA_QA_WARDROBE", name, "VISION_FAILED");
+      continue;
+    }
+    const verdict = wardrobeVerdict(sight!, { fit, goal: "everyday", budget: "mid" });
+    if (verdict.verdict !== expected)
+      wardrobeFailures.push(`${name}:expected_${expected}_received_${verdict.verdict}`);
+    report.wardrobe.push({ fixture: name, ...sight, ...verdict });
+    console.log(
+      "MEDIA_QA_WARDROBE",
+      name,
+      verdict.verdict,
+      verdict.verdict === expected ? "PASS" : "FAIL",
+    );
   }
   const selfie = await photo("person");
   const outfits = [
@@ -164,21 +189,7 @@ try {
   }
   const replay = await renderOwnedLook(users[0], { lookId: looks[0].id, selfieDataUrl: selfie });
   check((await replay.json()).source === "cache", "cache_replay_failed");
-  for (const [name, fit, expected] of [
-    ["cotton", "soft", "keep"],
-    ["jeans", "relaxed", "toss"],
-    ["hoodie", "structured", "maybe"],
-  ] as const) {
-    const sight = await identifyGarmentFromPhoto(await photo(name));
-    check(sight, `wardrobe_${name}_vision_failed`);
-    const verdict = wardrobeVerdict(sight!, { fit, goal: "everyday", budget: "mid" });
-    check(
-      verdict.verdict === expected,
-      `wardrobe_${name}_expected_${expected}_received_${verdict.verdict}`,
-    );
-    report.wardrobe.push({ fixture: name, ...sight, ...verdict });
-    console.log("MEDIA_QA_WARDROBE", name, verdict.verdict, "PASS");
-  }
+  check(wardrobeFailures.length === 0, "wardrobe_acceptance_failed_" + wardrobeFailures.join(","));
   console.log(
     "MEDIA_QA_REPORT",
     JSON.stringify({ ...report, run, crossAccount: "blocked", cacheReplay: "passed" }),

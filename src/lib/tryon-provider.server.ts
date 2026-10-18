@@ -47,6 +47,14 @@ export async function generateTryOn(
     console.error("[tryon] provider response", {
       status: response.status,
       upstreamStatus: upstream,
+      ...(process.env.MEDIA_ACCEPTANCE === "1"
+        ? {
+            diagnostic: detail
+              .replace(/sk-[A-Za-z0-9_-]+/g, "[redacted]")
+              .replace(/Bearer\s+\S+/gi, "Bearer [redacted]")
+              .slice(0, 300),
+          }
+        : {}),
       cause,
       requestId: response.headers.get("X-Onixus-Request-ID"),
     });
