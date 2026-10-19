@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Home, Settings, WifiOff } from "lucide-react";
+import { StyleBlueprint } from "./components/StyleBlueprint";
 import { LookCard, WardrobeCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/ui";
 import { HoneyScreen } from "./screens/Honey";
@@ -74,7 +75,7 @@ import {
 import "./styles.css";
 
 type Tab = "today" | "bee" | "honey" | "buzz" | "hive" | "you";
-type BeeView = "chat" | "looks" | "reset";
+type BeeView = "guide" | "chat" | "looks" | "reset";
 
 export function MobileApp() {
   const [ready, setReady] = useState(false);
@@ -82,9 +83,11 @@ export function MobileApp() {
   const snapRef = useRef(snap);
   snapRef.current = snap;
   const [tab, setTab] = useState<Tab>("today");
-  const [beeView, setBeeView] = useState<BeeView>("looks");
+  const [beeView, setBeeView] = useState<BeeView>("guide");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [wardrobeBusy, setWardrobeBusy] = useState(false);
+  const [wardrobeError, setWardrobeError] = useState<string | null>(null);
   /** Real Talk in progress: the topic, and the id of Bee's opening question. */
   const [talk, setTalk] = useState<{ topic: TalkTopic; startId: string } | null>(null);
   const [hiveRoomId, setHiveRoomId] = useState<string | null>(null);
@@ -503,7 +506,9 @@ export function MobileApp() {
   }
 
   return (
-    <div className="la-app relative flex flex-col">
+    <div
+      className={`la-app relative flex flex-col ${snap.phase === "app" && tab === "bee" ? "bee-studio" : ""}`}
+    >
       {!online && (
         <div
           className="mx-5 mt-3 flex items-center gap-2 neo-inset px-3 py-2 text-sm"
@@ -797,12 +802,20 @@ export function MobileApp() {
                 value={beeView}
                 onChange={setBeeView}
                 options={[
+                  { id: "guide", label: "Style Guide" },
                   { id: "looks", label: "Looks" },
                   { id: "chat", label: "Chat" },
                   { id: "reset", label: "Reset" },
                 ]}
               />
             </div>
+          )}
+          {tab === "bee" && beeView === "guide" && (
+            <StyleBlueprint
+              wardrobe={snap.wardrobe}
+              looks={snap.looks}
+              onLooks={() => setBeeView("looks")}
+            />
           )}
           {tab === "bee" && beeView === "chat" && (
             <HomeChat
@@ -854,7 +867,7 @@ export function MobileApp() {
             />
           )}
           {tab === "bee" && beeView === "looks" && (
-            <StyleGuide
+            <LooksBook
               looks={snap.looks}
               selfie={snap.selfie}
               renderingId={renderingId}
@@ -887,53 +900,72 @@ export function MobileApp() {
           {tab === "bee" && beeView === "reset" && (
             <WardrobeReset
               items={snap.wardrobe}
+              busy={wardrobeBusy}
+              error={wardrobeError}
+              onDecide={(id, verdict) =>
+                patch((s) => ({
+                  ...s,
+                  wardrobe: s.wardrobe.map((w) => (w.id === id ? { ...w, verdict } : w)),
+                }))
+              }
               onUpload={async () => {
-                const photos = await pickWardrobeBatch();
-                if (photos.length === 0) return;
-                const profile = snap.onboarding;
-                // Cards keep a small thumbnail on the device; Bee reads the larger photo.
-                const thumbs = await Promise.all(
-                  photos.map((photo) => downscaleDataUrl(photo, THUMB_MAX, 0.75)),
-                );
-                const items: AppSnapshot["wardrobe"] = photos.map((_, i) => ({
-                  id: nid("w"),
-                  photo: thumbs[i],
-                  label: "Taking a closer look",
-                  verdict: null,
-                  reason: null,
-                  error: null,
-                }));
-                const fullPhoto = new Map(items.map((item, i) => [item.id, photos[i]]));
-                patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe].slice(0, 60) }));
-                for (const item of items) {
-                  const result = await analyzeWardrobePhoto({
-                    photo: fullPhoto.get(item.id) ?? item.photo,
-                    profile,
-                  });
-                  patch((s) => ({
-                    ...s,
-                    wardrobe: s.wardrobe.map((row) => {
-                      if (row.id !== item.id) return row;
-                      if ("error" in result) {
+                if (wardrobeBusy) return;
+                setWardrobeError(null);
+                try {
+                  const photos = await pickWardrobeBatch();
+                  if (photos.length === 0) return;
+                  setWardrobeBusy(true);
+                  const profile = snap.onboarding;
+                  // Cards keep a small thumbnail on the device; Bee reads the larger photo.
+                  const thumbs = await Promise.all(
+                    photos.map((photo) => downscaleDataUrl(photo, THUMB_MAX, 0.75)),
+                  );
+                  const items: AppSnapshot["wardrobe"] = photos.map((_, i) => ({
+                    id: nid("w"),
+                    photo: thumbs[i],
+                    label: "Taking a closer look",
+                    verdict: null,
+                    reason: null,
+                    error: null,
+                  }));
+                  const fullPhoto = new Map(items.map((item, i) => [item.id, photos[i]]));
+                  patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe].slice(0, 60) }));
+                  for (const item of items) {
+                    const result = await analyzeWardrobePhoto({
+                      photo: fullPhoto.get(item.id) ?? item.photo,
+                      profile,
+                    });
+                    patch((s) => ({
+                      ...s,
+                      wardrobe: s.wardrobe.map((row) => {
+                        if (row.id !== item.id) return row;
+                        if ("error" in result) {
+                          return {
+                            ...row,
+                            label: "Bee couldn't make this one out",
+                            error: result.error,
+                            reason: null,
+                            verdict: null,
+                          };
+                        }
                         return {
                           ...row,
-                          label: "Bee couldn't make this one out",
-                          error: result.error,
-                          reason: null,
-                          verdict: null,
+                          label: result.label,
+                          verdict: result.verdict,
+                          reason: result.reason,
+                          error: null,
                         };
-                      }
-                      return {
-                        ...row,
-                        label: result.label,
-                        verdict: result.verdict,
-                        reason: result.reason,
-                        error: null,
-                      };
-                    }),
-                  }));
+                      }),
+                    }));
+                  }
+                  void haptic(items.length > 0 ? "success" : "impact");
+                } catch {
+                  setWardrobeError(
+                    "These photos could not be opened. Try a JPEG or PNG, one item per photo.",
+                  );
+                } finally {
+                  setWardrobeBusy(false);
                 }
-                void haptic(items.length > 0 ? "success" : "impact");
               }}
             />
           )}
@@ -1552,7 +1584,7 @@ function HomeChat({
   );
 }
 
-function StyleGuide({
+function LooksBook({
   looks,
   selfie,
   renderingId,
@@ -1652,9 +1684,15 @@ function StyleGuide({
 
 function WardrobeReset({
   items,
+  busy,
+  error,
+  onDecide,
   onUpload,
 }: {
   items: AppSnapshot["wardrobe"];
+  busy: boolean;
+  error: string | null;
+  onDecide: (id: string, verdict: "keep" | "toss" | "maybe") => void;
   onUpload: () => void;
 }) {
   return (
@@ -1662,15 +1700,27 @@ function WardrobeReset({
       kicker="Wardrobe Reset"
       title="Keep, toss or maybe"
       footer={
-        <NeoButton variant="ink" onClick={onUpload}>
-          Add clothes, shoes or accessories
+        <NeoButton variant="ink" onClick={onUpload} disabled={busy}>
+          {busy ? "Bee is reviewing your pieces…" : "Add clothes, shoes or accessories"}
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
         Add one item per photo: clothes, shoes, bags, jewellery or other accessories. Bee checks
-        each one against your Fit, Feel and Fabric, not some trend list.
+        each one against your Fit, Feel and Fabric. Keep what serves you, set aside what doesn’t,
+        and decide on the maybes after a try-on. Toss is an edit to your wardrobe, not a requirement
+        to throw anything away.
       </p>
+      {error && (
+        <p role="alert" className="mb-4 text-sm">
+          {error}
+        </p>
+      )}
+      {busy && (
+        <p role="status" className="mb-4 text-sm">
+          Reviewing your photos. Each decision appears below when ready.
+        </p>
+      )}
       {items.length === 0 ? (
         <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
           Nothing here yet. Start with the pieces you reach for most.
@@ -1678,7 +1728,11 @@ function WardrobeReset({
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {items.map((item) => (
-            <WardrobeCard key={item.id} item={item} />
+            <WardrobeCard
+              key={item.id}
+              item={item}
+              onDecide={(verdict) => onDecide(item.id, verdict)}
+            />
           ))}
         </div>
       )}

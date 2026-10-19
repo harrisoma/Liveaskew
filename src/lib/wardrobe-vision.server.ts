@@ -31,29 +31,6 @@ function parseJsonObject(text: string): unknown {
   }
 }
 
-async function identifyViaN8n(photoDataUrl: string): Promise<GarmentSight | null> {
-  const webhook = process.env.N8N_WARDROBE_WEBHOOK_URL?.trim();
-  if (!webhook) return null;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 22_000);
-  try {
-    const res = await fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      signal: controller.signal,
-      body: JSON.stringify({ photoDataUrl, task: "identify_garment" }),
-    });
-    if (!res.ok) return null;
-    const json = (await res.json()) as unknown;
-    return parseGarmentSight(json);
-  } catch (err) {
-    console.error("[wardrobe] n8n webhook failed", err);
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 async function identifyViaOnixus(photoDataUrl: string): Promise<GarmentSight | null> {
   const apiKey = process.env.ONIXUS_AI_API_KEY;
   if (!apiKey || !process.env.ONIXUS_AI_BASE_URL || !process.env.ONIXUS_AI_ORGANIZATION_ID) {
@@ -97,8 +74,6 @@ async function identifyViaOnixus(photoDataUrl: string): Promise<GarmentSight | n
 
 /** Identify the garment in the photo. Returns null if vision is unavailable — never a fake label. */
 export async function identifyGarmentFromPhoto(photoDataUrl: string): Promise<GarmentSight | null> {
-  const fromN8n = await identifyViaN8n(photoDataUrl);
-  if (fromN8n) return fromN8n;
   try {
     return await identifyViaOnixus(photoDataUrl);
   } catch (err) {

@@ -74,7 +74,13 @@ export function LookCard({
   );
 }
 
-export function WardrobeCard({ item }: { item: WardrobeItem }) {
+export function WardrobeCard({
+  item,
+  onDecide,
+}: {
+  item: WardrobeItem;
+  onDecide?: (verdict: "keep" | "toss" | "maybe") => void;
+}) {
   const tone = item.error
     ? "Could not read"
     : item.verdict === "keep"
@@ -100,6 +106,15 @@ export function WardrobeCard({ item }: { item: WardrobeItem }) {
       )}
       <p className="la-kicker">{tone}</p>
       <h2 className="la-display mt-1 text-xl font-semibold">{item.label}</h2>
+      {onDecide && item.verdict && (
+        <div className="studio-decisions" aria-label={`Your decision for ${item.label}`}>
+          {(["keep", "toss", "maybe"] as const).map((v) => (
+            <button key={v} aria-pressed={item.verdict === v} onClick={() => onDecide(v)}>
+              {v === "toss" ? "Toss" : v === "keep" ? "Keep" : "Maybe"}
+            </button>
+          ))}
+        </div>
+      )}
       {item.error ? (
         <p className="mt-2 text-sm leading-relaxed">{item.error}</p>
       ) : item.reason ? (

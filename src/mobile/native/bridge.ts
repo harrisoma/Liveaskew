@@ -203,6 +203,11 @@ export function pickWardrobeBatch(): Promise<string[]> {
     input.type = "file";
     input.accept = "image/*";
     input.multiple = true;
+    const finish = (photos: string[]) => {
+      input.remove();
+      resolve(photos);
+    };
+    input.addEventListener("cancel", () => finish([]), { once: true });
     input.onchange = async () => {
       const files = Array.from(input.files ?? []).slice(0, 12);
       const urls = await Promise.all(
@@ -221,8 +226,10 @@ export function pickWardrobeBatch(): Promise<string[]> {
             }),
         ),
       );
-      resolve(urls.filter((u): u is string => Boolean(u)));
+      finish(urls.filter((u): u is string => Boolean(u)));
     };
+    input.style.display = "none";
+    document.body.append(input);
     input.click();
   });
 }

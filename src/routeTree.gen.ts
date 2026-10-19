@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as StyleGuidePreviewRouteImport } from './routes/style-guide-preview'
 import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
 import { Route as DotwellKnownOauthProtectedResourceRouteImport } from './routes/[.]well-known/oauth-protected-resource'
 import { Route as ApiGuideRouteImport } from './routes/api/guide'
@@ -21,6 +22,7 @@ import { Route as OauthAuthorizeRouteImport } from './routes/oauth/authorize'
 import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
+import { Route as ApiBeeStyleGuideRouteImport } from './routes/api/bee/style-guide'
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inquiry'
 import { Route as ApiBillingPortalRouteImport } from './routes/api/billing/portal'
@@ -63,6 +65,11 @@ const AppRoute = AppRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StyleGuidePreviewRoute = StyleGuidePreviewRouteImport.update({
+  id: '/style-guide-preview',
+  path: '/style-guide-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DotwellKnownOauthAuthorizationServerRoute =
@@ -110,6 +117,11 @@ const ApiBeeAppRoute = ApiBeeAppRouteImport.update({
 const ApiBeeLooksRoute = ApiBeeLooksRouteImport.update({
   id: '/api/bee/looks',
   path: '/api/bee/looks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBeeStyleGuideRoute = ApiBeeStyleGuideRouteImport.update({
+  id: '/api/bee/style-guide',
+  path: '/api/bee/style-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBillingCheckoutRoute = ApiBillingCheckoutRouteImport.update({
@@ -259,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -268,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -301,6 +315,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -310,6 +325,7 @@ export interface FileRoutesByTo {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -344,6 +360,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -353,6 +370,7 @@ export interface FileRoutesById {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -388,6 +406,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -397,6 +416,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -430,6 +450,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -439,6 +460,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -472,6 +494,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -481,6 +504,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -515,6 +539,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
   PrivacyRoute: typeof PrivacyRoute
+  StyleGuidePreviewRoute: typeof StyleGuidePreviewRoute
   DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
   DotwellKnownOauthProtectedResourceRoute: typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   ApiGuideRoute: typeof ApiGuideRoute
@@ -524,6 +549,7 @@ export interface RootRouteChildren {
   ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
+  ApiBeeStyleGuideRoute: typeof ApiBeeStyleGuideRoute
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
   ApiBillingPortalRoute: typeof ApiBillingPortalRoute
@@ -574,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/style-guide-preview': {
+      id: '/style-guide-preview'
+      path: '/style-guide-preview'
+      fullPath: '/style-guide-preview'
+      preLoaderRoute: typeof StyleGuidePreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-authorization-server': {
@@ -637,6 +670,13 @@ declare module '@tanstack/react-router' {
       path: '/api/bee/looks'
       fullPath: '/api/bee/looks'
       preLoaderRoute: typeof ApiBeeLooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/bee/style-guide': {
+      id: '/api/bee/style-guide'
+      path: '/api/bee/style-guide'
+      fullPath: '/api/bee/style-guide'
+      preLoaderRoute: typeof ApiBeeStyleGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/billing/checkout': {
@@ -857,6 +897,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
   PrivacyRoute: PrivacyRoute,
+  StyleGuidePreviewRoute: StyleGuidePreviewRoute,
   DotwellKnownOauthAuthorizationServerRoute:
     DotwellKnownOauthAuthorizationServerRoute,
   DotwellKnownOauthProtectedResourceRoute:
@@ -868,6 +909,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeLooksRoute: ApiBeeLooksRoute,
+  ApiBeeStyleGuideRoute: ApiBeeStyleGuideRoute,
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingInquiryRoute: ApiBillingInquiryRoute,
   ApiBillingPortalRoute: ApiBillingPortalRoute,
