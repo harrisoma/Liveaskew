@@ -194,7 +194,7 @@ export function isOnline(): boolean {
 }
 
 export function pickWardrobeBatch(): Promise<string[]> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (typeof document === "undefined") {
       resolve([]);
       return;
@@ -209,24 +209,29 @@ export function pickWardrobeBatch(): Promise<string[]> {
     };
     input.addEventListener("cancel", () => finish([]), { once: true });
     input.onchange = async () => {
-      const files = Array.from(input.files ?? []).slice(0, 12);
-      const urls = await Promise.all(
-        files.map(
-          (file) =>
-            new Promise<string | null>((ok) => {
-              const reader = new FileReader();
-              reader.onload = () =>
-                ok(
-                  typeof reader.result === "string"
-                    ? downscaleDataUrl(reader.result, PHOTO_MAX)
-                    : null,
-                );
-              reader.onerror = () => ok(null);
-              reader.readAsDataURL(file);
-            }),
-        ),
-      );
-      finish(urls.filter((u): u is string => Boolean(u)));
+      try {
+        const files = Array.from(input.files ?? []).slice(0, 12);
+        const urls = await Promise.all(
+          files.map(
+            (file) =>
+              new Promise<string | null>((ok) => {
+                const reader = new FileReader();
+                reader.onload = () =>
+                  ok(
+                    typeof reader.result === "string"
+                      ? downscaleDataUrl(reader.result, PHOTO_MAX)
+                      : null,
+                  );
+                reader.onerror = () => ok(null);
+                reader.readAsDataURL(file);
+              }),
+          ),
+        );
+        finish(urls.filter((u): u is string => Boolean(u)));
+      } catch (error) {
+        input.remove();
+        reject(error);
+      }
     };
     input.style.display = "none";
     document.body.append(input);
