@@ -12,6 +12,7 @@ export const RETAILERS = [
   { name: "Kotn", origin: "https://shop.kotn.com", kind: "clothing" },
   { name: "Allbirds", origin: "https://www.allbirds.com", kind: "shoe" },
   { name: "Portland Leather", origin: "https://www.portlandleathergoods.com", kind: "accessory" },
+  { name: "PAVOI", origin: "https://www.pavoi.com", kind: "jewelry" },
 ] as const;
 type Retailer = (typeof RETAILERS)[number];
 const variantSchema = z.object({
@@ -110,7 +111,7 @@ export function eligibleVariant(
         : profile.clothingMax;
   if (!cap) return null;
   const sizeOption = p.options.find((o) => /size/i.test(o.name));
-  const colorOption = p.options.find((o) => /colou?r/i.test(o.name));
+  const colorOption = p.options.find((o) => /colou?r|metal|finish/i.test(o.name));
   let requested =
     role === "shoe"
       ? profile.shoeSize
@@ -119,7 +120,7 @@ export function eligibleVariant(
         : role === "dress"
           ? profile.dressSize
           : profile.topSize;
-  if (role === "accessory") requested = profile.bagSize;
+  if (role === "accessory") requested = retailer.kind === "jewelry" ? "" : profile.bagSize;
   if (role !== "accessory" && !requested) return null;
   if (role === "shoe") {
     if (
@@ -212,7 +213,9 @@ async function catalog(retailer: Retailer, profile: ShoppingProfile) {
       ? ["shirt", "pants", "dress", "jacket"].map((t) => `${profile.department} ${t}`)
       : retailer.kind === "shoe"
         ? [`${profile.department} runners`, `${profile.department} loungers`]
-        : ["bag"];
+        : retailer.kind === "jewelry"
+          ? ["hoop earrings", "necklace"]
+          : ["bag"];
   const results = await Promise.allSettled(
     terms.map(async (term) => {
       const u = new URL("/search/suggest.json", retailer.origin);
@@ -287,7 +290,7 @@ export async function matchRetailProducts(
     RETAILERS.filter((r) =>
       r.kind === "shoe"
         ? profile.shoeMax > 0 && Boolean(profile.shoeSize)
-        : r.kind === "accessory"
+        : r.kind === "accessory" || r.kind === "jewelry"
           ? profile.accessoryMax > 0
           : profile.clothingMax > 0,
     ).map(async (r) => {
@@ -318,12 +321,14 @@ export async function matchRetailProducts(
         if (piece.role === "shoe") {
           if (retailer.kind !== "shoe" || !isDepartment(p, profile)) return [];
         } else if (piece.role === "accessory") {
-          if (
-            retailer.kind !== "accessory" ||
-            !/bag|tote|purse|satchel|clutch|wallet/i.test(p.title) ||
-            /gift.card|care.kit/i.test(p.title)
-          )
-            return [];
+          const bag = /bag|tote|purse|satchel|clutch|wallet/i;
+          const jewelry = /earrings?|hoops?|necklace|pendant/i;
+          if (retailer.kind === "accessory") {
+            if (!bag.test(piece.name) || !bag.test(p.title) || /gift.card|care.kit/i.test(p.title))
+              return [];
+          } else if (retailer.kind === "jewelry") {
+            if (!jewelry.test(piece.name) || !jewelry.test(p.title)) return [];
+          } else return [];
         } else if (
           retailer.kind !== "clothing" ||
           roleOf(p) !== piece.role ||
@@ -354,7 +359,9 @@ export async function matchRetailProducts(
       url: url.href,
       image: safeImage(
         option.v.featured_image?.src ||
-          (!p.options.some((o) => /colou?r/i.test(o.name) && (o.values?.length ?? 2) > 1)
+          (!p.options.some(
+            (o) => /colou?r|metal|finish/i.test(o.name) && (o.values?.length ?? 2) > 1,
+          )
             ? p.featured_image
             : null),
       ),
@@ -368,7 +375,7 @@ export async function matchRetailProducts(
     total: Math.round(items.reduce((sum, p) => sum + p.price, 0) * 100) / 100,
     currency: profile.currency,
     notice: items.length
-      ? "These are the exact retailer items shown in your capsule. Clothing and shoes were listed as available in your saved size. Bag sizes are retailer options; all selected prices stay within your limits. Taxes, shipping, final stock and fit are confirmed at the retailer. Unmatched pieces remain styling directions, not purchasable products."
+      ? "These are the exact retailer items shown in your capsule. Clothing and shoes were listed as available in your saved size. Accessory sizes are retailer options; all selected prices stay within your limits. Taxes, shipping, final stock and fit are confirmed at the retailer. Unmatched pieces remain styling directions, not purchasable products."
       : "No current variants matched your saved sizes, currency, colors and spending limits. Your guide is intact; Bee has not substituted a different size or exceeded your budget.",
   };
 }

@@ -73,7 +73,10 @@ try {
     ...studioSample,
     capsule: studioSample.capsule.map((p) => ({
       ...p,
-      name: names[p.role],
+      name:
+        p.role === "accessory" && p.name.toLowerCase().includes("hoop")
+          ? "Gold hoop earrings"
+          : names[p.role],
       color: "Client choice",
     })),
   };
@@ -101,7 +104,12 @@ try {
   );
   if (!matches.items.length) throw Error("no_real_products_matched");
   const sources = new Set(matches.items.map((p) => p.retailer));
-  if (!sources.has("Allbirds") || !sources.has("Portland Leather") || !sources.has("tentree"))
+  if (
+    !sources.has("Allbirds") ||
+    !sources.has("Portland Leather") ||
+    !sources.has("tentree") ||
+    !sources.has("PAVOI")
+  )
     throw Error("missing_product_category");
   if (matches.total > profile.totalMax) throw Error("total_budget_exceeded");
   for (const item of matches.items) {

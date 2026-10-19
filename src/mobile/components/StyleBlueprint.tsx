@@ -224,7 +224,7 @@ function RetailItem({ product }: { product: LiveProduct }) {
         )}
       </p>
       <p>
-        {product.color ? `${product.color} · ` : ""}Listed size: {product.size}
+        {product.color ? `${product.color} · ` : ""}Selected size / option: {product.size}
       </p>
       <a className="studio-link" href={product.url} target="_blank" rel="noopener noreferrer">
         Shop this exact item <ArrowRight size={14} />
