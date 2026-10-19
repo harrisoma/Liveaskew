@@ -51,6 +51,7 @@ import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
 import { Route as DotwellKnownOauthProtectedResourceApiMcpRouteImport } from './routes/[.]well-known/oauth-protected-resource/api/mcp'
 import { Route as ApiBeeStyleGuideProductsRouteImport } from './routes/api/bee/style-guide/products'
+import { Route as ApiBeeStyleGuideShopRouteImport } from './routes/api/bee/style-guide/shop'
 import { Route as ApiBeeStyleGuideShoppingProfileRouteImport } from './routes/api/bee/style-guide/shopping-profile'
 import { Route as ApiPublicBuzzCallbackRouteImport } from './routes/api/public/buzz/callback'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -270,6 +271,11 @@ const ApiBeeStyleGuideProductsRoute =
     path: '/products',
     getParentRoute: () => ApiBeeStyleGuideRoute,
   } as any)
+const ApiBeeStyleGuideShopRoute = ApiBeeStyleGuideShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => ApiBeeStyleGuideRoute,
+} as any)
 const ApiBeeStyleGuideShoppingProfileRoute =
   ApiBeeStyleGuideShoppingProfileRouteImport.update({
     id: '/shopping-profile',
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
+  '/api/bee/style-guide/shop': typeof ApiBeeStyleGuideShopRoute
   '/api/bee/style-guide/shopping-profile': typeof ApiBeeStyleGuideShoppingProfileRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -378,6 +385,7 @@ export interface FileRoutesByTo {
   '/api/honey': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
+  '/api/bee/style-guide/shop': typeof ApiBeeStyleGuideShopRoute
   '/api/bee/style-guide/shopping-profile': typeof ApiBeeStyleGuideShoppingProfileRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -426,6 +434,7 @@ export interface FileRoutesById {
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
+  '/api/bee/style-guide/shop': typeof ApiBeeStyleGuideShopRoute
   '/api/bee/style-guide/shopping-profile': typeof ApiBeeStyleGuideShoppingProfileRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -475,6 +484,7 @@ export interface FileRouteTypes {
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
+    | '/api/bee/style-guide/shop'
     | '/api/bee/style-guide/shopping-profile'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/api/honey'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
+    | '/api/bee/style-guide/shop'
     | '/api/bee/style-guide/shopping-profile'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
+    | '/api/bee/style-guide/shop'
     | '/api/bee/style-guide/shopping-profile'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
@@ -915,6 +927,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBeeStyleGuideProductsRouteImport
       parentRoute: typeof ApiBeeStyleGuideRoute
     }
+    '/api/bee/style-guide/shop': {
+      id: '/api/bee/style-guide/shop'
+      path: '/shop'
+      fullPath: '/api/bee/style-guide/shop'
+      preLoaderRoute: typeof ApiBeeStyleGuideShopRouteImport
+      parentRoute: typeof ApiBeeStyleGuideRoute
+    }
     '/api/bee/style-guide/shopping-profile': {
       id: '/api/bee/style-guide/shopping-profile'
       path: '/shopping-profile'
@@ -956,11 +975,13 @@ const DotwellKnownOauthProtectedResourceRouteWithChildren =
 
 interface ApiBeeStyleGuideRouteChildren {
   ApiBeeStyleGuideProductsRoute: typeof ApiBeeStyleGuideProductsRoute
+  ApiBeeStyleGuideShopRoute: typeof ApiBeeStyleGuideShopRoute
   ApiBeeStyleGuideShoppingProfileRoute: typeof ApiBeeStyleGuideShoppingProfileRoute
 }
 
 const ApiBeeStyleGuideRouteChildren: ApiBeeStyleGuideRouteChildren = {
   ApiBeeStyleGuideProductsRoute: ApiBeeStyleGuideProductsRoute,
+  ApiBeeStyleGuideShopRoute: ApiBeeStyleGuideShopRoute,
   ApiBeeStyleGuideShoppingProfileRoute: ApiBeeStyleGuideShoppingProfileRoute,
 }
 

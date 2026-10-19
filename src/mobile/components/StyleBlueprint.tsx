@@ -26,10 +26,12 @@ export function StyleBlueprintDocument({
   guide,
   photo,
   products,
+  liveAccount = false,
 }: {
   guide: Blueprint;
   photo?: string;
   products?: ProductMatches | null;
+  liveAccount?: boolean;
 }) {
   const productFor = (index: number) =>
     products?.items.find((p) => p.pieceId === `piece-${index + 1}`);
@@ -132,7 +134,7 @@ export function StyleBlueprintDocument({
                 {p.role} · {p.color}
               </span>
               <h3>{productFor(i)?.title ?? p.name}</h3>
-              {productFor(i) && <RetailItem product={productFor(i)!} />}
+              {productFor(i) && <RetailItem product={productFor(i)!} liveAccount={liveAccount} />}
               <p>{p.reason}</p>
             </article>
           ))}
@@ -214,7 +216,41 @@ export function StyleBlueprintDocument({
     </div>
   );
 }
-function RetailItem({ product }: { product: LiveProduct }) {
+function RetailItem({
+  product,
+  liveAccount = false,
+}: {
+  product: LiveProduct;
+  liveAccount?: boolean;
+}) {
+  const [checking, setChecking] = useState(false),
+    [error, setError] = useState<string | null>(null);
+  async function shop() {
+    setChecking(true);
+    setError(null);
+    try {
+      const res = await apiFetch("/api/bee/style-guide/shop", {
+        method: "POST",
+        body: JSON.stringify({
+          pieceId: product.pieceId,
+          url: product.url,
+          variantId: product.variantId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok)
+        throw Error(
+          data.error === "retailer_unavailable"
+            ? "The retailer could not confirm availability. Please try again shortly."
+            : "This option no longer matches your saved size, currency or budget. Refresh live products for current options.",
+        );
+      window.location.assign(data.url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "The retailer could not be opened.");
+    } finally {
+      setChecking(false);
+    }
+  }
   return (
     <div className="studio-retail">
       <p>
@@ -226,9 +262,16 @@ function RetailItem({ product }: { product: LiveProduct }) {
       <p>
         {product.color ? `${product.color} · ` : ""}Selected size / option: {product.size}
       </p>
-      <a className="studio-link" href={product.url} target="_blank" rel="noopener noreferrer">
-        Shop this exact item <ArrowRight size={14} />
-      </a>
+      {liveAccount ? (
+        <button className="studio-link" disabled={checking} onClick={() => void shop()}>
+          {checking ? "Checking stock & price…" : "Shop this exact item"} <ArrowRight size={14} />
+        </button>
+      ) : (
+        <a className="studio-link" href={product.url} target="_blank" rel="noopener noreferrer">
+          View retailer item <ArrowRight size={14} />
+        </a>
+      )}
+      {error && <p role="alert">{error}</p>}
     </div>
   );
 }
@@ -436,6 +479,7 @@ export function StyleBlueprint({
         <StyleBlueprintDocument
           guide={guide}
           products={products}
+          liveAccount
           photo={looks.find((l) => l.tryOnUrl)?.tryOnUrl ?? undefined}
         />
       )}

@@ -122,6 +122,25 @@ try {
           ? profile.accessoryMax
           : profile.clothingMax;
     if (item.currency !== profile.currency || item.price > cap) throw Error("price_filter_failed");
+    if (!local) {
+      const checked = await fetch("https://www.liveaskew.com/api/bee/style-guide/shop", {
+        method: "POST",
+        headers: { ...user.headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ pieceId: item.pieceId, url: item.url, variantId: item.variantId }),
+        signal: AbortSignal.timeout(45000),
+      });
+      const verified = await checked.json();
+      if (
+        !checked.ok ||
+        !verified.available ||
+        verified.price !== item.price ||
+        verified.currency !== profile.currency
+      )
+        throw Error(
+          `fresh_shop_recheck_failed_${item.retailer}_${verified.error || checked.status}`,
+        );
+      continue;
+    }
     const { product, variant: actual } = await recheckRetailVariant(item);
     if (!actual || !actual.available || actual.price !== Math.round(item.price * 100))
       throw Error("variant_recheck_failed");
