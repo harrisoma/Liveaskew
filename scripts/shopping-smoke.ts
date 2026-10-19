@@ -117,7 +117,15 @@ try {
     const variant = url.searchParams.get("variant");
     url.search = "";
     url.pathname += ".js";
-    const product = await (await fetch(url)).json();
+    const recheck = await fetch(url, {
+      headers: { Accept: "application/json" },
+      redirect: "error",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!recheck.ok) throw Error(`variant_recheck_http_${recheck.status}_${item.retailer}`);
+    const product = await recheck.json().catch(() => {
+      throw Error(`variant_recheck_not_json_${item.retailer}`);
+    });
     const actual = product.variants.find((v: { id: number }) => String(v.id) === variant);
     if (!actual || !actual.available || actual.price !== Math.round(item.price * 100))
       throw Error("variant_recheck_failed");
