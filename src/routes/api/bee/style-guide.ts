@@ -1,3 +1,4 @@
+import { preferencesFromInterview } from "@/lib/shopping-profile";
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { createHash } from "node:crypto";
@@ -59,9 +60,15 @@ export const Route = createFileRoute("/api/bee/style-guide")({
           .eq("user_id", user)
           .order("created_at", { ascending: false })
           .limit(7);
+        const preferences = {
+          ...preferencesFromInterview(style.interview as Record<string, unknown>),
+          ...Object.fromEntries(
+            Object.entries(parsed.data.preferences).filter(([, value]) => value.trim()),
+          ),
+        };
         const context = {
           consultation: style.interview,
-          preferences: parsed.data.preferences,
+          preferences,
           closet: parsed.data.wardrobe,
           looks: (looks ?? []).map((row) => {
             const l = row.look as Record<string, Json>;
@@ -94,7 +101,7 @@ export const Route = createFileRoute("/api/bee/style-guide")({
             .from("style_blueprints")
             .upsert({
               user_id: user,
-              preferences: parsed.data.preferences as unknown as Json,
+              preferences: preferences as unknown as Json,
               document: document as unknown as Json,
               context_key: hash,
               updated_at: new Date().toISOString(),

@@ -1,3 +1,5 @@
+import { apiFetch } from "./lib/api";
+import { ShoppingBrief } from "./components/ShoppingBrief";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Home, Settings, WifiOff } from "lucide-react";
 import { StyleBlueprint } from "./components/StyleBlueprint";
@@ -19,7 +21,7 @@ import {
   signOut,
 } from "./lib/auth";
 import { currentBeePlatform, platformLabel } from "./lib/platform";
-import { answersFromInterview, interviewOpener, reflectOnAnswer } from "./lib/interview";
+import { INTERVIEW, answersFromInterview, interviewOpener, reflectOnAnswer } from "./lib/interview";
 import { generateLooks } from "./lib/looks";
 import {
   consumeBillingReturn,
@@ -133,7 +135,7 @@ export function MobileApp() {
         authProvider: s.authProvider ?? "email",
         ...(style
           ? {
-              interview: { step: 5, answers: style.interview, completed: true },
+              interview: { step: INTERVIEW.length, answers: style.interview, completed: true },
               onboarding: style.onboarding,
               looks: mergeLooks(s.looks, remoteLooks ?? []),
             }
@@ -478,7 +480,7 @@ export function MobileApp() {
           role: "assistant",
           content: opts.trialEnded
             ? "Your 14 free days have wrapped up. Pick a membership under You to build your seven-day Style Guide."
-            : "Your seven-day Style Guide is ready! Each day has an outfit with Fit, Feel and Fabric notes. Bee is creating all seven outfit previews using your photo, including shoes and accessories. You've got 14 days of as many looks as you like, so have fun.",
+            : "Your Style Guide uses your completed interview. Your seven looks have Fit, Feel and Fabric notes, and Bee is finishing all seven photo previews, including shoes and accessories. You've got 14 days of as many looks as you like, so have fun.",
         },
       ],
     }));
@@ -643,7 +645,7 @@ export function MobileApp() {
               }
               return {
                 ...base,
-                interview: { step: 5, answers: style.interview, completed: true },
+                interview: { step: INTERVIEW.length, answers: style.interview, completed: true },
                 onboarding: style.onboarding,
                 looks: mergeLooks(s.looks, remoteLooks ?? []),
                 phase: s.selfie || remoteLooks?.some((l) => l.guideDay) ? "app" : "selfie",
@@ -664,19 +666,27 @@ export function MobileApp() {
 
       {snap.phase === "interview" && (
         <InterviewScreen
+          step={snap.interview.step}
           messages={snap.messages}
           sending={sending}
           input={input}
           setInput={setInput}
-          onSend={async () => {
-            const value = input.trim();
+          onSend={async (shoppingAnswer?: string) => {
+            const value = shoppingAnswer ?? input.trim();
             if (!value || sending) return;
             setInput("");
             const step = snap.interview.step;
-            const key = ["life", "fit", "feel", "fabric", "goal"][step] ?? `q${step}`;
+            const key = INTERVIEW[step]?.id ?? `q${step}`;
             patch((s) => ({
               ...s,
-              messages: [...s.messages, { id: nid("m"), role: "user", content: value }],
+              messages: [
+                ...s.messages,
+                {
+                  id: nid("m"),
+                  role: "user",
+                  content: key === "shopping" ? "My sizes and shopping limits are saved." : value,
+                },
+              ],
               interview: {
                 ...s.interview,
                 step: step + 1,
@@ -686,7 +696,7 @@ export function MobileApp() {
             setSending(true);
             await new Promise((r) => setTimeout(r, 400));
             const reply = reflectOnAnswer(step, value);
-            const done = step >= 4;
+            const done = step >= INTERVIEW.length - 1;
             patch((s) => ({
               ...s,
               messages: [...s.messages, { id: nid("m"), role: "assistant", content: reply }],
@@ -698,7 +708,7 @@ export function MobileApp() {
             }));
             if (done) {
               const answers = { ...snap.interview.answers, [key]: value };
-              void pushStyle({
+              await pushStyle({
                 interview: answers,
                 onboarding: { ...answersFromInterview(answers), completed: true },
               });
@@ -733,6 +743,16 @@ export function MobileApp() {
             setBuilding(true);
             setGuideError(null);
             try {
+              const interviewSaved = await pushStyle({
+                interview: snap.interview.answers,
+                onboarding: { ...snap.onboarding, completed: true },
+              });
+              if (!interviewSaved) {
+                setGuideError(
+                  "Your interview is saved on this device, but account sync did not finish. Reconnect and select Generate my Style Guide again.",
+                );
+                return;
+              }
               const { looks, source } = await generateLooks({
                 interview: snap.interview.answers,
                 count: 7,
@@ -756,8 +776,25 @@ export function MobileApp() {
                   );
                   return;
                 }
-                startTrial(looks);
                 await queueWeeklyGuide(looks, snap.selfie);
+                const editorial = await apiFetch("/api/bee/style-guide", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    wardrobe: snap.wardrobe
+                      .filter((w) => w.verdict && !w.error)
+                      .map((w) => ({
+                        label: w.label,
+                        verdict: w.verdict,
+                        reason: w.reason || undefined,
+                      })),
+                  }),
+                }).catch(() => null);
+                startTrial(looks);
+                setBeeView("guide");
+                if (!editorial?.ok)
+                  setGuideError(
+                    "Your outfit previews are queued. Open Style Guide and select Generate my Style Guide to retry the editorial guide using your saved interview.",
+                  );
                 setGuideNotice(
                   "Your seven outfit previews are queued. Bee will finish them automatically, even if you close this page.",
                 );
@@ -813,6 +850,7 @@ export function MobileApp() {
           {tab === "bee" && beeView === "guide" && (
             <StyleBlueprint
               wardrobe={snap.wardrobe}
+              notice={guideError}
               looks={snap.looks}
               onLooks={() => setBeeView("looks")}
             />
@@ -1354,43 +1392,53 @@ function VerifyScreen({
 }
 
 function InterviewScreen({
+  step,
   messages,
   sending,
   input,
   setInput,
   onSend,
 }: {
+  step: number;
   messages: ChatMsg[];
   sending: boolean;
   input: string;
   setInput: (v: string) => void;
-  onSend: () => void;
+  onSend: (answer?: string) => void;
 }) {
   return (
     <Screen
       kicker="Bee"
       title="Fit, Feel, Fabric"
       footer={
-        <form
-          className="space-y-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSend();
-          }}
-        >
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={2}
-            placeholder="Tell Bee…"
-            className="neo-input resize-none"
-          />
-          <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
-            Send to Bee
-          </NeoButton>
-        </form>
+        INTERVIEW[step]?.id === "shopping" ? undefined : (
+          <form
+            className="space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSend();
+            }}
+          >
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              rows={2}
+              placeholder="Tell Bee…"
+              className="neo-input resize-none"
+            />
+            <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
+              Send to Bee
+            </NeoButton>
+          </form>
+        )
       }
     >
+      <p className="mb-4 text-sm opacity-70">
+        Interview {Math.min(step + 1, INTERVIEW.length)} of {INTERVIEW.length}
+      </p>
+      {INTERVIEW[step]?.id === "shopping" && (
+        <ShoppingBrief disabled={sending} onComplete={onSend} />
+      )}
       <ul className="flex flex-col gap-2">
         {messages.map((m) => (
           <li
@@ -1427,21 +1475,19 @@ function SelfieScreen({
   return (
     <Screen
       kicker="Your photo"
-      title="Let's see you"
+      title="Your interview is complete"
       footer={
         <NeoButton variant="ink" disabled={!selfie || building} onClick={onContinue}>
-          {building
-            ? "Bee is putting your week together…"
-            : "Build my guide and all seven previews"}
+          {building ? "Bee is putting your week together…" : "Generate my Style Guide"}
         </NeoButton>
       }
     >
       <p className="mb-4 text-sm leading-relaxed">
         Bee styles the body you have. AI previews can make mistakes in likeness, detail and fit.
-        Your Style Guide includes seven complete outfits with shoes and accessories. Use a clear,
-        full-length photo. Building previews sends your photo to Onixus AI and its image provider
-        for all seven looks. Your reference is stored privately for up to 24 hours so Bee can finish
-        even when this page closes, then deleted.
+        Your editorial Style Guide and seven outfits use the interview you just completed. No more
+        questions. Use a clear, full-length photo. Building previews sends your photo to Onixus AI
+        and its image provider for all seven looks. Your reference is stored privately for up to 24
+        hours so Bee can finish even when this page closes, then deleted.
       </p>
       {selfie ? (
         <img

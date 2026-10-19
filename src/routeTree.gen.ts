@@ -49,6 +49,7 @@ import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommen
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
 import { Route as DotwellKnownOauthProtectedResourceApiMcpRouteImport } from './routes/[.]well-known/oauth-protected-resource/api/mcp'
+import { Route as ApiBeeStyleGuideProductsRouteImport } from './routes/api/bee/style-guide/products'
 import { Route as ApiPublicBuzzCallbackRouteImport } from './routes/api/public/buzz/callback'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
@@ -255,6 +256,12 @@ const DotwellKnownOauthProtectedResourceApiMcpRoute =
     path: '/api/mcp',
     getParentRoute: () => DotwellKnownOauthProtectedResourceRoute,
   } as any)
+const ApiBeeStyleGuideProductsRoute =
+  ApiBeeStyleGuideProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => ApiBeeStyleGuideRoute,
+  } as any)
 const ApiPublicBuzzCallbackRoute = ApiPublicBuzzCallbackRouteImport.update({
   id: '/api/public/buzz/callback',
   path: '/api/public/buzz/callback',
@@ -281,7 +288,7 @@ export interface FileRoutesByFullPath {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
-  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRouteWithChildren
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
+  '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -325,7 +333,7 @@ export interface FileRoutesByTo {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
-  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRouteWithChildren
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -352,6 +360,7 @@ export interface FileRoutesByTo {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
+  '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -370,7 +379,7 @@ export interface FileRoutesById {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
-  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRouteWithChildren
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -397,6 +406,7 @@ export interface FileRoutesById {
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
+  '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
   '/api/public/buzz/callback': typeof ApiPublicBuzzCallbackRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
+    | '/api/bee/style-guide/products'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -487,6 +498,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey'
     | '/.well-known/oauth-protected-resource/api/mcp'
+    | '/api/bee/style-guide/products'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   id:
@@ -531,6 +543,7 @@ export interface FileRouteTypes {
     | '/api/wardrobe/analyze'
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
+    | '/api/bee/style-guide/products'
     | '/api/public/buzz/callback'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -549,7 +562,7 @@ export interface RootRouteChildren {
   ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
-  ApiBeeStyleGuideRoute: typeof ApiBeeStyleGuideRoute
+  ApiBeeStyleGuideRoute: typeof ApiBeeStyleGuideRouteWithChildren
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
   ApiBillingPortalRoute: typeof ApiBillingPortalRoute
@@ -861,6 +874,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DotwellKnownOauthProtectedResourceApiMcpRouteImport
       parentRoute: typeof DotwellKnownOauthProtectedResourceRoute
     }
+    '/api/bee/style-guide/products': {
+      id: '/api/bee/style-guide/products'
+      path: '/products'
+      fullPath: '/api/bee/style-guide/products'
+      preLoaderRoute: typeof ApiBeeStyleGuideProductsRouteImport
+      parentRoute: typeof ApiBeeStyleGuideRoute
+    }
     '/api/public/buzz/callback': {
       id: '/api/public/buzz/callback'
       path: '/api/public/buzz/callback'
@@ -893,6 +913,17 @@ const DotwellKnownOauthProtectedResourceRouteWithChildren =
     DotwellKnownOauthProtectedResourceRouteChildren,
   )
 
+interface ApiBeeStyleGuideRouteChildren {
+  ApiBeeStyleGuideProductsRoute: typeof ApiBeeStyleGuideProductsRoute
+}
+
+const ApiBeeStyleGuideRouteChildren: ApiBeeStyleGuideRouteChildren = {
+  ApiBeeStyleGuideProductsRoute: ApiBeeStyleGuideProductsRoute,
+}
+
+const ApiBeeStyleGuideRouteWithChildren =
+  ApiBeeStyleGuideRoute._addFileChildren(ApiBeeStyleGuideRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
@@ -909,7 +940,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeLooksRoute: ApiBeeLooksRoute,
-  ApiBeeStyleGuideRoute: ApiBeeStyleGuideRoute,
+  ApiBeeStyleGuideRoute: ApiBeeStyleGuideRouteWithChildren,
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingInquiryRoute: ApiBillingInquiryRoute,
   ApiBillingPortalRoute: ApiBillingPortalRoute,

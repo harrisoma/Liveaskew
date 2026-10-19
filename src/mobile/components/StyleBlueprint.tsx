@@ -1,15 +1,13 @@
+import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useState } from "react";
 import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight, Footprints } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
 import {
   blueprintSchema,
-  blueprintPreferences,
-  emptyBlueprintPreferences,
   capsuleFormulas,
   retailerSearch,
   type StyleBlueprint as Blueprint,
-  type BlueprintPreferences,
 } from "@/lib/style-blueprint";
 import flatlay from "@/assets/brand/flatlay.webp";
 
@@ -22,8 +20,20 @@ function Notes({ items }: { items: string[] }) {
     </ul>
   );
 }
-export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; photo?: string }) {
-  const formulas = capsuleFormulas(guide.capsule);
+export function StyleBlueprintDocument({
+  guide,
+  photo,
+  products,
+}: {
+  guide: Blueprint;
+  photo?: string;
+  products?: ProductMatches | null;
+}) {
+  const productFor = (index: number) =>
+    products?.items.find((p) => p.pieceId === `piece-${index + 1}`);
+  const formulas = capsuleFormulas(
+    guide.capsule.map((p, i) => ({ ...p, name: productFor(i)?.title ?? p.name })),
+  );
   return (
     <div className="studio-document">
       <header className="studio-hero">
@@ -97,15 +107,18 @@ export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; pho
         <div className="studio-heading">
           <h2>A considered capsule</h2>
           <p>
-            Twelve coordinated pieces, including shoes and accessories. Check your closet before
-            shopping; these are recommendations, not confirmed possessions.
+            Twelve coordinated pieces, including shoes and accessories. Retailer photos show the
+            actual products linked below. Unmatched pieces are styling directions; check your closet
+            before shopping.
           </p>
         </div>
         <div className="studio-capsule">
           {guide.capsule.map((p, i) => (
             <article key={i} id={`piece-${i + 1}`}>
               <div className="studio-piece" style={{ background: p.hex }}>
-                {p.role === "shoe" ? (
+                {productFor(i)?.image ? (
+                  <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
+                ) : p.role === "shoe" ? (
                   <Footprints />
                 ) : p.role === "accessory" ? (
                   <ShoppingBag />
@@ -116,7 +129,8 @@ export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; pho
               <span>
                 {p.role} · {p.color}
               </span>
-              <h3>{p.name}</h3>
+              <h3>{productFor(i)?.title ?? p.name}</h3>
+              {productFor(i) && <RetailItem product={productFor(i)!} />}
               <p>{p.reason}</p>
             </article>
           ))}
@@ -150,8 +164,9 @@ export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; pho
         <div className="studio-heading">
           <h2>Your shopping notes</h2>
           <p>
-            Consider these gaps after your wardrobe review. Retailer links open searches; prices,
-            stock, sizing and specific products have not been verified.
+            Consider these gaps after your wardrobe review. Live, size-and-budget checked products
+            appear in your capsule. The search links below are for further research and are not
+            verified inventory.
           </p>
         </div>
         <div className="studio-columns">
@@ -197,21 +212,56 @@ export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; pho
     </div>
   );
 }
+function RetailItem({ product }: { product: LiveProduct }) {
+  return (
+    <div className="studio-retail">
+      <p>
+        {product.retailer} ·{" "}
+        {new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency }).format(
+          product.price,
+        )}
+      </p>
+      <p>
+        {product.color ? `${product.color} · ` : ""}Listed size: {product.size}
+      </p>
+      <a className="studio-link" href={product.url} target="_blank" rel="noopener noreferrer">
+        Shop this exact item <ArrowRight size={14} />
+      </a>
+    </div>
+  );
+}
 export function StyleBlueprint({
   wardrobe,
   looks,
   onLooks,
+  notice,
 }: {
   wardrobe: WardrobeItem[];
   looks: GuideLook[];
   onLooks: () => void;
+  notice?: string | null;
 }) {
   const [guide, setGuide] = useState<Blueprint | null>(null),
-    [preferences, setPreferences] = useState<BlueprintPreferences>(emptyBlueprintPreferences),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null),
-    [editing, setEditing] = useState(false);
+    [products, setProducts] = useState<ProductMatches | null>(null),
+    [shoppingBusy, setShoppingBusy] = useState(false);
+  async function loadProducts() {
+    setShoppingBusy(true);
+    try {
+      const res = await apiFetch("/api/bee/style-guide/products");
+      if (!res.ok) throw Error();
+      setProducts(await res.json());
+    } catch {
+      setProducts(null);
+      setError(
+        "Live retailer availability could not load. Your guide is safe; select Refresh live products to try again.",
+      );
+    } finally {
+      setShoppingBusy(false);
+    }
+  }
   useEffect(() => {
     let active = true;
     void (async () => {
@@ -219,10 +269,7 @@ export function StyleBlueprint({
         const res = await apiFetch("/api/bee/style-guide");
         if (!res.ok) throw Error();
         const data = await res.json();
-        if (active && data.guide) {
-          setGuide(blueprintSchema.parse(data.guide.document));
-          setPreferences(blueprintPreferences.parse(data.guide.preferences));
-        }
+        if (active && data.guide) setGuide(blueprintSchema.parse(data.guide.document));
       } catch {
         if (active) setError("Your saved guide could not load. Try again when you’re connected.");
       } finally {
@@ -233,6 +280,9 @@ export function StyleBlueprint({
       active = false;
     };
   }, []);
+  useEffect(() => {
+    if (guide) void loadProducts();
+  }, [guide]);
   async function create() {
     if (busy) return;
     setBusy(true);
@@ -241,7 +291,6 @@ export function StyleBlueprint({
       const res = await apiFetch("/api/bee/style-guide", {
         method: "POST",
         body: JSON.stringify({
-          preferences,
           wardrobe: wardrobe
             .filter((w) => w.verdict && !w.error)
             .map((w) => ({ label: w.label, verdict: w.verdict, reason: w.reason || undefined })),
@@ -251,31 +300,20 @@ export function StyleBlueprint({
       if (!res.ok)
         throw Error(
           res.status === 409
-            ? "Finish your interview with Bee before creating your guide."
+            ? "Finish your interview with Bee before generating your guide."
             : res.status === 402
               ? "Choose a membership under You to continue styling."
               : res.status === 429
                 ? "Your styling limit has been reached. Please try again later."
-                : "Bee couldn’t complete the guide. Your existing guide is safe; please try again.",
+                : "Bee couldn’t complete the guide. Your saved interview is ready; please try again.",
         );
       setGuide(blueprintSchema.parse(data.guide.document));
-      setEditing(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "The guide could not be created.");
+      setError(e instanceof Error ? e.message : "The guide could not be generated.");
     } finally {
       setBusy(false);
     }
   }
-  const fields: [keyof BlueprintPreferences, string][] = [
-    ["aesthetic", "Styles you feel drawn to"],
-    ["presence", "How you want to feel and be perceived"],
-    ["coloring", "Your coloring, if you know it"],
-    ["colors", "Colors you love or avoid"],
-    ["proportions", "Fit, coverage and silhouette preferences"],
-    ["measurements", "Sizes or measurements (optional)"],
-    ["occasions", "Your week, climate and occasions"],
-    ["budget", "Your shopping budget and currency"],
-  ];
   return (
     <div className="studio-scroll">
       <div className="studio-toolbar">
@@ -283,13 +321,18 @@ export function StyleBlueprint({
           <BookOpen size={17} /> Your Style Guide
         </span>
         <div>
-          <button onClick={() => setEditing(!editing)} aria-expanded={editing}>
-            {editing ? "Close brief" : "Refine my brief"}
-          </button>
           {guide && (
-            <button onClick={() => window.print()}>
-              <Printer size={15} /> Print / save PDF
-            </button>
+            <>
+              <button disabled={busy} onClick={() => void create()}>
+                {busy ? "Updating your guide…" : "Update from my interview"}
+              </button>
+              <button onClick={() => window.print()}>
+                <Printer size={15} /> Print / save PDF
+              </button>
+              <button disabled={shoppingBusy} onClick={() => void loadProducts()}>
+                {shoppingBusy ? "Checking retailers…" : "Refresh live products"}
+              </button>
+            </>
           )}
           <button onClick={onLooks}>View my looks</button>
         </div>
@@ -299,47 +342,52 @@ export function StyleBlueprint({
           Opening your styling notes…
         </p>
       )}
+      {notice && (
+        <p role="status" className="studio-message">
+          {notice}
+        </p>
+      )}
       {error && (
         <p role="alert" className="studio-message">
           {error}
         </p>
       )}
-      {((!guide && !loading) || editing) && (
+      {!guide && !loading && (
         <div className="studio-brief">
-          <h2>{guide ? "A little more about you" : "Your wardrobe, with a point of view."}</h2>
+          <h2>Your interview is complete.</h2>
           <p>
-            Bee uses your saved interview and wardrobe review to create your editorial guide. Add
-            any details you’d like her to consider.
+            Your style, fit, color preferences and shopping details come from your saved interview.
+            You won’t need to answer another questionnaire.
           </p>
-          <div className="studio-brief-fields">
-            {fields.map(([key, label]) => (
-              <label key={key}>
-                {label}
-                <textarea
-                  value={preferences[key]}
-                  maxLength={500}
-                  rows={2}
-                  onChange={(e) => setPreferences((p) => ({ ...p, [key]: e.target.value }))}
-                />
-              </label>
-            ))}
-          </div>
           <button className="studio-primary" disabled={busy} onClick={() => void create()}>
-            {busy
-              ? "Bee is writing your guide…"
-              : guide
-                ? "Update my Style Guide"
-                : "Create my Style Guide"}
+            {busy ? "Bee is writing your guide…" : "Generate my Style Guide"}
           </button>
-          <p className="studio-fine">
-            Your photo is used for outfit previews in Looks. This guide uses your consultation, not
-            a body or color scan.
-          </p>
         </div>
+      )}
+      {products && (
+        <div className="studio-message">
+          <p>{products.notice}</p>
+          {products.items.length > 0 && (
+            <p className="studio-fine">
+              {products.items.length} live matches ·{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: products.currency,
+              }).format(products.total)}{" "}
+              before tax and shipping · Checked {new Date(products.checkedAt).toLocaleString()}
+            </p>
+          )}
+        </div>
+      )}
+      {shoppingBusy && (
+        <p role="status" className="studio-message">
+          Checking your size, price and availability with retailers…
+        </p>
       )}
       {guide && (
         <StyleBlueprintDocument
           guide={guide}
+          products={products}
           photo={looks.find((l) => l.tryOnUrl)?.tryOnUrl ?? undefined}
         />
       )}

@@ -29,7 +29,25 @@ export const INTERVIEW = [
     id: "goal",
     pillar: "Feel",
     prompt:
-      "Last one! Where should I start dressing you: work, weekends, a special occasion, or just everyday life?",
+      "Where should I start dressing you: work, weekends, a special occasion, or just everyday life?",
+  },
+  {
+    id: "aesthetic",
+    pillar: "Style",
+    prompt:
+      "Which styles feel like you? Tell me the silhouettes, references or outfits you love, and anything you never want to wear.",
+  },
+  {
+    id: "colors",
+    pillar: "Color",
+    prompt:
+      "Which colors do you love or avoid? You can also describe your hair, eyes and undertone if you know them, or say skip. I won’t guess a color season from your photo.",
+  },
+  {
+    id: "shopping",
+    pillar: "Shopping",
+    prompt:
+      "Let’s finish your interview with sizes and shopping limits. Save the details below, then you can generate your Style Guide without another questionnaire.",
   },
 ] as const;
 
@@ -69,7 +87,7 @@ export function answersFromInterview(answers: Record<string, string>): Onboardin
   return {
     fit: mapFit(answers.fit ?? answers.life ?? ""),
     goal: mapGoal(answers.goal ?? answers.life ?? ""),
-    budget: mapBudget(answers.fabric ?? ""),
+    budget: mapBudget(answers.budget ?? ""),
   };
 }
 
@@ -77,9 +95,12 @@ export function reflectOnAnswer(step: number, text: string): string {
   const next = INTERVIEW[step + 1];
   const pillar = INTERVIEW[step]?.pillar ?? "Fit";
   const echo = text.trim().slice(0, 80);
-  const line = `Noted — ${pillar.toLowerCase()} as you said it: “${echo}${text.trim().length > 80 ? "…" : ""}”.`;
+  const line =
+    INTERVIEW[step]?.id === "shopping"
+      ? "Your sizes and shopping limits are saved."
+      : `Noted — ${pillar.toLowerCase()} as you said it: “${echo}${text.trim().length > 80 ? "…" : ""}”.`;
   if (!next) {
-    return `${line} I have enough to build your Style Guide. Next I need a selfie so the looks sit on you — not a retouched stand-in.`;
+    return `${line} Your interview is complete. Add your photo, then select Generate my Style Guide. I’ll create your editorial blueprint and start all seven outfit previews without another questionnaire.`;
   }
   return `${line}\n\n${next.prompt}`;
 }
