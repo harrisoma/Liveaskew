@@ -45,7 +45,7 @@ async function json(url: string, cookie = "", ttl = 60_000): Promise<unknown> {
     redirect: "error",
     signal: AbortSignal.timeout(8000),
   });
-  if (!r.ok) throw Error("retailer_unavailable");
+  if (!r.ok) throw Error(`retailer_http_${r.status}`);
   const length = Number(r.headers.get("content-length") || 0);
   if (length > 2_000_000) throw Error("retailer_response_too_large");
   const text = await r.text();
@@ -202,6 +202,10 @@ async function catalog(retailer: Retailer, profile: ShoppingProfile) {
   const currencyData = z
     .object({ currency: z.string() })
     .parse(await json(`${retailer.origin}/cart.js`, "", 120000));
+  console.info("[retail-source] market", {
+    retailer: retailer.name,
+    currency: currencyData.currency,
+  });
   if (currencyData.currency !== profile.currency) return [];
   const terms =
     retailer.kind === "clothing"
@@ -246,6 +250,7 @@ async function catalog(retailer: Retailer, profile: ShoppingProfile) {
     );
     all.push(...batch.flatMap((r) => (r.status === "fulfilled" ? [r.value] : [])));
   }
+  console.info("[retail-source] catalog", { retailer: retailer.name, products: all.length });
   return all.map((p) => ({ retailer, p }));
 }
 export async function matchRetailProducts(
@@ -269,7 +274,22 @@ export async function matchRetailProducts(
         : r.kind === "accessory"
           ? profile.accessoryMax > 0
           : profile.clothingMax > 0,
-    ).map((r) => catalog(r, profile)),
+    ).map(async (r) => {
+      try {
+        return await catalog(r, profile);
+      } catch (error) {
+        console.warn("[retail-source] unavailable", {
+          retailer: r.name,
+          kind:
+            error instanceof z.ZodError
+              ? "schema"
+              : error instanceof Error
+                ? error.message.slice(0, 90)
+                : "unknown",
+        });
+        return [];
+      }
+    }),
   );
   const products = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
   const items: LiveProduct[] = [];
