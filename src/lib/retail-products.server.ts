@@ -37,24 +37,98 @@ export const productSchema = z.object({
 });
 export type RetailProduct = z.infer<typeof productSchema>;
 const cache = new Map<string, { until: number; value: unknown }>();
-async function json(url: string, cookie = "", ttl = 60_000): Promise<unknown> {
-  const key = url + cookie;
-  const cached = cache.get(key);
-  if (cached && cached.until > Date.now()) return cached.value;
-  const r = await fetch(url, {
-    headers: { Accept: "application/json", ...(cookie ? { Cookie: cookie } : {}) },
-    redirect: "error",
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!r.ok) throw Error(`retailer_http_${r.status}`);
-  const length = Number(r.headers.get("content-length") || 0);
-  if (length > 2_000_000) throw Error("retailer_response_too_large");
-  const text = await r.text();
-  if (text.length > 2_000_000) throw Error("retailer_response_too_large");
-  const value = JSON.parse(text);
-  if (cache.size > 180) cache.clear();
-  cache.set(key, { until: Date.now() + ttl, value });
-  return value;
+const pending = new Map<string, Promise<unknown>>();
+const originQueue = new Map<string, Promise<unknown>>();
+const nextRequest = new Map<string, number>();
+const cooldown = new Map<string, number>();
+const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+async function pacedResponse(url: string): Promise<Response> {
+  const origin = new URL(url).origin;
+  const previous = originQueue.get(origin) ?? Promise.resolve();
+  const current = previous
+    .catch(() => {})
+    .then(async () => {
+      if ((cooldown.get(origin) ?? 0) > Date.now()) throw Error("retailer_cooling_down");
+      await delay(Math.max(0, (nextRequest.get(origin) ?? 0) - Date.now()));
+      try {
+        let response = await fetch(url, {
+          headers: { Accept: "application/json" },
+          redirect: "error",
+          signal: AbortSignal.timeout(8000),
+        });
+        if (response.status === 429) {
+          const raw = response.headers.get("retry-after");
+          const wait = raw
+            ? Number.isFinite(Number(raw))
+              ? Number(raw) * 1000
+              : Date.parse(raw) - Date.now()
+            : 3000;
+          const safeWait = Math.max(2000, wait || 3000);
+          if (safeWait > 15000) {
+            cooldown.set(origin, Date.now() + safeWait);
+            throw Error("retailer_rate_limited");
+          }
+          await delay(safeWait);
+          response = await fetch(url, {
+            headers: { Accept: "application/json" },
+            redirect: "error",
+            signal: AbortSignal.timeout(8000),
+          });
+          if (response.status === 429) {
+            cooldown.set(origin, Date.now() + 30000);
+            throw Error("retailer_rate_limited");
+          }
+        }
+        return response;
+      } finally {
+        nextRequest.set(origin, Date.now() + 1100);
+      }
+    });
+  originQueue.set(
+    origin,
+    current.then(
+      () => {},
+      () => {},
+    ),
+  );
+  return current;
+}
+async function json(url: string, _cookie = "", ttl = 60000): Promise<unknown> {
+  const cached = cache.get(url);
+  if (ttl > 0 && cached && cached.until > Date.now()) return cached.value;
+  const inFlight = pending.get(url);
+  if (inFlight) return inFlight;
+  const run = (async () => {
+    const r = await pacedResponse(url);
+    if (!r.ok) throw Error(`retailer_http_${r.status}`);
+    if (Number(r.headers.get("content-length") || 0) > 2000000)
+      throw Error("retailer_response_too_large");
+    const text = await r.text();
+    if (text.length > 2000000) throw Error("retailer_response_too_large");
+    const value: unknown = JSON.parse(text);
+    if (cache.size > 220) cache.clear();
+    cache.set(url, { until: Date.now() + ttl, value });
+    return value;
+  })();
+  pending.set(url, run);
+  try {
+    return await run;
+  } finally {
+    pending.delete(url);
+  }
+}
+export async function recheckRetailVariant(item: LiveProduct) {
+  const url = new URL(item.url);
+  if (
+    !RETAILERS.some((r) => r.origin === url.origin) ||
+    !/^\/products\/[a-z0-9-]+$/.test(url.pathname)
+  )
+    throw Error("invalid_retailer_url");
+  url.search = "";
+  url.pathname += ".js";
+  const product = productSchema.parse(await json(url.href, "", 0));
+  const variant = product.variants.find((v) => String(v.id) === item.variantId);
+  return { product, variant };
 }
 const searchSchema = z.object({
   resources: z.object({
@@ -258,6 +332,7 @@ async function catalog(retailer: Retailer, profile: ShoppingProfile) {
             ? error.message.slice(0, 70)
             : "unknown",
       );
+      if (error instanceof Error && /rate_limited|cooling_down/.test(error.message)) break;
     }
   }
   if (failures.length)

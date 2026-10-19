@@ -1,3 +1,4 @@
+import { recheckRetailVariant } from "../src/lib/retail-products.server";
 // Private build acceptance: real retailer feeds, disposable users; never log account credentials.
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
@@ -121,20 +122,7 @@ try {
           ? profile.accessoryMax
           : profile.clothingMax;
     if (item.currency !== profile.currency || item.price > cap) throw Error("price_filter_failed");
-    const url = new URL(item.url);
-    const variant = url.searchParams.get("variant");
-    url.search = "";
-    url.pathname += ".js";
-    const recheck = await fetch(url, {
-      headers: { Accept: "application/json" },
-      redirect: "error",
-      signal: AbortSignal.timeout(15000),
-    });
-    if (!recheck.ok) throw Error(`variant_recheck_http_${recheck.status}_${item.retailer}`);
-    const product = await recheck.json().catch(() => {
-      throw Error(`variant_recheck_not_json_${item.retailer}`);
-    });
-    const actual = product.variants.find((v: { id: number }) => String(v.id) === variant);
+    const { product, variant: actual } = await recheckRetailVariant(item);
     if (!actual || !actual.available || actual.price !== Math.round(item.price * 100))
       throw Error("variant_recheck_failed");
     if (role !== "accessory") {
