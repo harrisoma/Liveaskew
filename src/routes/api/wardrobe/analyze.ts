@@ -16,14 +16,18 @@ export const Route = createFileRoute("/api/wardrobe/analyze")({
       POST: async ({ request }) => {
         const caller = await requireApiUser(request);
         if (caller instanceof Response) return caller;
-        const denied = await guardAi(caller, "wardrobe");
-        if (denied) return denied;
         const body = (await request.json().catch(() => ({}))) as Body;
         const photo = body.photoDataUrl?.trim();
-        if (!photo || !photo.startsWith("data:image/")) {
+        if (
+          !photo ||
+          !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(photo) ||
+          photo.length > 4_800_000
+        ) {
           return Response.json({ error: "missing_photo" }, { status: 400 });
         }
 
+        const denied = await guardAi(caller, "wardrobe");
+        if (denied) return denied;
         const sight = await identifyGarmentFromPhoto(photo);
         if (!sight) {
           return Response.json({ error: "vision_unavailable" }, { status: 503 });
@@ -36,6 +40,7 @@ export const Route = createFileRoute("/api/wardrobe/analyze")({
         };
         const judged = wardrobeVerdict(sight, profile);
         return Response.json({
+          category: sight.category,
           label: sight.label,
           type: sight.type,
           fabric: sight.fabric,

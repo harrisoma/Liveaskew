@@ -21,6 +21,7 @@ import { Route as OauthAuthorizeRouteImport } from './routes/oauth/authorize'
 import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as ApiBeeAppRouteImport } from './routes/api/bee/app'
 import { Route as ApiBeeLooksRouteImport } from './routes/api/bee/looks'
+import { Route as ApiBeeStyleGuideRouteImport } from './routes/api/bee/style-guide'
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inquiry'
 import { Route as ApiBillingPortalRouteImport } from './routes/api/billing/portal'
@@ -110,6 +111,11 @@ const ApiBeeAppRoute = ApiBeeAppRouteImport.update({
 const ApiBeeLooksRoute = ApiBeeLooksRouteImport.update({
   id: '/api/bee/looks',
   path: '/api/bee/looks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBeeStyleGuideRoute = ApiBeeStyleGuideRouteImport.update({
+  id: '/api/bee/style-guide',
+  path: '/api/bee/style-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBillingCheckoutRoute = ApiBillingCheckoutRouteImport.update({
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -310,6 +317,7 @@ export interface FileRoutesByTo {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -353,6 +361,7 @@ export interface FileRoutesById {
   '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/bee/app': typeof ApiBeeAppRoute
   '/api/bee/looks': typeof ApiBeeLooksRoute
+  '/api/bee/style-guide': typeof ApiBeeStyleGuideRoute
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/inquiry': typeof ApiBillingInquiryRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/api/account/delete'
     | '/api/bee/app'
     | '/api/bee/looks'
+    | '/api/bee/style-guide'
     | '/api/billing/checkout'
     | '/api/billing/inquiry'
     | '/api/billing/portal'
@@ -524,6 +536,7 @@ export interface RootRouteChildren {
   ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiBeeAppRoute: typeof ApiBeeAppRoute
   ApiBeeLooksRoute: typeof ApiBeeLooksRoute
+  ApiBeeStyleGuideRoute: typeof ApiBeeStyleGuideRoute
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingInquiryRoute: typeof ApiBillingInquiryRoute
   ApiBillingPortalRoute: typeof ApiBillingPortalRoute
@@ -637,6 +650,13 @@ declare module '@tanstack/react-router' {
       path: '/api/bee/looks'
       fullPath: '/api/bee/looks'
       preLoaderRoute: typeof ApiBeeLooksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/bee/style-guide': {
+      id: '/api/bee/style-guide'
+      path: '/api/bee/style-guide'
+      fullPath: '/api/bee/style-guide'
+      preLoaderRoute: typeof ApiBeeStyleGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/billing/checkout': {
@@ -868,6 +888,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiBeeAppRoute: ApiBeeAppRoute,
   ApiBeeLooksRoute: ApiBeeLooksRoute,
+  ApiBeeStyleGuideRoute: ApiBeeStyleGuideRoute,
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingInquiryRoute: ApiBillingInquiryRoute,
   ApiBillingPortalRoute: ApiBillingPortalRoute,

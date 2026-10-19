@@ -8,6 +8,30 @@ export type Database = {
   };
   public: {
     Tables: {
+      style_blueprints: {
+        Row: {
+          user_id: string;
+          preferences: Json;
+          document: Json;
+          context_key: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          preferences?: Json;
+          document: Json;
+          context_key: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          preferences?: Json;
+          document?: Json;
+          context_key?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       ai_calls: {
         Row: {
           created_at: string;
