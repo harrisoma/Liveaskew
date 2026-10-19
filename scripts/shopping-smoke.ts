@@ -34,6 +34,18 @@ async function get(headers: Record<string, string>) {
     ).Route.options.server.handlers.GET({ request } as never);
   return fetch(request);
 }
+async function saveProfile(headers: Record<string, string>, profile: object) {
+  const request = new Request("https://www.liveaskew.com/api/bee/style-guide/shopping-profile", {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify(profile),
+  });
+  return local
+    ? (
+        await import("../src/routes/api/bee/style-guide/shopping-profile")
+      ).Route.options.server.handlers.POST({ request } as never)
+    : fetch(request);
+}
 try {
   console.log("SHOPPING_QA_START");
   const user = await account(),
@@ -74,6 +86,9 @@ try {
     .from("member_style")
     .upsert({ user_id: user.id, interview, onboarding: { completed: true } });
   if (styleSaved.error) throw Error("qa_interview_save_failed");
+  if (!(await saveProfile(user.headers, profile)).ok) throw Error("profile_save_failed");
+  if ((await saveProfile(other.headers, { ...profile, user_id: user.id })).status !== 409)
+    throw Error("profile_ownership_failed");
   const response = await get(user.headers);
   if (!response.ok) throw Error(`shopping_http_${response.status}`);
   const matches = (await response.json()) as ProductMatches;
@@ -117,14 +132,13 @@ try {
   }
   const denied = await get(other.headers);
   if (denied.status !== 409) throw Error("account_isolation_failed");
-  await db
-    .from("member_style")
-    .update({
-      interview: {
-        shopping: JSON.stringify({ ...profile, clothingMax: 0, shoeMax: 0, accessoryMax: 0 }),
-      },
-    })
-    .eq("user_id", user.id);
+  const profileSaved = await saveProfile(user.headers, {
+    ...profile,
+    clothingMax: 0,
+    shoeMax: 0,
+    accessoryMax: 0,
+  });
+  if (!profileSaved.ok) throw Error("profile_update_failed");
   const zero = (await (await get(user.headers)).json()) as ProductMatches;
   if (zero.items.length) throw Error("missing_budget_not_respected");
   console.log(
@@ -140,6 +154,7 @@ try {
       priceCaps: true,
       totalCap: true,
       accountIsolation: true,
+      profileSaveAndOwnership: true,
       missingBudgetReturnsNoMatches: true,
       products: matches.items.map((p) => ({
         pieceId: p.pieceId,

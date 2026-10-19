@@ -49,16 +49,13 @@ try {
       week: "Office weekdays, casual weekends in warm weather.",
       fit: "Relaxed fits, flat shoes, comfortable waistbands.",
       fabric: "Cotton and linen",
+      aesthetic: "Relaxed modern classics",
+      colors: "Navy and ivory",
       budget: "USD 300, reuse existing pieces",
     },
     onboarding: { completed: true, goal: "everyday", fit: "relaxed", budget: "value" },
   });
   const body = {
-    preferences: {
-      aesthetic: "Relaxed modern classics",
-      budget: "USD 300",
-      occasions: "Office, weekend brunch",
-    },
     wardrobe: [
       { label: "Navy cotton shirt", verdict: "keep", reason: "Comfortable everyday staple" },
     ],
@@ -68,6 +65,11 @@ try {
   if (!result.ok) throw Error(`guide_http_${result.status}_${data.error}`);
   const guide = parseBlueprint(JSON.stringify(data.guide.document));
   if (capsuleFormulas(guide.capsule).length !== 20) throw Error("formula_count");
+  if (
+    data.guide.preferences.aesthetic !== "Relaxed modern classics" ||
+    data.guide.preferences.colors !== "Navy and ivory"
+  )
+    throw Error("interview_preferences_not_carried");
   console.log("STUDIO_QA_GUIDE", "6 sections, 12 pieces, 20 formulas PASS");
   const cached = await (await call("/api/bee/style-guide", client.headers, body)).json();
   if (!cached.cached) throw Error("cache_failed");
@@ -80,7 +82,9 @@ try {
     photoDataUrl: "not-an-image",
   });
   if (invalid.status !== 400) throw Error("invalid_photo");
-  for (const name of ["cotton", "jeans", "hoodie", "shoes", "bag"]) {
+  for (const name of process.argv.includes("--guide-only")
+    ? []
+    : ["cotton", "jeans", "hoodie", "shoes", "bag"]) {
     const photoDataUrl =
       "data:image/png;base64," +
       (await readFile(new URL(`./fixtures/${name}.png`, import.meta.url))).toString("base64");
@@ -110,14 +114,14 @@ try {
     "STUDIO_QA_PASS",
     JSON.stringify({
       guideSections: 6,
+      interviewPreferencesReused: true,
       capsule: 12,
       formulas: 20,
       saved: true,
       cached: true,
       accountIsolation: true,
       invalidPhotoRejected: true,
-      shoes: true,
-      accessories: true,
+      closetChecks: !process.argv.includes("--guide-only"),
       transport: local ? "handler" : "production-http",
     }),
   );
