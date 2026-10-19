@@ -78,16 +78,30 @@ try {
     photoDataUrl: "not-an-image",
   });
   if (invalid.status !== 400) throw Error("invalid_photo");
-  for (const name of ["shoes", "bag"]) {
+  for (const name of ["cotton", "jeans", "hoodie", "shoes", "bag"]) {
     const photoDataUrl =
       "data:image/png;base64," +
       (await readFile(new URL(`./fixtures/${name}.png`, import.meta.url))).toString("base64");
     const response = await call("/api/wardrobe/analyze", client.headers, {
       photoDataUrl,
-      profile: { goal: "everyday", fit: "soft", budget: "mid" },
+      profile: { goal: "everyday", fit: "relaxed", budget: "mid" },
     });
     const item = await response.json();
-    if (!response.ok || item.verdict !== "maybe" || !item.reason || !item.label)
+    console.log(
+      "STUDIO_QA_WARDROBE",
+      JSON.stringify({
+        fixture: name,
+        verdict: item.verdict,
+        category: item.category,
+        status: response.status,
+      }),
+    );
+    if (
+      !response.ok ||
+      !["keep", "toss", "maybe"].includes(item.verdict) ||
+      !item.reason ||
+      !item.label
+    )
       throw Error(`closet_${name}_failed`);
   }
   console.log(

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight } from "lucide-react";
+import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight, Footprints } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
 import {
