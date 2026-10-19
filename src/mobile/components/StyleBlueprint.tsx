@@ -1,7 +1,7 @@
 import { ShoppingBrief } from "./ShoppingBrief";
 import type { ShoppingProfile } from "@/lib/shopping-profile";
 import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight, Footprints } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
@@ -279,19 +279,24 @@ export function StyleBlueprint({
       setBusy(false);
     }
   }
+  const productRequest = useRef(0);
   async function loadProducts() {
+    const requestId = ++productRequest.current;
+    setProducts(null);
     setShoppingBusy(true);
     try {
       const res = await apiFetch("/api/bee/style-guide/products");
       if (!res.ok) throw Error();
-      setProducts(await res.json());
+      const matches = await res.json();
+      if (requestId === productRequest.current) setProducts(matches);
     } catch {
+      if (requestId !== productRequest.current) return;
       setProducts(null);
       setError(
         "Live retailer availability could not load. Your guide is safe; select Refresh live products to try again.",
       );
     } finally {
-      setShoppingBusy(false);
+      if (requestId === productRequest.current) setShoppingBusy(false);
     }
   }
   useEffect(() => {
