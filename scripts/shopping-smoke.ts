@@ -92,6 +92,13 @@ try {
   const response = await get(user.headers);
   if (!response.ok) throw Error(`shopping_http_${response.status}`);
   const matches = (await response.json()) as ProductMatches;
+  console.log(
+    "SHOPPING_QA_MATCHES",
+    JSON.stringify({
+      count: matches.items.length,
+      sources: [...new Set(matches.items.map((p) => p.retailer))],
+    }),
+  );
   if (!matches.items.length) throw Error("no_real_products_matched");
   const sources = new Set(matches.items.map((p) => p.retailer));
   if (!sources.has("Allbirds") || !sources.has("Portland Leather") || !sources.has("tentree"))

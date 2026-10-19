@@ -29,7 +29,9 @@ const productSchema = z.object({
   tags: z.array(z.string()).default([]),
   description: z.string().default(""),
   featured_image: z.string().nullish(),
-  options: z.array(z.object({ name: z.string(), position: z.number() })),
+  options: z.array(
+    z.object({ name: z.string(), position: z.number(), values: z.array(z.string()).optional() }),
+  ),
   variants: z.array(variantSchema),
 });
 export type RetailProduct = z.infer<typeof productSchema>;
@@ -98,6 +100,7 @@ export function eligibleVariant(
   role: CapsulePiece["role"],
   profile: ShoppingProfile,
   retailer: Retailer,
+  piece?: CapsulePiece,
 ) {
   const cap =
     role === "shoe"
@@ -116,7 +119,7 @@ export function eligibleVariant(
         : role === "dress"
           ? profile.dressSize
           : profile.topSize;
-  if (role === "accessory") requested = "one";
+  if (role === "accessory") requested = profile.bagSize;
   if (role !== "accessory" && !requested) return null;
   if (role === "shoe") {
     if (
@@ -130,8 +133,14 @@ export function eligibleVariant(
     if (!v.available || v.price <= 0 || v.price > Math.floor(cap * 100)) continue;
     if (sizeOption) {
       const size = v.options[sizeOption.position - 1] || "";
-      if (normalizeSize(size) !== normalizeSize(requested)) continue;
+      if (
+        (role !== "accessory" || (requested && !/^any$/i.test(requested))) &&
+        normalizeSize(size) !== normalizeSize(requested)
+      )
+        continue;
     } else if (role !== "accessory") continue;
+    const color = colorOption ? v.options[colorOption.position - 1] : null;
+    if (piece && productScore(piece, p, color) < 0) continue;
     return {
       v,
       size: sizeOption ? v.options[sizeOption.position - 1] : "Not sized",
@@ -273,14 +282,19 @@ export async function matchRetailProducts(
         if (piece.role === "shoe") {
           if (retailer.kind !== "shoe" || !isDepartment(p, profile)) return [];
         } else if (piece.role === "accessory") {
-          if (retailer.kind !== "accessory") return [];
+          if (
+            retailer.kind !== "accessory" ||
+            !/bag|tote|purse|satchel|clutch|wallet/i.test(p.title) ||
+            /gift.card|care.kit/i.test(p.title)
+          )
+            return [];
         } else if (
           retailer.kind !== "clothing" ||
           roleOf(p) !== piece.role ||
           !isDepartment(p, profile)
         )
           return [];
-        const option = eligibleVariant(p, piece.role, profile, retailer);
+        const option = eligibleVariant(p, piece.role, profile, retailer, piece);
         if (!option || option.v.price > remaining) return [];
         const score = productScore(piece, p, option.color);
         return score < 0 ? [] : [{ retailer, p, option, score }];
@@ -302,7 +316,12 @@ export async function matchRetailProducts(
       price: option.v.price / 100,
       currency: profile.currency,
       url: url.href,
-      image: safeImage(option.v.featured_image?.src || p.featured_image),
+      image: safeImage(
+        option.v.featured_image?.src ||
+          (!p.options.some((o) => /colou?r/i.test(o.name) && (o.values?.length ?? 2) > 1)
+            ? p.featured_image
+            : null),
+      ),
       variantId: String(option.v.id),
       checkedAt,
     });
@@ -313,7 +332,7 @@ export async function matchRetailProducts(
     total: Math.round(items.reduce((sum, p) => sum + p.price, 0) * 100) / 100,
     currency: profile.currency,
     notice: items.length
-      ? "These are the exact retailer items shown in your capsule. Selected variants were listed as available in your saved size and within your limits. Taxes, shipping, final stock and fit are confirmed at the retailer. Unmatched pieces remain styling directions, not purchasable products."
+      ? "These are the exact retailer items shown in your capsule. Clothing and shoes were listed as available in your saved size. Bag sizes are retailer options; all selected prices stay within your limits. Taxes, shipping, final stock and fit are confirmed at the retailer. Unmatched pieces remain styling directions, not purchasable products."
       : "No current variants matched your saved sizes, currency, colors and spending limits. Your guide is intact; Bee has not substituted a different size or exceeded your budget.",
   };
 }

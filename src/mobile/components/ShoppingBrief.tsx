@@ -58,6 +58,7 @@ export function ShoppingBrief({
             ["bottomSize", "Trouser / skirt size"],
             ["dressSize", "Dress size"],
             ["shoeSize", "Shoe size"],
+            ["bagSize", "Bag size preference (optional)"],
           ] as const
         ).map(([key, label]) => (
           <label key={key}>
@@ -66,7 +67,13 @@ export function ShoppingBrief({
               className="neo-input mt-2"
               value={profile[key]}
               maxLength={30}
-              placeholder={key === "shoeSize" ? "For example, 8" : "For example, M or 10"}
+              placeholder={
+                key === "shoeSize"
+                  ? "For example, 8"
+                  : key === "bagSize"
+                    ? "Any, Small, Medium or Large"
+                    : "For example, M or 10"
+              }
               onChange={(e) => change(key, e.target.value)}
             />
           </label>

@@ -7,6 +7,7 @@ export const shoppingProfileSchema = z.object({
   bottomSize: size,
   dressSize: size,
   shoeSize: size,
+  bagSize: size,
   shoeSystem: z.enum(["US-women", "US-men", "UK", "EU"]).default("US-women"),
   clothingMax: z.number().min(0).max(10000).default(0),
   shoeMax: z.number().min(0).max(10000).default(0),
