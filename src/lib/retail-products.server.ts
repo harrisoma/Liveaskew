@@ -21,7 +21,7 @@ const variantSchema = z.object({
   options: z.array(z.string()),
   featured_image: z.object({ src: z.string() }).nullish(),
 });
-const productSchema = z.object({
+export const productSchema = z.object({
   id: z.number(),
   title: z.string(),
   handle: z.string().regex(/^[a-z0-9-]+$/),
@@ -242,14 +242,30 @@ async function catalog(retailer: Retailer, profile: ShoppingProfile) {
     ),
   ].slice(0, 24);
   const all: RetailProduct[] = [];
-  for (let i = 0; i < handles.length; i += 6) {
-    const batch = await Promise.allSettled(
-      handles
-        .slice(i, i + 6)
-        .map(async (h) => productSchema.parse(await json(`${retailer.origin}/products/${h}.js`))),
-    );
-    all.push(...batch.flatMap((r) => (r.status === "fulfilled" ? [r.value] : [])));
+  const failures: string[] = [];
+  // Keep one product request in flight per retailer; several stores throttle bursts.
+  for (const handle of handles) {
+    try {
+      all.push(productSchema.parse(await json(`${retailer.origin}/products/${handle}.js`)));
+    } catch (error) {
+      failures.push(
+        error instanceof z.ZodError
+          ? "schema"
+          : error instanceof Error
+            ? error.message.slice(0, 70)
+            : "unknown",
+      );
+    }
   }
+  if (failures.length)
+    console.warn(
+      "[retail-source] partial",
+      JSON.stringify({
+        retailer: retailer.name,
+        failed: failures.length,
+        examples: [...new Set(failures)].slice(0, 3),
+      }),
+    );
   console.info("[retail-source] catalog", { retailer: retailer.name, products: all.length });
   return all.map((p) => ({ retailer, p }));
 }
