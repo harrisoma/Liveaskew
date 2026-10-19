@@ -2,6 +2,21 @@ import { describe, expect, it } from "vitest";
 import { answersFromInterview, INTERVIEW, looksFromInterview, reflectOnAnswer } from "./interview";
 
 describe("interview", () => {
+  it("collects style, colors and shopping during the first interview, then points directly to generation", () => {
+    expect(INTERVIEW.map((q) => q.id)).toEqual([
+      "life",
+      "fit",
+      "feel",
+      "fabric",
+      "goal",
+      "aesthetic",
+      "colors",
+      "shopping",
+    ]);
+    const final = reflectOnAnswer(INTERVIEW.length - 1, '{"shoeSize":"8","clothingMax":100}');
+    expect(final).toContain("Generate my Style Guide");
+    expect(final).not.toContain("shoeSize");
+  });
   it("covers Fit, Feel, and Fabric in order", () => {
     const pillars = INTERVIEW.map((q) => q.pillar);
     expect(pillars).toContain("Fit");

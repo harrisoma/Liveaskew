@@ -56,10 +56,10 @@ export async function pullStyle(): Promise<SyncedStyle | null> {
   return { interview: (data.interview ?? {}) as Record<string, string>, onboarding };
 }
 
-export async function pushStyle(style: SyncedStyle): Promise<void> {
+export async function pushStyle(style: SyncedStyle): Promise<boolean> {
   const c = await client();
-  if (!c) return;
-  await c.supabase.from("member_style").upsert(
+  if (!c) return false;
+  const { error } = await c.supabase.from("member_style").upsert(
     {
       user_id: c.userId,
       interview: style.interview as Json,
@@ -68,6 +68,7 @@ export async function pushStyle(style: SyncedStyle): Promise<void> {
     },
     { onConflict: "user_id" },
   );
+  return !error;
 }
 
 export async function pullLooks(): Promise<GuideLook[] | null> {

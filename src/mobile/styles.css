@@ -990,3 +990,21 @@ button.neo-raised-sm:active:not(:disabled) {
     overflow: visible !important;
   }
 }
+.studio-piece img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fffefb;
+}
+.studio-retail {
+  padding: 10px 0 12px;
+  border-bottom: 1px solid #ded6c8;
+  margin-bottom: 12px;
+}
+.studio-retail p {
+  margin: 3px 0;
+  font-size: 12px !important;
+}
+.studio-retail .studio-link {
+  margin-top: 8px;
+}
