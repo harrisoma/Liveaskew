@@ -69,13 +69,11 @@ try {
     .from("style_blueprints")
     .upsert({ user_id: user.id, preferences: {}, document, context_key: "shopping-acceptance" });
   if (saved.error) throw Error("qa_guide_save_failed");
-  await db
+  const interview = { shopping: JSON.stringify(profile) };
+  const styleSaved = await db
     .from("member_style")
-    .upsert({
-      user_id: user.id,
-      interview: { shopping: JSON.stringify(profile) },
-      onboarding: { completed: true },
-    });
+    .upsert({ user_id: user.id, interview, onboarding: { completed: true } });
+  if (styleSaved.error) throw Error("qa_interview_save_failed");
   const response = await get(user.headers);
   if (!response.ok) throw Error(`shopping_http_${response.status}`);
   const matches = (await response.json()) as ProductMatches;
