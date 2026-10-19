@@ -509,7 +509,7 @@ export function MobileApp() {
 
   return (
     <div
-      className={`la-app relative flex flex-col ${snap.phase === "app" && tab === "bee" ? "bee-studio" : ""}`}
+      className={`la-app relative flex flex-col ${snap.phase === "interview" || snap.phase === "selfie" || (snap.phase === "app" && tab === "bee") ? "bee-studio" : ""}`}
     >
       {!online && (
         <div
@@ -666,6 +666,7 @@ export function MobileApp() {
 
       {snap.phase === "interview" && (
         <InterviewScreen
+          key={snap.interview.step === INTERVIEW.length - 1 ? "shopping" : "conversation"}
           step={snap.interview.step}
           messages={snap.messages}
           sending={sending}
@@ -1406,6 +1407,10 @@ function InterviewScreen({
   setInput: (v: string) => void;
   onSend: (answer?: string) => void;
 }) {
+  const endRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [messages.length, sending]);
   return (
     <Screen
       kicker="Bee"
@@ -1439,22 +1444,25 @@ function InterviewScreen({
       {INTERVIEW[step]?.id === "shopping" && (
         <ShoppingBrief disabled={sending} onComplete={onSend} />
       )}
-      <ul className="flex flex-col gap-2">
-        {messages.map((m) => (
-          <li
-            key={m.id}
-            className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
-          >
-            {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
-            <p className="whitespace-pre-wrap">{m.content}</p>
-          </li>
-        ))}
-        {sending && (
-          <li>
-            <Skeleton className="h-16" />
-          </li>
-        )}
-      </ul>
+      {INTERVIEW[step]?.id !== "shopping" && (
+        <ul className="flex flex-col gap-2">
+          {messages.map((m) => (
+            <li
+              key={m.id}
+              className={m.role === "user" ? "la-bubble la-bubble-me" : "la-bubble la-bubble-bee"}
+            >
+              {m.role === "assistant" && <p className="la-bubble-name">Bee</p>}
+              <p className="whitespace-pre-wrap">{m.content}</p>
+            </li>
+          ))}
+          {sending && (
+            <li>
+              <Skeleton className="h-16" />
+            </li>
+          )}
+          <li ref={endRef} aria-hidden />
+        </ul>
+      )}
     </Screen>
   );
 }

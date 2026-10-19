@@ -163,6 +163,23 @@ export function productScore(piece: CapsulePiece, p: RetailProduct, color: strin
   const text = [p.title, p.type, ...p.tags, p.description.replace(/<[^>]*>/g, " ")]
     .join(" ")
     .toLowerCase();
+  const direction = piece.name.toLowerCase();
+  const subtypes = [
+    [/loafers?/, /loafers?/],
+    [/boots?/, /boots?/],
+    [/sandals?/, /sandals?/],
+    [/heels?/, /heels?/],
+    [/sneakers?|trainers?|runners?/, /sneakers?|trainers?|runners?/],
+    [/earrings?|hoops?/, /earrings?|hoops?/],
+    [/necklace/, /necklace/],
+    [/crossbody/, /crossbody|cross.body/],
+    [/button.down|button.up/, /button.down|button.up/],
+    [/wide.leg/, /wide.leg/],
+    [/straight.leg/, /straight.leg/],
+    [/midi/, /midi/],
+    [/maxi/, /maxi/],
+  ];
+  if (subtypes.some(([wanted, actual]) => wanted.test(direction) && !actual.test(text))) return -1;
   const material =
     piece.name.toLowerCase().match(/\b(cotton|linen|silk|wool|denim|leather)\b/g) || [];
   if (material.some((m) => !text.includes(m))) return -1;

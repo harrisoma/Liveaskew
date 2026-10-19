@@ -1,3 +1,5 @@
+import { ShoppingBrief } from "./ShoppingBrief";
+import type { ShoppingProfile } from "@/lib/shopping-profile";
 import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useState } from "react";
 import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight, Footprints } from "lucide-react";
@@ -247,6 +249,36 @@ export function StyleBlueprint({
     [error, setError] = useState<string | null>(null),
     [products, setProducts] = useState<ProductMatches | null>(null),
     [shoppingBusy, setShoppingBusy] = useState(false);
+  const [editingInterview, setEditingInterview] = useState(false),
+    [savedProfile, setSavedProfile] = useState<ShoppingProfile | null>(null);
+  async function editInterview() {
+    try {
+      const res = await apiFetch("/api/bee/style-guide/shopping-profile");
+      if (!res.ok) throw Error();
+      const data = await res.json();
+      setSavedProfile(data.profile);
+      setEditingInterview(true);
+    } catch {
+      setError("Your interview details could not load. Please try again.");
+    }
+  }
+  async function saveInterview(value: string) {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await apiFetch("/api/bee/style-guide/shopping-profile", {
+        method: "POST",
+        body: value,
+      });
+      if (!res.ok) throw Error();
+      setEditingInterview(false);
+      await loadProducts();
+    } catch {
+      setError("Your interview details could not save. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
   async function loadProducts() {
     setShoppingBusy(true);
     try {
@@ -321,6 +353,7 @@ export function StyleBlueprint({
           <BookOpen size={17} /> Your Style Guide
         </span>
         <div>
+          <button onClick={() => void editInterview()}>Edit saved sizes & limits</button>
           {guide && (
             <>
               <button disabled={busy} onClick={() => void create()}>
@@ -337,6 +370,16 @@ export function StyleBlueprint({
           <button onClick={onLooks}>View my looks</button>
         </div>
       </div>
+      {editingInterview && (
+        <div>
+          <button onClick={() => setEditingInterview(false)}>Close interview details</button>
+          <ShoppingBrief
+            initialProfile={savedProfile}
+            disabled={busy}
+            onComplete={(value) => void saveInterview(value)}
+          />
+        </div>
+      )}
       {loading && (
         <p role="status" className="studio-message">
           Opening your styling notes…

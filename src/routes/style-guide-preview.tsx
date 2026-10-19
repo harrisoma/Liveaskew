@@ -1,4 +1,6 @@
-import { useState } from "react";
+import type { ProductMatches } from "@/lib/shopping-profile";
+import { ShoppingBrief } from "@/mobile/components/ShoppingBrief";
+import { useEffect, useState } from "react";
 import { WardrobeCard } from "@/mobile/components/LookCard";
 import type { WardrobeItem } from "@/mobile/lib/storage";
 import { createFileRoute } from "@tanstack/react-router";
@@ -15,6 +17,14 @@ export const Route = createFileRoute("/style-guide-preview")({
   component: Preview,
 });
 function Preview() {
+  const [products, setProducts] = useState<ProductMatches | null>(null),
+    [interviewSaved, setInterviewSaved] = useState(false);
+  useEffect(() => {
+    void fetch("/api/public/style-guide-products")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setProducts)
+      .catch(() => {});
+  }, []);
   const [sample, setSample] = useState<WardrobeItem>({
     id: "sample-closet",
     photo: "",
@@ -33,7 +43,21 @@ function Preview() {
         <span>Sample guide · fictional client</span>
         <a href="/app">Open my Bee studio</a>
       </div>
-      <StyleBlueprintDocument guide={studioSample} />
+      <p className="studio-document studio-fine">
+        Live shopping example: fictional US women’s size M, shoes US 6, up to USD 150 per item and
+        USD 1,000 total before tax/shipping. Product availability varies.
+      </p>
+      <StyleBlueprintDocument guide={studioSample} products={products} />
+      <details className="studio-document">
+        <summary>Try the interview’s shopping step</summary>
+        <ShoppingBrief onComplete={() => setInterviewSaved(true)} />
+        {interviewSaved && (
+          <p role="status">
+            Sample interview details saved. In your account, the next step is Generate my Style
+            Guide.
+          </p>
+        )}
+      </details>
       <details className="studio-document">
         <summary>Try a sample wardrobe decision</summary>
         <div style={{ maxWidth: 400, padding: "24px 0" }}>

@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { shoppingProfileSchema, type ShoppingProfile } from "@/lib/shopping-profile";
 export function ShoppingBrief({
+  initialProfile,
   onComplete,
   disabled = false,
 }: {
+  initialProfile?: ShoppingProfile | null;
   onComplete: (value: string) => void;
   disabled?: boolean;
 }) {
-  const [profile, setProfile] = useState<ShoppingProfile>(() => shoppingProfileSchema.parse({}));
+  const [profile, setProfile] = useState<ShoppingProfile>(
+    () => initialProfile ?? shoppingProfileSchema.parse({}),
+  );
   const change = <K extends keyof ShoppingProfile>(key: K, value: ShoppingProfile[K]) =>
     setProfile((p) => ({ ...p, [key]: value }));
   return (
@@ -91,7 +95,7 @@ export function ShoppingBrief({
             ["clothingMax", "Maximum per clothing item"],
             ["shoeMax", "Maximum per pair of shoes"],
             ["accessoryMax", "Maximum per accessory"],
-            ["totalMax", "Total new purchases budget (optional)"],
+            ["totalMax", "Total new purchases budget before tax/shipping (optional)"],
           ] as const
         ).map(([key, label]) => (
           <label key={key}>
