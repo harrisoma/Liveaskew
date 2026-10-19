@@ -70,10 +70,12 @@ export const Route = createFileRoute("/api/bee/style-guide/shop")({
             return Response.json({ error: "product_no_longer_matches" }, { status: 409 });
           if (checked.currency !== profile.currency)
             return Response.json({ error: "currency_changed" }, { status: 409 });
-          target.searchParams.set("currency", profile.currency);
+          const verifiedTarget = new URL(`/products/${checked.product.handle}`, retailer.origin);
+          verifiedTarget.searchParams.set("variant", String(eligible.v.id));
+          verifiedTarget.searchParams.set("currency", profile.currency);
           return Response.json(
             {
-              url: target.href,
+              url: verifiedTarget.href,
               available: true,
               price: eligible.v.price / 100,
               currency: profile.currency,
