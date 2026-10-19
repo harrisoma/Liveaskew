@@ -42,18 +42,16 @@ async function call(path: string, headers: Record<string, string>, body?: object
 }
 try {
   const client = await account();
-  await db
-    .from("member_style")
-    .upsert({
-      user_id: client.id,
-      interview: {
-        week: "Office weekdays, casual weekends in warm weather.",
-        fit: "Relaxed fits, flat shoes, comfortable waistbands.",
-        fabric: "Cotton and linen",
-        budget: "USD 300, reuse existing pieces",
-      },
-      onboarding: { completed: true, goal: "everyday", fit: "relaxed", budget: "value" },
-    });
+  await db.from("member_style").upsert({
+    user_id: client.id,
+    interview: {
+      week: "Office weekdays, casual weekends in warm weather.",
+      fit: "Relaxed fits, flat shoes, comfortable waistbands.",
+      fabric: "Cotton and linen",
+      budget: "USD 300, reuse existing pieces",
+    },
+    onboarding: { completed: true, goal: "everyday", fit: "relaxed", budget: "value" },
+  });
   const body = {
     preferences: {
       aesthetic: "Relaxed modern classics",
@@ -110,7 +108,10 @@ try {
 } finally {
   for (const id of users) {
     const result = await db.auth.admin.deleteUser(id);
-    if (result.error) throw Error("qa_cleanup_failed");
+    if (result.error) {
+      console.error("STUDIO_QA_CLEANUP_FAILED");
+      process.exitCode = 1;
+    }
   }
   console.log("STUDIO_QA_CLEANUP", users.length);
 }

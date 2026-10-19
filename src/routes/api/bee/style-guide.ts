@@ -81,7 +81,7 @@ export const Route = createFileRoute("/api/bee/style-guide")({
         try {
           const gateway = createOnixusAiGatewayProvider(process.env.ONIXUS_AI_API_KEY!);
           const { text } = await generateText({
-            model: gateway("onixus-text"),
+            model: gateway("google/gemini-2.5-flash"),
             system: SYSTEM,
             prompt: JSON.stringify(context),
             maxOutputTokens: 4800,
