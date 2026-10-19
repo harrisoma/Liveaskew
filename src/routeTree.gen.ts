@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as StyleGuidePreviewRouteImport } from './routes/style-guide-preview'
 import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
 import { Route as DotwellKnownOauthProtectedResourceRouteImport } from './routes/[.]well-known/oauth-protected-resource'
 import { Route as ApiGuideRouteImport } from './routes/api/guide'
@@ -64,6 +65,11 @@ const AppRoute = AppRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StyleGuidePreviewRoute = StyleGuidePreviewRouteImport.update({
+  id: '/style-guide-preview',
+  path: '/style-guide-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DotwellKnownOauthAuthorizationServerRoute =
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -308,6 +315,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/privacy': typeof PrivacyRoute
+  '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   '/api/guide': typeof ApiGuideRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -483,6 +494,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/privacy'
+    | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/api/guide'
@@ -527,6 +539,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
   PrivacyRoute: typeof PrivacyRoute
+  StyleGuidePreviewRoute: typeof StyleGuidePreviewRoute
   DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
   DotwellKnownOauthProtectedResourceRoute: typeof DotwellKnownOauthProtectedResourceRouteWithChildren
   ApiGuideRoute: typeof ApiGuideRoute
@@ -587,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/style-guide-preview': {
+      id: '/style-guide-preview'
+      path: '/style-guide-preview'
+      fullPath: '/style-guide-preview'
+      preLoaderRoute: typeof StyleGuidePreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/oauth-authorization-server': {
@@ -877,6 +897,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
   PrivacyRoute: PrivacyRoute,
+  StyleGuidePreviewRoute: StyleGuidePreviewRoute,
   DotwellKnownOauthAuthorizationServerRoute:
     DotwellKnownOauthAuthorizationServerRoute,
   DotwellKnownOauthProtectedResourceRoute:
