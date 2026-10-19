@@ -952,3 +952,41 @@ button.neo-raised-sm:active:not(:disabled) {
     max-height: 300px;
   }
 }
+.bee-studio {
+  color-scheme: light;
+  --bg: #faf8f3;
+  --card: #fffefb;
+  --label: #201d18;
+  --label-2: #625a4c;
+  --label-3: #75664a;
+  --fill: #eee9df;
+  --fill-strong: #e3dbcd;
+  --separator: #d7d0c3;
+  --bar: #faf8f3ed;
+  --font-display: "Iowan Old Style", "Baskerville", Georgia, serif;
+}
+.bee-studio .neo-raised {
+  box-shadow: none;
+  border: 1px solid #ded6c8;
+  border-radius: 8px;
+}
+.bee-studio .la-display {
+  font-weight: 400;
+}
+.bee-studio .la-segmented {
+  background: #eee9df;
+}
+@media (min-width: 900px) {
+  .bee-studio .grid.grid-cols-1.gap-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media print {
+  html,
+  body,
+  #root,
+  .la-web-shell {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
