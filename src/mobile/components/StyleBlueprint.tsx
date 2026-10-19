@@ -105,7 +105,13 @@ export function StyleBlueprintDocument({ guide, photo }: { guide: Blueprint; pho
           {guide.capsule.map((p, i) => (
             <article key={i} id={`piece-${i + 1}`}>
               <div className="studio-piece" style={{ background: p.hex }}>
-                {p.role === "accessory" ? <ShoppingBag /> : <Shirt />}
+                {p.role === "shoe" ? (
+                  <Footprints />
+                ) : p.role === "accessory" ? (
+                  <ShoppingBag />
+                ) : (
+                  <Shirt />
+                )}
               </div>
               <span>
                 {p.role} · {p.color}

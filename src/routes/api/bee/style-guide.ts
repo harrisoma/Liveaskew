@@ -85,6 +85,8 @@ export const Route = createFileRoute("/api/bee/style-guide")({
             system: SYSTEM,
             prompt: JSON.stringify(context),
             maxOutputTokens: 4800,
+            maxRetries: 0,
+            abortSignal: AbortSignal.timeout(120_000),
             temperature: 0.2,
           });
           const document = parseBlueprint(text);

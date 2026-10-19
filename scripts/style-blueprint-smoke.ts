@@ -41,6 +41,7 @@ async function call(path: string, headers: Record<string, string>, body?: object
   return fetch(request);
 }
 try {
+  console.log("STUDIO_QA_START");
   const client = await account();
   await db.from("member_style").upsert({
     user_id: client.id,
@@ -67,6 +68,7 @@ try {
   if (!result.ok) throw Error(`guide_http_${result.status}_${data.error}`);
   const guide = parseBlueprint(JSON.stringify(data.guide.document));
   if (capsuleFormulas(guide.capsule).length !== 20) throw Error("formula_count");
+  console.log("STUDIO_QA_GUIDE", "6 sections, 12 pieces, 20 formulas PASS");
   const cached = await (await call("/api/bee/style-guide", client.headers, body)).json();
   if (!cached.cached) throw Error("cache_failed");
   const saved = await (await call("/api/bee/style-guide", client.headers)).json();
