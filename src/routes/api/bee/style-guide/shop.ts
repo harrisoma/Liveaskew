@@ -9,6 +9,7 @@ import {
   eligibleVariant,
   recheckRetailVariant,
   productScore,
+  retailerProductMatchesPiece,
 } from "@/lib/retail-products.server";
 const input = z.object({
   pieceId: z.string().regex(/^piece-(?:[1-9]|1[0-2])$/),
@@ -55,6 +56,8 @@ export const Route = createFileRoute("/api/bee/style-guide/shop")({
             image: null,
             checkedAt: "",
           });
+          if (!retailerProductMatchesPiece(piece, checked.product, profile, retailer))
+            return Response.json({ error: "product_no_longer_matches" }, { status: 409 });
           if (!checked.variant)
             return Response.json({ error: "product_unavailable" }, { status: 409 });
           const single = { ...checked.product, variants: [checked.variant] };
@@ -65,13 +68,7 @@ export const Route = createFileRoute("/api/bee/style-guide/shop")({
             (profile.totalMax > 0 && eligible.v.price > Math.round(profile.totalMax * 100))
           )
             return Response.json({ error: "product_no_longer_matches" }, { status: 409 });
-          const market = await fetch(`${retailer.origin}/cart.js`, {
-            headers: { Accept: "application/json" },
-            signal: AbortSignal.timeout(10000),
-          });
-          if (!market.ok) return Response.json({ error: "retailer_unavailable" }, { status: 503 });
-          const context = await market.json();
-          if (context.currency !== profile.currency)
+          if (checked.currency !== profile.currency)
             return Response.json({ error: "currency_changed" }, { status: 409 });
           target.searchParams.set("currency", profile.currency);
           return Response.json(

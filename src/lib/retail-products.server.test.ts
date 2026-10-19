@@ -3,6 +3,8 @@ import {
   eligibleVariant,
   productScore,
   safeImage,
+  recheckRetailVariant,
+  retailerProductMatchesPiece,
   RETAILERS,
   type RetailProduct,
 } from "./retail-products.server";
@@ -69,6 +71,52 @@ describe("live shopping constraints", () => {
     expect(productScore(piece, product, "Navy")).toBe(-1);
     expect(productScore({ ...piece, name: "Cotton shirt" }, product, "Pink")).toBe(-1);
     expect(productScore({ ...piece, name: "Cotton shirt" }, product, "Navy")).toBeGreaterThan(0);
+  });
+  it("separates bag dimensions and jewelry options from clothing sizes", () => {
+    const bag = {
+      ...product,
+      title: "Crossbody Bag",
+      options: [
+        { name: "Color", position: 1 },
+        { name: "Size", position: 2 },
+      ],
+      variants: [{ id: 20, options: ["Brown", "Small"], available: true, price: 5000 }],
+    };
+    expect(eligibleVariant(bag, "accessory", profile, RETAILERS[3])?.size).toBe("Small");
+    expect(
+      eligibleVariant(bag, "accessory", { ...profile, bagSize: "Large" }, RETAILERS[3]),
+    ).toBeNull();
+    expect(
+      retailerProductMatchesPiece(
+        {
+          role: "accessory",
+          name: "Gold hoop earrings",
+          color: "Gold",
+          hex: "#bbaa66",
+          reason: "Finish",
+        },
+        bag,
+        profile,
+        RETAILERS[3],
+      ),
+    ).toBe(false);
+  });
+  it("rejects foreign product URLs before any retailer request", async () => {
+    await expect(
+      recheckRetailVariant({
+        pieceId: "piece-1",
+        retailer: "Fake",
+        title: "Item",
+        color: null,
+        size: "M",
+        price: 10,
+        currency: "USD",
+        url: "https://evil.example/products/item",
+        image: null,
+        variantId: "1",
+        checkedAt: "",
+      }),
+    ).rejects.toThrow("invalid_retailer_url");
   });
   it("accepts only secure images on retailer and product CDN hosts", () => {
     expect(safeImage("//cdn.shopify.com/item.jpg")).toBe("https://cdn.shopify.com/item.jpg");

@@ -128,7 +128,10 @@ export async function recheckRetailVariant(item: LiveProduct) {
   url.pathname += ".js";
   const product = productSchema.parse(await json(url.href, "", 0));
   const variant = product.variants.find((v) => String(v.id) === item.variantId);
-  return { product, variant };
+  const market = z
+    .object({ currency: z.string() })
+    .parse(await json(`${url.origin}/cart.js`, "", 60000));
+  return { product, variant, currency: market.currency };
 }
 const searchSchema = z.object({
   resources: z.object({
@@ -169,6 +172,26 @@ function isDepartment(p: RetailProduct, profile: ShoppingProfile) {
   if (profile.department === "unisex") return /unisex|genderless/.test(t);
   if (profile.department === "women") return /\bwomen'?s?\b|female|unisex/.test(t);
   return /\bmen'?s?\b|male|unisex/.test(t) && !/\bwomen/.test(t);
+}
+export function retailerProductMatchesPiece(
+  piece: CapsulePiece,
+  p: RetailProduct,
+  profile: ShoppingProfile,
+  retailer: Retailer,
+) {
+  if (piece.role === "shoe") return retailer.kind === "shoe" && isDepartment(p, profile);
+  if (piece.role === "accessory") {
+    if (retailer.kind === "accessory") {
+      const bag = /bag|tote|purse|satchel|clutch|wallet/i;
+      return bag.test(piece.name) && bag.test(p.title) && !/gift.card|care.kit/i.test(p.title);
+    }
+    if (retailer.kind === "jewelry") {
+      if (/earrings?|hoops?/i.test(piece.name)) return /earrings?|hoops?/i.test(p.title);
+      if (/necklace|pendant/i.test(piece.name)) return /necklace|pendant/i.test(p.title);
+    }
+    return false;
+  }
+  return retailer.kind === "clothing" && roleOf(p) === piece.role && isDepartment(p, profile);
 }
 export function eligibleVariant(
   p: RetailProduct,
@@ -386,6 +409,18 @@ export async function matchRetailProducts(
     }),
   );
   const products = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+  if (
+    !products.length &&
+    (profile.clothingMax > 0 || profile.shoeMax > 0 || profile.accessoryMax > 0)
+  )
+    return {
+      items: [],
+      checkedAt,
+      total: 0,
+      currency: profile.currency,
+      notice:
+        "Retailers could not confirm current inventory in your selected currency. Your guide is safe; refresh live products in a few minutes. No sizes, prices or availability have been assumed.",
+    };
   const items: LiveProduct[] = [];
   const used = new Set<number>();
   let remaining = profile.totalMax > 0 ? Math.floor(profile.totalMax * 100) : Infinity;
@@ -393,23 +428,7 @@ export async function matchRetailProducts(
     const candidates = products
       .flatMap(({ retailer, p }) => {
         if (used.has(p.id)) return [];
-        if (piece.role === "shoe") {
-          if (retailer.kind !== "shoe" || !isDepartment(p, profile)) return [];
-        } else if (piece.role === "accessory") {
-          const bag = /bag|tote|purse|satchel|clutch|wallet/i;
-          const jewelry = /earrings?|hoops?|necklace|pendant/i;
-          if (retailer.kind === "accessory") {
-            if (!bag.test(piece.name) || !bag.test(p.title) || /gift.card|care.kit/i.test(p.title))
-              return [];
-          } else if (retailer.kind === "jewelry") {
-            if (!jewelry.test(piece.name) || !jewelry.test(p.title)) return [];
-          } else return [];
-        } else if (
-          retailer.kind !== "clothing" ||
-          roleOf(p) !== piece.role ||
-          !isDepartment(p, profile)
-        )
-          return [];
+        if (!retailerProductMatchesPiece(piece, p, profile, retailer)) return [];
         const option = eligibleVariant(p, piece.role, profile, retailer, piece);
         if (!option || option.v.price > remaining) return [];
         const score = productScore(piece, p, option.color);
