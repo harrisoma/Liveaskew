@@ -1,3 +1,5 @@
+import { MemberSetupScreen } from "./screens/MemberSetup";
+import { readMemberSetup } from "./lib/member-setup";
 import { apiFetch } from "./lib/api";
 import { ShoppingBrief } from "./components/ShoppingBrief";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -127,11 +129,16 @@ export function MobileApp() {
     void configureNativeChrome();
     setOnline(isOnline());
     const applySession = async (email: string | null) => {
-      const [style, remoteLooks] = await Promise.all([pullStyle(), pullLooks()]);
+      const [style, remoteLooks, memberSetup] = await Promise.all([
+        pullStyle(),
+        pullLooks(),
+        readMemberSetup(),
+      ]);
       setSnap((s) => ({
         ...s,
         email: email ?? s.email,
         verified: true,
+        memberSetup: memberSetup ?? s.memberSetup,
         authProvider: s.authProvider ?? "email",
         ...(style
           ? {
@@ -146,7 +153,9 @@ export function MobileApp() {
               ? s.selfie || remoteLooks?.some((l) => l.guideDay)
                 ? "app"
                 : "selfie"
-              : "interview"
+              : memberSetup
+                ? "interview"
+                : "profile"
             : s.phase,
         messages:
           !style && (s.phase === "auth" || s.phase === "verify")
@@ -159,7 +168,7 @@ export function MobileApp() {
         setTab("you");
         setYouView("membership");
         setTierNotice(
-          "Payment's in, thank you! Your new membership switches on the moment Stripe confirms it.",
+          "You returned from checkout. We’re checking your membership with Stripe; access updates after confirmation.",
         );
         void syncAccount();
       }
@@ -628,7 +637,11 @@ export function MobileApp() {
             }
             void haptic("success");
             // A returning member on a new device: bring back the interview and looks.
-            const [style, remoteLooks] = await Promise.all([pullStyle(), pullLooks()]);
+            const [style, remoteLooks, memberSetup] = await Promise.all([
+              pullStyle(),
+              pullLooks(),
+              readMemberSetup(),
+            ]);
             patch((s) => {
               const base = {
                 ...s,
@@ -639,7 +652,8 @@ export function MobileApp() {
               if (!style) {
                 return {
                   ...base,
-                  phase: "interview",
+                  memberSetup: memberSetup ?? s.memberSetup,
+                  phase: memberSetup ? "interview" : "profile",
                   messages: [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
                 };
               }
@@ -661,6 +675,25 @@ export function MobileApp() {
             });
             if (style) void syncAccount();
           }}
+        />
+      )}
+
+      {snap.phase === "profile" && (
+        <MemberSetupScreen
+          email={snap.email}
+          initial={snap.memberSetup}
+          onDraft={(memberSetup) => patch((s) => ({ ...s, memberSetup }))}
+          onComplete={(memberSetup) =>
+            patch((s) => ({
+              ...s,
+              memberSetup,
+              phone: memberSetup.phone || null,
+              phase: "interview",
+              messages: s.messages.length
+                ? s.messages
+                : [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
+            }))
+          }
         />
       )}
 

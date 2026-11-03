@@ -17,8 +17,8 @@ export async function fetchMembership(): Promise<Membership | null> {
 }
 
 const CHECKOUT_ERRORS: Record<string, string> = {
-  sign_in_required: "Sign in with Google or Apple first, then choose your tier.",
-  unauthorized: "Sign in with Google or Apple first, then choose your tier.",
+  sign_in_required: "Sign in with email, Google or Apple first, then choose your tier.",
+  unauthorized: "Sign in with email, Google or Apple first, then choose your tier.",
   billing_not_configured: "Payments are not switched on in this environment yet.",
   price_missing: "This tier is not on sale yet. Try another, or ask Bee.",
 };
