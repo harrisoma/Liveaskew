@@ -1,9 +1,10 @@
+import type { MemberSetup } from "./member-setup";
 import type { HoneyItem } from "@/lib/honey";
 import type { LookCard, OnboardingAnswers } from "./recommend";
 
 export type AuthProvider = "google" | "apple" | "email";
 export type WardrobeVerdict = "keep" | "toss" | "maybe";
-export type Phase = "auth" | "verify" | "interview" | "selfie" | "app";
+export type Phase = "profile" | "auth" | "verify" | "interview" | "selfie" | "app";
 
 export type ChatMsg = { id: string; role: "user" | "assistant"; content: string };
 
@@ -43,6 +44,7 @@ export type InterviewState = {
 
 export type AppSnapshot = {
   phase: Phase;
+  memberSetup: MemberSetup | null;
   authProvider: AuthProvider | null;
   email: string | null;
   phone: string | null;
@@ -68,6 +70,7 @@ const KEY = "la_mobile_v2";
 
 export const emptySnapshot: AppSnapshot = {
   phase: "auth",
+  memberSetup: null,
   authProvider: null,
   email: null,
   phone: null,
