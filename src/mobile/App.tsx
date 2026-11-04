@@ -1,3 +1,5 @@
+import { SetupProgress } from "./components/SetupProgress";
+import { savedSetupWeek } from "./lib/setup-guide";
 import { AdminWorkspace } from "./screens/AdminWorkspace";
 import { fetchAdminAccess } from "./lib/moderation";
 import { MemberSetupScreen } from "./screens/MemberSetup";
@@ -108,6 +110,7 @@ export function MobileApp() {
   );
   const [modQueue, setModQueue] = useState<ModerationItem[] | null>(null);
   const [building, setBuilding] = useState(false);
+  const [buildStatus, setBuildStatus] = useState("");
   const [guideError, setGuideError] = useState<string | null>(null);
   const [dressingId, setDressingId] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
@@ -702,6 +705,8 @@ export function MobileApp() {
         />
       )}
 
+      <SetupProgress phase={snap.phase} />
+
       {snap.phase === "profile" && (
         <MemberSetupScreen
           email={snap.email}
@@ -796,9 +801,11 @@ export function MobileApp() {
             }
           }}
           building={building}
+          status={buildStatus}
           onContinue={async () => {
             if (!snap.selfie || building) return;
             setBuilding(true);
+            setBuildStatus("Saving your style preferences…");
             setGuideError(null);
             try {
               const interviewSaved = await pushStyle({
@@ -811,10 +818,13 @@ export function MobileApp() {
                 );
                 return;
               }
-              const { looks, source } = await generateLooks({
-                interview: snap.interview.answers,
-                count: 7,
-              });
+              const savedWeek = savedSetupWeek(snap.looks);
+              setBuildStatus(
+                savedWeek ? "Resuming your saved guide…" : "Creating your seven outfits…",
+              );
+              const { looks, source } = savedWeek
+                ? { looks: savedWeek, source: "bee" }
+                : await generateLooks({ interview: snap.interview.answers, count: 7 });
               if (source === "locked") {
                 startTrial([], { trialEnded: true });
                 setGateOpen(true);
@@ -827,6 +837,7 @@ export function MobileApp() {
                   "Bee could not finish all seven days. Your interview and photo are still here. Try building your guide again.",
                 );
               } else {
+                setBuildStatus("Saving your seven outfits…");
                 const saved = await pushLooks(looks);
                 if (!saved) {
                   setGuideError(
@@ -834,7 +845,18 @@ export function MobileApp() {
                   );
                   return;
                 }
-                await queueWeeklyGuide(looks, snap.selfie);
+                // Persist before queueing so a retry does not generate (or charge for) another week.
+                patch((s) => ({ ...s, looks: mergeLooks(s.looks, looks) }));
+                setBuildStatus("Preparing your photo previews…");
+                try {
+                  await queueWeeklyGuide(looks, snap.selfie);
+                } catch {
+                  setGuideError(
+                    "Your seven outfits are saved. Photo previews could not start. Select Generate my Style Guide to retry with these same outfits.",
+                  );
+                  return;
+                }
+                setBuildStatus("Writing your personal Style Guide…");
                 const editorial = await apiFetch("/api/bee/style-guide", {
                   method: "POST",
                   body: JSON.stringify({
@@ -863,6 +885,7 @@ export function MobileApp() {
               );
             } finally {
               setBuilding(false);
+              setBuildStatus("");
             }
           }}
         />
@@ -1466,7 +1489,10 @@ function InterviewScreen({
 }) {
   const endRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+    endRef.current?.scrollIntoView({
+      block: "end",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
   }, [messages.length, sending]);
   return (
     <Screen
@@ -1485,6 +1511,8 @@ function InterviewScreen({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               rows={2}
+              aria-label="Your answer to Bee"
+              disabled={sending}
               placeholder="Tell Bee…"
               className="neo-input resize-none"
             />
@@ -1502,7 +1530,13 @@ function InterviewScreen({
         <ShoppingBrief disabled={sending} onComplete={onSend} />
       )}
       {INTERVIEW[step]?.id !== "shopping" && (
-        <ul className="flex flex-col gap-2">
+        <ul
+          className="flex flex-col gap-2"
+          role="log"
+          aria-label="Style interview"
+          aria-live="polite"
+          aria-relevant="additions"
+        >
           {messages.map((m) => (
             <li
               key={m.id}
@@ -1527,12 +1561,14 @@ function InterviewScreen({
 function SelfieScreen({
   selfie,
   building,
+  status,
   error,
   onPick,
   onContinue,
 }: {
   selfie: string | null;
   building: boolean;
+  status: string;
   error: string | null;
   onPick: (source?: "camera" | "photos") => void;
   onContinue: () => void;
@@ -1554,6 +1590,16 @@ function SelfieScreen({
         and its image provider for all seven looks. Your reference is stored privately for up to 24
         hours so Bee can finish even when this page closes, then deleted.
       </p>
+      {building && (
+        <div className="neo-inset mb-4 p-4" role="status" aria-live="polite" aria-atomic="true">
+          <p className="font-semibold">{status}</p>
+          <p className="mt-2 text-sm">
+            Keep this page open while Bee saves your guide. Photo previews can finish in the
+            background after setup.
+          </p>
+          <Skeleton className="mt-3 h-1.5" />
+        </div>
+      )}
       {selfie ? (
         <img
           src={selfie}
