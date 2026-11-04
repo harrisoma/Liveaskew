@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
+import { shouldSendChat } from "../lib/chat-keyboard";
 import { ArrowUp, LoaderCircle } from "lucide-react";
 
 export function ChatComposer({
@@ -40,10 +41,10 @@ export function ChatComposer({
         className="neo-input resize-none"
         onKeyDown={(event) => {
           if (
-            event.key === "Enter" &&
-            !event.shiftKey &&
-            !event.nativeEvent.isComposing &&
-            window.matchMedia("(hover: hover) and (pointer: fine)").matches
+            shouldSendChat(
+              event.nativeEvent,
+              window.matchMedia("(hover: hover) and (pointer: fine)").matches,
+            )
           ) {
             event.preventDefault();
             event.currentTarget.form?.requestSubmit();
