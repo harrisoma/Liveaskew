@@ -117,6 +117,15 @@ export function MobileApp() {
   const [buzzAccounts, setBuzzAccounts] = useState<BuzzAccounts | null>(null);
   const [signalMode, setSignalMode] = useState(false);
   useEffect(() => {
+    if (!signalMode || snap.phase !== "app") return;
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("native_social")) return;
+    setTab("buzz");
+    for (const key of ["native_social", "provider", "connection_id"]) url.searchParams.delete(key);
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }, [signalMode, snap.phase]);
+
+  useEffect(() => {
     if (snap.phase !== "app") return;
     let cancelled = false;
     void apiFetch("/api/buzz/signal")

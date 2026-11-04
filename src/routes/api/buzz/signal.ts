@@ -6,7 +6,8 @@ async function handle(request: Request) {
   const user = await requireApiUser(request);
   if (user instanceof Response) return user;
   if (user === "preview") return Response.json({ error: "sign_in_required" }, { status: 401 });
-  if (process.env.ONIXUS_SIGNAL_MEMBER_ENABLED !== "true") return Response.json({ enabled: false });
+  if (process.env.ONIXUS_SIGNAL_MEMBER_ENABLED !== "true")
+    return Response.json({ enabled: false }, { status: request.method === "POST" ? 503 : 200 });
   const key = process.env.ONIXUS_SIGNAL_PUBLIC_KEY;
   if (!key) return Response.json({ enabled: true, error: "not_configured" }, { status: 503 });
   let command: { endpoint: string; body: unknown } = {
