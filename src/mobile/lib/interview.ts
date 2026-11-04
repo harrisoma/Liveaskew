@@ -11,7 +11,7 @@ export const INTERVIEW = [
     id: "fit",
     pillar: "Fit",
     prompt:
-      "Love that. Now, how do you like your clothes to fit? Sharp and structured, soft, relaxed, or nipped in at the waist?",
+      "How do you like your clothes to fit? Sharp and structured, soft, relaxed, or nipped in at the waist?",
   },
   {
     id: "feel",
@@ -91,18 +91,14 @@ export function answersFromInterview(answers: Record<string, string>): Onboardin
   };
 }
 
-export function reflectOnAnswer(step: number, text: string): string {
+export function reflectOnAnswer(step: number, _text: string): string {
   const next = INTERVIEW[step + 1];
-  const pillar = INTERVIEW[step]?.pillar ?? "Fit";
-  const echo = text.trim().slice(0, 80);
   const line =
-    INTERVIEW[step]?.id === "shopping"
-      ? "Your sizes and shopping limits are saved."
-      : `Noted — ${pillar.toLowerCase()} as you said it: “${echo}${text.trim().length > 80 ? "…" : ""}”.`;
+    INTERVIEW[step]?.id === "shopping" ? "Your sizes and shopping limits are saved." : "";
   if (!next) {
     return `${line} Your interview is complete. Add your photo, then select Generate my Style Guide. I’ll create your editorial blueprint and start all seven outfit previews without another questionnaire.`;
   }
-  return `${line}\n\n${next.prompt}`;
+  return next.prompt;
 }
 
 export function looksFromInterview(answers: Record<string, string>): LookCard[] {

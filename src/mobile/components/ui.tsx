@@ -22,22 +22,33 @@ export function Screen({
   title,
   children,
   footer,
+  conversation = false,
+  detail,
 }: {
   kicker?: string;
   title?: string;
   children: ReactNode;
   footer?: ReactNode;
+  conversation?: boolean;
+  detail?: ReactNode;
 }) {
+  const heading = (
+    <>
+      {kicker && <p className="la-kicker">{kicker}</p>}
+      {title && (
+        <h1 className="la-display mt-1 text-[2.125rem] leading-[1.1] font-bold">{title}</h1>
+      )}
+      {detail}
+    </>
+  );
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-3">
-        {kicker && <p className="la-kicker">{kicker}</p>}
-        {title && (
-          <h1 className="la-display mt-1 text-[2.125rem] leading-[1.1] font-bold">{title}</h1>
-        )}
-        <div className={title ? "mt-5" : ""}>{children}</div>
+    <div className={`flex min-h-0 flex-1 flex-col ${conversation ? "la-conversation" : ""}`}>
+      {conversation && <header className="la-conversation-header px-5 pt-3 pb-3">{heading}</header>}
+      <div className="la-screen-content min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-3">
+        {!conversation && heading}
+        <div className={!conversation && title ? "mt-5" : ""}>{children}</div>
       </div>
-      {footer && <div className="shrink-0 px-5 pt-2 pb-3">{footer}</div>}
+      {footer && <div className="la-screen-footer shrink-0 px-5 pt-2 pb-3">{footer}</div>}
     </div>
   );
 }
