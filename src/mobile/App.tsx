@@ -1,3 +1,4 @@
+import { INTERVIEW_OPTIONS, addInterviewOption } from "./lib/interview-options";
 import { ChatComposer } from "./components/ChatComposer";
 import { SetupProgress } from "./components/SetupProgress";
 import { savedSetupWeek } from "./lib/setup-guide";
@@ -1570,6 +1571,33 @@ function InterviewScreen({
           {sending && (
             <li>
               <Skeleton className="h-16" />
+            </li>
+          )}
+          {!sending && (
+            <li className="la-answer-options">
+              <p id="interview-options-help" className="mb-2 text-sm la-secondary">
+                Tap ideas to add to your answer, or use your own words. Edit before sending.
+              </p>
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Suggested answers"
+                aria-describedby="interview-options-help"
+              >
+                {(INTERVIEW_OPTIONS[INTERVIEW[step]?.id] ?? []).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className="la-chip"
+                    data-selected={input
+                      .split(/[,;\n]/)
+                      .some((part) => part.trim().toLowerCase() === option.toLowerCase())}
+                    onClick={() => setInput(addInterviewOption(input, option))}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
             </li>
           )}
           <li ref={endRef} aria-hidden />
