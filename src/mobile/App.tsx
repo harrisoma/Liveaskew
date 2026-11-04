@@ -1,3 +1,5 @@
+import { AdminWorkspace } from "./screens/AdminWorkspace";
+import { fetchAdminAccess } from "./lib/moderation";
 import { MemberSetupScreen } from "./screens/MemberSetup";
 import { readMemberSetup } from "./lib/member-setup";
 import { apiFetch } from "./lib/api";
@@ -83,6 +85,7 @@ type BeeView = "guide" | "chat" | "looks" | "reset";
 
 export function MobileApp() {
   const [ready, setReady] = useState(false);
+  const [adminAccess, setAdminAccess] = useState(false);
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
   const snapRef = useRef(snap);
   snapRef.current = snap;
@@ -129,11 +132,13 @@ export function MobileApp() {
     void configureNativeChrome();
     setOnline(isOnline());
     const applySession = async (email: string | null) => {
-      const [style, remoteLooks, memberSetup] = await Promise.all([
+      const [style, remoteLooks, memberSetup, isAdmin] = await Promise.all([
         pullStyle(),
         pullLooks(),
         readMemberSetup(),
+        fetchAdminAccess(),
       ]);
+      setAdminAccess(isAdmin);
       setSnap((s) => ({
         ...s,
         email: email ?? s.email,
@@ -516,6 +521,23 @@ export function MobileApp() {
     );
   }
 
+  if (adminAccess) {
+    return (
+      <AdminWorkspace
+        email={snap.email}
+        onSignOut={async () => {
+          await signOut();
+          setAdminAccess(false);
+          window.localStorage.removeItem("la_mobile_v2");
+          setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
+        }}
+        renderChat={(props) => (
+          <HomeChat {...props} topic={null} onTopic={() => {}} onOpenHive={() => {}} />
+        )}
+      />
+    );
+  }
+
   return (
     <div
       className={`la-app relative flex flex-col ${snap.phase === "interview" || snap.phase === "selfie" || (snap.phase === "app" && tab === "bee") ? "bee-studio" : ""}`}
@@ -637,11 +659,13 @@ export function MobileApp() {
             }
             void haptic("success");
             // A returning member on a new device: bring back the interview and looks.
-            const [style, remoteLooks, memberSetup] = await Promise.all([
+            const [style, remoteLooks, memberSetup, isAdmin] = await Promise.all([
               pullStyle(),
               pullLooks(),
               readMemberSetup(),
+              fetchAdminAccess(),
             ]);
+            setAdminAccess(isAdmin);
             patch((s) => {
               const base = {
                 ...s,

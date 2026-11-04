@@ -18,6 +18,9 @@ export const Route = createFileRoute("/api/hive/moderation")({
       GET: async ({ request }) => {
         const userId = await moderator(request);
         if (userId instanceof Response) return userId;
+        if (new URL(request.url).searchParams.get("access") === "1") {
+          return Response.json({ admin: true }, { headers: { "Cache-Control": "no-store" } });
+        }
         return Response.json({ items: await moderationQueue() });
       },
       POST: async ({ request }) => {
