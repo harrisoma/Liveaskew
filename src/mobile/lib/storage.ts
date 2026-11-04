@@ -43,6 +43,7 @@ export type InterviewState = {
 };
 
 export type AppSnapshot = {
+  buzzSetupDismissed?: boolean;
   phase: Phase;
   memberSetup: MemberSetup | null;
   authProvider: AuthProvider | null;

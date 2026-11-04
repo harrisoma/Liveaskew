@@ -1,3 +1,5 @@
+import { isNativeApp } from "./lib/external";
+import { SignalConnections } from "./screens/SignalConnections";
 import { MemberSetupScreen } from "./screens/MemberSetup";
 import { readMemberSetup } from "./lib/member-setup";
 import { apiFetch } from "./lib/api";
@@ -114,6 +116,32 @@ export function MobileApp() {
   const [shareLook, setShareLook] = useState<GuideLook | null>(null);
   const [guideNotice, setGuideNotice] = useState<string | null>(null);
   const [buzzAccounts, setBuzzAccounts] = useState<BuzzAccounts | null>(null);
+  const [signalMode, setSignalMode] = useState(false);
+  useEffect(() => {
+    if (!signalMode || snap.phase !== "app") return;
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("native_social")) return;
+    setTab("buzz");
+    for (const key of ["native_social", "provider", "connection_id"]) url.searchParams.delete(key);
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }, [signalMode, snap.phase]);
+
+  useEffect(() => {
+    if (snap.phase !== "app") return;
+    let cancelled = false;
+    void isNativeApp()
+      .then((native) =>
+        native ? { enabled: false } : apiFetch("/api/buzz/signal").then((r) => r.json()),
+      )
+      .then((data) => {
+        if (!cancelled) setSignalMode(data.enabled === true);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [snap.phase]);
+
   const [buzzNotice, setBuzzNotice] = useState<string | null>(null);
   const [buzzBusy, setBuzzBusy] = useState<string | null>(null);
   const [emailDraft, setEmailDraft] = useState("");
@@ -846,6 +874,29 @@ export function MobileApp() {
 
       {snap.phase === "app" && (
         <>
+          {tab === "today" && signalMode && !snap.buzzSetupDismissed && (
+            <section className="neo-raised mx-5 mb-3 p-4" aria-label="Optional social setup">
+              <h2 className="font-semibold">Your style, ready to share</h2>
+              <p className="mt-2 text-sm">
+                Connect your socials to Buzz through Onixus Signal. You can do this anytime.
+              </p>
+              <NeoButton
+                className="mt-3"
+                onClick={() => {
+                  patch((s) => ({ ...s, buzzSetupDismissed: true }));
+                  setTab("buzz");
+                }}
+              >
+                Connect your socials
+              </NeoButton>
+              <NeoButton
+                className="mt-2"
+                onClick={() => patch((s) => ({ ...s, buzzSetupDismissed: true }))}
+              >
+                Skip for now
+              </NeoButton>
+            </section>
+          )}
           {tab === "today" && (
             <TodayScreen
               now={new Date()}
@@ -1102,7 +1153,8 @@ export function MobileApp() {
               }}
             />
           )}
-          {tab === "buzz" && (
+          {tab === "buzz" && signalMode && <SignalConnections />}
+          {tab === "buzz" && !signalMode && (
             <BuzzScreen
               looks={snap.looks}
               posts={snap.honey.filter((h) => h.kind === "post")}

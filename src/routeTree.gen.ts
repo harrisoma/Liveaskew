@@ -28,6 +28,7 @@ import { Route as ApiBillingInquiryRouteImport } from './routes/api/billing/inqu
 import { Route as ApiBillingPortalRouteImport } from './routes/api/billing/portal'
 import { Route as ApiBillingStatusRouteImport } from './routes/api/billing/status'
 import { Route as ApiBuzzConnectRouteImport } from './routes/api/buzz/connect'
+import { Route as ApiBuzzSignalRouteImport } from './routes/api/buzz/signal'
 import { Route as ApiBuzzConnectionsRouteImport } from './routes/api/buzz/connections'
 import { Route as ApiBuzzFinishRouteImport } from './routes/api/buzz/finish'
 import { Route as ApiBuzzPublishRouteImport } from './routes/api/buzz/publish'
@@ -151,6 +152,11 @@ const ApiBillingStatusRoute = ApiBillingStatusRouteImport.update({
 const ApiBuzzConnectRoute = ApiBuzzConnectRouteImport.update({
   id: '/api/buzz/connect',
   path: '/api/buzz/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBuzzSignalRoute = ApiBuzzSignalRouteImport.update({
+  id: '/api/buzz/signal',
+  path: '/api/buzz/signal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBuzzConnectionsRoute = ApiBuzzConnectionsRouteImport.update({
@@ -314,6 +320,7 @@ export interface FileRoutesByFullPath {
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/signal': typeof ApiBuzzSignalRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
@@ -362,6 +369,7 @@ export interface FileRoutesByTo {
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/signal': typeof ApiBuzzSignalRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
@@ -411,6 +419,7 @@ export interface FileRoutesById {
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/status': typeof ApiBillingStatusRoute
   '/api/buzz/connect': typeof ApiBuzzConnectRoute
+  '/api/buzz/signal': typeof ApiBuzzSignalRoute
   '/api/buzz/connections': typeof ApiBuzzConnectionsRoute
   '/api/buzz/finish': typeof ApiBuzzFinishRoute
   '/api/buzz/publish': typeof ApiBuzzPublishRoute
@@ -461,6 +470,7 @@ export interface FileRouteTypes {
     | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
+    | '/api/buzz/signal'
     | '/api/buzz/connections'
     | '/api/buzz/finish'
     | '/api/buzz/publish'
@@ -509,6 +519,7 @@ export interface FileRouteTypes {
     | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
+    | '/api/buzz/signal'
     | '/api/buzz/connections'
     | '/api/buzz/finish'
     | '/api/buzz/publish'
@@ -557,6 +568,7 @@ export interface FileRouteTypes {
     | '/api/billing/portal'
     | '/api/billing/status'
     | '/api/buzz/connect'
+    | '/api/buzz/signal'
     | '/api/buzz/connections'
     | '/api/buzz/finish'
     | '/api/buzz/publish'
@@ -606,6 +618,7 @@ export interface RootRouteChildren {
   ApiBillingPortalRoute: typeof ApiBillingPortalRoute
   ApiBillingStatusRoute: typeof ApiBillingStatusRoute
   ApiBuzzConnectRoute: typeof ApiBuzzConnectRoute
+  ApiBuzzSignalRoute: typeof ApiBuzzSignalRoute
   ApiBuzzConnectionsRoute: typeof ApiBuzzConnectionsRoute
   ApiBuzzFinishRoute: typeof ApiBuzzFinishRoute
   ApiBuzzPublishRoute: typeof ApiBuzzPublishRoute
@@ -764,6 +777,13 @@ declare module '@tanstack/react-router' {
       path: '/api/buzz/connect'
       fullPath: '/api/buzz/connect'
       preLoaderRoute: typeof ApiBuzzConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/buzz/signal': {
+      id: '/api/buzz/signal'
+      path: '/api/buzz/signal'
+      fullPath: '/api/buzz/signal'
+      preLoaderRoute: typeof ApiBuzzSignalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/buzz/connections': {
@@ -1010,6 +1030,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBillingPortalRoute: ApiBillingPortalRoute,
   ApiBillingStatusRoute: ApiBillingStatusRoute,
   ApiBuzzConnectRoute: ApiBuzzConnectRoute,
+  ApiBuzzSignalRoute: ApiBuzzSignalRoute,
   ApiBuzzConnectionsRoute: ApiBuzzConnectionsRoute,
   ApiBuzzFinishRoute: ApiBuzzFinishRoute,
   ApiBuzzPublishRoute: ApiBuzzPublishRoute,
