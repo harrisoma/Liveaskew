@@ -1225,3 +1225,17 @@ button.neo-raised-sm:active:not(:disabled) {
     -webkit-backdrop-filter: none;
   }
 }
+
+.la-answer-options {
+  list-style: none;
+  padding: 8px 0 16px;
+}
+.la-answer-options .la-chip {
+  font-size: 14px;
+  background: var(--card);
+  border: 1px solid var(--separator);
+}
+.la-answer-options .la-chip[data-selected="true"] {
+  border-color: var(--gold);
+  color: var(--gold);
+}
