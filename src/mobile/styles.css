@@ -1008,3 +1008,137 @@ button.neo-raised-sm:active:not(:disabled) {
 .studio-retail .studio-link {
   margin-top: 8px;
 }
+
+/* LiveAskew glass: light-catching navigation, quiet content surfaces. */
+.la-app {
+  background: var(--bg);
+}
+.la-topbar {
+  min-height: 64px;
+}
+.la-topbar > button {
+  min-height: 44px;
+}
+.neo-icon-btn {
+  width: 44px;
+  height: 44px;
+}
+.la-tabbar {
+  margin: 6px 12px max(env(safe-area-inset-bottom), 10px);
+  padding: 6px;
+  border: 1px solid var(--separator);
+  border-radius: 28px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.08);
+}
+.la-tabbar button {
+  min-height: 52px;
+  border-radius: 22px;
+  gap: 3px;
+  font-size: 11px;
+  transition: background-color 160ms ease;
+}
+.la-tabbar button[aria-current="page"] {
+  background: var(--card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.la-text-action,
+.la-chip,
+.la-segmented button {
+  min-height: 44px;
+}
+.la-text-action {
+  padding: 8px 4px;
+}
+.la-today-intro {
+  margin-top: 10px;
+  color: var(--label-2);
+  line-height: 1.5;
+}
+.la-today .la-kicker {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.la-today .la-hero {
+  border-radius: 28px;
+}
+.la-today-shortcuts > button {
+  border-radius: 20px;
+}
+.la-chat-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px;
+  background: var(--bar);
+  border: 1px solid var(--separator);
+  border-radius: 24px;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+.la-chat-composer textarea {
+  min-width: 0;
+  background: transparent;
+  line-height: 1.5;
+}
+.la-chat-composer .neo-btn {
+  width: auto;
+  min-width: 68px;
+  min-height: 44px;
+  border-radius: 18px;
+}
+.la-chat-topics {
+  margin-top: 16px;
+  color: var(--label-2);
+}
+.la-chat-topics summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 10px 0;
+  font-size: 15px;
+}
+.la-chat-messages {
+  padding: 8px 0 16px;
+}
+.la-bubble {
+  line-height: 1.55;
+  padding: 12px 16px;
+  overflow-wrap: anywhere;
+}
+.neo-input::placeholder {
+  color: var(--label-2);
+}
+@media (min-width: 960px) {
+  .la-tabbar {
+    width: min(640px, calc(100% - 48px));
+    align-self: center;
+  }
+  .la-today {
+    width: 100%;
+    margin-inline: auto;
+  }
+  .la-today-shortcuts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .la-chat-composer,
+  .la-chat-messages {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .la-tabbar button,
+  .la-segmented button,
+  .neo-btn {
+    transition: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .la-tabbar,
+  .la-chat-composer {
+    background: var(--card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

@@ -1588,13 +1588,14 @@ function HomeChat({
       title={topic ? TALK_GUIDES[topic].label : "Your stylist"}
       footer={
         <form
-          className="space-y-3"
+          className="la-chat-composer"
           onSubmit={(e) => {
             e.preventDefault();
-            onSend();
+            if (!sending && input.trim()) onSend();
           }}
         >
           <textarea
+            aria-label="Message Bee"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
@@ -1603,43 +1604,46 @@ function HomeChat({
             }
             className="neo-input resize-none"
           />
-          <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
-            Send to Bee
+          <NeoButton type="submit" variant="gold" disabled={sending || !input.trim()}>
+            {sending ? "Sending…" : "Send"}
           </NeoButton>
         </form>
       }
     >
       <section aria-label="Real Talk" className="mb-4">
-        {!topic && <p className="la-kicker">Real Talk</p>}
+        {!topic && <p className="la-kicker">Made for your everyday</p>}
         <p className="mt-1 text-[15px] opacity-70">
           {topic
             ? TALK_GUIDES[topic].blurb
-            : "Bee asks the questions most people skip. Pick whatever's on your mind."}
+            : "Tell Bee where you’re going, how you want to feel, and what’s in your wardrobe."}
         </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {TALK_TOPICS.map((t) => (
-            <button
-              key={t}
-              type="button"
-              aria-pressed={topic === t}
-              disabled={sending}
-              className="la-chip"
-              onClick={() => onTopic(t)}
-            >
-              {TALK_GUIDES[t].label}
-            </button>
-          ))}
-          {topic && (
-            <button
-              type="button"
-              className="px-2 py-2 text-[15px] font-medium"
-              style={{ color: "var(--gold)" }}
-              onClick={() => onTopic(null)}
-            >
-              Back to styling
-            </button>
-          )}
-        </div>
+        <details className="la-chat-topics" open={topic !== null || undefined}>
+          <summary>More ways to talk with Bee</summary>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {TALK_TOPICS.map((t) => (
+              <button
+                key={t}
+                type="button"
+                aria-pressed={topic === t}
+                disabled={sending}
+                className="la-chip"
+                onClick={() => onTopic(t)}
+              >
+                {TALK_GUIDES[t].label}
+              </button>
+            ))}
+            {topic && (
+              <button
+                type="button"
+                className="px-2 py-2 text-[15px] font-medium"
+                style={{ color: "var(--gold)" }}
+                onClick={() => onTopic(null)}
+              >
+                Back to styling
+              </button>
+            )}
+          </div>
+        </details>
         {topic && (
           <p className="mt-3 text-xs leading-relaxed opacity-70">
             Bee's a great listener, but she isn't a therapist. In danger or crisis? Call or text
@@ -1650,7 +1654,12 @@ function HomeChat({
           </p>
         )}
       </section>
-      <ul className="flex flex-col gap-2">
+      <ul
+        className="la-chat-messages flex flex-col gap-2"
+        aria-label="Conversation with Bee"
+        aria-live="polite"
+        aria-relevant="additions text"
+      >
         {messages.map((m) => (
           <li
             key={m.id}
@@ -1661,8 +1670,8 @@ function HomeChat({
           </li>
         ))}
         {sending && (
-          <li>
-            <Skeleton className="h-16" />
+          <li className="la-bubble la-bubble-bee" role="status">
+            Bee is thinking…
           </li>
         )}
         <li ref={listEnd} aria-hidden />
