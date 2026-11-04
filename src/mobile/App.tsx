@@ -88,6 +88,7 @@ type BeeView = "guide" | "chat" | "looks" | "reset";
 export function MobileApp() {
   const [ready, setReady] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [customerView, setCustomerView] = useState(false);
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
   const snapRef = useRef(snap);
   snapRef.current = snap;
@@ -527,13 +528,15 @@ export function MobileApp() {
     );
   }
 
-  if (adminAccess) {
+  if (adminAccess && !customerView) {
     return (
       <AdminWorkspace
         email={snap.email}
+        onOpenCustomer={() => setCustomerView(true)}
         onSignOut={async () => {
           await signOut();
           setAdminAccess(false);
+          setCustomerView(false);
           window.localStorage.removeItem("la_mobile_v2");
           setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
         }}
@@ -548,6 +551,24 @@ export function MobileApp() {
     <div
       className={`la-app relative flex flex-col ${snap.phase === "interview" || snap.phase === "selfie" || (snap.phase === "app" && tab === "bee") ? "bee-studio" : ""}`}
     >
+      {adminAccess && customerView && (
+        <div
+          className="la-workspace-switch mx-5 mt-3 mb-2 flex shrink-0 items-center justify-between gap-3 neo-inset px-3 py-2"
+          aria-label="Workspace switcher"
+        >
+          <div className="min-w-0">
+            <p className="text-sm font-semibold">Customer view</p>
+            <p className="text-xs opacity-70">Your account · Live activity</p>
+          </div>
+          <NeoButton
+            className="shrink-0 px-3 text-sm"
+            disabled={building || sending}
+            onClick={() => setCustomerView(false)}
+          >
+            Back to Admin
+          </NeoButton>
+        </div>
+      )}
       {!online && (
         <div
           className="mx-5 mt-3 flex items-center gap-2 neo-inset px-3 py-2 text-sm"
@@ -1304,6 +1325,8 @@ export function MobileApp() {
               onModeration={() => setYouView("moderation")}
               onReset={() => {
                 void signOut();
+                setAdminAccess(false);
+                setCustomerView(false);
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
                 setTab("today");
@@ -1313,6 +1336,8 @@ export function MobileApp() {
                 const err = await deleteMyAccount();
                 if (err) return err;
                 await signOut();
+                setAdminAccess(false);
+                setCustomerView(false);
                 window.localStorage.removeItem("la_mobile_v2");
                 setSnap({ ...emptySnapshot, lastActiveAt: new Date().toISOString() });
                 setTab("today");

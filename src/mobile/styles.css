@@ -1142,3 +1142,8 @@ button.neo-raised-sm:active:not(:disabled) {
     -webkit-backdrop-filter: none;
   }
 }
+
+.la-workspace-switch .neo-btn {
+  width: auto;
+  min-height: 44px;
+}

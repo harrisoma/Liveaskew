@@ -15,10 +15,12 @@ type PreviewChatProps = {
 export function AdminWorkspace({
   email,
   onSignOut,
+  onOpenCustomer,
   renderChat,
 }: {
   email: string | null;
   onSignOut: () => Promise<void>;
+  onOpenCustomer: () => void;
   renderChat: (props: PreviewChatProps) => ReactNode;
 }) {
   const [view, setView] = useState<"home" | "today" | "bee" | "moderation">("home");
@@ -95,8 +97,23 @@ export function AdminWorkspace({
             Signed in{email ? ` as ${email}` : ""}. Your administrator access is verified by the
             server.
           </p>
-          <section className="mt-6 space-y-3" aria-label="Admin tools">
-            <NeoButton variant="gold" disabled={busy} onClick={() => void openModeration()}>
+          <section className="mt-6 neo-inset p-4" aria-label="Your customer experience">
+            <h2 className="text-lg font-semibold">Use LiveAskew as yourself</h2>
+            <p className="mt-2 mb-4 text-sm leading-relaxed">
+              Complete your style setup, talk to Bee, and use your own Style Guide with this
+              account. Your preferences and activity are saved. Normal trial and membership rules
+              apply.
+            </p>
+            <NeoButton variant="gold" onClick={onOpenCustomer}>
+              Switch to customer view
+            </NeoButton>
+            <p className="mt-3 text-xs opacity-70">
+              Return here with Back to Admin. Switching views does not start a trial or
+              subscription.
+            </p>
+          </section>
+          <section className="mt-5 space-y-3" aria-label="Admin tools">
+            <NeoButton disabled={busy} onClick={() => void openModeration()}>
               {busy ? "Loading reports…" : "Review Hive reports"}
             </NeoButton>
             <NeoButton
@@ -105,7 +122,7 @@ export function AdminWorkspace({
                 setView("today");
               }}
             >
-              Preview Today and Bee
+              Preview sample screens
             </NeoButton>
             <a className="neo-btn" href="/" target="_blank" rel="noreferrer">
               View marketing website
