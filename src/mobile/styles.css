@@ -573,14 +573,7 @@ button.neo-raised-sm:active:not(:disabled) {
   margin-top: 10px;
 }
 
-/* Bee's studio: a quiet editorial canvas around the client's wardrobe. */
-.bee-studio {
-  --surface: #faf8f3;
-  --ink: #201d18;
-  --gold: #84662c;
-  background: #faf8f3;
-  color: #201d18;
-}
+/* The Style Guide document keeps its own editorial canvas. */
 .studio-scroll {
   flex: 1;
   min-height: 0;
@@ -951,30 +944,6 @@ button.neo-raised-sm:active:not(:disabled) {
   .studio-hero img {
     max-height: 300px;
   }
-}
-.bee-studio {
-  color-scheme: light;
-  --bg: #faf8f3;
-  --card: #fffefb;
-  --label: #201d18;
-  --label-2: #625a4c;
-  --label-3: #75664a;
-  --fill: #eee9df;
-  --fill-strong: #e3dbcd;
-  --separator: #d7d0c3;
-  --bar: #faf8f3ed;
-  --font-display: "Iowan Old Style", "Baskerville", Georgia, serif;
-}
-.bee-studio .neo-raised {
-  box-shadow: none;
-  border: 1px solid #ded6c8;
-  border-radius: 8px;
-}
-.bee-studio .la-display {
-  font-weight: 400;
-}
-.bee-studio .la-segmented {
-  background: #eee9df;
 }
 @media (min-width: 900px) {
   .bee-studio .grid.grid-cols-1.gap-4 {
