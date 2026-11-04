@@ -18,6 +18,32 @@ describe("member setup", () => {
       expect(memberSetupSchema.safeParse({ ...profile, ...invalid }).success).toBe(false);
     }
   });
+  it.each([
+    ["(305) 555-0123", "+13055550123"],
+    ["305-555-0123", "+13055550123"],
+    ["1 (305) 555-0123", "+13055550123"],
+    ["+44 20 7946 0958", "+442079460958"],
+    ["+33 (1) 42 68 53 00", "+33142685300"],
+    ["  ", ""],
+  ])("normalizes %s without losing country information", (phone, expected) => {
+    expect(memberSetupSchema.parse({ ...profile, phone }).phone).toBe(expected);
+  });
+  it.each([
+    "call me 3055550123",
+    "3055550123 ext 4",
+    "++13055550123",
+    "02079460958",
+    "+1234567890123456",
+  ])("rejects ambiguous or malformed phone %s", (phone) => {
+    expect(memberSetupSchema.safeParse({ ...profile, phone }).success).toBe(false);
+  });
+  it("saves the normalized phone value", async () => {
+    updateUser.mockResolvedValue({ error: null });
+    expect(await saveMemberSetup({ ...profile, phone: "(305) 555-0123" })).toBe(true);
+    expect(updateUser).toHaveBeenCalledWith({
+      data: { memberSetup: { ...profile, phone: "+13055550123" } },
+    });
+  });
   it("stores preferences without verification or membership privileges", async () => {
     updateUser.mockResolvedValue({ error: null });
     expect(await saveMemberSetup({ ...profile, membershipActive: true } as typeof profile)).toBe(
