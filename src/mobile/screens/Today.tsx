@@ -87,11 +87,12 @@ export function TodayScreen({
   ];
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-5">
+    <div className="la-today min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-5">
       <p className="la-kicker">
         {now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
       </p>
       <h1 className="la-display mt-1 text-[2.125rem] leading-[1.1] font-bold">{greeting(now)}.</h1>
+      <p className="la-today-intro">A little less deciding. A lot more you.</p>
 
       {/* Today's look */}
       <section className="la-hero mt-5 aspect-[4/5]" aria-label="Today's look">
@@ -139,7 +140,11 @@ export function TodayScreen({
       <section className="mt-6" aria-label="Next on Honey">
         <div className="flex items-center justify-between">
           <p className="la-kicker">Next on Honey</p>
-          <button type="button" className="text-sm font-semibold" onClick={() => onOpen("honey")}>
+          <button
+            type="button"
+            className="la-text-action text-sm font-semibold"
+            onClick={() => onOpen("honey")}
+          >
             See all
           </button>
         </div>
@@ -150,10 +155,7 @@ export function TodayScreen({
             onClick={() => onOpen("honey")}
           >
             <Crest name="honey" size={40} decorative />
-            <span>
-              Nothing planned yet. Connect your calendar and Bee will have an outfit ready for every
-              day.
-            </span>
+            <span>Add your next occasion. Ask Bee to help you decide what to wear.</span>
           </button>
         ) : (
           <ul className="mt-2 space-y-3">
@@ -180,7 +182,7 @@ export function TodayScreen({
                   ) : (
                     <button
                       type="button"
-                      className="mt-2 inline-flex items-center gap-1 font-semibold"
+                      className="la-text-action mt-2 inline-flex items-center gap-1 font-semibold"
                       style={{ color: "var(--gold)" }}
                       disabled={dressingId !== null}
                       onClick={() => onDressMe(item)}
@@ -197,7 +199,7 @@ export function TodayScreen({
       </section>
 
       {/* One door into each product */}
-      <section className="mt-6 grid grid-cols-2 gap-4" aria-label="LiveAskew">
+      <section className="la-today-shortcuts mt-6 grid grid-cols-2 gap-4" aria-label="LiveAskew">
         {tiles.map((t) => (
           <button
             key={t.crest}
@@ -205,7 +207,7 @@ export function TodayScreen({
             className="neo-raised flex flex-col items-start gap-3 p-4 text-left"
             onClick={() => onOpen(t.to)}
           >
-            <Crest name={t.crest} size={52} decorative />
+            <Crest name={t.crest} size={40} decorative />
             <span>
               <span className="la-display block text-base font-semibold">{t.title}</span>
               <span className="block text-sm opacity-70">{t.line}</span>
