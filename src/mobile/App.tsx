@@ -1,3 +1,4 @@
+import { ChatComposer } from "./components/ChatComposer";
 import { SetupProgress } from "./components/SetupProgress";
 import { savedSetupWeek } from "./lib/setup-guide";
 import { AdminWorkspace } from "./screens/AdminWorkspace";
@@ -558,7 +559,7 @@ export function MobileApp() {
         >
           <div className="min-w-0">
             <p className="text-sm font-semibold">Customer view</p>
-            <p className="text-xs opacity-70">Your account · Live activity</p>
+            <p className="la-workspace-detail text-xs opacity-70">Your account · Live activity</p>
           </div>
           <NeoButton
             className="shrink-0 px-3 text-sm"
@@ -1526,34 +1527,26 @@ function InterviewScreen({
     <Screen
       kicker="Bee"
       title="Fit, Feel, Fabric"
+      conversation
+      detail={
+        <p className="mt-2 text-sm la-secondary">
+          Question {Math.min(step + 1, INTERVIEW.length)} of {INTERVIEW.length} · Your style, in
+          your words
+        </p>
+      }
       footer={
         INTERVIEW[step]?.id === "shopping" ? undefined : (
-          <form
-            className="space-y-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSend();
-            }}
-          >
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={2}
-              aria-label="Your answer to Bee"
-              disabled={sending}
-              placeholder="Tell Bee…"
-              className="neo-input resize-none"
-            />
-            <NeoButton type="submit" variant="ink" disabled={sending || !input.trim()}>
-              Send to Bee
-            </NeoButton>
-          </form>
+          <ChatComposer
+            value={input}
+            onChange={setInput}
+            onSend={() => onSend()}
+            sending={sending}
+            label="Your answer to Bee"
+            placeholder="Tell Bee…"
+          />
         )
       }
     >
-      <p className="mb-4 text-sm opacity-70">
-        Interview {Math.min(step + 1, INTERVIEW.length)} of {INTERVIEW.length}
-      </p>
       {INTERVIEW[step]?.id === "shopping" && (
         <ShoppingBrief disabled={sending} onComplete={onSend} />
       )}
@@ -1684,28 +1677,16 @@ function HomeChat({
     <Screen
       kicker={topic ? "Real Talk" : "Bee"}
       title={topic ? TALK_GUIDES[topic].label : "Your stylist"}
+      conversation
       footer={
-        <form
-          className="la-chat-composer"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!sending && input.trim()) onSend();
-          }}
-        >
-          <textarea
-            aria-label="Message Bee"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            rows={2}
-            placeholder={
-              topic ? "Say it however it comes out…" : "What are you getting dressed for?"
-            }
-            className="neo-input resize-none"
-          />
-          <NeoButton type="submit" variant="gold" disabled={sending || !input.trim()}>
-            {sending ? "Sending…" : "Send"}
-          </NeoButton>
-        </form>
+        <ChatComposer
+          value={input}
+          onChange={setInput}
+          onSend={onSend}
+          sending={sending}
+          label="Message Bee"
+          placeholder={topic ? "Say it however it comes out…" : "What are you getting dressed for?"}
+        />
       }
     >
       <section aria-label="Real Talk" className="mb-4">

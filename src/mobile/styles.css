@@ -1147,3 +1147,112 @@ button.neo-raised-sm:active:not(:disabled) {
   width: auto;
   min-height: 44px;
 }
+
+/* Conversation surfaces: steady headings, a quiet transcript, one clear action. */
+.la-conversation-header {
+  flex: none;
+  background: var(--bar);
+  border-bottom: 1px solid var(--separator);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+.la-conversation-header h1 {
+  font-size: clamp(1.375rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+.la-conversation-header .la-kicker {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.la-secondary {
+  color: var(--label-2);
+}
+.la-screen-content {
+  overscroll-behavior-y: contain;
+  scroll-padding-block: 16px;
+}
+.la-conversation .la-bubble-bee {
+  background: transparent;
+  box-shadow: none;
+  max-width: 100%;
+  padding: 12px 2px 20px;
+}
+.la-conversation .la-bubble-me {
+  max-width: 90%;
+}
+.la-conversation .la-screen-footer {
+  padding-top: 8px;
+}
+.la-chat-composer textarea {
+  height: auto;
+  min-height: 44px;
+  max-height: 144px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  border: 0;
+  box-shadow: none;
+}
+.la-send-button {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  color: var(--on-gold);
+  cursor: pointer;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+.la-send-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.la-send-button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.la-sending-icon {
+  animation: la-send-spin 1s linear infinite;
+}
+@keyframes la-send-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.la-workspace-switch {
+  gap: 8px;
+  padding: 6px 10px;
+}
+.la-workspace-switch .neo-btn {
+  font-size: 13px;
+  padding-inline: 10px;
+}
+@media (max-width: 380px) {
+  .la-workspace-detail {
+    display: none;
+  }
+}
+@media (min-width: 960px) {
+  .la-conversation .la-screen-content > div {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .la-send-button {
+    transition: none;
+  }
+  .la-sending-icon {
+    animation: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .la-conversation-header {
+    background: var(--card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
