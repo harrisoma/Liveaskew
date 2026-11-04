@@ -1,3 +1,4 @@
+import { isNativeApp } from "./lib/external";
 import { SignalConnections } from "./screens/SignalConnections";
 import { MemberSetupScreen } from "./screens/MemberSetup";
 import { readMemberSetup } from "./lib/member-setup";
@@ -128,8 +129,10 @@ export function MobileApp() {
   useEffect(() => {
     if (snap.phase !== "app") return;
     let cancelled = false;
-    void apiFetch("/api/buzz/signal")
-      .then((r) => r.json())
+    void isNativeApp()
+      .then((native) =>
+        native ? { enabled: false } : apiFetch("/api/buzz/signal").then((r) => r.json()),
+      )
       .then((data) => {
         if (!cancelled) setSignalMode(data.enabled === true);
       })
