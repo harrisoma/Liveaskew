@@ -1,14 +1,24 @@
 import { z } from "zod";
 import { TIERS } from "./tiers";
 
+/** US/Canada is the displayed default; explicit international codes are preserved. */
+export function normalizeMemberPhone(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || !/^[+\d\s().-]+$/.test(trimmed)) return trimmed;
+  const compact = trimmed.replace(/[\s().-]/g, "");
+  if (/^[2-9]\d{2}[2-9]\d{6}$/.test(compact)) return `+1${compact}`;
+  if (/^1[2-9]\d{2}[2-9]\d{6}$/.test(compact)) return `+${compact}`;
+  return compact;
+}
+
 export const memberSetupSchema = z.object({
   name: z.string().trim().min(1, "Enter your name.").max(100),
   phone: z
     .string()
-    .trim()
+    .transform(normalizeMemberPhone)
     .refine(
       (value) => !value || /^\+[1-9]\d{6,14}$/.test(value),
-      "Use a country code, such as +13055550123, or leave phone blank.",
+      "Enter a US/Canada number or an international number starting with + and its country code. You can also leave this blank.",
     ),
   socials: z.object({
     Instagram: z.string().trim().max(160).default(""),

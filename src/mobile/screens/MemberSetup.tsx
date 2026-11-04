@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { NeoButton, NeoField, Screen } from "../components/ui";
 import {
   blankMemberSetup,
@@ -22,8 +22,12 @@ export function MemberSetupScreen({
   const [profile, setProfile] = useState(initial ?? blankMemberSetup);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
   function update(next: MemberSetup) {
     setProfile(next);
+    setError("");
+    setPhoneError("");
     onDraft(next);
   }
   return (
@@ -33,13 +37,18 @@ export function MemberSetupScreen({
         explore your style.
       </p>
       <form
+        ref={formRef}
         className="space-y-4"
         onSubmit={async (event) => {
           event.preventDefault();
           if (busy) return;
           const parsed = memberSetupSchema.safeParse(profile);
           if (!parsed.success) {
-            setError(parsed.error.issues[0].message);
+            const issue = parsed.error.issues[0];
+            if (issue.path[0] === "phone") {
+              setPhoneError(issue.message);
+              formRef.current?.querySelector<HTMLInputElement>('input[name="phone"]')?.focus();
+            } else setError(issue.message);
             return;
           }
           setBusy(true);
@@ -69,14 +78,26 @@ export function MemberSetupScreen({
           <label className="block">
             Phone number (optional)
             <NeoField
+              name="phone"
               type="tel"
+              aria-describedby={phoneError ? "phone-help phone-error" : "phone-help"}
+              aria-invalid={Boolean(phoneError)}
               autoComplete="tel"
-              placeholder="+13055550123"
-              maxLength={16}
+              placeholder="(305) 555-0123"
+              maxLength={40}
               value={profile.phone}
               onChange={(e) => update({ ...profile, phone: e.target.value })}
             />
           </label>
+          <p id="phone-help" className="text-sm opacity-70">
+            US/Canada by default (+1). For another country, start with + and the country code.
+            Spaces and dashes are fine. You can leave this blank.
+          </p>
+          {phoneError && (
+            <p id="phone-error" role="alert" className="text-sm">
+              {phoneError}
+            </p>
+          )}
           <details className="neo-inset p-4">
             <summary>Add social handles (optional)</summary>
             <p className="my-3 text-sm">
