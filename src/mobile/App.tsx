@@ -584,7 +584,7 @@ export function MobileApp() {
           </button>
         </header>
       )}
-      {snap.phase === "app" && trialText && tab !== "today" && (
+      {snap.phase === "app" && trialText && (
         <p className="mx-5 mt-1 text-[13px] opacity-60" role="status">
           {trialText}
         </p>
@@ -840,6 +840,8 @@ export function MobileApp() {
                   "Bee could not finish all seven days. Your interview and photo are still here. Try building your guide again.",
                 );
               } else {
+                // Keep generated outfits locally before any network step can fail.
+                patch((s) => ({ ...s, looks: mergeLooks(s.looks, looks) }));
                 setBuildStatus("Saving your seven outfits…");
                 const saved = await pushLooks(looks);
                 if (!saved) {
@@ -848,8 +850,6 @@ export function MobileApp() {
                   );
                   return;
                 }
-                // Persist before queueing so a retry does not generate (or charge for) another week.
-                patch((s) => ({ ...s, looks: mergeLooks(s.looks, looks) }));
                 setBuildStatus("Preparing your photo previews…");
                 try {
                   await queueWeeklyGuide(looks, snap.selfie);
