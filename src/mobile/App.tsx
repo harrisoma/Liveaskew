@@ -172,11 +172,14 @@ export function MobileApp() {
       }));
     };
     const handleReturn = (href: string) => {
-      if (consumeBillingReturn(href) === "success") {
+      const billingReturn = consumeBillingReturn(href);
+      if (billingReturn) {
         setTab("you");
         setYouView("membership");
         setTierNotice(
-          "You returned from checkout. We’re checking your membership with Stripe; access updates after confirmation.",
+          billingReturn === "success"
+            ? "You returned from checkout. We’re checking your membership with Stripe; access updates after confirmation."
+            : "Checkout was cancelled. Your current access is unchanged. You can choose a membership whenever you’re ready.",
         );
         void syncAccount();
       }
