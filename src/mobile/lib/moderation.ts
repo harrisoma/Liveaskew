@@ -26,3 +26,15 @@ export async function moderateMessage(id: string, action: ModerationAction): Pro
     return false;
   }
 }
+
+/** Server role check; never infer administrator access from email or local metadata. */
+export async function fetchAdminAccess(): Promise<boolean> {
+  try {
+    const response = await apiFetch("/api/hive/moderation?access=1");
+    if (!response.ok) return false;
+    const result = await response.json();
+    return result.admin === true;
+  } catch {
+    return false;
+  }
+}
