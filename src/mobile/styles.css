@@ -1228,14 +1228,42 @@ button.neo-raised-sm:active:not(:disabled) {
 
 .la-answer-options {
   list-style: none;
-  padding: 8px 0 16px;
+  padding: 16px 0 20px;
+}
+.la-answer-hint {
+  margin: 0 0 12px;
+  color: var(--label-2);
+  font-size: 13px;
+  line-height: 1.5;
 }
 .la-answer-options .la-chip {
-  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
   background: var(--card);
   border: 1px solid var(--separator);
+  box-shadow: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 .la-answer-options .la-chip[data-selected="true"] {
+  background: color-mix(in srgb, var(--gold) 12%, var(--card));
   border-color: var(--gold);
-  color: var(--gold);
+}
+.la-answer-options .la-chip:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .la-answer-options .la-chip:hover {
+    background: color-mix(in srgb, var(--label) 6%, var(--card));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .la-answer-options .la-chip {
+    transition: none;
+  }
 }
