@@ -1,3 +1,4 @@
+import type { CalendarPreferences, CalendarSettings } from "../lib/calendar-settings";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -126,15 +127,22 @@ function GuideIllustration({ provider, step }: { provider: Provider; step: numbe
 
 export function CalendarConnect({
   feeds,
+  preferences = {},
+  onChange,
+  onDisconnect,
   importing,
   onImport,
   onDone,
 }: {
   feeds: string[];
+  preferences?: CalendarPreferences;
+  onChange?: (url: string, settings: CalendarSettings) => void;
+  onDisconnect?: (url: string) => void;
   importing: boolean;
   onImport: (url: string) => Promise<boolean | void> | void;
   onDone: () => void;
 }) {
+  const [disconnecting, setDisconnecting] = useState<string | null>(null);
   const [provider, setProvider] = useState<Provider | null>(null);
   const [step, setStep] = useState(0);
   const [url, setUrl] = useState("");
@@ -209,6 +217,14 @@ export function CalendarConnect({
               {feeds.map((feed, i) => {
                 const source = feedSource(feed)?.source;
                 const known = source && source !== "manual" ? source : null;
+                const settings = preferences[feed] ?? {
+                  name: "",
+                  hidden: false,
+                  prefix: "",
+                  lastSyncedAt: "",
+                };
+                const label =
+                  settings.name || `${known ? guides[known].name : "Calendar"} ${i + 1}`;
                 return (
                   <div key={feed} className="calendar-connected-row">
                     {known ? (
@@ -217,8 +233,12 @@ export function CalendarConnect({
                       <CheckCircle2 size={18} aria-hidden />
                     )}
                     <span>
-                      {known ? guides[known].name : "Calendar"} {i + 1}
-                      <small>Tap refresh to get changes</small>
+                      {label}
+                      <small>
+                        {settings.lastSyncedAt
+                          ? `Updated ${new Date(settings.lastSyncedAt).toLocaleString()}`
+                          : "Refresh to update your plans"}
+                      </small>
                     </span>
                     <button
                       type="button"
@@ -231,6 +251,55 @@ export function CalendarConnect({
                     >
                       <RefreshCw size={17} aria-hidden />
                     </button>
+                    {onChange && (
+                      <details className="calendar-manage">
+                        <summary>Manage calendar</summary>
+                        <label>
+                          Calendar name
+                          <NeoField
+                            maxLength={60}
+                            value={settings.name}
+                            placeholder={label}
+                            onChange={(e) => onChange(feed, { ...settings, name: e.target.value })}
+                          />
+                        </label>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={!settings.hidden}
+                            onChange={(e) =>
+                              onChange(feed, { ...settings, hidden: !e.target.checked })
+                            }
+                          />{" "}
+                          Show in Honey
+                        </label>
+                        <p className="calendar-connect-note">
+                          Display preferences apply on this device. Disconnecting removes the saved
+                          link here; imported plans stay in your account.
+                        </p>
+                        {disconnecting === feed ? (
+                          <div>
+                            <p>Disconnect {label}?</p>
+                            <NeoButton
+                              disabled={waiting}
+                              onClick={() => {
+                                onDisconnect?.(feed);
+                                setDisconnecting(null);
+                              }}
+                            >
+                              Disconnect
+                            </NeoButton>
+                            <NeoButton onClick={() => setDisconnecting(null)}>
+                              Keep connected
+                            </NeoButton>
+                          </div>
+                        ) : (
+                          <NeoButton disabled={waiting} onClick={() => setDisconnecting(feed)}>
+                            Disconnect calendar
+                          </NeoButton>
+                        )}
+                      </details>
+                    )}
                   </div>
                 );
               })}

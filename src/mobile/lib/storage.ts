@@ -27,6 +27,7 @@ export function lookPhoto(look: { tryOnUrl: string | null }, selfie: string | nu
 }
 
 export type GuideLook = LookCard & {
+  feedback?: import("@/lib/bee-context").LookFeedback;
   guideDay?: number;
   renderError?: string | null;
   saved: boolean;
@@ -63,6 +64,7 @@ export type AppSnapshot = {
   ratingAsked: boolean;
   honey: HoneyItem[];
   calendarFeeds: string[];
+  calendarPreferences: import("./calendar-settings").CalendarPreferences;
   lastActiveAt: string;
 };
 
@@ -89,6 +91,7 @@ export const emptySnapshot: AppSnapshot = {
   ratingAsked: false,
   honey: [],
   calendarFeeds: [],
+  calendarPreferences: {},
   lastActiveAt: new Date().toISOString(),
 };
 
@@ -104,6 +107,7 @@ function cloneEmpty(): AppSnapshot {
     tryOnCache: {},
     honey: [],
     calendarFeeds: [],
+    calendarPreferences: {},
   };
 }
 
@@ -136,6 +140,7 @@ export function loadSnapshot(): AppSnapshot {
       looks: parsed.looks ?? [],
       honey: parsed.honey ?? [],
       calendarFeeds: parsed.calendarFeeds ?? [],
+      calendarPreferences: parsed.calendarPreferences ?? {},
     };
   } catch {
     return cloneEmpty();

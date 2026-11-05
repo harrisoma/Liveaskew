@@ -1,3 +1,4 @@
+import { stylingContextSchema } from "@/lib/bee-context";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { TALK_TOPICS } from "@/lib/bee-talk";
@@ -6,6 +7,7 @@ import { requireApiUser } from "@/lib/api-auth.server";
 import { guardAi } from "@/lib/entitlement.server";
 
 const bodySchema = z.object({
+  context: stylingContextSchema,
   /** Real Talk topic; absent means the usual styling chat. */
   topic: z.enum(TALK_TOPICS).optional(),
   profile: z
@@ -48,6 +50,7 @@ export const Route = createFileRoute("/api/bee/app")({
         }
 
         const result = await beeReply({
+          context: parsed.topic ? undefined : parsed.context,
           profile: parsed.profile ?? {},
           messages: parsed.messages,
           topic: parsed.topic,

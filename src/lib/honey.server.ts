@@ -5,7 +5,7 @@ type Row = Database["public"]["Tables"]["calendar_events"]["Row"];
 type Insert = Database["public"]["Tables"]["calendar_events"]["Insert"];
 
 export const HONEY_COLUMNS =
-  "id, client_id, title, event_date, start_time, kind, source, network, look_id, caption, post_status, outfit_recommendation, scheduled_at, media_url, post_error, post_url";
+  "description, id, client_id, title, event_date, start_time, kind, source, network, look_id, caption, post_status, outfit_recommendation, scheduled_at, media_url, post_error, post_url";
 
 function asNetwork(value: string | null): HoneyNetwork | null {
   return (HONEY_NETWORKS as readonly string[]).includes(value ?? "")
@@ -32,9 +32,22 @@ export function rowToHoney(
     | "media_url"
     | "post_error"
     | "post_url"
-  >,
+  > & { description?: string | null },
 ): HoneyItem {
+  let details: { location?: string; dressCode?: string; weatherNote?: string } = {};
+  try {
+    const parsed = JSON.parse(row.description ?? "{}");
+    if (parsed.liveaskew === "event-details-v1")
+      details = {
+        location: typeof parsed.location === "string" ? parsed.location : "",
+        dressCode: typeof parsed.dressCode === "string" ? parsed.dressCode : "",
+        weatherNote: typeof parsed.weatherNote === "string" ? parsed.weatherNote : "",
+      };
+  } catch {
+    /* Older descriptions remain untouched. */
+  }
   return {
+    ...details,
     id: row.client_id ?? row.id,
     title: row.title,
     date: row.event_date,
@@ -91,6 +104,18 @@ export function honeyToInsert(
           };
   return {
     user_id: userId,
+    ...(item.location !== undefined ||
+    item.dressCode !== undefined ||
+    item.weatherNote !== undefined
+      ? {
+          description: JSON.stringify({
+            liveaskew: "event-details-v1",
+            location: item.location ?? "",
+            dressCode: item.dressCode ?? "",
+            weatherNote: item.weatherNote ?? "",
+          }),
+        }
+      : {}),
     client_id: item.id,
     title: item.title.slice(0, 160),
     event_date: item.date,

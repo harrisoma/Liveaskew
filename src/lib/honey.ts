@@ -7,6 +7,9 @@ export type HoneyNetwork = (typeof HONEY_NETWORKS)[number];
 
 /** One row on the Honey calendar — a day's event, a meeting, or a Buzz post. */
 export type HoneyItem = {
+  location?: string;
+  dressCode?: string;
+  weatherNote?: string;
   id: string;
   title: string;
   date: string; // YYYY-MM-DD

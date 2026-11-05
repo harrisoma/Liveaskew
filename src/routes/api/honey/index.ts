@@ -6,6 +6,9 @@ import { isOwnBuzzMedia } from "@/lib/buzz/media.server";
 import { HONEY_COLUMNS, honeyToInsert, rowToHoney } from "@/lib/honey.server";
 
 const itemSchema = z.object({
+  location: z.string().max(160).optional(),
+  dressCode: z.string().max(160).optional(),
+  weatherNote: z.string().max(160).optional(),
   id: z.string().min(1).max(120),
   title: z.string().trim().min(1).max(160),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

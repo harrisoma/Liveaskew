@@ -24,3 +24,20 @@
 Onixus Signal setup is not ready. Member social connections and automated publishing remain pending. This release does not enable those integrations.
 
 Calendar connections currently import iCal feeds in one direction when the member requests sync; they are not two-way calendar integrations. These additions do not establish that every proposed app feature is production-complete.
+
+## Bee and Honey completion pass — November 2026
+
+Implemented in this branch:
+- Bee styling chats and outfit generation receive up to 12 kept wardrobe records, up to three small piece photos, and the latest 12 outfit feedback records. Talk/crisis replies do not receive wardrobe images or styling context.
+- Outfit feedback supports quick responses and custom words; account sync uses existing look JSON. Newer feedback wins when merging device/account copies.
+- Honey expands supported calendar recurrences, exclusions and moved occurrences; timed events display in the requesting device timezone. Import refuses incomplete/oversized/unsupported feeds rather than reconciling a truncated result.
+- New imports use calendar-scoped IDs. Refresh removes missing events within the imported window for that feed only. Legacy source/UID rows are not deleted automatically because their originating feed was never recorded.
+- Per-device calendar names, visibility, last successful refresh and disconnect controls. Disconnect removes the device's saved feed link; it does not delete account events or revoke the provider link.
+- Manual events support location, dress code and user-provided weather/comfort notes. These details persist in the existing description field using a versioned JSON envelope and reach Dress Me generation.
+- Event reminder export includes an outfit summary and a selectable 15-minute, one-hour or one-day calendar alert. The customer must open/save the ICS event in their calendar. It is a standalone copy, not a background LiveAskew push reminder.
+
+Still pending (do not present as shipped):
+- Direct Google/Microsoft OAuth, encrypted server-side token storage, provider calendar selection, token refresh and automatic background synchronization. Provider account setup is not completed.
+- Server-delivered Honey push reminders and cross-device calendar connection preferences.
+- Live weather lookup; current weather notes are explicitly user supplied.
+- End-to-end testing with a real external calendar and separate customer account.

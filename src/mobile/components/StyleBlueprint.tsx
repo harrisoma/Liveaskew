@@ -305,6 +305,7 @@ export function StyleBlueprint({
   looks,
   onLooks,
   notice,
+  onFeedback,
   onSaveLook,
   onRestyle,
   onPlanLook,
@@ -457,6 +458,7 @@ export function StyleBlueprint({
       </div>
       <GuideLookbook
         looks={looks}
+        onFeedback={onFeedback}
         onSaveLook={onSaveLook}
         onRestyle={onRestyle}
         onPlanLook={onPlanLook}

@@ -18,7 +18,20 @@ export function mergeLooks(local: GuideLook[], remote: GuideLook[]): GuideLook[]
   for (const r of remote) byId.set(r.id, r);
   for (const l of local) {
     const r = byId.get(l.id);
-    byId.set(l.id, r ? { ...r, ...l, saved: l.saved || r.saved } : l);
+    byId.set(
+      l.id,
+      r
+        ? {
+            ...r,
+            ...l,
+            saved: l.saved || r.saved,
+            feedback:
+              (r.feedback?.updatedAt ?? "") > (l.feedback?.updatedAt ?? "")
+                ? r.feedback
+                : l.feedback,
+          }
+        : l,
+    );
   }
   return [...byId.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }

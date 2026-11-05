@@ -42,6 +42,8 @@ export async function deleteHoney(id: string): Promise<boolean> {
 }
 
 const IMPORT_ERRORS: Record<string, string> = {
+  calendar_not_supported:
+    "This calendar could not be fully read. Your existing plans are unchanged. Try a smaller calendar or add the plan manually.",
   unsupported_feed:
     "Use the private iCal link from Google Calendar, iCloud, or Outlook (it starts with https:// or webcal://).",
   feed_unreachable:
@@ -52,19 +54,25 @@ const IMPORT_ERRORS: Record<string, string> = {
 
 export async function importCalendar(
   url: string,
-): Promise<{ items: HoneyItem[] } | { error: string }> {
+): Promise<{ items: HoneyItem[]; prefix: string; from: string; to: string } | { error: string }> {
   try {
     const res = await apiFetch("/api/honey/import", {
       method: "POST",
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
     });
-    const json = (await res.json().catch(() => ({}))) as { items?: HoneyItem[]; error?: string };
+    const json = (await res.json().catch(() => ({}))) as {
+      items?: HoneyItem[];
+      error?: string;
+      prefix: string;
+      from: string;
+      to: string;
+    };
     if (!res.ok || !json.items) {
       return {
         error: IMPORT_ERRORS[json.error ?? ""] ?? "Could not read that calendar. Try again.",
       };
     }
-    return { items: json.items };
+    return { items: json.items, prefix: json.prefix, from: json.from, to: json.to };
   } catch {
     return { error: "No connection. Try again in a moment." };
   }

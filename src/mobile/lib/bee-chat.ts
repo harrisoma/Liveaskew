@@ -5,6 +5,7 @@ import { apiFetch } from "./api";
 import { CRISIS_RESOURCES, localTalkReply, needsCrisisCare, type TalkTopic } from "@/lib/bee-talk";
 
 export async function askBee(opts: {
+  context?: import("@/lib/bee-context").StylingContext;
   messages: ChatMsg[];
   profile: OnboardingAnswers;
   /** Real Talk topic; omit for the styling chat. */
@@ -18,6 +19,7 @@ export async function askBee(opts: {
       method: "POST",
       body: JSON.stringify({
         ...(opts.topic ? { topic: opts.topic } : {}),
+        context: opts.topic ? undefined : opts.context,
         profile: {
           goal: opts.profile.goal,
           fit: opts.profile.fit,
