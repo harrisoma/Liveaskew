@@ -1510,3 +1510,388 @@ button.neo-raised-sm:active:not(:disabled) {
     transition: none;
   }
 }
+
+/* Outfit-first lookbook: fashion leads; glass carries the controls. */
+.guide-lookbook {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+}
+.lookbook-heading {
+  margin: 12px 0 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+}
+.lookbook-heading h1 {
+  font: 650 clamp(28px, 3.8vw, 46px)/1.1 var(--font-display);
+  letter-spacing: -0.045em;
+  max-width: 19ch;
+}
+.lookbook-heading p {
+  color: var(--label-2);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 32ch;
+}
+.lookbook-heading > div > p {
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.lookbook-picker {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 16px;
+}
+.lookbook-picker button {
+  min-height: 48px;
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: var(--fill);
+  font-size: 13px;
+  text-align: left;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.lookbook-picker button span {
+  display: block;
+  font-size: 11px;
+  color: var(--label-2);
+  margin-bottom: 3px;
+}
+.lookbook-picker button[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 10%, var(--card));
+}
+.lookbook-stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--separator);
+  background: var(--card);
+}
+.lookbook-visual {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  background: var(--fill);
+}
+.lookbook-visual > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 780px;
+  object-fit: contain;
+}
+.lookbook-sample-image {
+  width: 100%;
+  aspect-ratio: 1/2;
+  background-image: url("/images/style-guide/miami-lookbook.jpg");
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+}
+.lookbook-visual figcaption {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  padding: 10px 14px;
+  color: var(--label);
+  font-size: 11px;
+  line-height: 1.5;
+  background: var(--bar);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--separator);
+  border-radius: 16px;
+}
+.lookbook-details {
+  padding: clamp(22px, 3vw, 40px);
+  min-width: 0;
+}
+.lookbook-details h2 {
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  margin: 8px 0 16px;
+}
+.lookbook-occasion {
+  color: var(--gold);
+  font-size: 13px;
+}
+.lookbook-reason {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--label-2);
+  margin-bottom: 24px;
+}
+.lookbook-details h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.lookbook-pieces {
+  padding: 0;
+  list-style: none;
+  margin: 10px 0 20px;
+}
+.lookbook-pieces li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--separator);
+  font-size: 14px;
+}
+.lookbook-rationale summary,
+.studio-reference > summary {
+  min-height: 48px;
+  padding-block: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.lookbook-rationale dl {
+  font-size: 14px;
+  line-height: 1.65;
+  padding-bottom: 16px;
+}
+.lookbook-rationale dt {
+  font-weight: 600;
+  margin-top: 10px;
+}
+.lookbook-rationale dd {
+  color: var(--label-2);
+}
+.lookbook-start {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 20px;
+}
+.lookbook-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.lookbook-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--separator);
+  background: var(--bar);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-size: 13px;
+  cursor: pointer;
+}
+.lookbook-actions button:first-child {
+  color: var(--on-gold);
+  background: var(--gold-bright);
+}
+.lookbook-actions button:disabled,
+.lookbook-picker button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.lookbook-plan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  margin-top: 20px;
+}
+.lookbook-plan label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  flex: 1;
+}
+.lookbook-plan input {
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--separator);
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--label);
+}
+.lookbook-feedback {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.lookbook-empty,
+.lookbook-pending {
+  padding: 32px;
+  background: var(--card);
+  border-radius: 24px;
+}
+.lookbook-pending {
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 90px;
+}
+.lookbook-empty h2,
+.lookbook-pending h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.lookbook-empty p,
+.lookbook-pending p {
+  color: var(--label-2);
+  line-height: 1.65;
+  font-size: 14px;
+}
+.studio-reference {
+  border-top: 1px solid var(--separator);
+  padding: 4px 0;
+}
+.studio-reference > summary {
+  font-size: 17px;
+}
+.studio-reference > div,
+.studio-reference > p {
+  padding: 12px 0 24px;
+}
+.studio-direction p {
+  max-width: 65ch;
+  color: var(--label-2);
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.studio-direction h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+.studio-piece-swatch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--label-2);
+}
+.studio-piece-swatch > span:first-child {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--separator);
+  border-radius: 50%;
+}
+@media (max-width: 640px) {
+  .lookbook-heading {
+    display: block;
+    margin: 8px 0 16px;
+  }
+  .lookbook-heading > p {
+    margin-top: 12px;
+  }
+  .lookbook-stage {
+    grid-template-columns: 1fr;
+    border-radius: 24px;
+  }
+  .lookbook-visual {
+    max-width: 100%;
+  }
+  .lookbook-sample-image {
+    aspect-ratio: 1/2;
+  }
+  .lookbook-details {
+    padding: 24px 20px;
+  }
+  .studio-toolbar {
+    margin-bottom: 20px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lookbook-visual figcaption,
+  .lookbook-actions button {
+    background: var(--card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media print {
+  .guide-lookbook,
+  .guide-lookbook * {
+    visibility: visible !important;
+  }
+  .guide-lookbook {
+    break-after: page;
+  }
+  .lookbook-picker,
+  .lookbook-actions,
+  .lookbook-plan,
+  .lookbook-start {
+    display: none !important;
+  }
+  .studio-document {
+    position: static;
+  }
+  .studio-reference::details-content,
+  .lookbook-rationale::details-content {
+    content-visibility: visible;
+  }
+  .studio-reference > div,
+  .studio-reference > p,
+  .lookbook-rationale > dl {
+    display: block !important;
+  }
+}
+/* Keep the entire outfit visible without a poster-sized image. */
+.lookbook-sample-image {
+  height: min(68svh, 650px);
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
+}
+.lookbook-visual {
+  padding-bottom: 58px;
+}
+.lookbook-visual figcaption {
+  bottom: 8px;
+}
+.lookbook-visual > img {
+  max-height: 650px;
+  height: auto;
+}
+.lookbook-actions button,
+.lookbook-picker button {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--label) 10%, transparent);
+}
+@media (max-width: 640px) {
+  .lookbook-sample-image {
+    height: min(58svh, 520px);
+  }
+}
+.lookbook-stage {
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--label) 12%, transparent);
+}
+.lookbook-sample-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 2;
+}
+.lookbook-visual {
+  background: color-mix(in srgb, var(--card) 90%, var(--label));
+}
+@media (max-width: 640px) {
+  .lookbook-stage {
+    grid-template-columns: 1fr;
+  }
+  .lookbook-sample-image {
+    max-width: 300px;
+    height: auto;
+  }
+}

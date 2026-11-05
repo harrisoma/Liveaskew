@@ -1,11 +1,9 @@
 import type { ProductMatches } from "@/lib/shopping-profile";
-import { ShoppingBrief } from "@/mobile/components/ShoppingBrief";
 import { useEffect, useState } from "react";
-import { WardrobeCard } from "@/mobile/components/LookCard";
-import type { WardrobeItem } from "@/mobile/lib/storage";
 import { createFileRoute } from "@tanstack/react-router";
 import { StyleBlueprintDocument } from "@/mobile/components/StyleBlueprint";
-import { studioSample } from "@/mobile/lib/studio-sample";
+import { GuideLookbook } from "@/mobile/components/GuideLookbook";
+import { studioSample, sampleGuideLooks } from "@/mobile/lib/studio-sample";
 import "@/mobile/styles.css";
 export const Route = createFileRoute("/style-guide-preview")({
   head: () => ({
@@ -17,54 +15,35 @@ export const Route = createFileRoute("/style-guide-preview")({
   component: Preview,
 });
 function Preview() {
-  const [products, setProducts] = useState<ProductMatches | null>(null),
-    [interviewSaved, setInterviewSaved] = useState(false);
+  const [products, setProducts] = useState<ProductMatches | null>(null);
   useEffect(() => {
+    let active = true;
     void fetch("/api/public/style-guide-products")
       .then((r) => (r.ok ? r.json() : null))
-      .then(setProducts)
+      .then((data) => {
+        if (active) setProducts(data);
+      })
       .catch(() => {});
+    return () => {
+      active = false;
+    };
   }, []);
-  const [sample, setSample] = useState<WardrobeItem>({
-    id: "sample-closet",
-    photo: "",
-    label: "Your favorite cotton shirt",
-    verdict: "maybe",
-    reason:
-      "Try it with your capsule and check how it feels. This is a fictional wardrobe example.",
-    error: null,
-  });
   return (
     <main className="studio-scroll studio-preview">
       <div className="studio-toolbar">
-        <span>Sample guide · fictional client</span>
-        <a href="/app">Open my Bee studio</a>
+        <span>LiveAskew · Sample lookbook</span>
+        <a href="/app">Open my guide</a>
       </div>
-      <p className="studio-document studio-fine">
-        Live shopping example: fictional US women’s size M, shoes US 6, up to USD 150 per item and
-        USD 1,000 total before tax/shipping. Product availability varies.
-      </p>
+      <GuideLookbook looks={sampleGuideLooks} sample />
+      <details className="studio-document studio-reference">
+        <summary>About this sample</summary>
+        <p>
+          Fictional client and AI-created outfit illustrations. These are styling ideas, not exact
+          retailer products or a preview of you. Live matches below use sample US clothing size M,
+          shoes US 6, up to USD 150 per item and USD 1,000 total before tax and shipping.
+        </p>
+      </details>
       <StyleBlueprintDocument guide={studioSample} products={products} />
-      <details className="studio-document">
-        <summary>Try the interview’s shopping step</summary>
-        <ShoppingBrief onComplete={() => setInterviewSaved(true)} />
-        {interviewSaved && (
-          <p role="status">
-            Sample interview details saved. In your account, the next step is Generate my Style
-            Guide.
-          </p>
-        )}
-      </details>
-      <details className="studio-document">
-        <summary>Try a sample wardrobe decision</summary>
-        <div style={{ maxWidth: 400, padding: "24px 0" }}>
-          <WardrobeCard
-            item={sample}
-            onDecide={(verdict) => setSample((s) => ({ ...s, verdict }))}
-          />
-          <p className="studio-fine">Sample only. Your personal closet is in Bee → Reset.</p>
-        </div>
-      </details>
     </main>
   );
 }

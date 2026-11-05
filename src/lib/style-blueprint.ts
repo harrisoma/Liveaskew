@@ -56,8 +56,8 @@ export function parseBlueprint(text: string): StyleBlueprint {
     document.capsule.filter((p) => p.role === role).length;
   if (
     counts("top") !== 3 ||
-    counts("bottom") !== 3 ||
-    counts("dress") !== 1 ||
+    counts("bottom") + counts("dress") !== 4 ||
+    counts("bottom") < 1 ||
     counts("layer") !== 1 ||
     counts("shoe") !== 2 ||
     counts("accessory") !== 2
