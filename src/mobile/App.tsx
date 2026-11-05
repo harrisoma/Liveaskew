@@ -1527,12 +1527,11 @@ function InterviewScreen({
   return (
     <Screen
       kicker="Bee"
-      title="Fit, Feel, Fabric"
+      title="Your style"
       conversation
       detail={
         <p className="mt-2 text-sm la-secondary">
-          Question {Math.min(step + 1, INTERVIEW.length)} of {INTERVIEW.length} · Your style, in
-          your words
+          Question {Math.min(step + 1, INTERVIEW.length)} of {INTERVIEW.length}
         </p>
       }
       footer={
@@ -1543,7 +1542,7 @@ function InterviewScreen({
             onSend={() => onSend()}
             sending={sending}
             label="Your answer to Bee"
-            placeholder="Tell Bee…"
+            placeholder="Your own words…"
           />
         )
       }
@@ -1575,8 +1574,8 @@ function InterviewScreen({
           )}
           {!sending && (
             <li className="la-answer-options">
-              <p id="interview-options-help" className="mb-2 text-sm la-secondary">
-                Tap ideas to add to your answer, or use your own words. Edit before sending.
+              <p id="interview-options-help" className="la-answer-hint">
+                Choose ideas or write your own.
               </p>
               <div
                 className="flex flex-wrap gap-2"
