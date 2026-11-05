@@ -21,7 +21,7 @@ type Provider = "google" | "apple" | "outlook";
 const guides = {
   google: {
     name: "Google Calendar",
-    mark: "31",
+    logo: "/images/brands/google-calendar.svg",
     subtitle: "Your Google schedule",
     url: "https://calendar.google.com/",
     help: "https://support.google.com/calendar/answer/37648",
@@ -40,7 +40,7 @@ const guides = {
   },
   apple: {
     name: "Apple Calendar",
-    mark: "iCloud",
+    logo: "/images/brands/apple-calendar.png",
     subtitle: "An iCloud calendar",
     url: "https://www.icloud.com/calendar",
     help: "https://support.apple.com/en-mide/guide/iphone/iph7613c4fb/ios",
@@ -59,7 +59,7 @@ const guides = {
   },
   outlook: {
     name: "Outlook Calendar",
-    mark: "O",
+    logo: "/images/brands/outlook.svg",
     subtitle: "Outlook or Microsoft 365",
     url: "https://outlook.office.com/calendar/",
     help: "https://support.microsoft.com/en-us/outlook/share-your-calendar-in-outlook-com",
@@ -80,8 +80,8 @@ const guides = {
 
 function CalendarMark({ provider }: { provider: Provider }) {
   return (
-    <span className={`calendar-provider-mark calendar-provider-${provider}`} aria-hidden>
-      {guides[provider].mark}
+    <span className="calendar-provider-mark" aria-hidden="true">
+      <img src={guides[provider].logo} alt="" width={44} height={44} />
     </span>
   );
 }
@@ -211,7 +211,11 @@ export function CalendarConnect({
                 const known = source && source !== "manual" ? source : null;
                 return (
                   <div key={feed} className="calendar-connected-row">
-                    <CheckCircle2 size={18} aria-hidden />
+                    {known ? (
+                      <CalendarMark provider={known} />
+                    ) : (
+                      <CheckCircle2 size={18} aria-hidden />
+                    )}
                     <span>
                       {known ? guides[known].name : "Calendar"} {i + 1}
                       <small>Tap refresh to get changes</small>
