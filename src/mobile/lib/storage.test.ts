@@ -51,7 +51,9 @@ describe("snapshotFallbacks", () => {
     };
     const steps = snapshotFallbacks(snap);
     expect(steps[0].messages).toHaveLength(120);
-    expect(steps[1].wardrobe).toHaveLength(20);
+    expect(steps[1].wardrobe).toHaveLength(40);
+    expect(steps[1].wardrobe[39].id).toBe("39");
+    expect(steps[1].wardrobe.slice(20).every((w) => w.photo === "")).toBe(true);
     expect(steps[2].wardrobe.every((w) => w.photo === "")).toBe(true);
     const last = steps[steps.length - 1];
     expect(last.looks).toHaveLength(1);
