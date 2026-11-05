@@ -1,3 +1,6 @@
+import { buildStylingContext } from "./lib/styling-context";
+import type { LookFeedback as Feedback } from "@/lib/bee-context";
+import { LookFeedback } from "./components/LookFeedback";
 import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
 import { WardrobeReset } from "./screens/WardrobeReset";
 import { syncWardrobe } from "./lib/wardrobe-sync";
@@ -431,6 +434,11 @@ export function MobileApp() {
     return result.source;
   }
 
+  async function saveLookFeedback(look: GuideLook, feedback: Feedback) {
+    const next = { ...look, feedback };
+    patch((s) => ({ ...s, looks: s.looks.map((item) => (item.id === look.id ? next : item)) }));
+    if (!(await pushLooks([next]))) throw new Error("feedback_sync_failed");
+  }
   const today = isoDay(new Date());
 
   function upsertHoney(items: HoneyItem[]) {
@@ -447,8 +455,16 @@ export function MobileApp() {
     }
     setDressingId(item.id);
     const { looks, source } = await generateLooks({
+      context: buildStylingContext(snap.wardrobe, snap.looks),
       interview: snap.interview.answers,
-      occasion: { title: item.title, date: item.date, kind: item.kind },
+      occasion: {
+        title: item.title,
+        date: item.date,
+        kind: item.kind,
+        location: item.location,
+        dressCode: item.dressCode,
+        weatherNote: item.weatherNote,
+      },
       count: 1,
     });
     setDressingId(null);
@@ -887,7 +903,11 @@ export function MobileApp() {
               );
               const { looks, source } = savedWeek
                 ? { looks: savedWeek, source: "bee" }
-                : await generateLooks({ interview: snap.interview.answers, count: 7 });
+                : await generateLooks({
+                    interview: snap.interview.answers,
+                    context: buildStylingContext(snap.wardrobe, snap.looks),
+                    count: 7,
+                  });
               if (source === "locked") {
                 startTrial([], { trialEnded: true });
                 setGateOpen(true);
@@ -997,6 +1017,7 @@ export function MobileApp() {
               notice={guideError}
               looks={snap.looks}
               onLooks={() => setBeeView("looks")}
+              onFeedback={saveLookFeedback}
               onSaveLook={async (look) => {
                 const saved = { ...look, saved: true };
                 patch((s) => ({ ...s, looks: s.looks.map((l) => (l.id === look.id ? saved : l)) }));
@@ -1077,6 +1098,7 @@ export function MobileApp() {
                 // Real Talk only sends the conversation since Bee's opening question.
                 const start = talk ? snap.messages.findIndex((m) => m.id === talk.startId) : -1;
                 const reply = await askBee({
+                  context: buildStylingContext(snap.wardrobe, snap.looks),
                   messages: [...(start >= 0 ? snap.messages.slice(start) : snap.messages), user],
                   profile: snap.onboarding,
                   topic: start >= 0 ? talk?.topic : null,
@@ -1092,6 +1114,7 @@ export function MobileApp() {
           )}
           {tab === "bee" && beeView === "looks" && (
             <LooksBook
+              onFeedback={saveLookFeedback}
               looks={snap.looks}
               selfie={snap.selfie}
               renderingId={renderingId}
@@ -1265,11 +1288,34 @@ export function MobileApp() {
           )}
           {tab === "honey" && (
             <HoneyScreen
-              items={snap.honey}
+              items={snap.honey.filter(
+                (item) =>
+                  !Object.values(snap.calendarPreferences).some(
+                    (c) => c.hidden && c.prefix && item.id.startsWith(c.prefix),
+                  ),
+              )}
               today={today}
               looks={snap.looks}
               dressingId={dressingId}
               feeds={snap.calendarFeeds}
+              calendarPreferences={snap.calendarPreferences}
+              onCalendarChange={(url, settings) =>
+                patch((s) => ({
+                  ...s,
+                  calendarPreferences: { ...s.calendarPreferences, [url]: settings },
+                }))
+              }
+              onDisconnect={(url) =>
+                patch((s) => {
+                  const next = { ...s.calendarPreferences };
+                  delete next[url];
+                  return {
+                    ...s,
+                    calendarFeeds: s.calendarFeeds.filter((f) => f !== url),
+                    calendarPreferences: next,
+                  };
+                })
+              }
               importing={importing}
               notice={honeyNotice}
               onRange={loadHoneyRange}
@@ -1331,12 +1377,37 @@ export function MobileApp() {
                 patch((s) => ({
                   ...s,
                   honey: mergeHoney(
-                    s.honey,
+                    s.honey.filter(
+                      (h) =>
+                        !(
+                          h.id.startsWith(result.prefix) &&
+                          h.date >= result.from &&
+                          h.date <= result.to
+                        ),
+                    ),
                     result.items.map((item) => {
                       const mine = s.honey.find((h) => h.id === item.id);
-                      return mine ? { ...item, lookId: mine.lookId, beeNote: mine.beeNote } : item;
+                      return mine
+                        ? {
+                            ...item,
+                            lookId: mine.lookId,
+                            beeNote: mine.beeNote,
+                            location: mine.location,
+                            dressCode: mine.dressCode,
+                            weatherNote: mine.weatherNote,
+                          }
+                        : item;
                     }),
                   ),
+                  calendarPreferences: {
+                    ...s.calendarPreferences,
+                    [url]: {
+                      name: s.calendarPreferences[url]?.name ?? "",
+                      hidden: s.calendarPreferences[url]?.hidden ?? false,
+                      prefix: result.prefix,
+                      lastSyncedAt: new Date().toISOString(),
+                    },
+                  },
                   calendarFeeds: s.calendarFeeds.includes(url)
                     ? s.calendarFeeds
                     : [...s.calendarFeeds, url].slice(-5),
@@ -1963,6 +2034,7 @@ function HomeChat({
 }
 
 function LooksBook({
+  onFeedback,
   looks,
   selfie,
   renderingId,
@@ -1974,6 +2046,7 @@ function LooksBook({
   onShare,
   notice,
 }: {
+  onFeedback: (look: GuideLook, feedback: Feedback) => Promise<void>;
   looks: GuideLook[];
   selfie: string | null;
   renderingId: string | null;
@@ -2032,6 +2105,11 @@ function LooksBook({
               onAction={() => onSave(look)}
               footer={
                 <>
+                  <LookFeedback
+                    key={look.id}
+                    value={look.feedback}
+                    onChange={(feedback) => onFeedback(look, feedback)}
+                  />
                   <NeoButton
                     className="mt-3"
                     variant="ink"

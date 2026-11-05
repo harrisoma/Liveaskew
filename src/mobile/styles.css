@@ -2425,7 +2425,7 @@ button.neo-raised-sm:active:not(:disabled) {
   border-bottom: 1px solid var(--separator);
   font-size: 14px;
 }
-.calendar-connected-row > span {
+.calendar-connected-row > span:not(.calendar-provider-mark) {
   flex: 1;
 }
 .calendar-connected-row > svg {
@@ -2436,4 +2436,43 @@ button.neo-raised-sm:active:not(:disabled) {
     transition: none;
     transform: none;
   }
+}
+.look-feedback {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--separator);
+}
+.look-feedback summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 14px;
+  min-height: 44px;
+}
+.look-feedback p {
+  color: var(--label-2);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.calendar-connected-row {
+  flex-wrap: wrap;
+}
+.calendar-manage {
+  flex-basis: 100%;
+  padding-top: 8px;
+}
+.calendar-manage summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.calendar-manage label {
+  display: block;
+  margin: 12px 0;
+}
+.calendar-manage label input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: var(--gold);
 }

@@ -20,8 +20,16 @@ export function toGuideLook(look: LookCard): GuideLook {
  * If the model is unreachable, the rule-based guide keeps the app usable offline.
  */
 export async function generateLooks(opts: {
+  context?: import("@/lib/bee-context").StylingContext;
   interview: Record<string, string>;
-  occasion?: { title: string; date?: string; kind?: string };
+  occasion?: {
+    title: string;
+    date?: string;
+    kind?: string;
+    location?: string;
+    dressCode?: string;
+    weatherNote?: string;
+  };
   count?: number;
 }): Promise<{
   looks: GuideLook[];
@@ -31,6 +39,7 @@ export async function generateLooks(opts: {
     const res = await apiFetch("/api/bee/looks", {
       method: "POST",
       body: JSON.stringify({
+        context: opts.context,
         interview: opts.interview,
         occasion: opts.occasion,
         count: opts.count ?? 3,

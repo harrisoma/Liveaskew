@@ -1,9 +1,14 @@
+import { LookFeedback } from "./LookFeedback";
 import { useState } from "react";
 import { ArrowRight, Bookmark, Check, CalendarDays, MessageCircle } from "lucide-react";
 import { lookPhoto, type GuideLook } from "../lib/storage";
 import { isoDay } from "@/lib/honey";
 
 export type GuideActions = {
+  onFeedback?: (
+    look: GuideLook,
+    feedback: import("@/lib/bee-context").LookFeedback,
+  ) => Promise<void>;
   onSaveLook?: (look: GuideLook) => Promise<void>;
   onRestyle?: (look: GuideLook) => void;
   onPlanLook?: (look: GuideLook, date: string) => Promise<void>;
@@ -11,6 +16,7 @@ export type GuideActions = {
 export function GuideLookbook({
   looks,
   sample = false,
+  onFeedback,
   onSaveLook,
   onRestyle,
   onPlanLook,
@@ -199,6 +205,13 @@ export function GuideLookbook({
           )}
         </div>
       </div>
+      {!sample && onFeedback && (
+        <LookFeedback
+          key={look.id}
+          value={look.feedback}
+          onChange={(feedback) => onFeedback(look, feedback)}
+        />
+      )}
     </section>
   );
 }

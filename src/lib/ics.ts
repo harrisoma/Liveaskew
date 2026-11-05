@@ -20,7 +20,8 @@ export function feedSource(raw: string): { url: string; source: HoneySource } | 
   } catch {
     return null;
   }
-  if (url.protocol !== "https:") return null;
+  if (url.protocol !== "https:" || url.username || url.password || (url.port && url.port !== "443"))
+    return null;
   const match = FEED_HOSTS.find((h) => h.test(url.hostname.toLowerCase()));
   return match ? { url: url.toString(), source: match.source } : null;
 }

@@ -1,3 +1,4 @@
+import { stylingContextPrompt, type StylingContext } from "./bee-context";
 import { generateText } from "ai";
 import { createOnixusAiGatewayProvider } from "@/lib/ai-gateway.server";
 import {
@@ -46,6 +47,7 @@ export type BeeResult =
  * gets the safety-first prompt in every chat, and the reply carries crisis resources.
  */
 export async function beeReply(input: {
+  context?: StylingContext;
   profile: BeeProfile;
   messages: BeeMessage[];
   topic?: TalkTopic;
@@ -63,8 +65,28 @@ export async function beeReply(input: {
     const gateway = createOnixusAiGatewayProvider(key);
     const { text } = await generateText({
       model: gateway(BEE_MODEL),
-      system,
-      messages: input.messages.map((m) => ({ role: m.role, content: m.content })),
+      system: system + (input.topic || crisis ? "" : "\n" + stylingContextPrompt(input.context)),
+      messages: input.messages.map((m, i) =>
+        m.role === "user" &&
+        i === input.messages.length - 1 &&
+        !input.topic &&
+        !crisis &&
+        input.context?.wardrobe.some((p) => p.photo)
+          ? {
+              role: "user" as const,
+              content: [
+                { type: "text" as const, text: m.content },
+                ...input.context.wardrobe
+                  .filter((p) => p.photo)
+                  .slice(0, 3)
+                  .flatMap((p) => [
+                    { type: "text" as const, text: `Kept piece: ${p.label}` },
+                    { type: "image" as const, image: p.photo! },
+                  ]),
+              ],
+            }
+          : { role: m.role, content: m.content },
+      ),
     });
     const reply = text.trim();
     if (!reply) return { error: "empty" };

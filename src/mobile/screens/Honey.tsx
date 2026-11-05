@@ -1,3 +1,5 @@
+import { CalendarReminder } from "../components/CalendarReminder";
+import type { CalendarPreferences, CalendarSettings } from "../lib/calendar-settings";
 import { CalendarConnect } from "../components/CalendarConnect";
 import { calendarDays, shiftCalendar } from "../lib/calendar-grid";
 import { useEffect, useState } from "react";
@@ -23,6 +25,9 @@ export function HoneyScreen({
   looks,
   dressingId,
   feeds,
+  calendarPreferences = {},
+  onCalendarChange,
+  onDisconnect,
   importing,
   notice,
   onAdd,
@@ -37,9 +42,15 @@ export function HoneyScreen({
   looks: GuideLook[];
   dressingId: string | null;
   feeds: string[];
+  calendarPreferences?: CalendarPreferences;
+  onCalendarChange?: (url: string, settings: CalendarSettings) => void;
+  onDisconnect?: (url: string) => void;
   importing: boolean;
   notice: string | null;
   onAdd: (input: {
+    location?: string;
+    dressCode?: string;
+    weatherNote?: string;
     title: string;
     date: string;
     time: string | null;
@@ -58,6 +69,9 @@ export function HoneyScreen({
   const [editing, setEditing] = useState<HoneyItem | null>(null);
   const [lookId, setLookId] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [dressCode, setDressCode] = useState("");
+  const [weatherNote, setWeatherNote] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("");
@@ -86,6 +100,9 @@ export function HoneyScreen({
   function startAdd() {
     setEditing(null);
     setTitle("");
+    setLocation("");
+    setDressCode("");
+    setWeatherNote("");
     setDate(selectedDay);
     setTime("");
     setKind("event");
@@ -95,6 +112,9 @@ export function HoneyScreen({
   function startEdit(item: HoneyItem) {
     setEditing(item);
     setTitle(item.title);
+    setLocation(item.location ?? "");
+    setDressCode(item.dressCode ?? "");
+    setWeatherNote(item.weatherNote ?? "");
     setDate(item.date);
     setTime(item.time ?? "");
     setKind(item.kind);
@@ -233,6 +253,11 @@ export function HoneyScreen({
                               .filter(Boolean)
                               .join(" · ")}
                           </p>
+                          {(item.location || item.dressCode) && (
+                            <p className="mt-2 opacity-70">
+                              {[item.location, item.dressCode].filter(Boolean).join(" · ")}
+                            </p>
+                          )}
                         </div>
                         <div className="flex gap-1">
                           {item.source === "manual" && item.kind !== "post" && (
@@ -303,6 +328,12 @@ export function HoneyScreen({
                           </NeoButton>
                         )
                       )}
+                      {item.kind !== "post" && (
+                        <CalendarReminder
+                          item={item}
+                          outfit={look ? `${look.title}: ${look.formula.join(", ")}` : undefined}
+                        />
+                      )}
                     </li>
                   );
                 })}
@@ -322,6 +353,9 @@ export function HoneyScreen({
               onUpdate({
                 ...editing,
                 title: title.trim(),
+                location,
+                dressCode,
+                weatherNote,
                 date,
                 time: time || null,
                 kind,
@@ -331,6 +365,9 @@ export function HoneyScreen({
             else
               onAdd({
                 title: title.trim(),
+                location,
+                dressCode,
+                weatherNote,
                 date,
                 time: time || null,
                 kind,
@@ -339,6 +376,9 @@ export function HoneyScreen({
             setSelectedDay(date);
             setEditing(null);
             setTitle("");
+            setLocation("");
+            setDressCode("");
+            setWeatherNote("");
             setTime("");
             setView("calendar");
           }}
@@ -375,6 +415,52 @@ export function HoneyScreen({
               { id: "meeting", label: "Meeting" },
             ]}
           />
+          <details className="calendar-manage">
+            <summary>Help Bee dress you for the occasion</summary>
+            <label>
+              Location
+              <NeoField
+                maxLength={160}
+                value={location}
+                placeholder="Miami · rooftop dinner"
+                onChange={(e) => setLocation(e.target.value)}
+              />
+            </label>
+            <label>
+              Dress code
+              <NeoField
+                maxLength={160}
+                value={dressCode}
+                placeholder="Choose below or use your words"
+                onChange={(e) => setDressCode(e.target.value)}
+              />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {["Casual", "Smart casual", "Cocktail", "Black tie"].map((code) => (
+                <button
+                  type="button"
+                  className="neo-btn"
+                  aria-pressed={dressCode === code}
+                  key={code}
+                  onClick={() => setDressCode(code)}
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
+            <label>
+              Weather or comfort notes
+              <NeoField
+                maxLength={160}
+                value={weatherNote}
+                placeholder="Warm evening, outdoors, bring a light layer"
+                onChange={(e) => setWeatherNote(e.target.value)}
+              />
+            </label>
+            <p className="calendar-connect-note">
+              Your notes guide Bee. This is not a live weather forecast.
+            </p>
+          </details>
           <label className="block text-sm">
             Outfit (optional)
             <select
@@ -409,6 +495,9 @@ export function HoneyScreen({
       {view === "connect" && (
         <CalendarConnect
           feeds={feeds}
+          preferences={calendarPreferences}
+          onChange={onCalendarChange}
+          onDisconnect={onDisconnect}
           importing={importing}
           onImport={onImport}
           onDone={() => setView("calendar")}
