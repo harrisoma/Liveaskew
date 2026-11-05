@@ -1,3 +1,4 @@
+import { SoundControl } from "../components/InteractionFeedback";
 import { HoneyScreen } from "./Honey";
 import { WardrobeReset } from "./WardrobeReset";
 import { isoDay, type HoneyItem } from "@/lib/honey";
@@ -82,7 +83,10 @@ export function AdminWorkspace({
         <span className="la-wordmark">
           Live<b>Askew</b>
         </span>
-        <span className="text-sm">Admin</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm">Admin</span>
+          <SoundControl />
+        </div>
       </header>
       {view !== "home" && (
         <div className="px-5 py-2">
@@ -101,7 +105,7 @@ export function AdminWorkspace({
           <p className="text-sm" role="status">
             Customer layout preview · Sample state · No trial or account changes
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="la-admin-preview-tabs mt-2 grid grid-cols-4 gap-1">
             <NeoButton aria-pressed={view === "today"} onClick={() => setView("today")}>
               Today
             </NeoButton>
