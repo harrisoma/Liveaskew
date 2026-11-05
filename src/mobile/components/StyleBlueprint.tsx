@@ -1,16 +1,9 @@
+import { GuideLookbook, type GuideActions } from "./GuideLookbook";
 import { ShoppingBrief } from "./ShoppingBrief";
 import type { ShoppingProfile } from "@/lib/shopping-profile";
 import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useRef, useState } from "react";
-import {
-  BookOpen,
-  Printer,
-  Shirt,
-  ShoppingBag,
-  ArrowRight,
-  Footprints,
-  SlidersHorizontal,
-} from "lucide-react";
+import { BookOpen, Printer, ArrowRight, SlidersHorizontal } from "lucide-react";
 import { apiFetch } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
 import {
@@ -31,12 +24,10 @@ function Notes({ items }: { items: string[] }) {
 }
 export function StyleBlueprintDocument({
   guide,
-  photo,
   products,
   liveAccount = false,
 }: {
   guide: Blueprint;
-  photo?: string;
   products?: ProductMatches | null;
   liveAccount?: boolean;
 }) {
@@ -49,97 +40,21 @@ export function StyleBlueprintDocument({
   );
   return (
     <div className="studio-document">
-      <header className="studio-hero">
+      <details className="studio-reference studio-direction">
+        <summary>Your style direction</summary>
         <div>
-          <span className="studio-signature">Made for you, by Bee</span>
-          <h1>{guide.title}</h1>
-          <p className="studio-archetype">{guide.archetype}</p>
+          <h2>{guide.title}</h2>
+          <p>{guide.archetype}</p>
           <p>{guide.intro}</p>
-          <div className="studio-overview" aria-label="Guide overview">
-            <span>
-              <strong>{guide.capsule.length}</strong> wardrobe pieces
-            </span>
-            <span>
-              <strong>{formulas.length}</strong> outfit combinations
-            </span>
-          </div>
-          <a className="studio-primary studio-start" href="#studio-capsule">
-            Explore your wardrobe <ArrowRight size={16} />
-          </a>
+          <Notes items={guide.intent} />
         </div>
-        <figure>
-          {photo ? (
-            <img src={photo} alt="Your outfit preview" />
-          ) : (
-            <div className="studio-palette-cover" aria-label="Your guide’s color palette">
-              {[...guide.palette.neutrals, ...guide.palette.accents].map((color) => (
-                <div key={color.name}>
-                  <span style={{ background: color.hex }} />
-                  <p>{color.name}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          <figcaption>{photo ? "Your personal lookbook" : "Your palette at a glance"}</figcaption>
-        </figure>
-      </header>
-      <div className="studio-intent">
-        <h2>Your style priorities</h2>
-        <Notes items={guide.intent} />
-      </div>
-      <nav className="studio-index" aria-label="Guide sections">
-        {[
-          ["palette", "Your palette"],
-          ["silhouette", "Shape & fit"],
-          ["capsule", "The capsule"],
-          ["formulas", "Outfit formulas"],
-          ["shopping", "Shopping notes"],
-          ["finishing", "Finishing touches"],
-        ].map(([id, label]) => (
-          <a key={id} href={`#studio-${id}`}>
-            {label}
-          </a>
-        ))}
-      </nav>
-      <section id="studio-palette">
-        <div className="studio-heading">
-          <h2>Your color story</h2>
-          <p>{guide.palette.basis}</p>
-        </div>
-        <div className="studio-palette">
-          {[...guide.palette.neutrals, ...guide.palette.accents].map((c) => (
-            <div key={c.name}>
-              <span style={{ background: c.hex }} />
-              <p>{c.name}</p>
-            </div>
-          ))}
-        </div>
-        <Notes items={guide.palette.consider} />
-      </section>
-      <section id="studio-silhouette">
-        <div className="studio-heading">
-          <h2>Shape, fit & movement</h2>
-          <p>{guide.silhouette.basis}</p>
-        </div>
-        <div className="studio-columns">
-          {[
-            ["Your silhouettes", guide.silhouette.cuts],
-            ["Fabric & feel", guide.silhouette.fabrics],
-            ["The tailor’s notes", guide.silhouette.tailoring],
-          ].map(([title, items]) => (
-            <div key={title as string}>
-              <h3>{title as string}</h3>
-              <Notes items={items as string[]} />
-            </div>
-          ))}
-        </div>
-      </section>
+      </details>
       <section id="studio-capsule">
         <div className="studio-heading">
           <h2>Your wardrobe, working together</h2>
           <p>
             Start with what you own. These coordinated pieces give you a foundation to mix, repeat,
-            and make your own. Photos show retailer matches; color tiles are styling suggestions.
+            and make your own. Photos show retailer matches; color swatches are styling suggestions.
           </p>
         </div>
         <div className="studio-filters" role="group" aria-label="Filter wardrobe pieces">
@@ -169,27 +84,16 @@ export function StyleBlueprintDocument({
               id={`piece-${i + 1}`}
               hidden={category !== "all" && category !== p.role}
             >
-              <div className="studio-piece" style={{ background: p.hex }}>
-                {productFor(i)?.image ? (
+              {productFor(i)?.image ? (
+                <div className="studio-piece">
                   <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
-                ) : p.role === "dress" ? (
-                  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" aria-hidden="true">
-                    <path d="M24 7h16l4 12-7 9 16 28H11l16-28-7-9 4-12Z" />
-                    <path d="M27 28h10M27 7c0 7 10 7 10 0" />
-                  </svg>
-                ) : p.role === "bottom" ? (
-                  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" aria-hidden="true">
-                    <path d="M20 8h24l5 48H35l-3-30-3 30H15l5-48Z" />
-                    <path d="M20 15h24M32 8v10" />
-                  </svg>
-                ) : p.role === "shoe" ? (
-                  <Footprints />
-                ) : p.role === "accessory" ? (
-                  <ShoppingBag />
-                ) : (
-                  <Shirt />
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="studio-piece-swatch">
+                  <span style={{ background: p.hex }} aria-hidden="true" />
+                  <span>{p.color}</span>
+                </div>
+              )}
               <span>
                 {p.role} · {p.color}
               </span>
@@ -204,87 +108,135 @@ export function StyleBlueprintDocument({
           ))}
         </div>
       </section>
-      <section id="studio-formulas">
-        <div className="studio-heading">
-          <h2>Less deciding. More getting dressed.</h2>
-          <p>
-            A few pieces, a complete look. Tap any piece to find it in your wardrobe above. Your
-            personalized outfit images are in Looks.
-          </p>
-        </div>
-        <div className="studio-formulas">
-          {formulas.map((f, i) => (
-            <div key={f.id} hidden={!allFormulas && i >= 4}>
-              <span>Look {i + 1}</span>
-              <div>
-                {f.pieces.map((p) => (
-                  <a href={`#${p.id}`} key={p.id} onClick={() => setCategory("all")}>
-                    <i style={{ background: p.hex }} />
-                    {p.name}
-                  </a>
-                ))}
+      <details id="studio-palette" className="studio-reference">
+        <summary>Your palette</summary>
+        <div className="studio-reference-body">
+          <div className="studio-heading">
+            <h2>Your color story</h2>
+            <p>{guide.palette.basis}</p>
+          </div>
+          <div className="studio-palette">
+            {[...guide.palette.neutrals, ...guide.palette.accents].map((c) => (
+              <div key={c.name}>
+                <span style={{ background: c.hex }} />
+                <p>{c.name}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <Notes items={guide.palette.consider} />
         </div>
-        {formulas.length > 4 && (
-          <button
-            className="studio-expand"
-            aria-expanded={allFormulas}
-            onClick={() => setAllFormulas(!allFormulas)}
-          >
-            {allFormulas ? "Show fewer combinations" : `See all ${formulas.length} combinations`}
-          </button>
-        )}
-      </section>
-      <section id="studio-shopping">
-        <div className="studio-heading">
-          <h2>Your shopping notes</h2>
-          <p>
-            Consider these gaps after your wardrobe review. Live, size-and-budget checked products
-            appear in your capsule. The search links below are for further research and are not
-            verified inventory.
-          </p>
+      </details>
+      <details id="studio-silhouette" className="studio-reference">
+        <summary>Fit & fabric</summary>
+        <div className="studio-reference-body">
+          <div className="studio-heading">
+            <h2>Shape, fit & movement</h2>
+            <p>{guide.silhouette.basis}</p>
+          </div>
+          <div className="studio-columns">
+            {[
+              ["Your silhouettes", guide.silhouette.cuts],
+              ["Fabric & feel", guide.silhouette.fabrics],
+              ["The tailor’s notes", guide.silhouette.tailoring],
+            ].map(([title, items]) => (
+              <div key={title as string}>
+                <h3>{title as string}</h3>
+                <Notes items={items as string[]} />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="studio-columns">
-          {guide.gaps.map((g) => (
-            <article key={g.item}>
-              <span>{g.priority === "first" ? "Consider first" : "For later"}</span>
-              <h3>{g.item}</h3>
-              <p>{g.why}</p>
-              <a
-                className="studio-link"
-                href={retailerSearch(g.item)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Search retailer <ArrowRight size={14} />
-              </a>
-            </article>
-          ))}
+      </details>
+      <details id="studio-formulas" className="studio-reference">
+        <summary>More ways to combine your pieces</summary>
+        <div className="studio-reference-body">
+          <div className="studio-heading">
+            <h2>Less deciding. More getting dressed.</h2>
+            <p>
+              A few pieces, a complete look. Tap any piece to find it in your wardrobe above. Your
+              personalized outfit images are in Looks.
+            </p>
+          </div>
+          <div className="studio-formulas">
+            {formulas.map((f, i) => (
+              <div key={f.id} hidden={!allFormulas && i >= 4}>
+                <span>Look {i + 1}</span>
+                <div>
+                  {f.pieces.map((p) => (
+                    <a href={`#${p.id}`} key={p.id} onClick={() => setCategory("all")}>
+                      <i style={{ background: p.hex }} />
+                      {p.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {formulas.length > 4 && (
+            <button
+              className="studio-expand"
+              aria-expanded={allFormulas}
+              onClick={() => setAllFormulas(!allFormulas)}
+            >
+              {allFormulas ? "Show fewer combinations" : `See all ${formulas.length} combinations`}
+            </button>
+          )}
         </div>
-        <h3 className="mt-6">Before you buy</h3>
-        <Notes items={guide.finishing.shoppingChecklist} />
-      </section>
-      <section id="studio-finishing">
-        <div className="studio-heading">
-          <h2>The finishing touches</h2>
-          <p>Comfort comes first. Keep the details that feel like you.</p>
+      </details>
+      <details id="studio-shopping" className="studio-reference">
+        <summary>Shopping priorities</summary>
+        <div className="studio-reference-body">
+          <div className="studio-heading">
+            <h2>Your shopping notes</h2>
+            <p>
+              Consider these gaps after your wardrobe review. Live, size-and-budget checked products
+              appear in your capsule. The search links below are for further research and are not
+              verified inventory.
+            </p>
+          </div>
+          <div className="studio-columns">
+            {guide.gaps.map((g) => (
+              <article key={g.item}>
+                <span>{g.priority === "first" ? "Consider first" : "For later"}</span>
+                <h3>{g.item}</h3>
+                <p>{g.why}</p>
+                <a
+                  className="studio-link"
+                  href={retailerSearch(g.item)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Search retailer <ArrowRight size={14} />
+                </a>
+              </article>
+            ))}
+          </div>
+          <h3 className="mt-6">Before you buy</h3>
+          <Notes items={guide.finishing.shoppingChecklist} />
         </div>
-        <div className="studio-columns">
-          {[
-            ["Foundations", guide.finishing.foundations],
-            ["Shoes", guide.finishing.shoes],
-            ["Accessories", guide.finishing.accessories],
-            ["Care & grooming", guide.finishing.grooming],
-          ].map(([title, items]) => (
-            <div key={title as string}>
-              <h3>{title as string}</h3>
-              <Notes items={items as string[]} />
-            </div>
-          ))}
+      </details>
+      <details id="studio-finishing" className="studio-reference">
+        <summary>Finishing touches</summary>
+        <div className="studio-reference-body">
+          <div className="studio-heading">
+            <h2>The finishing touches</h2>
+            <p>Comfort comes first. Keep the details that feel like you.</p>
+          </div>
+          <div className="studio-columns">
+            {[
+              ["Foundations", guide.finishing.foundations],
+              ["Shoes", guide.finishing.shoes],
+              ["Accessories", guide.finishing.accessories],
+              ["Care & grooming", guide.finishing.grooming],
+            ].map(([title, items]) => (
+              <div key={title as string}>
+                <h3>{title as string}</h3>
+                <Notes items={items as string[]} />
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      </details>
       <footer className="studio-colophon">LiveAskew · A wardrobe for the life you live.</footer>
     </div>
   );
@@ -353,7 +305,10 @@ export function StyleBlueprint({
   looks,
   onLooks,
   notice,
-}: {
+  onSaveLook,
+  onRestyle,
+  onPlanLook,
+}: GuideActions & {
   wardrobe: WardrobeItem[];
   looks: GuideLook[];
   onLooks: () => void;
@@ -500,6 +455,12 @@ export function StyleBlueprint({
           </button>
         </div>
       </div>
+      <GuideLookbook
+        looks={looks}
+        onSaveLook={onSaveLook}
+        onRestyle={onRestyle}
+        onPlanLook={onPlanLook}
+      />
       {editingInterview && (
         <div className="studio-editor">
           <button className="studio-expand" onClick={() => setEditingInterview(false)}>
@@ -559,14 +520,7 @@ export function StyleBlueprint({
           Checking your size, price and availability with retailers…
         </p>
       )}
-      {guide && (
-        <StyleBlueprintDocument
-          guide={guide}
-          products={products}
-          liveAccount
-          photo={looks.find((l) => l.tryOnUrl)?.tryOnUrl ?? undefined}
-        />
-      )}
+      {guide && <StyleBlueprintDocument guide={guide} products={products} liveAccount />}
     </div>
   );
 }

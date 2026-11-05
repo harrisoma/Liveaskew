@@ -960,6 +960,48 @@ export function MobileApp() {
               notice={guideError}
               looks={snap.looks}
               onLooks={() => setBeeView("looks")}
+              onSaveLook={async (look) => {
+                const saved = { ...look, saved: true };
+                patch((s) => ({ ...s, looks: s.looks.map((l) => (l.id === look.id ? saved : l)) }));
+                const synced = await pushLooks([saved]);
+                if (!synced)
+                  throw new Error(
+                    "Saved on this device. Account sync is unavailable; reconnect to sync your collection.",
+                  );
+              }}
+              onRestyle={(look) => {
+                setTalk(null);
+                setInput(
+                  `Help me adjust “${look.title}”: ${look.formula.join(", ")}. I’d like to change `,
+                );
+                setBeeView("chat");
+              }}
+              onPlanLook={async (look, date) => {
+                const item: HoneyItem = {
+                  id:
+                    snap.honey.find(
+                      (item) =>
+                        item.id.startsWith("guide_") &&
+                        item.lookId === look.id &&
+                        item.date === date,
+                    )?.id ?? nid("guide"),
+                  title: look.title,
+                  date,
+                  time: null,
+                  kind: "event",
+                  source: "manual",
+                  network: null,
+                  lookId: look.id,
+                  caption: null,
+                  postStatus: null,
+                  beeNote: look.feel,
+                };
+                patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
+                if (!(await pushHoney([item])))
+                  throw new Error(
+                    "Planned on this device. Account sync is unavailable; reconnect to sync Honey.",
+                  );
+              }}
             />
           )}
           {tab === "bee" && beeView === "chat" && (
