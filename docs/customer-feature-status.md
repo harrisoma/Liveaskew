@@ -10,7 +10,7 @@
 
 ## Verified
 
-- TypeScript and lint; 218 automated tests.
+- TypeScript and lint; 220 automated tests.
 - Browser preview: calendar selection, add/edit event with outfit, seven-day week, wardrobe filtering and renaming; 320px layout without horizontal overflow.
 
 ## Still requires customer account verification

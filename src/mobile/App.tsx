@@ -274,11 +274,24 @@ export function MobileApp() {
     setSnap((s) => fn(s));
   }, []);
 
+  const editedHoneyIds = useRef(new Set<string>());
   const loadHoneyRange = useCallback(
     (from: string, to: string) => {
       void pullHoney({ from, to }).then((remote) => {
         if (remote)
-          patch((s) => (s.email === snap.email ? { ...s, honey: mergeHoney(s.honey, remote) } : s));
+          patch((s) =>
+            s.email === snap.email
+              ? {
+                  ...s,
+                  honey: mergeHoney(
+                    s.honey,
+                    remote.filter(
+                      (item) => !editedHoneyIds.current.has(`${snap.email}:${item.id}`),
+                    ),
+                  ),
+                }
+              : s,
+          );
         else
           setHoneyNotice("Couldn’t refresh this date range. Showing events saved on this device.");
       });
@@ -1251,6 +1264,7 @@ export function MobileApp() {
               notice={honeyNotice}
               onRange={loadHoneyRange}
               onUpdate={async (item) => {
+                editedHoneyIds.current.add(`${snap.email}:${item.id}`);
                 patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
                 const synced = await pushHoney([item]);
                 setHoneyNotice(
@@ -1271,6 +1285,7 @@ export function MobileApp() {
                   beeNote: null,
                 };
                 patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
+                editedHoneyIds.current.add(`${snap.email}:${item.id}`);
                 void pushHoney([item]).then((synced) =>
                   setHoneyNotice(
                     synced
@@ -1280,9 +1295,18 @@ export function MobileApp() {
                 );
                 void haptic("impact");
               }}
-              onDelete={(item) => {
+              onDelete={async (item) => {
+                editedHoneyIds.current.add(`${snap.email}:${item.id}`);
                 patch((s) => ({ ...s, honey: s.honey.filter((h) => h.id !== item.id) }));
-                void deleteHoney(item.id);
+                const removed = await deleteHoney(item.id);
+                if (!removed) {
+                  patch((s) =>
+                    s.email === snap.email ? { ...s, honey: mergeHoney(s.honey, [item]) } : s,
+                  );
+                  setHoneyNotice(
+                    "This event could not be removed from your account. It has been restored; reconnect and try again.",
+                  );
+                } else setHoneyNotice("Event removed.");
               }}
               onDressMe={(item) => void dressMe(item)}
               onImport={async (url) => {

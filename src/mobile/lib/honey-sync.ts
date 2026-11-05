@@ -30,11 +30,14 @@ export async function pushHoney(items: HoneyItem[]): Promise<boolean> {
   }
 }
 
-export async function deleteHoney(id: string): Promise<void> {
+export async function deleteHoney(id: string): Promise<boolean> {
   try {
-    await apiFetch(`/api/honey/?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    const response = await apiFetch(`/api/honey/?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    return response.ok;
   } catch {
-    /* local delete already applied */
+    return false;
   }
 }
 
