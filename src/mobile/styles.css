@@ -1895,3 +1895,122 @@ button.neo-raised-sm:active:not(:disabled) {
     height: auto;
   }
 }
+
+.honey-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.honey-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.honey-calendar {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px solid var(--separator);
+}
+.honey-calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.honey-calendar-nav h2 {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+.honey-today {
+  min-height: 44px;
+  padding: 8px;
+  font-size: 12px;
+  color: var(--gold);
+}
+.honey-weekdays,
+.honey-date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.honey-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  color: var(--label-2);
+  padding-bottom: 8px;
+}
+.honey-date-grid button {
+  min-width: 0;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid transparent;
+}
+.honey-date-grid button[data-outside="true"] {
+  color: var(--label-2);
+}
+.honey-date-grid button[aria-current="date"] {
+  border-color: var(--gold);
+}
+.honey-date-grid button[aria-pressed="true"] {
+  background: var(--gold-bright);
+  color: var(--on-gold);
+}
+.honey-date-grid i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.honey-date-grid button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.honey-outfit {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+.wardrobe-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  color: var(--label-2);
+  font-size: 13px;
+}
+.wardrobe-summary strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--label);
+}
+.wardrobe-filters {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 4px 0;
+}
+.wardrobe-filters button {
+  white-space: nowrap;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--fill);
+  border-radius: 999px;
+  font-size: 13px;
+}
+.wardrobe-filters button[aria-pressed="true"] {
+  background: var(--label);
+  color: var(--bg);
+}

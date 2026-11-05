@@ -1,3 +1,5 @@
+import { WardrobeReset } from "./screens/WardrobeReset";
+import { syncWardrobe } from "./lib/wardrobe-sync";
 import { INTERVIEW_OPTIONS, addInterviewOption } from "./lib/interview-options";
 import { ChatComposer } from "./components/ChatComposer";
 import { SetupProgress } from "./components/SetupProgress";
@@ -11,7 +13,7 @@ import { ShoppingBrief } from "./components/ShoppingBrief";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Home, Settings, WifiOff } from "lucide-react";
 import { StyleBlueprint } from "./components/StyleBlueprint";
-import { LookCard, WardrobeCard } from "./components/LookCard";
+import { LookCard } from "./components/LookCard";
 import { NeoButton, NeoField, Screen, Segmented, Skeleton } from "./components/ui";
 import { HoneyScreen } from "./screens/Honey";
 import { BuzzScreen } from "./screens/Buzz";
@@ -271,6 +273,18 @@ export function MobileApp() {
   const patch = useCallback((fn: (s: AppSnapshot) => AppSnapshot) => {
     setSnap((s) => fn(s));
   }, []);
+
+  const loadHoneyRange = useCallback(
+    (from: string, to: string) => {
+      void pullHoney({ from, to }).then((remote) => {
+        if (remote)
+          patch((s) => (s.email === snap.email ? { ...s, honey: mergeHoney(s.honey, remote) } : s));
+        else
+          setHoneyNotice("Couldn’t refresh this date range. Showing events saved on this device.");
+      });
+    },
+    [patch, snap.email],
+  );
 
   const weeklyIds = snap.looks
     .filter((l) => l.guideDay)
@@ -949,7 +963,7 @@ export function MobileApp() {
                   { id: "guide", label: "Style Guide" },
                   { id: "looks", label: "Looks" },
                   { id: "chat", label: "Chat" },
-                  { id: "reset", label: "Reset" },
+                  { id: "reset", label: "Wardrobe" },
                 ]}
               />
             </div>
@@ -1089,10 +1103,80 @@ export function MobileApp() {
               items={snap.wardrobe}
               busy={wardrobeBusy}
               error={wardrobeError}
+              onSync={async () => {
+                if (wardrobeBusy) return;
+                setWardrobeBusy(true);
+                setWardrobeError(null);
+                try {
+                  const items = await syncWardrobe(snap.wardrobe);
+                  patch((s) => ({ ...s, wardrobe: items }));
+                  setWardrobeError(
+                    "Wardrobe synced. Your photos and decisions are backed up to your account.",
+                  );
+                } catch (error) {
+                  setWardrobeError(
+                    error instanceof Error
+                      ? error.message
+                      : "Wardrobe sync failed. Your device copy is safe.",
+                  );
+                } finally {
+                  setWardrobeBusy(false);
+                }
+              }}
+              onStyle={() => {
+                const kept = snap.wardrobe.filter((item) => item.verdict === "keep" && !item.error);
+                setTalk(null);
+                setInput(
+                  `Build an outfit using my kept wardrobe pieces: ${kept.map((item) => item.label).join(", ")}. My occasion is `,
+                );
+                setBeeView("chat");
+              }}
+              onRename={(id, label) =>
+                patch((s) => ({
+                  ...s,
+                  wardrobe: s.wardrobe.map((item) => (item.id === id ? { ...item, label } : item)),
+                }))
+              }
+              onRetry={async (item) => {
+                if (wardrobeBusy || !item.photo) return;
+                setWardrobeBusy(true);
+                setWardrobeError(null);
+                try {
+                  const result = await analyzeWardrobePhoto({
+                    photo: item.photo,
+                    profile: snap.onboarding,
+                  });
+                  patch((s) => ({
+                    ...s,
+                    wardrobe: s.wardrobe.map((row) =>
+                      row.id !== item.id
+                        ? row
+                        : "error" in result
+                          ? { ...row, error: result.error }
+                          : { ...row, ...result, error: null },
+                    ),
+                  }));
+                } catch {
+                  setWardrobeError("This piece could not be reviewed. Please try again.");
+                } finally {
+                  setWardrobeBusy(false);
+                }
+              }}
               onDecide={(id, verdict) =>
                 patch((s) => ({
                   ...s,
-                  wardrobe: s.wardrobe.map((w) => (w.id === id ? { ...w, verdict } : w)),
+                  wardrobe: s.wardrobe.map((w) =>
+                    w.id === id
+                      ? {
+                          ...w,
+                          verdict,
+                          error: null,
+                          reason: w.error
+                            ? "Your choice. Bee has not completed a review of this piece."
+                            : w.reason,
+                        }
+                      : w,
+                  ),
                 }))
               }
               onUpload={async () => {
@@ -1116,7 +1200,7 @@ export function MobileApp() {
                     error: null,
                   }));
                   const fullPhoto = new Map(items.map((item, i) => [item.id, photos[i]]));
-                  patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe].slice(0, 60) }));
+                  patch((s) => ({ ...s, wardrobe: [...items, ...s.wardrobe] }));
                   for (const item of items) {
                     const result = await analyzeWardrobePhoto({
                       photo: fullPhoto.get(item.id) ?? item.photo,
@@ -1165,20 +1249,35 @@ export function MobileApp() {
               feeds={snap.calendarFeeds}
               importing={importing}
               notice={honeyNotice}
+              onRange={loadHoneyRange}
+              onUpdate={async (item) => {
+                patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
+                const synced = await pushHoney([item]);
+                setHoneyNotice(
+                  synced
+                    ? "Event updated."
+                    : "Updated on this device. Reconnect to sync your calendar.",
+                );
+              }}
               onAdd={(input) => {
                 setHoneyNotice(null);
-                upsertHoney([
-                  {
-                    id: nid("h"),
-                    ...input,
-                    source: "manual",
-                    network: null,
-                    lookId: null,
-                    caption: null,
-                    postStatus: null,
-                    beeNote: null,
-                  },
-                ]);
+                const item: HoneyItem = {
+                  id: nid("h"),
+                  ...input,
+                  source: "manual",
+                  network: null,
+                  caption: null,
+                  postStatus: null,
+                  beeNote: null,
+                };
+                patch((s) => ({ ...s, honey: mergeHoney(s.honey, [item]) }));
+                void pushHoney([item]).then((synced) =>
+                  setHoneyNotice(
+                    synced
+                      ? "Added to Honey."
+                      : "Saved on this device. Reconnect to sync your calendar.",
+                  ),
+                );
                 void haptic("impact");
               }}
               onDelete={(item) => {
@@ -1922,64 +2021,6 @@ function LooksBook({
             />
           ))}
       </div>
-    </Screen>
-  );
-}
-
-function WardrobeReset({
-  items,
-  busy,
-  error,
-  onDecide,
-  onUpload,
-}: {
-  items: AppSnapshot["wardrobe"];
-  busy: boolean;
-  error: string | null;
-  onDecide: (id: string, verdict: "keep" | "toss" | "maybe") => void;
-  onUpload: () => void;
-}) {
-  return (
-    <Screen
-      kicker="Wardrobe Reset"
-      title="Keep, toss or maybe"
-      footer={
-        <NeoButton variant="ink" onClick={onUpload} disabled={busy}>
-          {busy ? "Bee is reviewing your pieces…" : "Add clothes, shoes or accessories"}
-        </NeoButton>
-      }
-    >
-      <p className="mb-4 text-sm leading-relaxed">
-        Add one item per photo: clothes, shoes, bags, jewellery or other accessories. Bee checks
-        each one against your Fit, Feel and Fabric. Keep what serves you, set aside what doesn’t,
-        and decide on the maybes after a try-on. Toss is an edit to your wardrobe, not a requirement
-        to throw anything away.
-      </p>
-      {error && (
-        <p role="alert" className="mb-4 text-sm">
-          {error}
-        </p>
-      )}
-      {busy && (
-        <p role="status" className="mb-4 text-sm">
-          Reviewing your photos. Each decision appears below when ready.
-        </p>
-      )}
-      {items.length === 0 ? (
-        <div className="neo-inset px-4 py-8 text-sm leading-relaxed">
-          Nothing here yet. Start with the pieces you reach for most.
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {items.map((item) => (
-            <WardrobeCard
-              key={item.id}
-              item={item}
-              onDecide={(verdict) => onDecide(item.id, verdict)}
-            />
-          ))}
-        </div>
-      )}
     </Screen>
   );
 }

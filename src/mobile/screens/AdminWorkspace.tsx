@@ -1,3 +1,7 @@
+import { HoneyScreen } from "./Honey";
+import { WardrobeReset } from "./WardrobeReset";
+import { isoDay, type HoneyItem } from "@/lib/honey";
+import type { WardrobeItem } from "../lib/storage";
 import { useState, type ReactNode } from "react";
 import { TodayScreen } from "./Today";
 import { ModerationScreen } from "./Moderation";
@@ -23,7 +27,28 @@ export function AdminWorkspace({
   onOpenCustomer: () => void;
   renderChat: (props: PreviewChatProps) => ReactNode;
 }) {
-  const [view, setView] = useState<"home" | "today" | "bee" | "moderation">("home");
+  const [view, setView] = useState<"home" | "today" | "bee" | "honey" | "wardrobe" | "moderation">(
+    "home",
+  );
+  const [sampleEvents, setSampleEvents] = useState<HoneyItem[]>([]);
+  const [sampleWardrobe, setSampleWardrobe] = useState<WardrobeItem[]>([
+    {
+      id: "sample-dress",
+      photo: "",
+      label: "Blue cotton dress",
+      verdict: "keep",
+      reason: "Sample piece: comfortable for warm days.",
+      error: null,
+    },
+    {
+      id: "sample-shirt",
+      photo: "",
+      label: "White linen shirt",
+      verdict: "maybe",
+      reason: "Sample piece: check the sleeve fit.",
+      error: null,
+    },
+  ]);
   const [queue, setQueue] = useState<ModerationItem[]>([]);
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
@@ -50,7 +75,7 @@ export function AdminWorkspace({
     setQueue(items);
     setView("moderation");
   }
-  const preview = view === "today" || view === "bee";
+  const preview = view === "today" || view === "bee" || view === "honey" || view === "wardrobe";
   return (
     <div className="la-app flex flex-col">
       <header className="la-topbar">
@@ -76,17 +101,71 @@ export function AdminWorkspace({
           <p className="text-sm" role="status">
             Customer layout preview · Sample state · No trial or account changes
           </p>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             <NeoButton aria-pressed={view === "today"} onClick={() => setView("today")}>
               Today
             </NeoButton>
             <NeoButton aria-pressed={view === "bee"} onClick={() => setView("bee")}>
               Bee
             </NeoButton>
+            <NeoButton aria-pressed={view === "honey"} onClick={() => setView("honey")}>
+              Honey
+            </NeoButton>
+            <NeoButton aria-pressed={view === "wardrobe"} onClick={() => setView("wardrobe")}>
+              Wardrobe
+            </NeoButton>
           </div>
         </div>
       )}
-      {notice && (
+      {view === "honey" && (
+        <HoneyScreen
+          items={sampleEvents}
+          today={isoDay(new Date())}
+          looks={[]}
+          dressingId={null}
+          feeds={[]}
+          importing={false}
+          notice={notice}
+          onAdd={(input) =>
+            setSampleEvents((items) => [
+              ...items,
+              {
+                ...input,
+                id: crypto.randomUUID(),
+                source: "manual",
+                network: null,
+                caption: null,
+                postStatus: null,
+                beeNote: null,
+              },
+            ])
+          }
+          onUpdate={(item) =>
+            setSampleEvents((items) => items.map((i) => (i.id === item.id ? item : i)))
+          }
+          onDelete={(item) => setSampleEvents((items) => items.filter((i) => i.id !== item.id))}
+          onDressMe={() => setNotice("Sample preview: styling is available in your customer view.")}
+          onImport={() => setNotice("Sample preview: connect calendars in your customer view.")}
+        />
+      )}
+      {view === "wardrobe" && (
+        <WardrobeReset
+          items={sampleWardrobe}
+          busy={false}
+          error={notice}
+          onUpload={() => setNotice("Sample preview: add your own photos in customer view.")}
+          onSync={() => setNotice("Sample preview: account sync is available in customer view.")}
+          onStyle={() => setNotice("Sample preview: Bee styles your kept pieces in customer view.")}
+          onRetry={() => {}}
+          onRename={(id, label) =>
+            setSampleWardrobe((items) => items.map((i) => (i.id === id ? { ...i, label } : i)))
+          }
+          onDecide={(id, verdict) =>
+            setSampleWardrobe((items) => items.map((i) => (i.id === id ? { ...i, verdict } : i)))
+          }
+        />
+      )}
+      {notice && view !== "honey" && view !== "wardrobe" && (
         <p className="mx-5 p-3 neo-inset text-sm" role="status">
           {notice}
         </p>

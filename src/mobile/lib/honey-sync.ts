@@ -2,9 +2,13 @@ import type { HoneyItem } from "@/lib/honey";
 import { apiFetch } from "./api";
 
 /** Honey is local-first: the device copy always works; signed-in accounts sync to Supabase. */
-export async function pullHoney(): Promise<HoneyItem[] | null> {
+export async function pullHoney(range?: { from: string; to: string }): Promise<HoneyItem[] | null> {
   try {
-    const res = await apiFetch("/api/honey/");
+    const res = await apiFetch(
+      range
+        ? `/api/honey/?from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`
+        : "/api/honey/",
+    );
     if (!res.ok) return null;
     const json = (await res.json()) as { items?: HoneyItem[] };
     return json.items ?? [];

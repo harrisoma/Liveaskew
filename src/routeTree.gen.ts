@@ -49,6 +49,7 @@ import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
 import { Route as ApiPushRegisterRouteImport } from './routes/api/push/register'
 import { Route as ApiWardrobeAnalyzeRouteImport } from './routes/api/wardrobe/analyze'
+import { Route as ApiWardrobeStatusRouteImport } from './routes/api/wardrobe/status'
 import { Route as DotwellKnownOauthProtectedResourceApiMcpRouteImport } from './routes/[.]well-known/oauth-protected-resource/api/mcp'
 import { Route as ApiBeeStyleGuideProductsRouteImport } from './routes/api/bee/style-guide/products'
 import { Route as ApiBeeStyleGuideShopRouteImport } from './routes/api/bee/style-guide/shop'
@@ -259,6 +260,11 @@ const ApiWardrobeAnalyzeRoute = ApiWardrobeAnalyzeRouteImport.update({
   path: '/api/wardrobe/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWardrobeStatusRoute = ApiWardrobeStatusRouteImport.update({
+  id: '/api/wardrobe/status',
+  path: '/api/wardrobe/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DotwellKnownOauthProtectedResourceApiMcpRoute =
   DotwellKnownOauthProtectedResourceApiMcpRouteImport.update({
     id: '/api/mcp',
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/wardrobe/status': typeof ApiWardrobeStatusRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
@@ -382,6 +389,7 @@ export interface FileRoutesByTo {
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/wardrobe/status': typeof ApiWardrobeStatusRoute
   '/api/honey': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
@@ -431,6 +439,7 @@ export interface FileRoutesById {
   '/api/push/recommend': typeof ApiPushRecommendRoute
   '/api/push/register': typeof ApiPushRegisterRoute
   '/api/wardrobe/analyze': typeof ApiWardrobeAnalyzeRoute
+  '/api/wardrobe/status': typeof ApiWardrobeStatusRoute
   '/api/honey/': typeof ApiHoneyIndexRoute
   '/.well-known/oauth-protected-resource/api/mcp': typeof DotwellKnownOauthProtectedResourceApiMcpRoute
   '/api/bee/style-guide/products': typeof ApiBeeStyleGuideProductsRoute
@@ -481,6 +490,7 @@ export interface FileRouteTypes {
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/wardrobe/status'
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/wardrobe/status'
     | '/api/honey'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/api/push/recommend'
     | '/api/push/register'
     | '/api/wardrobe/analyze'
+    | '/api/wardrobe/status'
     | '/api/honey/'
     | '/.well-known/oauth-protected-resource/api/mcp'
     | '/api/bee/style-guide/products'
@@ -626,6 +638,7 @@ export interface RootRouteChildren {
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
   ApiPushRegisterRoute: typeof ApiPushRegisterRoute
   ApiWardrobeAnalyzeRoute: typeof ApiWardrobeAnalyzeRoute
+  ApiWardrobeStatusRoute: typeof ApiWardrobeStatusRoute
   ApiHoneyIndexRoute: typeof ApiHoneyIndexRoute
   ApiPublicBuzzCallbackRoute: typeof ApiPublicBuzzCallbackRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -913,6 +926,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWardrobeAnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/wardrobe/status': {
+      id: '/api/wardrobe/status'
+      path: '/api/wardrobe/status'
+      fullPath: '/api/wardrobe/status'
+      preLoaderRoute: typeof ApiWardrobeStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/oauth-protected-resource/api/mcp': {
       id: '/.well-known/oauth-protected-resource/api/mcp'
       path: '/api/mcp'
@@ -1030,6 +1050,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPushRecommendRoute: ApiPushRecommendRoute,
   ApiPushRegisterRoute: ApiPushRegisterRoute,
   ApiWardrobeAnalyzeRoute: ApiWardrobeAnalyzeRoute,
+  ApiWardrobeStatusRoute: ApiWardrobeStatusRoute,
   ApiHoneyIndexRoute: ApiHoneyIndexRoute,
   ApiPublicBuzzCallbackRoute: ApiPublicBuzzCallbackRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
@@ -1037,3 +1058,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

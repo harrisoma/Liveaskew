@@ -40,13 +40,29 @@ export const Route = createFileRoute("/api/honey/")({
       GET: async ({ request }) => {
         const userId = await signedIn(request);
         if (userId instanceof Response) return userId;
-        const since = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+        const params = new URL(request.url).searchParams;
+        const from = params.get("from"),
+          to = params.get("to");
+        if (
+          (from || to) &&
+          (!from ||
+            !to ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(from) ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(to) ||
+            !Number.isFinite(Date.parse(from)) ||
+            !Number.isFinite(Date.parse(to)) ||
+            Date.parse(to) < Date.parse(from) ||
+            Date.parse(to) - Date.parse(from) > 93 * 86400000)
+        )
+          return Response.json({ error: "invalid_date_range" }, { status: 400 });
+        const since = from ?? new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin
           .from("calendar_events")
           .select(HONEY_COLUMNS)
           .eq("user_id", userId)
           .gte("event_date", since)
+          .lte("event_date", to ?? "9999-12-31")
           .order("event_date", { ascending: true })
           .limit(500);
         if (error) return Response.json({ error: "honey_unavailable" }, { status: 503 });

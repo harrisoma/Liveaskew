@@ -152,7 +152,11 @@ export function snapshotFallbacks(next: AppSnapshot): AppSnapshot[] {
   const base = { ...next, messages: next.messages.slice(-MAX_MESSAGES) };
   return [
     base,
-    { ...base, wardrobe: base.wardrobe.slice(0, 20), tryOnCache: {} },
+    {
+      ...base,
+      wardrobe: base.wardrobe.map((w, i) => (i < 20 ? w : { ...w, photo: "" })),
+      tryOnCache: {},
+    },
     { ...base, wardrobe: base.wardrobe.map((w) => ({ ...w, photo: "" })), tryOnCache: {} },
     {
       ...base,
