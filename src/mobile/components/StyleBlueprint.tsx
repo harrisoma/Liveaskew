@@ -2,7 +2,15 @@ import { ShoppingBrief } from "./ShoppingBrief";
 import type { ShoppingProfile } from "@/lib/shopping-profile";
 import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, Printer, Shirt, ShoppingBag, ArrowRight, Footprints } from "lucide-react";
+import {
+  BookOpen,
+  Printer,
+  Shirt,
+  ShoppingBag,
+  ArrowRight,
+  Footprints,
+  SlidersHorizontal,
+} from "lucide-react";
 import { apiFetch } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
 import {
@@ -11,7 +19,6 @@ import {
   retailerSearch,
   type StyleBlueprint as Blueprint,
 } from "@/lib/style-blueprint";
-import flatlay from "@/assets/brand/flatlay.webp";
 
 function Notes({ items }: { items: string[] }) {
   return (
@@ -33,6 +40,8 @@ export function StyleBlueprintDocument({
   products?: ProductMatches | null;
   liveAccount?: boolean;
 }) {
+  const [category, setCategory] = useState("all");
+  const [allFormulas, setAllFormulas] = useState(false);
   const productFor = (index: number) =>
     products?.items.find((p) => p.pieceId === `piece-${index + 1}`);
   const formulas = capsuleFormulas(
@@ -42,24 +51,42 @@ export function StyleBlueprintDocument({
     <div className="studio-document">
       <header className="studio-hero">
         <div>
-          <span className="studio-signature">Bee’s personal styling studio</span>
+          <span className="studio-signature">Made for you, by Bee</span>
           <h1>{guide.title}</h1>
           <p className="studio-archetype">{guide.archetype}</p>
           <p>{guide.intro}</p>
-          <Notes items={guide.intent} />
+          <div className="studio-overview" aria-label="Guide overview">
+            <span>
+              <strong>{guide.capsule.length}</strong> wardrobe pieces
+            </span>
+            <span>
+              <strong>{formulas.length}</strong> outfit combinations
+            </span>
+          </div>
+          <a className="studio-primary studio-start" href="#studio-capsule">
+            Explore your wardrobe <ArrowRight size={16} />
+          </a>
         </div>
         <figure>
-          <img
-            src={photo || flatlay}
-            alt={photo ? "Your outfit preview" : "Studio wardrobe inspiration"}
-          />
-          <figcaption>
-            {photo
-              ? "Your personal lookbook"
-              : "Studio inspiration · your guide is personalized below"}
-          </figcaption>
+          {photo ? (
+            <img src={photo} alt="Your outfit preview" />
+          ) : (
+            <div className="studio-palette-cover" aria-label="Your guide’s color palette">
+              {[...guide.palette.neutrals, ...guide.palette.accents].map((color) => (
+                <div key={color.name}>
+                  <span style={{ background: color.hex }} />
+                  <p>{color.name}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <figcaption>{photo ? "Your personal lookbook" : "Your palette at a glance"}</figcaption>
         </figure>
       </header>
+      <div className="studio-intent">
+        <h2>Your style priorities</h2>
+        <Notes items={guide.intent} />
+      </div>
       <nav className="studio-index" aria-label="Guide sections">
         {[
           ["palette", "Your palette"],
@@ -109,19 +136,52 @@ export function StyleBlueprintDocument({
       </section>
       <section id="studio-capsule">
         <div className="studio-heading">
-          <h2>A considered capsule</h2>
+          <h2>Your wardrobe, working together</h2>
           <p>
-            Twelve coordinated pieces, including shoes and accessories. Retailer photos show the
-            actual products linked below. Unmatched pieces are styling directions; check your closet
-            before shopping.
+            Start with what you own. These coordinated pieces give you a foundation to mix, repeat,
+            and make your own. Photos show retailer matches; color tiles are styling suggestions.
           </p>
+        </div>
+        <div className="studio-filters" role="group" aria-label="Filter wardrobe pieces">
+          {[
+            ["all", "All pieces"],
+            ["top", "Tops"],
+            ["bottom", "Bottoms"],
+            ["dress", "Dresses"],
+            ["layer", "Layers"],
+            ["shoe", "Shoes"],
+            ["accessory", "Accessories"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={category === value}
+              onClick={() => setCategory(value)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
         <div className="studio-capsule">
           {guide.capsule.map((p, i) => (
-            <article key={i} id={`piece-${i + 1}`}>
+            <article
+              key={i}
+              id={`piece-${i + 1}`}
+              hidden={category !== "all" && category !== p.role}
+            >
               <div className="studio-piece" style={{ background: p.hex }}>
                 {productFor(i)?.image ? (
                   <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
+                ) : p.role === "dress" ? (
+                  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M24 7h16l4 12-7 9 16 28H11l16-28-7-9 4-12Z" />
+                    <path d="M27 28h10M27 7c0 7 10 7 10 0" />
+                  </svg>
+                ) : p.role === "bottom" ? (
+                  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path d="M20 8h24l5 48H35l-3-30-3 30H15l5-48Z" />
+                    <path d="M20 15h24M32 8v10" />
+                  </svg>
                 ) : p.role === "shoe" ? (
                   <Footprints />
                 ) : p.role === "accessory" ? (
@@ -135,26 +195,30 @@ export function StyleBlueprintDocument({
               </span>
               <h3>{productFor(i)?.title ?? p.name}</h3>
               {productFor(i) && <RetailItem product={productFor(i)!} liveAccount={liveAccount} />}
-              <p>{p.reason}</p>
+              {!productFor(i) && <span className="studio-suggestion">Styling suggestion</span>}
+              <details className="studio-piece-notes">
+                <summary>Why it works</summary>
+                <p>{p.reason}</p>
+              </details>
             </article>
           ))}
         </div>
       </section>
       <section id="studio-formulas">
         <div className="studio-heading">
-          <h2>Twenty ways to wear it</h2>
+          <h2>Less deciding. More getting dressed.</h2>
           <p>
-            Use these mix-and-match formulas as a starting point. Your seven personalized outfit
-            images are in Looks.
+            A few pieces, a complete look. Tap any piece to find it in your wardrobe above. Your
+            personalized outfit images are in Looks.
           </p>
         </div>
         <div className="studio-formulas">
           {formulas.map((f, i) => (
-            <div key={f.id}>
+            <div key={f.id} hidden={!allFormulas && i >= 4}>
               <span>Look {i + 1}</span>
               <div>
                 {f.pieces.map((p) => (
-                  <a href={`#${p.id}`} key={p.id}>
+                  <a href={`#${p.id}`} key={p.id} onClick={() => setCategory("all")}>
                     <i style={{ background: p.hex }} />
                     {p.name}
                   </a>
@@ -163,6 +227,15 @@ export function StyleBlueprintDocument({
             </div>
           ))}
         </div>
+        {formulas.length > 4 && (
+          <button
+            className="studio-expand"
+            aria-expanded={allFormulas}
+            onClick={() => setAllFormulas(!allFormulas)}
+          >
+            {allFormulas ? "Show fewer combinations" : `See all ${formulas.length} combinations`}
+          </button>
+        )}
       </section>
       <section id="studio-shopping">
         <div className="studio-heading">
@@ -401,26 +474,37 @@ export function StyleBlueprint({
           <BookOpen size={17} /> Your Style Guide
         </span>
         <div>
-          <button onClick={() => void editInterview()}>Edit saved sizes & limits</button>
-          {guide && (
-            <>
-              <button disabled={busy} onClick={() => void create()}>
-                {busy ? "Updating your guide…" : "Update from my interview"}
-              </button>
-              <button onClick={() => window.print()}>
-                <Printer size={15} /> Print / save PDF
-              </button>
-              <button disabled={shoppingBusy} onClick={() => void loadProducts()}>
-                {shoppingBusy ? "Checking retailers…" : "Refresh live products"}
-              </button>
-            </>
-          )}
-          <button onClick={onLooks}>View my looks</button>
+          <details className="studio-tools">
+            <summary>
+              <SlidersHorizontal size={16} /> Guide settings
+            </summary>
+            <div>
+              <button onClick={() => void editInterview()}>Edit sizes & budget</button>
+              {guide && (
+                <>
+                  <button disabled={busy} onClick={() => void create()}>
+                    {busy ? "Updating your guide…" : "Update from my interview"}
+                  </button>
+                  <button onClick={() => window.print()}>
+                    <Printer size={15} /> Print / save PDF
+                  </button>
+                  <button disabled={shoppingBusy} onClick={() => void loadProducts()}>
+                    {shoppingBusy ? "Checking retailers…" : "Refresh live products"}
+                  </button>
+                </>
+              )}
+            </div>
+          </details>
+          <button className="studio-primary" onClick={onLooks}>
+            View my looks <ArrowRight size={16} />
+          </button>
         </div>
       </div>
       {editingInterview && (
-        <div>
-          <button onClick={() => setEditingInterview(false)}>Close interview details</button>
+        <div className="studio-editor">
+          <button className="studio-expand" onClick={() => setEditingInterview(false)}>
+            Close interview details
+          </button>
           <ShoppingBrief
             initialProfile={savedProfile}
             disabled={busy}
