@@ -1,3 +1,4 @@
+import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
 import { WardrobeReset } from "./screens/WardrobeReset";
 import { syncWardrobe } from "./lib/wardrobe-sync";
 import { INTERVIEW_OPTIONS, addInterviewOption } from "./lib/interview-options";
@@ -90,6 +91,7 @@ type Tab = "today" | "bee" | "honey" | "buzz" | "hive" | "you";
 type BeeView = "guide" | "chat" | "looks" | "reset";
 
 export function MobileApp() {
+  useInteractionFeedback();
   const [ready, setReady] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
   const [customerView, setCustomerView] = useState(false);
@@ -598,6 +600,11 @@ export function MobileApp() {
           </NeoButton>
         </div>
       )}
+      {snap.phase !== "app" && (
+        <div className="flex justify-end px-5 pt-3">
+          <SoundControl />
+        </div>
+      )}
       {!online && (
         <div
           className="mx-5 mt-3 flex items-center gap-2 neo-inset px-3 py-2 text-sm"
@@ -620,18 +627,21 @@ export function MobileApp() {
               Live<b>Askew</b>
             </span>
           </button>
-          <button
-            type="button"
-            className="neo-icon-btn"
-            aria-label="You — profile, membership, privacy"
-            aria-current={tab === "you" ? "page" : undefined}
-            onClick={() => {
-              setTab("you");
-              setYouView("profile");
-            }}
-          >
-            <Settings size={18} aria-hidden />
-          </button>
+          <div className="flex items-center gap-2">
+            <SoundControl />
+            <button
+              type="button"
+              className="neo-icon-btn"
+              aria-label="You — profile, membership, privacy"
+              aria-current={tab === "you" ? "page" : undefined}
+              onClick={() => {
+                setTab("you");
+                setYouView("profile");
+              }}
+            >
+              <Settings size={18} aria-hidden />
+            </button>
+          </div>
         </header>
       )}
       {snap.phase === "app" && trialText && (
