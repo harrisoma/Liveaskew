@@ -2160,3 +2160,293 @@ button.neo-raised-sm:active:not(:disabled) {
     transform: none !important;
   }
 }
+
+/* Calendar setup is a guided task, with illustrations at each decision. */
+.calendar-connect {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+.calendar-connect-intro {
+  margin: 24px 0;
+}
+.calendar-connect-intro > svg {
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.calendar-connect h2 {
+  font-size: 23px;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+.calendar-connect-intro p,
+.calendar-guide-copy p,
+.calendar-connect-success p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--label-2);
+  margin-top: 10px;
+}
+.calendar-provider-list {
+  display: grid;
+  gap: 12px;
+}
+.calendar-provider-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 14px;
+  min-height: 84px;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--separator);
+  border-radius: 22px;
+  background: var(--card);
+  box-shadow:
+    inset 0 1px 0 var(--control-glint),
+    0 3px 12px var(--control-shadow);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+.calendar-provider-card:active {
+  transform: scale(0.98);
+  border-color: var(--gold);
+}
+.calendar-provider-card > span:nth-child(2) {
+  flex: 1;
+}
+.calendar-provider-card strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+}
+.calendar-provider-card small,
+.calendar-connected-row small {
+  display: block;
+  font-size: 12px;
+  color: var(--label-2);
+  margin-top: 4px;
+}
+.calendar-provider-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: #eaf2ff;
+  color: #245bb5;
+  font-weight: 700;
+  font-size: 21px;
+}
+.calendar-provider-apple {
+  background: #f5f5f7;
+  color: #343438;
+  font-size: 11px;
+}
+.calendar-provider-outlook {
+  background: #e6f3ff;
+  color: #0067b8;
+}
+.calendar-connect-note {
+  color: var(--label-2);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 16px 0;
+}
+.calendar-guide-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.calendar-guide-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.calendar-guide-heading h2 {
+  font-size: 20px;
+}
+.calendar-guide-heading p {
+  font-size: 12px;
+  color: var(--label-2);
+  margin-top: 4px;
+}
+.calendar-guide-progress {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 22px 0;
+  list-style: none;
+  padding: 0;
+}
+.calendar-guide-progress li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--label-2);
+  font-size: 10px;
+}
+.calendar-guide-progress li > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--fill);
+}
+.calendar-guide-progress li[aria-current="step"],
+.calendar-guide-progress li[data-complete="true"] {
+  color: var(--gold);
+}
+.calendar-guide-progress li[aria-current="step"] > span {
+  background: var(--gold-bright);
+  color: var(--on-gold);
+}
+.calendar-guide-art {
+  padding: 16px;
+  border: 1px solid var(--separator);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--card) 85%, var(--fill));
+}
+.calendar-guide-art-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.calendar-guide-art-header > span:nth-child(2) {
+  flex: 1;
+}
+.calendar-guide-art-header .calendar-provider-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+.calendar-guide-art-header .calendar-provider-apple {
+  font-size: 8px;
+}
+.calendar-guide-art-rows {
+  padding: 0 4px;
+}
+.calendar-guide-art-rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 10px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--separator);
+}
+.calendar-guide-art-rows > div[data-highlight="true"] {
+  background: var(--card);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  margin-top: 6px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.calendar-guide-pointer {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.calendar-art-caption {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  color: var(--label-2);
+  font-size: 10px;
+}
+.calendar-guide-copy {
+  margin: 22px 0;
+}
+.calendar-guide-copy h3 {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.calendar-open-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  margin-bottom: 12px;
+  color: var(--gold);
+  font-size: 14px;
+}
+.calendar-guide-help {
+  display: block;
+  padding: 18px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--label-2);
+  text-decoration: underline;
+}
+.calendar-guide-help svg {
+  display: inline;
+}
+.calendar-connect-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.calendar-connect-form .calendar-connect-note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.calendar-connect-form [role="alert"] {
+  font-size: 13px;
+  margin: 12px 0;
+  color: var(--label);
+}
+.calendar-connect-success {
+  padding: 24px 0;
+  text-align: center;
+}
+.calendar-connect-success > svg {
+  margin: 0 auto 18px;
+  color: var(--gold);
+}
+.calendar-connect-success .neo-btn {
+  margin-top: 14px;
+}
+.calendar-connected-list {
+  margin-top: 28px;
+}
+.calendar-connected-list h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.calendar-connected-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--separator);
+  font-size: 14px;
+}
+.calendar-connected-row > span {
+  flex: 1;
+}
+.calendar-connected-row > svg {
+  color: var(--gold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .calendar-provider-card {
+    transition: none;
+    transform: none;
+  }
+}

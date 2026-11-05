@@ -1,3 +1,4 @@
+import { CalendarConnect } from "../components/CalendarConnect";
 import { calendarDays, shiftCalendar } from "../lib/calendar-grid";
 import { useEffect, useState } from "react";
 import {
@@ -49,7 +50,7 @@ export function HoneyScreen({
   onRange?: (from: string, to: string) => void;
   onDelete: (item: HoneyItem) => void;
   onDressMe: (item: HoneyItem) => void;
-  onImport: (url: string) => void;
+  onImport: (url: string) => Promise<boolean | void> | void;
 }) {
   const [view, setView] = useState<"calendar" | "days" | "add" | "connect">("calendar");
   const [calendarMode, setCalendarMode] = useState<"month" | "week">("month");
@@ -61,7 +62,6 @@ export function HoneyScreen({
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("");
   const [kind, setKind] = useState<HoneyKind>("event");
-  const [feedUrl, setFeedUrl] = useState("");
   const days =
     view === "calendar"
       ? [
@@ -105,31 +105,44 @@ export function HoneyScreen({
   const lookFor = (id: string | null) => looks.find((l) => l.id === id) ?? null;
 
   return (
-    <Screen kicker="Honey" title="Your days">
-      <div className="honey-actions">
-        <NeoButton onClick={startAdd}>
-          <CalendarPlus size={16} /> Add event
-        </NeoButton>
-        <NeoButton onClick={() => setView("connect")}>
-          <Link2 size={16} /> Calendars
-        </NeoButton>
-      </div>
-      <Segmented
-        label="Honey view"
-        value={view === "days" ? "agenda" : calendarMode}
-        onChange={(mode) => {
-          if (mode === "agenda") setView("days");
-          else {
-            setCalendarMode(mode);
-            setView("calendar");
-          }
-        }}
-        options={[
-          { id: "month", label: "Month" },
-          { id: "week", label: "Week" },
-          { id: "agenda", label: "Agenda" },
-        ]}
-      />
+    <Screen kicker="Honey" title={view === "connect" ? "Connect your calendar" : "Your days"}>
+      {view === "connect" ? (
+        <button
+          type="button"
+          className="la-text-action calendar-guide-back"
+          onClick={() => setView("calendar")}
+        >
+          <ChevronLeft size={16} aria-hidden />
+          Back to calendar
+        </button>
+      ) : (
+        <div className="honey-actions">
+          <NeoButton onClick={startAdd}>
+            <CalendarPlus size={16} /> Add event
+          </NeoButton>
+          <NeoButton onClick={() => setView("connect")}>
+            <Link2 size={16} /> Calendars
+          </NeoButton>
+        </div>
+      )}
+      {view !== "connect" && (
+        <Segmented
+          label="Honey view"
+          value={view === "days" ? "agenda" : calendarMode}
+          onChange={(mode) => {
+            if (mode === "agenda") setView("days");
+            else {
+              setCalendarMode(mode);
+              setView("calendar");
+            }
+          }}
+          options={[
+            { id: "month", label: "Month" },
+            { id: "week", label: "Week" },
+            { id: "agenda", label: "Agenda" },
+          ]}
+        />
+      )}
       {view === "calendar" && (
         <div className="honey-calendar">
           <div className="honey-calendar-nav">
@@ -394,67 +407,12 @@ export function HoneyScreen({
       )}
 
       {view === "connect" && (
-        <div className="mt-5 space-y-4 text-sm leading-relaxed">
-          <p>
-            Import an iCal feed to show the next 60 days in Honey. This is one-way import; use Sync
-            to refresh. Keep private feed links confidential.
-          </p>
-          <ul className="neo-inset space-y-2 px-4 py-3">
-            <li>
-              <strong>Google:</strong> Settings → your calendar → “Secret address in iCal format”.
-            </li>
-            <li>
-              <strong>iPhone / iCloud:</strong> Calendar → ⓘ next to the calendar → Public Calendar
-              → Share Link. Only do this for a calendar you are comfortable making public.
-            </li>
-            <li>
-              <strong>Outlook:</strong> Settings → Calendar → Shared calendars → Publish → ICS.
-            </li>
-          </ul>
-          <NeoField
-            type="url"
-            inputMode="url"
-            placeholder="https://… or webcal://…"
-            value={feedUrl}
-            onChange={(e) => setFeedUrl(e.target.value)}
-          />
-          <NeoButton
-            variant="ink"
-            disabled={importing || !feedUrl.trim()}
-            onClick={() => {
-              onImport(feedUrl.trim());
-              setFeedUrl("");
-            }}
-          >
-            <Link2 size={14} aria-hidden className="mr-1 inline" />
-            {importing ? "Bringing your calendar in…" : "Connect calendar"}
-          </NeoButton>
-          {feeds.length > 0 && (
-            <div>
-              <p className="la-kicker">Connected</p>
-              <ul className="mt-2 space-y-2">
-                {feeds.map((f) => (
-                  <li
-                    key={f}
-                    className="neo-raised-sm flex items-center justify-between gap-2 px-3 py-2"
-                  >
-                    <span className="truncate">
-                      {new URL(f.replace(/^webcal:/i, "https:")).hostname}
-                    </span>
-                    <button
-                      type="button"
-                      className="font-semibold"
-                      disabled={importing}
-                      onClick={() => onImport(f)}
-                    >
-                      Sync
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+        <CalendarConnect
+          feeds={feeds}
+          importing={importing}
+          onImport={onImport}
+          onDone={() => setView("calendar")}
+        />
       )}
     </Screen>
   );

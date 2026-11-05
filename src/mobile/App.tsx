@@ -1326,7 +1326,7 @@ export function MobileApp() {
                 setImporting(false);
                 if ("error" in result) {
                   setHoneyNotice(result.error);
-                  return;
+                  return false;
                 }
                 patch((s) => ({
                   ...s,
@@ -1347,6 +1347,7 @@ export function MobileApp() {
                     : `Done! ${result.items.length} upcoming event${result.items.length === 1 ? "" : "s"} added to Honey.`,
                 );
                 void haptic("success");
+                return true;
               }}
             />
           )}
