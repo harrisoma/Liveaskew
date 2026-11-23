@@ -326,3 +326,281 @@
     transition: none !important;
   }
 }
+
+/* ——— Design Studio: moodboard, notes, collage, process ——— */
+.la-company .lac-hand {
+  font-family: "Caveat", "Bradley Hand", "Segoe Print", cursive;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.la-company .lac-display {
+  font-size: clamp(3.4rem, 8vw, 6.6rem);
+  line-height: 0.98;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.la-company .lac-display em {
+  display: block;
+  font-style: italic;
+  color: #8a6412;
+}
+.la-company .lac-outline-word {
+  position: absolute;
+  top: clamp(90px, 10vw, 130px);
+  left: 18%;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(6rem, 18vw, 17rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(120, 100, 70, 0.16);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.la-company .lac-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #c9a86a;
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6b4d0e;
+}
+.la-company .lac-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #b8860b;
+}
+.la-company .lac-btn-outline {
+  border: 1.5px solid #111;
+  color: #111;
+  background: transparent;
+}
+.la-company .lac-btn-outline:hover {
+  background: #111;
+  color: #fff;
+}
+.la-company .lac-stat {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(60, 40, 10, 0.05);
+}
+
+.la-company .lac-board {
+  position: relative;
+  margin: 0;
+  padding: 14px 14px 18px;
+  background: #fffdf8;
+  box-shadow: 0 30px 70px rgba(60, 40, 10, 0.16);
+  transform: rotate(0.6deg);
+}
+.la-company .lac-board img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.la-company .lac-tape {
+  position: absolute;
+  z-index: 2;
+  width: 120px;
+  height: 30px;
+  background: rgba(226, 190, 110, 0.6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.la-company .lac-tape-top {
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+}
+.la-company .lac-sticky-gold {
+  flex: none;
+  padding: 4px 14px;
+  background: #f3dc9a;
+  font-size: 1.5rem;
+  transform: rotate(-2deg);
+  box-shadow: 0 4px 10px rgba(60, 40, 10, 0.12);
+}
+.la-company .lac-note {
+  background: #fffdf8;
+  padding: 16px 22px;
+  box-shadow: 0 14px 34px rgba(60, 40, 10, 0.14);
+}
+.la-company .lac-note-corner {
+  position: absolute;
+  top: 18px;
+  right: -14px;
+  z-index: 3;
+  font-size: 1.6rem;
+  transform: rotate(3deg);
+}
+.la-company .lac-note-studio {
+  position: relative;
+  z-index: 3;
+  width: min(330px, 90%);
+  margin: -18px 0 0 24px;
+  transform: rotate(-2deg);
+}
+@media (max-width: 640px) {
+  .la-company .lac-note-corner {
+    right: 4px;
+    top: -10px;
+    font-size: 1.3rem;
+  }
+}
+.la-company .lac-scroll {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 40px auto 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(60, 40, 10, 0.12);
+}
+
+/* Collage: a pinned wall of polaroids */
+.la-company .lac-collage {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 36px 28px;
+  align-items: start;
+}
+@media (min-width: 1100px) {
+  .la-company .lac-collage {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.la-company .lac-collage .lac-polaroid img {
+  aspect-ratio: 819 / 1100;
+  object-fit: cover;
+}
+.la-company .lac-collage-note {
+  align-self: center;
+  transform: rotate(-1deg);
+}
+.la-company .lac-polaroid {
+  position: relative;
+  display: block;
+  padding: 12px 12px 16px;
+  background: #fffdf8;
+  box-shadow: 0 18px 44px rgba(60, 40, 10, 0.13);
+  transition: transform 220ms ease;
+}
+.la-company .lac-polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.la-company .lac-polaroid:hover {
+  transform: rotate(0deg) translateY(-4px);
+}
+.la-company .lac-tilt-0 {
+  transform: rotate(-1.4deg);
+}
+.la-company .lac-tilt-1 {
+  transform: rotate(1.1deg);
+}
+.la-company .lac-tilt-2 {
+  transform: rotate(-0.6deg);
+}
+.la-company .lac-tilt-3 {
+  transform: rotate(1.6deg);
+}
+.la-company .lac-pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, #f3d68a, #b8860b 60%, #6b4d0e);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+/* Tools */
+.la-company .lac-tool-logo {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+.la-company .lac-tool-logo img {
+  max-width: 30px;
+  max-height: 30px;
+}
+.la-company .lac-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.la-company .lac-tool-chip img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* Process */
+.la-company .lac-stages {
+  display: grid;
+  gap: 72px;
+}
+.la-company .lac-stage {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .la-company .lac-stage {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+  .la-company .lac-stage:nth-child(even) .lac-stage-copy {
+    order: 2;
+  }
+}
+.la-company .lac-stage-num {
+  font-size: 3.4rem;
+  line-height: 1;
+  font-weight: 700;
+  color: #b8860b;
+}
+.la-company .lac-stage-media img {
+  aspect-ratio: 1100 / 819;
+  object-fit: cover;
+}
+.la-company .lac-stage-media {
+  max-width: 560px;
+  width: 100%;
+  justify-self: center;
+}
+.la-company .lac-stage-note {
+  padding: 34px 32px;
+  transform: rotate(1.2deg);
+}

@@ -11,3 +11,16 @@ Retrieved November 5, 2026 from provider-owned sites:
 | Microsoft Outlook | public/images/brands/outlook.svg         | https://www.microsoft.com/content/dam/microsoft/bade/images/icons/en-us/m365-app-icons-fy26/Outlook-Icon-FY26.svg — linked by https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook |
 
 Reuse in provider choices, guide headers, and connected-calendar rows. The Apple icon's date is artwork from Apple, not the user's current date.
+
+## Design tools (Design Studio page)
+
+Added November 23, 2026. Shown in the Design Studio toolkit and process steps.
+
+| Tool              | Local asset                                | Source                                                                                                             |
+| ----------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Figma             | public/images/brands/figma.svg             | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:figma`             |
+| Adobe Illustrator | public/images/brands/adobe-illustrator.svg | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-illustrator` |
+| Adobe Photoshop   | public/images/brands/adobe-photoshop.svg   | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-photoshop`   |
+
+Still needed from the provider's press or brand page (shown as name only until added): **Canva**, **Procreate**, **CLO 3D**.
+Replace any of the above with the provider's own download if it differs.
