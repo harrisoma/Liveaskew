@@ -1,29 +1,7 @@
 import { ArrowRight } from "lucide-react";
-import appImg from "@/assets/site/bee-flatlay-app.webp";
-import stylingImg from "@/assets/site/hero-portrait.webp";
-import consultingImg from "@/assets/site/consulting/brand.webp";
-import studioImg from "@/assets/site/studio/blazer.webp";
 import { SiteFrame } from "./chrome";
-import { OFFERS, type OfferId } from "./offers";
+import { OFFERS } from "./offers";
 import { StudioCheckoutButton } from "./StudioCheckout";
-
-const IMAGES: Record<OfferId, { src: string; alt: string; position?: string }> = {
-  app: { src: appImg, alt: "A styled outfit laid out on a bed with the Bee app open beside it" },
-  styling: {
-    src: stylingImg,
-    alt: "A woman in a tailored black suit with gold embroidery",
-    position: "center 12%",
-  },
-  consulting: {
-    src: consultingImg,
-    alt: "Two consultants reviewing brand identity sketches and swatches",
-  },
-  "design-studio": {
-    src: studioImg,
-    alt: "A black blazer with gold embroidery on a dress form",
-    position: "center 30%",
-  },
-};
 
 const STEPS = ["Choose your path", "Sign up or book", "We get to work"];
 
@@ -41,8 +19,8 @@ export function StartPage() {
               Where would you like to start?
             </h1>
             <p className="mt-6 max-w-xl text-[1.15rem] leading-relaxed text-black/70">
-              Four ways in — for you, your business, or the things your brand makes. Pick one; you
-              can always add the rest later.
+              Four ways to work with LiveAskew: for you, for your business, or for the things your
+              brand makes. Start with one and add the rest later.
             </p>
           </div>
           <ol className="lac-funnel-steps mt-10" aria-label="How it works">
@@ -59,25 +37,18 @@ export function StartPage() {
       <section className="la-section pt-12 md:pt-16" aria-label="Choose your path">
         <ul className="mx-auto grid max-w-[1320px] gap-6 md:grid-cols-2">
           {OFFERS.map((offer) => {
-            const image = IMAGES[offer.id];
             return (
               <li key={offer.id} id={offer.id} className="lac-path scroll-mt-28">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  loading="lazy"
-                  style={image.position ? { objectPosition: image.position } : undefined}
-                />
                 <div className="lac-path-body">
                   <p className="la-eyebrow text-[0.75rem] text-[#8a6412]">{offer.forWho}</p>
-                  <h2 className="la-serif mt-3 text-[2rem] leading-tight md:text-[2.4rem]">
+                  <h2 className="la-serif mt-3 text-[1.7rem] leading-tight md:text-[2rem]">
                     {offer.name}
                   </h2>
                   <p className="mt-3 text-[1.0625rem] leading-relaxed text-black/70">
                     {offer.summary}
                   </p>
                   <p className="mt-6 flex items-baseline gap-2">
-                    <span className="la-serif text-[2rem] leading-none">{offer.price}</span>
+                    <span className="la-serif text-[1.7rem] leading-none">{offer.price}</span>
                     <span className="text-[0.92rem] text-black/60">{offer.priceNote}</span>
                   </p>
                   <div className="mt-6 flex flex-wrap items-start gap-3">

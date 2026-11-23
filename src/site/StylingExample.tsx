@@ -1,5 +1,5 @@
 import { Shirt } from "lucide-react";
-import workLook from "@/assets/site/sample-work-look.jpg";
+import workLook from "@/assets/site/look-ivory-navy.webp";
 
 export function StylingExample() {
   return (
@@ -57,7 +57,7 @@ export function StylingExample() {
             <h4 className="mt-5 text-lg font-semibold">Find a look. Refine it together.</h4>
             <img
               src={workLook}
-              alt="Illustrative outfit: ivory shirt, navy midi skirt, tan loafers and tan bag"
+              alt="Illustrative outfit: ivory shirt, navy midi skirt and tan loafers"
               width="800"
               height="800"
               loading="lazy"

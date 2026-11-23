@@ -41,7 +41,7 @@ export function PricingPage() {
           </nav>
           {cancelled ? (
             <p role="status" className="lac-focus mt-6 max-w-xl text-[0.98rem]">
-              Checkout was cancelled — nothing was charged. Start again whenever you're ready, or
+              Checkout was cancelled and nothing was charged. Start again whenever you're ready, or
               book a call to talk it through first.
             </p>
           ) : null}
@@ -95,7 +95,7 @@ export function PricingPage() {
             <SectionHeading
               eyebrow="The Bee App"
               title={<span id="app-plans">App memberships</span>}
-              intro="Every membership starts with 14 days free — no card to get started."
+              intro="Every membership starts with 14 days free. No card needed."
             />
             <a href="/apps#pricing" className="lac-text-link">
               Compare every feature <ArrowRight size={16} aria-hidden />

@@ -8,6 +8,7 @@ import {
   Sparkles,
   Store,
 } from "lucide-react";
+import heroImg from "@/assets/site/consulting/hero.webp";
 import brandImg from "@/assets/site/consulting/brand.webp";
 import marketingImg from "@/assets/site/consulting/marketing.webp";
 import retailImg from "@/assets/site/consulting/retail.webp";
@@ -23,7 +24,7 @@ const CORE = [
     tag: "Make the brand unmistakable",
     image: brandImg,
     alt: "Two consultants reviewing brand identity sketches, color swatches and typography notes",
-    desc: "Name, story, logo direction, color, type, voice, and visual identity — so your brand looks like what it sells.",
+    desc: "Name, story, logo direction, color, type, voice and visual identity, so your brand looks like what it sells.",
     deliverables: [
       "Brand story + positioning",
       "Logo + color + type direction",
@@ -67,8 +68,8 @@ const CORE = [
     title: "Product Design",
     tag: "Products people want to wear",
     image: productImg,
-    alt: "Designers reviewing a jacket tech pack with fabric swatches and a sample",
-    desc: "Products people want to wear. From idea to tech pack to sample — with a stylist's eye for fit, fabric, and wearability.",
+    alt: "A technical drawing of a jacket beside the finished black jacket with gold embroidery, swatches and a tape measure",
+    desc: "From idea to tech pack to sample, with a stylist's eye for fit, fabric and wearability.",
     deliverables: [
       "Product + collection direction",
       "Tech packs",
@@ -88,7 +89,7 @@ const MENU: { title: string; desc: string; cat: Category }[] = [
   },
   {
     title: "Team + Uniform Styling",
-    desc: "Corporate wardrobe programs your team will actually wear.",
+    desc: "Corporate wardrobe programs your team will wear.",
     cat: "People",
   },
   {
@@ -103,7 +104,7 @@ const MENU: { title: string; desc: string; cat: Category }[] = [
   },
   {
     title: "Fashion Buying + Sourcing Strategy",
-    desc: "Buy smarter — the right range, the right suppliers, the right timing.",
+    desc: "Buy the right range from the right suppliers at the right time.",
     cat: "Retail",
   },
   {
@@ -133,7 +134,7 @@ const MENU: { title: string; desc: string; cat: Category }[] = [
   },
   {
     title: "Event Styling",
-    desc: "Launches, pop-ups, runway, and press — styled end to end.",
+    desc: "Launches, pop-ups, runway shows and press events, styled end to end.",
     cat: "Brand",
   },
   {
@@ -189,7 +190,7 @@ const FOCUS: Record<(typeof CORE)[number]["title"], string> = {
     "We will start with your story and positioning, then shape the visual identity around it.",
   Marketing: "We will shape the campaign idea, then plan the shoot, content, and launch around it.",
   "Retail Strategies":
-    "We will walk your assortment, floor, and pricing — then map what to change first.",
+    "We will walk your assortment, floor and pricing, then map what to change first.",
   "Product Design":
     "We will review the collection idea, then shape fit, fabric, and the path to sample.",
 };
@@ -222,8 +223,8 @@ export function ConsultingPage() {
               Business Consulting, From a Professional Stylist.
             </h1>
             <p className="mt-6 max-w-xl text-[1.15rem] leading-relaxed text-black/70">
-              A stylist sees what your customer sees first — your brand, your clothes, your store,
-              your campaign. We turn that eye into strategy for your whole business.
+              A stylist sees what your customer sees first: your brand, your clothes, your store and
+              your campaigns. We turn that eye into strategy for your whole business.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a href="#services" className="la-btn la-btn-dark">
@@ -241,13 +242,15 @@ export function ConsultingPage() {
           </div>
           <figure className="lac-photo-card">
             <img
-              src={brandImg}
+              src={heroImg}
               fetchPriority="high"
-              alt="Two consultants reviewing brand identity sketches, color swatches and typography notes"
+              alt="A boutique set for a consultation: two cream chairs, a table with a lookbook and swatches, and a rail of black and ivory garments"
             />
             <figcaption className="flex items-center justify-between gap-3 px-2 pt-4 pb-1">
-              <span className="la-eyebrow text-[0.75rem]">Brand identity, styled</span>
-              <span className="lac-stat text-[0.8rem]">01 — Start here</span>
+              <span className="la-eyebrow text-[0.75rem]">Your consultation, set up</span>
+              <a href={bookHref()} className="lac-stat text-[0.8rem]">
+                Book a call
+              </a>
             </figcaption>
           </figure>
         </div>
@@ -262,7 +265,7 @@ export function ConsultingPage() {
               id="core-title"
               className="la-serif mt-4 text-[2.4rem] leading-[1.06] md:text-[3.4rem]"
             >
-              Four ways to change how your business looks — and sells.
+              Four ways to change how your business looks and sells.
             </h2>
             <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/70">
               Start with one. Build the rest around it. Each service is practical, visual, and made
@@ -292,7 +295,7 @@ export function ConsultingPage() {
                   <p className="mt-3 text-[1.0625rem] leading-relaxed text-black/70">{desc}</p>
                   <details className="lac-deliverables mt-6">
                     <summary>
-                      <span>What you get — {deliverables.length} included</span>
+                      <span>What you get: {deliverables.length} deliverables</span>
                       <ChevronDown size={18} aria-hidden />
                     </summary>
                     <ul>
@@ -325,7 +328,7 @@ export function ConsultingPage() {
               </h2>
             </div>
             <p className="max-w-sm text-[1rem] leading-relaxed text-black/65">
-              Filter by what you need most. Every item is a real service — not a vague promise.
+              Filter by what you need most.
             </p>
           </div>
           <div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter services">
@@ -374,8 +377,8 @@ export function ConsultingPage() {
                 Clear steps. No jargon. Work you can see.
               </h2>
               <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/70">
-                We start where your business actually is — then build the look, the offer, and the
-                launch around it.
+                We start where your business is today, then build the look, the offer and the launch
+                around it.
               </p>
               <a href={bookHref()} className="la-btn lac-btn-gold mt-8">
                 Start with Diagnose <ArrowRight size={18} aria-hidden />
@@ -415,7 +418,7 @@ export function ConsultingPage() {
 
       {/* Book a consulting call */}
       <section className="la-section" aria-labelledby="call-title">
-        <div className="lac-call mx-auto grid max-w-[1320px] overflow-hidden lg:grid-cols-[1.1fr_1fr]">
+        <div className="lac-call mx-auto max-w-[980px] overflow-hidden">
           <div className="p-8 md:p-12">
             <Eyebrow>Book a consulting call</Eyebrow>
             <h2
@@ -455,17 +458,6 @@ export function ConsultingPage() {
               </a>
             </div>
           </div>
-          <a href="/design-studio" className="lac-call-media">
-            <img
-              src={productImg}
-              alt="Designers reviewing a jacket tech pack with fabric swatches and a sample"
-              loading="lazy"
-            />
-            <span className="flex items-center justify-between gap-3 px-6 py-5">
-              <span className="la-eyebrow text-[0.75rem]">From idea to sample</span>
-              <span className="lac-stat text-[0.8rem]">Design Studio</span>
-            </span>
-          </a>
         </div>
       </section>
     </SiteFrame>

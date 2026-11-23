@@ -87,8 +87,8 @@ export function ServiceCard({
           <ArrowUpRight size={20} />
         </span>
       </div>
-      <h3 className="la-serif mt-6 text-[2rem] leading-[1.08] md:text-[2.4rem]">{title}</h3>
-      <p className="mt-3 max-w-md text-[1.0625rem] leading-relaxed text-black/70">{text}</p>
+      <h3 className="la-serif mt-4 text-[1.6rem] leading-[1.1] md:text-[1.85rem]">{title}</h3>
+      <p className="mt-2 max-w-md text-[1rem] leading-relaxed text-black/70">{text}</p>
     </a>
   );
 }
@@ -100,11 +100,11 @@ export function ItemGrid({ items, columns = 3 }: { items: Item[]; columns?: 2 | 
     columns
   ];
   return (
-    <ul className={`mt-12 grid gap-4 ${cols}`}>
+    <ul className={`mt-10 grid gap-3 ${cols}`}>
       {items.map((item) => (
         <li key={item.title} className="la-card">
-          <h3 className="la-serif text-[1.6rem] leading-tight">{item.title}</h3>
-          <p className="mt-3 text-[1rem] leading-relaxed text-black/70">{item.text}</p>
+          <h3 className="la-serif text-[1.35rem] leading-tight">{item.title}</h3>
+          <p className="mt-2 text-[0.98rem] leading-relaxed text-black/70">{item.text}</p>
         </li>
       ))}
     </ul>
@@ -113,13 +113,13 @@ export function ItemGrid({ items, columns = 3 }: { items: Item[]; columns?: 2 | 
 
 export function Steps({ steps }: { steps: Item[] }) {
   return (
-    <ol className="mt-12 grid gap-4 md:grid-cols-3">
+    <ol className="mt-10 grid gap-3 md:grid-cols-3">
       {steps.map((step, index) => (
         <li key={step.title} className="la-card">
-          <span className="la-serif text-[2.6rem] leading-none text-[#b8860b]">
+          <span className="la-serif text-[2rem] leading-none text-[#b8860b]">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <h3 className="mt-5 text-[1.2rem] font-semibold">{step.title}</h3>
+          <h3 className="mt-3 text-[1.25rem]">{step.title}</h3>
           <p className="mt-2 text-[1rem] leading-relaxed text-black/70">{step.text}</p>
         </li>
       ))}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowDown, Check, ChevronDown } from "lucide-react";
 import moodboard from "@/assets/site/studio/moodboard.webp";
+import moodHands from "@/assets/site/studio/mood-board.webp";
 import blazer from "@/assets/site/studio/blazer.webp";
 import gown from "@/assets/site/studio/gown.webp";
 import streetwear from "@/assets/site/studio/streetwear.webp";
@@ -46,7 +47,7 @@ const TOOLKIT: { id: ToolId; use: string }[] = [
   { id: "photoshop", use: "Colorways, fabric renders and realistic product mockups." },
   { id: "clo", use: "3D samples and fit checks before any fabric is cut." },
   { id: "canva", use: "Mood boards, presentations and launch assets for your team." },
-  { id: "procreate", use: "First sketches by hand — loose, fast and full of feeling." },
+  { id: "procreate", use: "First sketches by hand, loose and quick." },
   {
     id: "workspace",
     use: "Where every project lives: briefs, files, feedback and approvals, shared with you from start to finish.",
@@ -117,10 +118,13 @@ const STAGES: {
 }[] = [
   {
     title: "Mood & story",
-    text: "We start with how the collection should feel. Images, color, texture and story go up on the wall until the direction is clear — and you sign off on it.",
+    text: "We start with how the collection should feel. Images, color, texture and story go on the wall until the direction is clear, and you approve it before we sketch.",
     note: "pin it. live with it. let it change.",
     tools: ["canva", "procreate", "workspace"],
-    image: { src: moodboard, alt: "Moodboard wall with fabric swatches, sketches and photos" },
+    image: {
+      src: moodHands,
+      alt: "A designer pinning a fashion photo to a moodboard, holding a gold brocade swatch",
+    },
   },
   {
     title: "Sketch & flats",
@@ -134,7 +138,7 @@ const STAGES: {
   },
   {
     title: "Fabric, color & print",
-    text: "We choose materials for fit, feel and fabric — weight, drape, care and comfort — then build colorways and prints around them.",
+    text: "We choose materials for weight, drape, care and comfort, then build colorways and prints around them.",
     note: "touch everything",
     tools: ["photoshop", "illustrator"],
     image: {
@@ -150,7 +154,7 @@ const STAGES: {
   },
   {
     title: "Fitting & final",
-    text: "Real fittings on real bodies. We adjust until it's right, and a person — never a template — approves every piece before it's final.",
+    text: "Real fittings on real bodies. We adjust until the fit is right, and a person approves every piece before it's final.",
     note: "human-approved. always.",
     tools: ["workspace"],
     image: { src: fitting, alt: "Muslin toile pinned on a dress form with a measuring tape" },
@@ -167,7 +171,7 @@ export function DesignStudioPage() {
     <SiteFrame current="/design-studio">
       {joined ? (
         <div className="lac-banner" role="status">
-          Welcome to the Design Studio. Your membership is active — we'll be in touch shortly to
+          Welcome to the Design Studio. Your membership is active, and we'll be in touch shortly to
           start your first project.
         </div>
       ) : null}
@@ -186,8 +190,8 @@ export function DesignStudioPage() {
               The Design <em>Studio.</em>
             </h1>
             <p className="mt-7 max-w-lg text-[1.15rem] leading-relaxed text-black/70">
-              Where ideas become apparel. Mood, sketch, fabric, 3D sampling and real fittings — all
-              in one studio, for brands and companies that want to be worn and remembered.
+              Mood boards, sketches, fabric, 3D samples and real fittings for brands and companies,
+              all in one studio.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a href="#process" className="la-btn la-btn-dark">
@@ -205,7 +209,7 @@ export function DesignStudioPage() {
               ))}
             </ul>
             <p className="lac-hand mt-10 max-w-md text-[1.35rem] leading-snug">
-              Nothing here is a template. Every piece starts as a feeling — then becomes cloth.
+              Every piece starts on the moodboard and finishes in the fitting room.
             </p>
           </div>
 
@@ -256,7 +260,7 @@ export function DesignStudioPage() {
               </h2>
               <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/70">
                 Tailoring to teamwear, evening to everyday. If it can be worn or carried, we can
-                design it — in your brand's voice.
+                design it for your brand.
               </p>
             </div>
             <p className="lac-hand text-[1.2rem] text-black/70">design concepts ↓</p>
@@ -421,7 +425,7 @@ export function DesignStudioPage() {
 
       <BookingBand
         title="Have something in mind?"
-        text="Tell us about your project — a capsule, a uniform, a product line — and we'll set up a design consultation."
+        text="Tell us about your project, whether it's a capsule, a uniform or a product line, and we'll set up a design consultation."
         service="design-studio"
       />
     </SiteFrame>

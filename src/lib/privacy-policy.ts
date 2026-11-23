@@ -1,6 +1,6 @@
 export const PRIVACY_UPDATED = "October 18, 2026";
 
-export const PRIVACY_TITLE = "Privacy Policy — LiveAskew (Bee, Honey, Buzz, and the Hive)";
+export const PRIVACY_TITLE = "Privacy Policy | LiveAskew (Bee, Honey, Buzz and The Hive)";
 
 export const PRIVACY_INTRO =
   "LiveAskew is one app with four parts: Bee styles you, Honey keeps your calendar, Buzz shares your looks to social networks you connect, and the Hive is where members talk. This page says what each part collects, why, who else sees it, and how to delete it. We never sell your data, and styling photos are never used to slim, reshape, or beautify your body.";
@@ -20,7 +20,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     ],
   },
   {
-    title: "Bee — styling",
+    title: "Bee: styling",
     paragraphs: [
       "Your Fit, Feel, and Fabric interview answers, the looks Bee writes for you, the looks you save, and your chat with Bee.",
       "A styling photo, used to create AI outfit previews of you. When you choose to build your guide and previews, your photo is sent to Onixus AI and its image provider for all seven looks, including shoes and accessories. Previews are approximations and may have errors; they are not a fit guarantee. Private renders are cached to avoid duplicate generation. To finish your seven previews even when you leave the page, your reference photo is held in private server storage while the guide runs, for at most 24 hours. The reference is deleted when the guide finishes or expires; your completed previews stay in your account.",
@@ -28,14 +28,14 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     ],
   },
   {
-    title: "Honey — your calendar",
+    title: "Honey: your calendar",
     paragraphs: [
       "Events you add, and events from a Google, iCloud, or Outlook calendar link you choose to connect. We read the next 60 days from that link on our server; the link itself stays on your device.",
       "Bee uses an event's title and date only to suggest what to wear to it.",
     ],
   },
   {
-    title: "Buzz — social posting",
+    title: "Buzz: social posting",
     paragraphs: [
       "When you connect Instagram, Facebook, LinkedIn, X, or Threads, that network gives us a sign-in token for your account. We keep it encrypted, only our server can read it, and it is used only to publish the posts you schedule. Disconnect any network in Buzz at any time.",
       "Captions, post times, and the photo for each post. Post photos are stored at a public web address so the network can fetch them; anyone with that exact address can open the photo.",
@@ -43,7 +43,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     ],
   },
   {
-    title: "The Hive — community",
+    title: "The Hive: community",
     paragraphs: [
       "The Hive name you choose, the messages you post, and any look you share into a room. Other signed-in members can read them. Your email and phone number are never shown.",
       "Reports and blocks you make. Reports are read by LiveAskew moderators; three reports hide a message until it is reviewed, and moderators may remove messages or stop an account from posting.",
@@ -52,7 +52,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: "Notifications and devices",
     paragraphs: [
-      "A push token, only if you turn notifications on — used for a new Bee recommendation, trial reminders, or a tier upgrade, never marketing blasts.",
+      "A push token, only if you turn notifications on. It is used for a new Bee recommendation, trial reminders, or a tier upgrade, never marketing blasts.",
       "Bee keeps a copy of your answers, looks, chat, and calendar on the device so it still opens offline.",
       "We count how often each AI feature is used per account to keep fair limits and costs in check.",
     ],
