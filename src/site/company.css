@@ -886,3 +886,85 @@
   opacity: 0.7;
   cursor: progress;
 }
+
+/* ——— Apps page: one look with the rest of the site ——— */
+/* App-era building blocks inside page content adopt the company styles. */
+.la-company main .glass {
+  background: #fffdf8;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 20px 50px rgba(60, 40, 10, 0.07);
+}
+.la-company main .kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a6412;
+}
+.la-company main .glass-btn {
+  min-height: 52px;
+  padding: 0 28px;
+  background: #111;
+  color: #fff;
+  font-weight: 700;
+}
+.la-company main .glass-btn:hover {
+  background: #b8860b;
+  color: #000;
+}
+.la-company .lac-jump {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: -26px auto 0;
+  padding: 0 16px;
+}
+.la-company .lac-jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(60, 40, 10, 0.08);
+}
+.la-company .lac-jump a:hover {
+  background: #111;
+  color: #fff;
+}
+.la-company .lac-feature-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2rem;
+  box-shadow: 0 30px 70px rgba(60, 40, 10, 0.14);
+}
+.la-company .lac-feature-card {
+  overflow: hidden;
+  border-radius: 2rem;
+  background: #fffdf8;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.la-company .lac-feature-card > img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.la-company .lac-network {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  font-size: 0.85rem;
+}

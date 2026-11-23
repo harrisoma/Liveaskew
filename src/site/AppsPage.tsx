@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import crestBee from "@/assets/brand/crest-bee.webp";
 import crestBuzz from "@/assets/brand/crest-buzz.webp";
 import crestHive from "@/assets/brand/crest-hive.webp";
@@ -15,47 +15,57 @@ import { HoneyPreview } from "./HoneyPreview";
 import { SocialIcon } from "./SocialIcon";
 import { PriceBook } from "./PriceBook";
 import { SiteFrame } from "./chrome";
-import { BookingBand, PageHero } from "./ui";
+import { BookingBand, Eyebrow, PageHero } from "./ui";
 import "./miami.css";
 
-type Offer = { title: string; text: string };
+type Item = { title: string; text: string };
 
-function Offers({ items, cta }: { items: Offer[]; cta: ReactNode }) {
+/** Four short benefits in a 2×2 grid. */
+function Benefits({ items }: { items: Item[] }) {
   return (
-    <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
-      <ul className="grid gap-4 md:grid-cols-2">
-        {items.map((offer) => (
-          <li key={offer.title} className="glass rounded-[1.6rem] px-6 py-6">
-            <h3 className="la-serif text-[1.5rem] leading-tight">{offer.title}</h3>
-            <p className="mt-2.5 text-[1rem] leading-relaxed text-black/70">{offer.text}</p>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-8">{cta}</div>
-    </div>
+    <ul className="mt-10 grid gap-4 md:grid-cols-2">
+      {items.map((item) => (
+        <li key={item.title} className="la-card">
+          <h3 className="la-serif text-[1.45rem] leading-tight">{item.title}</h3>
+          <p className="mt-2 text-[1rem] leading-relaxed text-black/70">{item.text}</p>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function ProductMark({
+/** Section title used by every feature: crest, eyebrow, serif name, one-line promise. */
+function FeatureHead({
   crest,
-  index,
-  kicker,
+  eyebrow,
+  name,
+  promise,
+  children,
 }: {
   crest: ReactNode;
-  index: string;
-  kicker: string;
+  eyebrow: string;
+  name: string;
+  promise: string;
+  children?: ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-4">
-      {crest}
-      <p className="kicker">
-        {index} — {kicker}
+    <div>
+      <div className="flex items-center gap-4">
+        {crest}
+        <Eyebrow className="text-[#8a6412]">{eyebrow}</Eyebrow>
+      </div>
+      <h2 className="la-serif mt-4 text-[2.6rem] leading-none md:text-[3.6rem]">{name}</h2>
+      <p className="la-serif mt-4 text-[1.5rem] leading-snug text-black/80 italic md:text-[1.75rem]">
+        {promise}
       </p>
+      {children ? (
+        <div className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-black/70">
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 }
-
-const HEADLINE = "la-serif";
 
 function Phone({ src, alt }: { src: string; alt: string }) {
   return (
@@ -71,6 +81,15 @@ function Phone({ src, alt }: { src: string; alt: string }) {
 }
 
 const NETWORKS = ["Instagram", "Facebook", "LinkedIn", "X", "Threads"];
+
+const JUMP = [
+  { href: "#bee", label: "Bee" },
+  { href: "#honey", label: "Honey" },
+  { href: "#buzz", label: "Buzz" },
+  { href: "#hive", label: "The Hive" },
+  { href: "#pricing", label: "Plans" },
+  { href: "#faq", label: "FAQ" },
+];
 
 export function AppsPage() {
   const [meetBeeOpen, setMeetBeeOpen] = useState(false);
@@ -98,7 +117,9 @@ export function AppsPage() {
                 outfits for your body, your plans and your personal style — with Honey, Buzz and The
                 Hive built in.
               </p>
-              <p className="mt-3 text-base text-black/60">14 days free. No card to get started.</p>
+              <p className="mt-3 text-base text-black/60">
+                14 days free. No card to get started. Based in Miami, inspired by the world.
+              </p>
             </>
           }
           actions={
@@ -118,343 +139,200 @@ export function AppsPage() {
           aside={<Phone src={shotToday} alt="The LiveAskew app's Today screen" />}
         />
 
-        <section className="miami-inspirations" aria-label="Our roots and style inspirations">
-          <div className="glass mx-auto max-w-[1180px] rounded-[2rem] px-6 py-7 text-center">
-            <p className="kicker">Based in Miami. Inspired by the world. Styled for you.</p>
-            <ul className="mt-4 flex flex-wrap justify-center gap-x-8 gap-y-3 text-lg font-semibold">
-              {["Miami", "New York", "California", "Milan", "Paris"].map((place) => (
-                <li key={place}>{place}</li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        <nav className="lac-jump" aria-label="On this page">
+          {JUMP.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
         {/* Bee */}
-        <section id="bee" className="scroll-mt-28 bg-white">
-          <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-            <article className="relative min-h-[520px] w-full overflow-hidden rounded-[2rem] p-4 md:aspect-[2752/1536] md:p-6">
+        <section id="bee" className="la-section scroll-mt-28">
+          <div className="mx-auto max-w-[1320px]">
+            <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+              <FeatureHead
+                crest={<img src={crestBee} alt="" className="h-14 w-14" />}
+                eyebrow="Your AI stylist"
+                name="Meet Bee."
+                promise="Less second-guessing. More getting on with your day."
+              >
+                Share what you own, where you're going and how you want to feel. Bee puts a look
+                together, then refines it with you. Your body. Your style. Your rules.
+              </FeatureHead>
               <img
                 src={beeFlatlay}
-                alt="A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag, and jewelry, with that look open in Bee"
-                className="absolute inset-0 h-full w-full object-cover"
+                alt="A look laid out on the bed: burgundy sweater, grey trousers, gold mules, scarf, bag and jewelry, with that look open in Bee"
                 loading="lazy"
+                className="lac-feature-img"
               />
-              <div className="relative z-10 sm:max-w-[70%] lg:max-w-[52%]">
-                <div className="glass rounded-[2rem] px-5 py-5 md:px-8 md:py-7">
-                  <ProductMark
-                    crest={<img src={crestBee} alt="" className="h-14 w-14" />}
-                    index="01"
-                    kicker="Your AI stylist inside LiveAskew"
-                  />
-                  <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
-                    Meet Bee.
-                  </h2>
-                  <p className="mt-4 text-xl font-semibold tracking-tight md:text-2xl">
-                    Less second-guessing. More getting on with your day.
-                  </p>
-                  <p className="mt-3 text-[0.95rem] leading-relaxed text-black/80 md:mt-4 md:text-[1.0625rem]">
-                    Bee is the voice and styling intelligence behind LiveAskew. Share what you own,
-                    where you are going, and how you want to feel. She helps you put a look
-                    together, then refine it through conversation. Your body. Your style. Your
-                    rules.
-                  </p>
-                </div>
-              </div>
-            </article>
+            </div>
+            <StylingExample />
+            <Benefits
+              items={[
+                {
+                  title: "Clothes, but nothing to wear?",
+                  text: "Bee turns the pieces you already love into fresh combinations for today.",
+                },
+                {
+                  title: "A plan, but no outfit?",
+                  text: "A meeting, a dinner or an ordinary Tuesday — tell Bee the occasion and how you want to feel.",
+                },
+                {
+                  title: "Not quite your style?",
+                  text: "Softer fabrics, more coverage, flats instead of heels. Refine the look until it feels like you.",
+                },
+                {
+                  title: "Want to picture the whole look?",
+                  text: "Preview an outfit on your own photo with virtual try-on before you get dressed.",
+                },
+              ]}
+            />
           </div>
-          <StylingExample />
-          <Offers
-            items={[
-              {
-                title: "Clothes, but nothing to wear?",
-                text: "Find fresh combinations in your own wardrobe. Bee helps turn the pieces you already love into a look for today.",
-              },
-              {
-                title: "A plan, but no outfit?",
-                text: "A meeting, dinner, or an ordinary Tuesday. Tell Bee the occasion and your comfort preferences to shape the suggestion.",
-              },
-              {
-                title: "Not quite your style?",
-                text: "Say what you would change: softer fabrics, more coverage, or flats instead of heels. Refine the look with Bee until it feels like you.",
-              },
-              {
-                title: "Want to picture the whole look?",
-                text: "Use a virtual try-on to preview an outfit on your photo. Explore the idea before deciding what to wear.",
-              },
-            ]}
-            cta={
-              <a href="/app" className="glass-btn">
-                Start styling with Bee
-              </a>
-            }
-          />
         </section>
 
         {/* Honey */}
-        <section id="honey" className="scroll-mt-28 bg-white">
-          <div className="mx-auto max-w-[1180px] px-5 pt-24 md:px-8 md:pt-32">
-            <article className="glass overflow-hidden rounded-[2rem] bg-[radial-gradient(900px_500px_at_100%_0%,rgba(226,176,74,0.2),transparent)] md:grid md:grid-cols-2">
-              <div className="flex items-center px-7 py-10 md:px-12 md:py-14">
-                <div className="max-w-xl">
-                  <ProductMark
-                    crest={<Crest name="honey" size={56} decorative />}
-                    index="02"
-                    kicker="The calendar"
-                  />
-                  <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
-                    Honey
-                  </h2>
-                  <p className="mt-4 text-2xl font-semibold tracking-tight md:text-3xl">
-                    Your day, already dressed.
-                  </p>
-                  <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/80">
-                    Your calendar, with style built in. A workday, a coffee date, a
-                    celebration—bring your plans into Honey and ask Bee for a look that feels right
-                    for you.
-                  </p>
-                </div>
-              </div>
-              <div className="min-w-0 px-4 pb-6 sm:px-6 md:py-10 md:pr-8">
-                <HoneyPreview />
-              </div>
-            </article>
+        <section id="honey" className="la-section la-panel scroll-mt-28">
+          <div className="mx-auto grid max-w-[1320px] items-center gap-10 lg:grid-cols-2">
+            <div>
+              <FeatureHead
+                crest={<Crest name="honey" size={56} decorative />}
+                eyebrow="Your calendar"
+                name="Honey"
+                promise="Your day, already dressed."
+              >
+                Bring your plans into Honey — a workday, a coffee date, a celebration — and ask Bee
+                for a look that feels right for each one.
+              </FeatureHead>
+              <ul className="lac-checks mt-8 text-[1.02rem]">
+                <li>
+                  <ChevronRight size={16} aria-hidden />
+                  Bring in your Google, iCloud or Outlook calendar feed
+                </li>
+                <li>
+                  <ChevronRight size={16} aria-hidden />
+                  Tap any plan and Bee picks the look
+                </li>
+                <li>
+                  <ChevronRight size={16} aria-hidden />
+                  Month, week and agenda views, with an outfit on each plan
+                </li>
+                <li>
+                  <ChevronRight size={16} aria-hidden />
+                  Add plans by hand when they're not in a calendar
+                </li>
+              </ul>
+            </div>
+            <div className="min-w-0">
+              <HoneyPreview />
+            </div>
           </div>
-          <Offers
-            items={[
-              {
-                title: "Bring your calendar",
-                text: "Bring in your Google, iCloud or Outlook calendar feed so your plans land in one place. Nothing to retype.",
-              },
-              {
-                title: "Dress me for this",
-                text: "Tap any event and Bee picks the look, based on where you're going and why.",
-              },
-              {
-                title: "Plan the week ahead",
-                text: "See your week at a glance in month, week or agenda view, with an outfit saved to each plan.",
-              },
-              {
-                title: "Add plans by hand",
-                text: "Not everything lives in a calendar app. Add an event yourself and pick the look for it.",
-              },
-            ]}
-            cta={
-              <a href="/app" className="glass-btn">
-                Open Honey
-              </a>
-            }
-          />
         </section>
 
-        {/* Buzz */}
-        <section id="buzz" className="scroll-mt-28 bg-white">
-          <div className="relative min-h-[78svh]">
-            <img
-              src={buzzBroadcast}
-              alt="A woman smiling at her phone as her look goes out to her social networks"
-              className="absolute inset-0 h-full w-full object-cover object-[65%_center]"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
-              <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
-                <ProductMark
-                  crest={<img src={crestBuzz} alt="" className="h-14 w-14" />}
-                  index="03"
-                  kicker="Social posting · Coming soon"
-                />
-                <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
-                  Buzz
-                </h2>
-                <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                  Love the look? Share it without the faff. Bee will write the caption in your
-                  voice, and Buzz will post it when you say. Buzz is coming soon to the app.
-                </p>
+        {/* Buzz + The Hive */}
+        <section className="la-section" aria-label="Buzz and The Hive">
+          <div className="mx-auto grid max-w-[1320px] gap-6 lg:grid-cols-2">
+            <article id="buzz" className="lac-feature-card scroll-mt-28">
+              <img
+                src={buzzBroadcast}
+                alt="A woman smiling at her phone as her look goes out to her social networks"
+                loading="lazy"
+                style={{ objectPosition: "65% center" }}
+              />
+              <div className="p-7 md:p-9">
+                <FeatureHead
+                  crest={<img src={crestBuzz} alt="" className="h-12 w-12" />}
+                  eyebrow="Social posting · Coming soon"
+                  name="Buzz"
+                  promise="From outfit to feed in seconds."
+                >
+                  Bee will write the caption in your voice for each network, and Buzz will post it
+                  when you say — and show it on Honey too.
+                </FeatureHead>
                 <ul className="mt-6 flex flex-wrap gap-2">
                   {NETWORKS.map((n) => (
-                    <li
-                      key={n}
-                      className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/20 px-3.5 py-2 text-[0.85rem]"
-                    >
+                    <li key={n} className="lac-network">
                       <SocialIcon network={n} />
                       {n}
                     </li>
                   ))}
                 </ul>
               </div>
-            </div>
-          </div>
-          <Offers
-            items={[
-              {
-                title: "Captions that sound like you",
-                text: "Bee will draft one for each network: snappy for X, a little fuller for LinkedIn. Keep it, tweak it, make it yours.",
-              },
-              {
-                title: "Post on your time",
-                text: "Pick the day and time and you're done. Buzz will handle it, and the post will show up on Honey too.",
-              },
-              {
-                title: "Your accounts, your rules",
-                text: "Sign in to each network once. Everything will be encrypted, and you can disconnect any account in one tap.",
-              },
-              {
-                title: "From outfit to feed in seconds",
-                text: "Any look in Bee will be ready to schedule in a few taps, with your own photo or the look itself.",
-              },
-            ]}
-            cta={<p className="text-[0.95rem] text-black/60">Buzz is coming soon to the app.</p>}
-          />
-        </section>
+            </article>
 
-        {/* The Hive */}
-        <section id="hive" className="scroll-mt-28 bg-white">
-          <div className="relative min-h-[78svh]">
-            <img
-              src={hiveGathering}
-              alt="Friends gathered on a sofa in a bright room, laughing and talking"
-              className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-            <div className="relative z-10 flex min-h-[78svh] items-end px-5 pt-32 pb-10 md:px-16 md:pb-16">
-              <div className="glass-dark max-w-2xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
-                <ProductMark
-                  crest={<img src={crestHive} alt="" className="h-14 w-14" />}
-                  index="04"
-                  kicker="The community"
-                />
-                <h2 className={`${HEADLINE} mt-2 text-[2.5rem] leading-[1] md:text-[3.5rem]`}>
-                  The Hive.
-                  <br />
-                  Real talk. Real you.
-                </h2>
-                <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                  A community for women, beyond the outfit. Talk about confidence, relationships,
-                  family, work and whatever life looks like for you. Different perspectives, shared
-                  experiences, room to be yourself.
-                </p>
+            <article id="hive" className="lac-feature-card scroll-mt-28">
+              <img
+                src={hiveGathering}
+                alt="Friends gathered on a sofa in a bright room, laughing and talking"
+                loading="lazy"
+                style={{ objectPosition: "78% center" }}
+              />
+              <div className="p-7 md:p-9">
+                <FeatureHead
+                  crest={<img src={crestHive} alt="" className="h-12 w-12" />}
+                  eyebrow="The community"
+                  name="The Hive"
+                  promise="Real talk. Real you."
+                >
+                  A community for women, beyond the outfit — confidence, family, work and whatever
+                  life looks like for you. Pick a Hive name; your email and number are never shown,
+                  and real moderators read every report.
+                </FeatureHead>
+                <a href="/app" className="la-btn la-btn-dark mt-7">
+                  Join The Hive <ArrowRight size={18} aria-hidden />
+                </a>
               </div>
-            </div>
-          </div>
-          <Offers
-            items={[
-              {
-                title: "A room for every part of you",
-                text: "Explore style, family, work and everyday life. Join the conversations that feel like you.",
-              },
-              {
-                title: "Share a look, ask a question",
-                text: "Share a look or start a real conversation. Find encouragement and a fresh perspective from the community.",
-              },
-              {
-                title: "Challenges with your people",
-                text: "Try a new combination, share your take and discover how differently we can wear the same idea.",
-              },
-              {
-                title: "Kind, on purpose",
-                text: "You pick a Hive name, and your email and number are never shown. Real moderators read every report, and you can block anyone, any time.",
-              },
-            ]}
-            cta={
-              <a href="/app" className="glass-btn">
-                Join The Hive
-              </a>
-            }
-          />
-          <div id="real-talk" className="mx-auto max-w-[1180px] scroll-mt-28 px-5 pb-16 md:px-8">
-            <div className="glass rounded-[2rem] p-7 md:p-10">
-              <p className="kicker">Real Talk, inside The Hive</p>
-              <h3 className="mt-3 text-3xl font-semibold tracking-tight">
-                More than what we wear.
-              </h3>
-              <ul className="mt-6 grid gap-6 md:grid-cols-3">
-                <li>
-                  <p className="kicker">Style & identity</p>
-                  <p className="mt-2">What makes you feel most like yourself?</p>
-                </li>
-                <li>
-                  <p className="kicker">Life & connection</p>
-                  <p className="mt-2">What is something you wish people understood?</p>
-                </li>
-                <li>
-                  <p className="kicker">Work & possibility</p>
-                  <p className="mt-2">What are you making room for next?</p>
-                </li>
-              </ul>
-              <p className="mt-6 text-sm text-black/60">
-                Conversation starters, not member quotes. Share at your own pace.
-              </p>
-            </div>
+            </article>
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="pricing" className="scroll-mt-28 bg-[#f5f5f7] px-5 py-24 md:px-8 md:py-32">
-          <div className="mx-auto mb-14 max-w-2xl text-center">
-            <p className="kicker">Membership</p>
-            <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
+        {/* Plans */}
+        <section id="pricing" className="la-section la-panel scroll-mt-28">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <Eyebrow>Membership</Eyebrow>
+            <h2 className="la-serif mt-4 text-[2.6rem] leading-[1.04] md:text-[3.6rem]">
               Try it free. Fall in love.
             </h2>
-            <p className="mt-4 text-[1.125rem] text-black/65">
-              Try Bee for 14 days without a card. Choose a paid membership when you are ready.
+            <p className="mt-4 text-[1.0625rem] text-black/65">
+              14 days free without a card. Choose a membership when you're ready.{" "}
+              <a href="/pricing" className="font-semibold text-black underline underline-offset-4">
+                See all LiveAskew pricing
+              </a>
+              .
             </p>
           </div>
           <PriceBook />
         </section>
 
         {/* Questions */}
-        <section id="faq" className="scroll-mt-28 bg-white px-5 py-24 md:px-8 md:py-32">
+        <section id="faq" className="la-section scroll-mt-28">
           <div className="mx-auto max-w-3xl">
-            <p className="kicker">Good questions</p>
-            <h2 className={`${HEADLINE} mt-3 text-[2.5rem] leading-[1.02] md:text-[3.5rem]`}>
+            <Eyebrow>Good questions</Eyebrow>
+            <h2 className="la-serif mt-4 text-[2.4rem] leading-[1.04] md:text-[3.2rem]">
               Everything you're wondering.
             </h2>
             <div className="mt-10 divide-y divide-black/10 border-y border-black/10">
               {FAQ.map((item) => (
                 <details key={item.q} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.15rem] font-semibold">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.15rem]">
                     <h3>{item.q}</h3>
                     <ChevronRight
                       size={20}
                       aria-hidden
-                      className="shrink-0 text-[var(--gold)] transition-transform group-open:rotate-90"
+                      className="shrink-0 text-[#8a6412] transition-transform group-open:rotate-90"
                     />
                   </summary>
                   <p className="mt-3 text-[1.0625rem] leading-relaxed text-black/70">{item.a}</p>
                 </details>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* Close */}
-        <section className="bg-white px-5 py-24 md:px-8 md:py-32">
-          <div className="mx-auto max-w-[1180px]">
-            <div>
-              <p className="kicker">Fit · Feel · Fabric</p>
-              <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
-                Clothes should fit you. Not the other way round.
-              </h2>
-              <p className="mt-5 max-w-lg text-[1.125rem] leading-relaxed text-black/65">
-                Your style belongs to you. We never sell your data. Read how photos are processed,
-                what is stored, and the controls you have over your account.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-5">
-                <a href="/app" className="glass-btn">
-                  Start your 14 days free
-                </a>
-                <a
-                  href="/privacy"
-                  className="inline-flex items-center text-[1rem] font-medium text-[var(--gold)] hover:underline"
-                >
-                  How we keep you safe <ChevronRight size={18} aria-hidden />
-                </a>
-              </div>
-              <p className="mt-6 text-[0.9rem] text-black/55">
-                Live on the web today. iPhone and Android are coming soon.
-              </p>
-            </div>
+            <p className="mt-8 text-[0.98rem] text-black/65">
+              Clothes follow your body — we never alter it, and we never sell your data.{" "}
+              <a href="/privacy" className="font-semibold text-black underline underline-offset-4">
+                How we keep you safe
+              </a>
+              .
+            </p>
           </div>
         </section>
       </div>
