@@ -9,12 +9,23 @@ export const SITE_URL = "https://www.liveaskew.com";
 export const OG_IMAGE = `${SITE_URL}/og.png`;
 export const LOGO = `${SITE_URL}/logo.png`;
 
-export const SITE_TITLE = "LiveAskew: AI Personal Stylist & Outfit Planner App | Bee";
+export const SITE_TITLE = "LiveAskew: Professional Styling, Styling App & Design Studio";
 export const SITE_DESCRIPTION =
-  "Miami-born styling for women of every age, body and personal style. Meet Bee, your AI personal stylist, with Honey for your calendar, Buzz for sharing and The Hive for real talk. Try 14 days free.";
+  "LiveAskew is a professional styling company. We style people and brands, then back it with the Bee styling app, business consulting and a design studio. Book a consultation.";
+
+export const APP_TITLE = "LiveAskew App: AI Personal Stylist & Outfit Planner | Bee";
+export const APP_DESCRIPTION =
+  "Meet Bee, the AI personal stylist inside the LiveAskew app, with Honey for your calendar and The Hive for real talk. Styling for women of every age, body and style. Try 14 days free.";
 
 /** What people type into search, app stores and AI assistants. Also used in the store listings. */
 export const KEYWORDS = [
+  "professional stylist",
+  "personal stylist Miami",
+  "styling consultation",
+  "image consultant",
+  "brand consulting",
+  "fashion design studio",
+  "apparel design",
   "AI stylist",
   "AI personal stylist",
   "personal stylist app",
@@ -65,7 +76,7 @@ export const ORGANIZATION = {
   logo: { "@type": "ImageObject", url: LOGO, width: 512, height: 512 },
   image: OG_IMAGE,
   description:
-    "LiveAskew is a Miami-based styling app for women of every age, body and personal style: Bee (an AI personal stylist), Honey (an outfit calendar), Buzz (social posting) and The Hive (community and real talk).",
+    "LiveAskew is a Miami-based professional styling company. It styles people and brands, and offers the Bee styling app (with Honey, Buzz and The Hive), business consulting and a design studio.",
 };
 
 export const WEBSITE = {
@@ -87,13 +98,12 @@ export const APP = {
   applicationCategory: "LifestyleApplication",
   operatingSystem: "Web browser",
   browserRequirements: "Requires a modern web browser",
-  description: SITE_DESCRIPTION,
+  description: APP_DESCRIPTION,
   featureList: [
     "AI personal stylist chat",
     "Outfits for every event on your calendar",
     "Wardrobe Reset: keep, toss or maybe",
     "Virtual try-on on your own photo, never retouched",
-    "Social post scheduling for Instagram, Facebook, LinkedIn, X and Threads",
     "Real Talk conversations on motherhood, style, relationships and work",
     "The Hive community",
   ],

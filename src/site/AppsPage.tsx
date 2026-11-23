@@ -1,40 +1,22 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import crestBee from "@/assets/brand/crest-bee.webp";
 import crestBuzz from "@/assets/brand/crest-buzz.webp";
 import crestHive from "@/assets/brand/crest-hive.webp";
 import hiveGathering from "@/assets/brand/hive-gathering.webp";
-import heroEditorial from "@/assets/site/hero-editorial.webp";
 import beeFlatlay from "@/assets/site/bee-flatlay-app.webp";
 import buzzBroadcast from "@/assets/site/buzz-broadcast.webp";
 import shotToday from "@/assets/site/today.webp";
 import { Crest } from "@/mobile/components/Crest";
 import { FAQ } from "./faq";
-import { forwardsToApp } from "./forward";
 import { BeeSalesChat } from "./BeeSalesChat";
 import { StylingExample } from "./StylingExample";
 import { HoneyPreview } from "./HoneyPreview";
 import { SocialIcon } from "./SocialIcon";
 import { PriceBook } from "./PriceBook";
 import { SiteFrame } from "./chrome";
+import { BookingBand, PageHero } from "./ui";
 import "./miami.css";
-
-/**
- * Sign-in, checkout, and social connections used to land on "/", and home-screen installs
- * still open "/". The app lives at /app now; anything that arrives here carrying a session,
- * a result, or an error — or launched from the home screen — is passed straight through.
- */
-function useForwardAppReturns() {
-  useEffect(() => {
-    const { search, hash } = window.location;
-    const standalone =
-      window.matchMedia?.("(display-mode: standalone)").matches ||
-      (navigator as Navigator & { standalone?: boolean }).standalone === true;
-    if (forwardsToApp(search, hash, standalone)) {
-      window.location.replace(`/app${search}${hash}`);
-    }
-  }, []);
-}
 
 type Offer = { title: string; text: string };
 
@@ -92,58 +74,51 @@ function Phone({ src, alt }: { src: string; alt: string }) {
 
 const NETWORKS = ["Instagram", "Facebook", "LinkedIn", "X", "Threads"];
 
-export function Landing() {
-  useForwardAppReturns();
+export function AppsPage() {
   const [meetBeeOpen, setMeetBeeOpen] = useState(false);
 
   return (
-    <SiteFrame>
+    <SiteFrame current="/apps">
       <button className="bee-chat-launcher" onClick={() => setMeetBeeOpen(true)}>
         Chat with Bee
       </button>
       <BeeSalesChat open={meetBeeOpen} onClose={() => setMeetBeeOpen(false)} />
       <div className="miami-home">
-        {/* Hero */}
-        <section className="relative min-h-[100svh]">
-          <img
-            src={heroEditorial}
-            fetchPriority="high"
-            alt="A woman in a tailored black and gold ensemble, standing in a modern interior among framed looks"
-            className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-black/30" />
-          <div className="relative z-10 flex min-h-[100svh] items-end px-5 pt-36 pb-12 md:items-center md:px-16 md:pb-16">
-            <div className="glass-dark max-w-xl rounded-[2rem] px-7 py-8 md:px-10 md:py-10">
-              <img
-                src="/liveaskew-signature.png"
-                alt="LiveAskew"
-                className="h-24 w-auto md:h-32"
-                style={{ aspectRatio: "866 / 1610" }}
-              />
-              <p className="kicker mt-5">Miami-born. Styling for women.</p>
-              <h1 className={`${HEADLINE} mt-2 text-[2.6rem] leading-[1.05] md:text-[3.5rem]`}>
-                Get dressed for your life. Feel like yourself.
-              </h1>
-              <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-white/90">
-                LiveAskew is your personal styling app. Meet Bee, your AI stylist inside it. Turn
-                the clothes you own into outfits for your body, your plans, and your personal style.
+        <PageHero
+          eyebrow="The LiveAskew styling app"
+          title={
+            <>
+              Your stylist,
+              <br />
+              in your pocket.
+            </>
+          }
+          intro={
+            <>
+              <p>
+                Meet Bee, the AI stylist inside the LiveAskew app. Turn the clothes you own into
+                outfits for your body, your plans and your personal style — with Honey, Buzz and The
+                Hive built in.
               </p>
-              <p className="mt-3 text-sm text-white/80">14 days free. No card to get started.</p>
-              <div className="hero-actions mt-7 grid grid-cols-2 gap-3">
-                <a href="/app" className="glass-btn glass-btn-gold">
-                  Start your free trial
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setMeetBeeOpen(true)}
-                  className="glass-btn glass-btn-light"
-                >
-                  Meet Bee
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+              <p className="mt-3 text-base text-black/60">14 days free. No card to get started.</p>
+            </>
+          }
+          actions={
+            <>
+              <a href="/app" className="la-btn la-btn-dark">
+                Start your free trial <span aria-hidden>→</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setMeetBeeOpen(true)}
+                className="la-btn la-btn-light"
+              >
+                Meet Bee
+              </button>
+            </>
+          }
+          aside={<Phone src={shotToday} alt="The LiveAskew app's Today screen" />}
+        />
 
         <section className="miami-inspirations" aria-label="Our roots and style inspirations">
           <div className="glass mx-auto max-w-[1180px] rounded-[2rem] px-6 py-7 text-center">
@@ -250,19 +225,19 @@ export function Landing() {
             items={[
               {
                 title: "Bring your calendar",
-                text: "Hook up Google, iCloud or Outlook and everything you've already got lands in one place. Nothing to retype.",
+                text: "Bring in your Google, iCloud or Outlook calendar feed so your plans land in one place. Nothing to retype.",
               },
               {
                 title: "Dress me for this",
                 text: "Tap any event and Bee picks the look, based on where you're going and why.",
               },
               {
-                title: "Your posts, on the same page",
-                text: "Scheduled a Buzz post? It sits right there on the day, next to everything else.",
+                title: "Plan the week ahead",
+                text: "See your week at a glance in month, week or agenda view, with an outfit saved to each plan.",
               },
               {
-                title: "Know when it went live",
-                text: 'Once a post goes out, Honey marks the time, so you\'re never wondering "did that actually post?"',
+                title: "Add plans by hand",
+                text: "Not everything lives in a calendar app. Add an event yourself and pick the look for it.",
               },
             ]}
             cta={
@@ -288,14 +263,14 @@ export function Landing() {
                 <ProductMark
                   crest={<img src={crestBuzz} alt="" className="h-14 w-14" />}
                   index="03"
-                  kicker="Social posting"
+                  kicker="Social posting · Coming soon"
                 />
                 <h2 className={`${HEADLINE} mt-2 text-[2.75rem] leading-none md:text-[4rem]`}>
                   Buzz
                 </h2>
                 <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
-                  Love the look? Share it without the faff. Bee writes the caption in your voice,
-                  and Buzz posts it when you say, even if your phone's at the bottom of your bag.
+                  Love the look? Share it without the faff. Bee will write the caption in your
+                  voice, and Buzz will post it when you say. Buzz is coming soon to the app.
                 </p>
                 <ul className="mt-6 flex flex-wrap gap-2">
                   {NETWORKS.map((n) => (
@@ -315,26 +290,22 @@ export function Landing() {
             items={[
               {
                 title: "Captions that sound like you",
-                text: "Bee drafts one for each network: snappy for X, a little fuller for LinkedIn. Keep it, tweak it, make it yours.",
+                text: "Bee will draft one for each network: snappy for X, a little fuller for LinkedIn. Keep it, tweak it, make it yours.",
               },
               {
                 title: "Post on your time",
-                text: "Pick the day and time and you're done. Buzz handles it, and the post shows up on Honey too.",
+                text: "Pick the day and time and you're done. Buzz will handle it, and the post will show up on Honey too.",
               },
               {
                 title: "Your accounts, your rules",
-                text: "Sign in to each network once. Everything's encrypted, and you can disconnect any account in one tap.",
+                text: "Sign in to each network once. Everything will be encrypted, and you can disconnect any account in one tap.",
               },
               {
                 title: "From outfit to feed in seconds",
-                text: "Any look in Bee can be scheduled in a few taps, with your own photo or the look itself.",
+                text: "Any look in Bee will be ready to schedule in a few taps, with your own photo or the look itself.",
               },
             ]}
-            cta={
-              <a href="/app" className="glass-btn">
-                Open Buzz
-              </a>
-            }
+            cta={<p className="text-[0.95rem] text-black/60">Buzz is coming soon to the app.</p>}
           />
         </section>
 
@@ -461,7 +432,7 @@ export function Landing() {
 
         {/* Close */}
         <section className="bg-white px-5 py-24 md:px-8 md:py-32">
-          <div className="mx-auto grid max-w-[1180px] items-center gap-14 md:grid-cols-2">
+          <div className="mx-auto max-w-[1180px]">
             <div>
               <p className="kicker">Fit · Feel · Fabric</p>
               <h2 className={`${HEADLINE} mt-3 text-[2.75rem] leading-[1.02] md:text-[4rem]`}>
@@ -486,10 +457,14 @@ export function Landing() {
                 Live on the web today. iPhone and Android are coming soon.
               </p>
             </div>
-            <Phone src={shotToday} alt="The LiveAskew app's Today screen" />
           </div>
         </section>
       </div>
+      <BookingBand
+        title="Want a stylist, not just an app?"
+        text="Book a consultation with a LiveAskew stylist. Your looks carry straight into Bee."
+        service="styling"
+      />
     </SiteFrame>
   );
 }

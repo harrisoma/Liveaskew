@@ -1,57 +1,74 @@
 import type { ReactNode } from "react";
+import "./company.css";
 
-const LINKS = [
-  { href: "/#bee", label: "Bee" },
-  { href: "/#honey", label: "Honey" },
-  { href: "/#buzz", label: "Buzz" },
-  { href: "/#hive", label: "The Hive" },
-  { href: "/#pricing", label: "Pricing" },
+/** Top-level pages of the LiveAskew company site. */
+export const NAV = [
+  { href: "/", label: "Home", short: "Home" },
+  { href: "/apps", label: "Apps", short: "Apps" },
+  { href: "/design-studio", label: "Design Studio", short: "Studio" },
+  { href: "/consulting", label: "Business Consulting", short: "Consulting" },
 ] as const;
 
-/** The LiveAskew house site: floating glass nav, page, footer. */
-export function SiteFrame({ children }: { children: ReactNode }) {
+export type NavHref = (typeof NAV)[number]["href"] | "/book" | "/privacy";
+
+export const CONTACT_EMAIL = "hello@liveaskew.co";
+
+function Wordmark() {
   return (
-    <div className="la-site min-h-screen">
+    <a href="/" className="flex min-h-11 items-center gap-3" aria-label="LiveAskew home">
+      <img
+        src="/liveaskew-signature.png"
+        alt=""
+        className="h-11 w-auto"
+        style={{ aspectRatio: "866 / 1610" }}
+      />
+      <span className="text-[0.95rem] font-semibold tracking-[0.28em]">LIVEASKEW</span>
+    </a>
+  );
+}
+
+/** The LiveAskew company site: floating glass nav, page, footer. */
+export function SiteFrame({ current, children }: { current: NavHref; children: ReactNode }) {
+  return (
+    <div className="la-site la-company min-h-screen">
+      <a href="#main" className="la-skip">
+        Skip to content
+      </a>
       <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-8">
-        <div className="glass mx-auto flex max-w-[1180px] items-center justify-between gap-4 rounded-full py-2 pr-2 pl-4 md:pl-5">
-          <a href="/" className="flex items-center gap-2.5" aria-label="LiveAskew home">
-            <img
-              src="/liveaskew-signature.png"
-              alt=""
-              className="h-10 w-auto"
-              style={{ aspectRatio: "866 / 1610" }}
-            />
-            <span className="font-display text-[1.35rem] font-semibold tracking-tight">
-              Live<span className="text-[var(--gold)]">Askew</span>
-            </span>
-          </a>
-          <nav className="hidden items-center gap-7 md:flex" aria-label="Sections">
-            {LINKS.map((link) => (
+        <div className="mx-auto flex max-w-[1320px] items-center justify-between gap-4">
+          <Wordmark />
+          <nav className="la-nav glass hidden lg:flex" aria-label="Main">
+            {NAV.map((link) => (
               <a
-                key={link.label}
+                key={link.href}
                 href={link.href}
-                className="text-[0.875rem] text-black/80 transition-colors hover:text-black"
+                aria-current={current === link.href ? "page" : undefined}
               >
                 {link.label}
               </a>
             ))}
           </nav>
-          <a href="/app" className="glass-btn glass-btn-sm">
-            Open the app
+          <a
+            href="/book"
+            className="la-cta"
+            aria-current={current === "/book" ? "page" : undefined}
+          >
+            Book a Consultation <span aria-hidden>→</span>
           </a>
         </div>
-        <nav
-          className="glass mx-auto mt-2 flex max-w-[1180px] justify-center gap-5 overflow-x-auto rounded-full px-4 py-2 md:hidden"
-          aria-label="Sections"
-        >
-          {LINKS.map((link) => (
-            <a key={link.label} href={link.href} className="shrink-0 text-[0.8rem] text-black">
-              {link.label}
+        <nav className="la-nav la-nav-mobile glass mx-auto mt-2 lg:hidden" aria-label="Main">
+          {NAV.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              aria-current={current === link.href ? "page" : undefined}
+            >
+              {link.short}
             </a>
           ))}
         </nav>
       </header>
-      <main>{children}</main>
+      <main id="main">{children}</main>
       <SiteFooter />
     </div>
   );
@@ -59,39 +76,24 @@ export function SiteFrame({ children }: { children: ReactNode }) {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-black/10 bg-[#f5f5f7] px-5 py-12 text-sm text-black/70 md:px-8">
-      <div className="glass mx-auto max-w-[1180px] rounded-[2rem] p-7 md:p-10">
+    <footer className="la-footer px-5 py-12 text-sm md:px-8">
+      <div className="glass mx-auto max-w-[1320px] rounded-[2rem] p-7 md:p-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]">
           <div>
-            <a
-              href="/"
-              className="inline-flex min-h-11 items-center gap-3"
-              aria-label="LiveAskew home"
-            >
-              <img
-                src="/liveaskew-signature.png"
-                alt=""
-                className="h-12 w-auto"
-                width="26"
-                height="48"
-              />
-              <span className="font-display text-2xl font-semibold tracking-tight text-black">
-                Live<span className="text-[var(--gold)]">Askew</span>
-              </span>
-            </a>
-            <p className="mt-4 max-w-sm text-base leading-relaxed">
-              Miami-born. Styling for women. Your wardrobe, your plans, your own way of getting
-              dressed.
+            <Wordmark />
+            <p className="mt-4 max-w-sm text-base leading-relaxed text-black/70">
+              A professional styling company. We style people and brands, then back it with apps,
+              consulting, and a design studio.
             </p>
-            <a href="/app" className="glass-btn mt-6">
-              Meet Bee
+            <a href="/book" className="glass-btn mt-6">
+              Book a Consultation
             </a>
           </div>
           <nav aria-label="Explore LiveAskew">
             <h2 className="font-semibold text-black">Explore</h2>
-            <ul className="mt-3 space-y-1">
-              {LINKS.map((link) => (
-                <li key={link.label}>
+            <ul className="mt-3 space-y-1 text-black/70">
+              {NAV.map((link) => (
+                <li key={link.href}>
                   <a
                     href={link.href}
                     className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
@@ -100,25 +102,41 @@ export function SiteFooter() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href="/app"
+                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                >
+                  Open the Bee app
+                </a>
+              </li>
             </ul>
           </nav>
           <nav aria-label="Help and contact">
             <h2 className="font-semibold text-black">Let's connect</h2>
-            <ul className="mt-3 space-y-1">
+            <ul className="mt-3 space-y-1 text-black/70">
               <li>
                 <a
-                  href="mailto:hello@liveaskew.co"
+                  href={`mailto:${CONTACT_EMAIL}`}
                   className="inline-flex min-h-11 items-center break-all underline-offset-4 hover:underline"
                 >
-                  hello@liveaskew.co
+                  {CONTACT_EMAIL}
                 </a>
               </li>
               <li>
                 <a
-                  href="/#faq"
+                  href="/book"
                   className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
                 >
-                  Questions &amp; answers
+                  Book a consultation
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/apps#faq"
+                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
+                >
+                  App questions &amp; answers
                 </a>
               </li>
               <li>
@@ -127,14 +145,6 @@ export function SiteFooter() {
                   className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
                 >
                   Privacy policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:hello@liveaskew.co?subject=Private%20Atelier%20inquiry"
-                  className="inline-flex min-h-11 items-center underline-offset-4 hover:underline"
-                >
-                  Private styling inquiries
                 </a>
               </li>
             </ul>

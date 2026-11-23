@@ -24,7 +24,7 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <SiteFrame>
+    <SiteFrame current="/privacy">
       <div className="mx-auto max-w-[760px] px-6 pt-36 pb-16 md:pt-40 md:pb-24">
         <p className="kicker">LiveAskew</p>
         <h1 className="font-display mt-3 text-4xl font-bold tracking-[-0.035em] md:text-6xl">
