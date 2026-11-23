@@ -16,11 +16,13 @@ Reuse in provider choices, guide headers, and connected-calendar rows. The Apple
 
 Added November 23, 2026. Shown in the Design Studio toolkit and process steps.
 
-| Tool              | Local asset                                | Source                                                                                                             |
-| ----------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| Figma             | public/images/brands/figma.svg             | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:figma`             |
-| Adobe Illustrator | public/images/brands/adobe-illustrator.svg | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-illustrator` |
-| Adobe Photoshop   | public/images/brands/adobe-photoshop.svg   | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-photoshop`   |
+| Tool              | Local asset                                | Source                                                                                                                 |
+| ----------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Figma             | public/images/brands/figma.svg             | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:figma`                 |
+| Adobe Illustrator | public/images/brands/adobe-illustrator.svg | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-illustrator`     |
+| Adobe Photoshop   | public/images/brands/adobe-photoshop.svg   | SVG Logos collection (gilbarbara/logos, CC0) via the `@iconify-json/logos` npm package — `logos:adobe-photoshop`       |
+| Canva             | public/images/brands/canva.svg             | theSVG collection (glincker/thesvg, MIT) via the `@iconify/json` npm package — `thesvg-color:canva` (current app icon) |
+| Onixus Workspace  | public/images/brands/onixus-workspace.png  | Onixus brand assets (Signal storage `brand-assets/logos/onixus.png`, Nov 7 2026), trimmed and resized to 256 px        |
 
-Still needed from the provider's press or brand page (shown as name only until added): **Canva**, **Procreate**, **CLO 3D**.
+Still needed from the provider's press or brand page (shown as name only until added): **Procreate**, **CLO 3D**.
 Replace any of the above with the provider's own download if it differs.
