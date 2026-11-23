@@ -37,7 +37,7 @@ const CORE = [
     title: "Marketing",
     tag: "Campaigns that look expensive",
     image: marketingImg,
-    alt: "A creative team planning a campaign over printed editorial photos and a moodboard",
+    alt: "A creative team reviewing printed black and gold editorial photos in front of a moodboard",
     desc: "Campaigns, content, and launches that look expensive because they are styled right.",
     deliverables: [
       "Campaign direction",
