@@ -244,7 +244,7 @@ export function ConsultingPage() {
             <img
               src={heroImg}
               fetchPriority="high"
-              alt="A stylist in a black blazer advising a boutique owner at her shop counter"
+              alt="A stylist in a black blazer and a boutique owner reviewing a lookbook together in her shop"
             />
             <figcaption className="flex items-center justify-between gap-3 px-2 pt-4 pb-1">
               <span className="la-eyebrow text-[0.75rem]">Consulting, in your space</span>
