@@ -17,7 +17,7 @@ describe("site plans", () => {
   });
 
   it("keeps what is live unlabelled", () => {
-    expect(isComingSoon("Selfie AI — see yourself in every look")).toBe(false);
+    expect(isComingSoon("Selfie AI: see yourself in every look")).toBe(false);
     expect(isComingSoon("Buzz posts the look")).toBe(false);
     expect(isComingSoon("The Hive, inside Bee")).toBe(false);
   });

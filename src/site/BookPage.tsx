@@ -71,8 +71,8 @@ export function BookPage() {
               Let's talk about what you need.
             </h1>
             <p className="mt-6 text-[1.125rem] leading-relaxed text-black/75">
-              Personal styling, your brand, a design project or help with the app — tell us a little
-              about it and we'll reach out to set a time that works for you.
+              Personal styling, your brand, a design project or help with the app. Tell us a little
+              about it and we'll reach out to set a time.
             </p>
             <p className="mt-6 text-[1rem] text-black/60">
               Prefer email?{" "}

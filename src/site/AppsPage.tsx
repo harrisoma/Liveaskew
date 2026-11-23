@@ -18,22 +18,6 @@ import { SiteFrame } from "./chrome";
 import { BookingBand, Eyebrow, PageHero } from "./ui";
 import "./miami.css";
 
-type Item = { title: string; text: string };
-
-/** Four short benefits in a 2×2 grid. */
-function Benefits({ items }: { items: Item[] }) {
-  return (
-    <ul className="mt-10 grid gap-4 md:grid-cols-2">
-      {items.map((item) => (
-        <li key={item.title} className="la-card">
-          <h3 className="la-serif text-[1.45rem] leading-tight">{item.title}</h3>
-          <p className="mt-2 text-[1rem] leading-relaxed text-black/70">{item.text}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /** Section title used by every feature: crest, eyebrow, serif name, one-line promise. */
 function FeatureHead({
   crest,
@@ -114,8 +98,8 @@ export function AppsPage() {
             <>
               <p>
                 Meet Bee, the AI stylist inside the LiveAskew app. Turn the clothes you own into
-                outfits for your body, your plans and your personal style — with Honey, Buzz and The
-                Hive built in.
+                outfits for your body, your plans and your personal style. Honey, Buzz and The Hive
+                are built in.
               </p>
               <p className="mt-3 text-base text-black/60">
                 14 days free. No card to get started. Based in Miami, inspired by the world.
@@ -155,10 +139,10 @@ export function AppsPage() {
                 crest={<img src={crestBee} alt="" className="h-14 w-14" />}
                 eyebrow="Your AI stylist"
                 name="Meet Bee."
-                promise="Less second-guessing. More getting on with your day."
+                promise="Outfits from the clothes you already own."
               >
-                Share what you own, where you're going and how you want to feel. Bee puts a look
-                together, then refines it with you. Your body. Your style. Your rules.
+                Tell Bee what you own, where you're going and how you want to feel. She builds a
+                look from your wardrobe and adjusts it with you until it suits you.
               </FeatureHead>
               <img
                 src={beeFlatlay}
@@ -168,26 +152,6 @@ export function AppsPage() {
               />
             </div>
             <StylingExample />
-            <Benefits
-              items={[
-                {
-                  title: "Clothes, but nothing to wear?",
-                  text: "Bee turns the pieces you already love into fresh combinations for today.",
-                },
-                {
-                  title: "A plan, but no outfit?",
-                  text: "A meeting, a dinner or an ordinary Tuesday — tell Bee the occasion and how you want to feel.",
-                },
-                {
-                  title: "Not quite your style?",
-                  text: "Softer fabrics, more coverage, flats instead of heels. Refine the look until it feels like you.",
-                },
-                {
-                  title: "Want to picture the whole look?",
-                  text: "Preview an outfit on your own photo with virtual try-on before you get dressed.",
-                },
-              ]}
-            />
           </div>
         </section>
 
@@ -199,10 +163,10 @@ export function AppsPage() {
                 crest={<Crest name="honey" size={56} decorative />}
                 eyebrow="Your calendar"
                 name="Honey"
-                promise="Your day, already dressed."
+                promise="A look for every plan on your calendar."
               >
-                Bring your plans into Honey — a workday, a coffee date, a celebration — and ask Bee
-                for a look that feels right for each one.
+                Bring your plans into Honey, from a workday to a coffee date, and Bee suggests a
+                look for each one.
               </FeatureHead>
               <ul className="lac-checks mt-8 text-[1.02rem]">
                 <li>
@@ -244,10 +208,10 @@ export function AppsPage() {
                   crest={<img src={crestBuzz} alt="" className="h-12 w-12" />}
                   eyebrow="Social posting · Coming soon"
                   name="Buzz"
-                  promise="From outfit to feed in seconds."
+                  promise="Share a look without leaving the app."
                 >
-                  Bee will write the caption in your voice for each network, and Buzz will post it
-                  when you say — and show it on Honey too.
+                  Bee will write a caption in your voice for each network. Buzz will post it at the
+                  time you choose and add it to Honey.
                 </FeatureHead>
                 <ul className="mt-6 flex flex-wrap gap-2">
                   {NETWORKS.map((n) => (
@@ -272,11 +236,11 @@ export function AppsPage() {
                   crest={<img src={crestHive} alt="" className="h-12 w-12" />}
                   eyebrow="The community"
                   name="The Hive"
-                  promise="Real talk. Real you."
+                  promise="A private community for women."
                 >
-                  A community for women, beyond the outfit — confidence, family, work and whatever
-                  life looks like for you. Pick a Hive name; your email and number are never shown,
-                  and real moderators read every report.
+                  Talk about style, confidence, family and work with other members. You choose a
+                  Hive name, your email and number stay private, and real moderators read every
+                  report.
                 </FeatureHead>
                 <a href="/app" className="la-btn la-btn-dark mt-7">
                   Join The Hive <ArrowRight size={18} aria-hidden />
@@ -327,7 +291,7 @@ export function AppsPage() {
               ))}
             </div>
             <p className="mt-8 text-[0.98rem] text-black/65">
-              Clothes follow your body — we never alter it, and we never sell your data.{" "}
+              Clothes follow your body. We never alter it, and we never sell your data.{" "}
               <a href="/privacy" className="font-semibold text-black underline underline-offset-4">
                 How we keep you safe
               </a>

@@ -83,8 +83,8 @@ export function HomePage() {
               Professional Styling, Done Right.
             </h1>
             <p className="mt-6 max-w-lg text-[1.15rem] leading-relaxed text-black/80">
-              Live Askew is a professional styling company. We style people and brands — then back
-              it with apps, consulting, and a design studio.
+              Live Askew is a professional styling company. We style people and brands, and back it
+              with apps, consulting and a design studio.
             </p>
             <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap">
               <a href="/book?service=styling" className="la-btn la-btn-dark">
@@ -112,7 +112,7 @@ export function HomePage() {
             href="#styling"
             chip="Professional Styling"
             title="Professional Styling"
-            text="Real stylists, real fittings, real results."
+            text="Work one on one with a stylist on your wardrobe, your image and your events."
             icon={<Feather />}
           />
           <ServiceCard
@@ -139,7 +139,7 @@ export function HomePage() {
           <SectionHeading
             eyebrow="Professional styling"
             title="A stylist who works with your body, your life and your wardrobe."
-            intro="LiveAskew starts with real styling. Every session is built on our Fit · Feel · Fabric method, so clothes work for you — not the other way round."
+            intro="LiveAskew starts with real styling. Every session is built on our Fit · Feel · Fabric method, so your clothes work for you."
           />
           <ItemGrid
             items={[
@@ -149,7 +149,7 @@ export function HomePage() {
               },
               {
                 title: "Feel",
-                text: "How you want to show up — confident at work, at ease on the weekend, unforgettable at the event — guides every choice.",
+                text: "How you want to feel at work, on the weekend or at an event guides every choice.",
               },
               {
                 title: "Fabric",
@@ -193,8 +193,8 @@ export function HomePage() {
                 Your stylist in your pocket.
               </h2>
               <p className="mt-5 text-[1.0625rem] leading-relaxed text-black/75">
-                Our styling app puts the LiveAskew method in your hand. Try it free for 14 days — no
-                card to get started.
+                Our styling app puts the LiveAskew method in your hand. Try it free for 14 days. No
+                card needed.
               </p>
             </div>
             <a href="/apps" className="la-btn la-btn-light shrink-0">
@@ -219,7 +219,7 @@ export function HomePage() {
           <SectionHeading
             eyebrow="For companies and brands"
             title="Styling for your business, too."
-            intro="The eye that dresses our clients also shapes brands. We help companies look and sell like themselves — from marketing to the product itself."
+            intro="The eye that dresses our clients also shapes brands. We help companies with marketing, brand image and the products themselves."
           />
           <div className="mt-12 grid gap-5 lg:grid-cols-2">
             <ServiceCard

@@ -24,7 +24,8 @@ export const OFFERS: Offer[] = [
     id: "app",
     name: "The Bee App",
     forWho: "For you, every day",
-    summary: "Your AI stylist in your pocket — outfits from the clothes you own, for your plans.",
+    summary:
+      "An AI stylist that builds outfits from the clothes you own, for the plans on your calendar.",
     price: `From $${appFrom}`,
     priceNote: "per month · 14 days free, no card",
     cta: "Start your free trial",
@@ -72,7 +73,7 @@ export const OFFERS: Offer[] = [
     id: "design-studio",
     name: "Design Studio",
     forWho: "For brands that make things",
-    summary: "An ongoing design partner for apparel, merch and brand visuals — month to month.",
+    summary: "An ongoing design partner for apparel, merch and brand visuals, billed monthly.",
     price: "$199",
     priceNote: "per month",
     cta: "Start the Design Studio",
