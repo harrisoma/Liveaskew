@@ -15,7 +15,9 @@ import { Route as AppsRouteImport } from './routes/apps'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as ConsultingRouteImport } from './routes/consulting'
 import { Route as DesignStudioRouteImport } from './routes/design-studio'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as StyleGuidePreviewRouteImport } from './routes/style-guide-preview'
 import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
 import { Route as DotwellKnownOauthProtectedResourceRouteImport } from './routes/[.]well-known/oauth-protected-resource'
@@ -49,6 +51,7 @@ import { Route as ApiOauthTokenRouteImport } from './routes/api/oauth/token'
 import { Route as ApiPublicAppReturnRouteImport } from './routes/api/public/app-return'
 import { Route as ApiPublicBeeSalesRouteImport } from './routes/api/public/bee-sales'
 import { Route as ApiPublicBookingRouteImport } from './routes/api/public/booking'
+import { Route as ApiPublicStudioCheckoutRouteImport } from './routes/api/public/studio-checkout'
 import { Route as ApiPublicStyleGuideProductsRouteImport } from './routes/api/public/style-guide-products'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
@@ -92,9 +95,19 @@ const DesignStudioRoute = DesignStudioRouteImport.update({
   path: '/design-studio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StyleGuidePreviewRoute = StyleGuidePreviewRouteImport.update({
@@ -264,6 +277,11 @@ const ApiPublicBookingRoute = ApiPublicBookingRouteImport.update({
   path: '/api/public/booking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStudioCheckoutRoute = ApiPublicStudioCheckoutRouteImport.update({
+  id: '/api/public/studio-checkout',
+  path: '/api/public/studio-checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicStyleGuideProductsRoute =
   ApiPublicStyleGuideProductsRouteImport.update({
     id: '/api/public/style-guide-products',
@@ -337,7 +355,9 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/consulting': typeof ConsultingRoute
   '/design-studio': typeof DesignStudioRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start': typeof StartRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
@@ -370,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/studio-checkout': typeof ApiPublicStudioCheckoutRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -391,7 +412,9 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/consulting': typeof ConsultingRoute
   '/design-studio': typeof DesignStudioRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start': typeof StartRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
@@ -424,6 +447,7 @@ export interface FileRoutesByTo {
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/studio-checkout': typeof ApiPublicStudioCheckoutRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -446,7 +470,9 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/consulting': typeof ConsultingRoute
   '/design-studio': typeof DesignStudioRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start': typeof StartRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof DotwellKnownOauthProtectedResourceRouteWithChildren
@@ -479,6 +505,7 @@ export interface FileRoutesById {
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
   '/api/public/booking': typeof ApiPublicBookingRoute
+  '/api/public/studio-checkout': typeof ApiPublicStudioCheckoutRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -502,7 +529,9 @@ export interface FileRouteTypes {
     | '/book'
     | '/consulting'
     | '/design-studio'
+    | '/pricing'
     | '/privacy'
+    | '/start'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
@@ -535,6 +564,7 @@ export interface FileRouteTypes {
     | '/api/public/app-return'
     | '/api/public/bee-sales'
     | '/api/public/booking'
+    | '/api/public/studio-checkout'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -556,7 +586,9 @@ export interface FileRouteTypes {
     | '/book'
     | '/consulting'
     | '/design-studio'
+    | '/pricing'
     | '/privacy'
+    | '/start'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
@@ -589,6 +621,7 @@ export interface FileRouteTypes {
     | '/api/public/app-return'
     | '/api/public/bee-sales'
     | '/api/public/booking'
+    | '/api/public/studio-checkout'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -610,7 +643,9 @@ export interface FileRouteTypes {
     | '/book'
     | '/consulting'
     | '/design-studio'
+    | '/pricing'
     | '/privacy'
+    | '/start'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
@@ -643,6 +678,7 @@ export interface FileRouteTypes {
     | '/api/public/app-return'
     | '/api/public/bee-sales'
     | '/api/public/booking'
+    | '/api/public/studio-checkout'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -665,7 +701,9 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   ConsultingRoute: typeof ConsultingRoute
   DesignStudioRoute: typeof DesignStudioRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  StartRoute: typeof StartRoute
   StyleGuidePreviewRoute: typeof StyleGuidePreviewRoute
   DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
   DotwellKnownOauthProtectedResourceRoute: typeof DotwellKnownOauthProtectedResourceRouteWithChildren
@@ -698,6 +736,7 @@ export interface RootRouteChildren {
   ApiPublicAppReturnRoute: typeof ApiPublicAppReturnRoute
   ApiPublicBeeSalesRoute: typeof ApiPublicBeeSalesRoute
   ApiPublicBookingRoute: typeof ApiPublicBookingRoute
+  ApiPublicStudioCheckoutRoute: typeof ApiPublicStudioCheckoutRoute
   ApiPublicStyleGuideProductsRoute: typeof ApiPublicStyleGuideProductsRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
@@ -753,11 +792,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DesignStudioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/style-guide-preview': {
@@ -991,6 +1044,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBookingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/studio-checkout': {
+      id: '/api/public/studio-checkout'
+      path: '/api/public/studio-checkout'
+      fullPath: '/api/public/studio-checkout'
+      preLoaderRoute: typeof ApiPublicStudioCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/style-guide-products': {
       id: '/api/public/style-guide-products'
       path: '/api/public/style-guide-products'
@@ -1115,7 +1175,9 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   ConsultingRoute: ConsultingRoute,
   DesignStudioRoute: DesignStudioRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  StartRoute: StartRoute,
   StyleGuidePreviewRoute: StyleGuidePreviewRoute,
   DotwellKnownOauthAuthorizationServerRoute:
     DotwellKnownOauthAuthorizationServerRoute,
@@ -1150,6 +1212,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAppReturnRoute: ApiPublicAppReturnRoute,
   ApiPublicBeeSalesRoute: ApiPublicBeeSalesRoute,
   ApiPublicBookingRoute: ApiPublicBookingRoute,
+  ApiPublicStudioCheckoutRoute: ApiPublicStudioCheckoutRoute,
   ApiPublicStyleGuideProductsRoute: ApiPublicStyleGuideProductsRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,

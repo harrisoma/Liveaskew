@@ -785,3 +785,104 @@
   object-fit: cover;
   border-radius: 1.5rem;
 }
+
+/* ——— Funnel + pricing ——— */
+.la-company .lac-funnel-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  font-weight: 600;
+}
+.la-company .lac-funnel-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.la-company .lac-funnel-steps span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #111;
+  color: #e2b04a;
+  font-size: 1.05rem;
+}
+.la-company .lac-path {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 2rem;
+  background: #fffdf8;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 24px 60px rgba(60, 40, 10, 0.08);
+}
+.la-company .lac-path > img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #efe6d7;
+}
+.la-company .lac-path-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem;
+}
+@media (min-width: 768px) {
+  .la-company .lac-path-body {
+    padding: 2.25rem 2.5rem 2.5rem;
+  }
+}
+.la-company .lac-price {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 2rem;
+  background: #fffdf8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.la-company .lac-price.is-featured {
+  border: 2px solid #b8860b;
+  box-shadow: 0 24px 60px rgba(60, 40, 10, 0.12);
+}
+.la-company .lac-checks {
+  display: grid;
+  gap: 10px;
+}
+.la-company .lac-checks li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.45;
+}
+.la-company .lac-checks svg {
+  flex: none;
+  margin-top: 3px;
+  color: #b8860b;
+}
+.la-company .lac-tier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-radius: 1.25rem;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.la-company .lac-banner {
+  position: relative;
+  z-index: 40;
+  margin: 92px 16px 0;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+}
+.la-company .la-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
