@@ -1,13 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { TIERS } from "@/mobile/lib/tiers";
 import { FAQ } from "./faq";
-import { APP, FAQ_PAGE, KEYWORDS, ORGANIZATION, SITE_DESCRIPTION, SITE_TITLE } from "./seo";
+import {
+  APP,
+  APP_DESCRIPTION,
+  APP_TITLE,
+  FAQ_PAGE,
+  KEYWORDS,
+  ORGANIZATION,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from "./seo";
 
 describe("seo", () => {
   it("keeps titles and descriptions within what search results show", () => {
-    expect(SITE_TITLE.length).toBeLessThanOrEqual(65);
-    expect(SITE_DESCRIPTION.length).toBeLessThanOrEqual(300);
-    expect(SITE_TITLE).toMatch(/AI Personal Stylist/);
+    for (const title of [SITE_TITLE, APP_TITLE]) expect(title.length).toBeLessThanOrEqual(65);
+    for (const text of [SITE_DESCRIPTION, APP_DESCRIPTION])
+      expect(text.length).toBeLessThanOrEqual(300);
+    expect(SITE_TITLE).toMatch(/Professional Styling/);
+    expect(APP_TITLE).toMatch(/AI Personal Stylist/);
   });
 
   it("quotes the real Silver price in the FAQ", () => {

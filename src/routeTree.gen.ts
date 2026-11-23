@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AppsRouteImport } from './routes/apps'
+import { Route as BookRouteImport } from './routes/book'
+import { Route as ConsultingRouteImport } from './routes/consulting'
+import { Route as DesignStudioRouteImport } from './routes/design-studio'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as StyleGuidePreviewRouteImport } from './routes/style-guide-preview'
 import { Route as DotwellKnownOauthAuthorizationServerRouteImport } from './routes/[.]well-known/oauth-authorization-server'
@@ -44,6 +48,7 @@ import { Route as ApiOauthRevokeRouteImport } from './routes/api/oauth/revoke'
 import { Route as ApiOauthTokenRouteImport } from './routes/api/oauth/token'
 import { Route as ApiPublicAppReturnRouteImport } from './routes/api/public/app-return'
 import { Route as ApiPublicBeeSalesRouteImport } from './routes/api/public/bee-sales'
+import { Route as ApiPublicBookingRouteImport } from './routes/api/public/booking'
 import { Route as ApiPublicStyleGuideProductsRouteImport } from './routes/api/public/style-guide-products'
 import { Route as ApiPublicVerifyRouteImport } from './routes/api/public/verify'
 import { Route as ApiPushRecommendRouteImport } from './routes/api/push/recommend'
@@ -65,6 +70,26 @@ const IndexRoute = IndexRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppsRoute = AppsRouteImport.update({
+  id: '/apps',
+  path: '/apps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsultingRoute = ConsultingRouteImport.update({
+  id: '/consulting',
+  path: '/consulting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignStudioRoute = DesignStudioRouteImport.update({
+  id: '/design-studio',
+  path: '/design-studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -234,6 +259,11 @@ const ApiPublicBeeSalesRoute = ApiPublicBeeSalesRouteImport.update({
   path: '/api/public/bee-sales',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBookingRoute = ApiPublicBookingRouteImport.update({
+  id: '/api/public/booking',
+  path: '/api/public/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicStyleGuideProductsRoute =
   ApiPublicStyleGuideProductsRouteImport.update({
     id: '/api/public/style-guide-products',
@@ -303,6 +333,10 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/apps': typeof AppsRoute
+  '/book': typeof BookRoute
+  '/consulting': typeof ConsultingRoute
+  '/design-studio': typeof DesignStudioRoute
   '/privacy': typeof PrivacyRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
@@ -335,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -352,6 +387,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/apps': typeof AppsRoute
+  '/book': typeof BookRoute
+  '/consulting': typeof ConsultingRoute
+  '/design-studio': typeof DesignStudioRoute
   '/privacy': typeof PrivacyRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
@@ -384,6 +423,7 @@ export interface FileRoutesByTo {
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -402,6 +442,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/apps': typeof AppsRoute
+  '/book': typeof BookRoute
+  '/consulting': typeof ConsultingRoute
+  '/design-studio': typeof DesignStudioRoute
   '/privacy': typeof PrivacyRoute
   '/style-guide-preview': typeof StyleGuidePreviewRoute
   '/.well-known/oauth-authorization-server': typeof DotwellKnownOauthAuthorizationServerRoute
@@ -434,6 +478,7 @@ export interface FileRoutesById {
   '/api/oauth/token': typeof ApiOauthTokenRoute
   '/api/public/app-return': typeof ApiPublicAppReturnRoute
   '/api/public/bee-sales': typeof ApiPublicBeeSalesRoute
+  '/api/public/booking': typeof ApiPublicBookingRoute
   '/api/public/style-guide-products': typeof ApiPublicStyleGuideProductsRoute
   '/api/public/verify': typeof ApiPublicVerifyRoute
   '/api/push/recommend': typeof ApiPushRecommendRoute
@@ -453,6 +498,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/apps'
+    | '/book'
+    | '/consulting'
+    | '/design-studio'
     | '/privacy'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
@@ -485,6 +534,7 @@ export interface FileRouteTypes {
     | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/bee-sales'
+    | '/api/public/booking'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -502,6 +552,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/apps'
+    | '/book'
+    | '/consulting'
+    | '/design-studio'
     | '/privacy'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
@@ -534,6 +588,7 @@ export interface FileRouteTypes {
     | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/bee-sales'
+    | '/api/public/booking'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -551,6 +606,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/apps'
+    | '/book'
+    | '/consulting'
+    | '/design-studio'
     | '/privacy'
     | '/style-guide-preview'
     | '/.well-known/oauth-authorization-server'
@@ -583,6 +642,7 @@ export interface FileRouteTypes {
     | '/api/oauth/token'
     | '/api/public/app-return'
     | '/api/public/bee-sales'
+    | '/api/public/booking'
     | '/api/public/style-guide-products'
     | '/api/public/verify'
     | '/api/push/recommend'
@@ -601,6 +661,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
+  AppsRoute: typeof AppsRoute
+  BookRoute: typeof BookRoute
+  ConsultingRoute: typeof ConsultingRoute
+  DesignStudioRoute: typeof DesignStudioRoute
   PrivacyRoute: typeof PrivacyRoute
   StyleGuidePreviewRoute: typeof StyleGuidePreviewRoute
   DotwellKnownOauthAuthorizationServerRoute: typeof DotwellKnownOauthAuthorizationServerRoute
@@ -633,6 +697,7 @@ export interface RootRouteChildren {
   ApiOauthTokenRoute: typeof ApiOauthTokenRoute
   ApiPublicAppReturnRoute: typeof ApiPublicAppReturnRoute
   ApiPublicBeeSalesRoute: typeof ApiPublicBeeSalesRoute
+  ApiPublicBookingRoute: typeof ApiPublicBookingRoute
   ApiPublicStyleGuideProductsRoute: typeof ApiPublicStyleGuideProductsRoute
   ApiPublicVerifyRoute: typeof ApiPublicVerifyRoute
   ApiPushRecommendRoute: typeof ApiPushRecommendRoute
@@ -658,6 +723,34 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apps': {
+      id: '/apps'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof AppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consulting': {
+      id: '/consulting'
+      path: '/consulting'
+      fullPath: '/consulting'
+      preLoaderRoute: typeof ConsultingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design-studio': {
+      id: '/design-studio'
+      path: '/design-studio'
+      fullPath: '/design-studio'
+      preLoaderRoute: typeof DesignStudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -891,6 +984,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBeeSalesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/booking': {
+      id: '/api/public/booking'
+      path: '/api/public/booking'
+      fullPath: '/api/public/booking'
+      preLoaderRoute: typeof ApiPublicBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/style-guide-products': {
       id: '/api/public/style-guide-products'
       path: '/api/public/style-guide-products'
@@ -1011,6 +1111,10 @@ const ApiBeeStyleGuideRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
+  AppsRoute: AppsRoute,
+  BookRoute: BookRoute,
+  ConsultingRoute: ConsultingRoute,
+  DesignStudioRoute: DesignStudioRoute,
   PrivacyRoute: PrivacyRoute,
   StyleGuidePreviewRoute: StyleGuidePreviewRoute,
   DotwellKnownOauthAuthorizationServerRoute:
@@ -1045,6 +1149,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOauthTokenRoute: ApiOauthTokenRoute,
   ApiPublicAppReturnRoute: ApiPublicAppReturnRoute,
   ApiPublicBeeSalesRoute: ApiPublicBeeSalesRoute,
+  ApiPublicBookingRoute: ApiPublicBookingRoute,
   ApiPublicStyleGuideProductsRoute: ApiPublicStyleGuideProductsRoute,
   ApiPublicVerifyRoute: ApiPublicVerifyRoute,
   ApiPushRecommendRoute: ApiPushRecommendRoute,
