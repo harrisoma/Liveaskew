@@ -68,7 +68,7 @@ const CORE = [
     title: "Product Design",
     tag: "Products people want to wear",
     image: productImg,
-    alt: "Designers reviewing a jacket tech pack with fabric swatches and a sample",
+    alt: "A technical drawing of a jacket beside the finished black jacket with gold embroidery, swatches and a tape measure",
     desc: "From idea to tech pack to sample, with a stylist's eye for fit, fabric and wearability.",
     deliverables: [
       "Product + collection direction",
@@ -244,10 +244,10 @@ export function ConsultingPage() {
             <img
               src={heroImg}
               fetchPriority="high"
-              alt="A stylist in a black blazer and a boutique owner reviewing a lookbook together in her shop"
+              alt="A boutique set for a consultation: two cream chairs, a table with a lookbook and swatches, and a rail of black and ivory garments"
             />
             <figcaption className="flex items-center justify-between gap-3 px-2 pt-4 pb-1">
-              <span className="la-eyebrow text-[0.75rem]">Consulting, in your space</span>
+              <span className="la-eyebrow text-[0.75rem]">Your consultation, set up</span>
               <a href={bookHref()} className="lac-stat text-[0.8rem]">
                 Book a call
               </a>
