@@ -23,7 +23,8 @@ const TOOLS = {
   illustrator: { name: "Adobe Illustrator", logo: "/images/brands/adobe-illustrator.svg" },
   photoshop: { name: "Adobe Photoshop", logo: "/images/brands/adobe-photoshop.svg" },
   clo: { name: "CLO 3D", logo: null },
-  canva: { name: "Canva", logo: null },
+  canva: { name: "Canva", logo: "/images/brands/canva.svg" },
+  workspace: { name: "Onixus Workspace", logo: "/images/brands/onixus-workspace.png" },
   procreate: { name: "Procreate", logo: null },
 } as const;
 type ToolId = keyof typeof TOOLS;
@@ -41,6 +42,10 @@ const TOOLKIT: { id: ToolId; use: string }[] = [
   { id: "clo", use: "3D samples and fit checks before any fabric is cut." },
   { id: "canva", use: "Mood boards, presentations and launch assets for your team." },
   { id: "procreate", use: "First sketches by hand — loose, fast and full of feeling." },
+  {
+    id: "workspace",
+    use: "Where every project lives: briefs, files, feedback and approvals, shared with you from start to finish.",
+  },
 ];
 
 function ToolChip({ id }: { id: ToolId }) {
@@ -109,7 +114,7 @@ const STAGES: {
     title: "Mood & story",
     text: "We start with how the collection should feel. Images, color, texture and story go up on the wall until the direction is clear — and you sign off on it.",
     note: "pin it. live with it. let it change.",
-    tools: ["canva", "procreate"],
+    tools: ["canva", "procreate", "workspace"],
     image: { src: moodboard, alt: "Moodboard wall with fabric swatches, sketches and photos" },
   },
   {
@@ -142,7 +147,7 @@ const STAGES: {
     title: "Fitting & final",
     text: "Real fittings on real bodies. We adjust until it's right, and a person — never a template — approves every piece before it's final.",
     note: "human-approved. always.",
-    tools: [],
+    tools: ["workspace"],
     image: { src: fitting, alt: "Muslin toile pinned on a dress form with a measuring tape" },
   },
 ];
@@ -284,7 +289,10 @@ export function DesignStudioPage() {
             {TOOLKIT.map(({ id, use }) => {
               const tool = TOOLS[id];
               return (
-                <li key={id} className="la-card">
+                <li
+                  key={id}
+                  className={`la-card ${id === "workspace" ? "is-featured sm:col-span-2 lg:col-span-3" : ""}`}
+                >
                   <div className="flex items-center gap-4">
                     {tool.logo ? (
                       <span className="lac-tool-logo">
