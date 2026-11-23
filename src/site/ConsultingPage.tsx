@@ -37,7 +37,7 @@ const CORE = [
     title: "Marketing",
     tag: "Campaigns that look expensive",
     image: marketingImg,
-    alt: "A team planning a styled campaign around a content board and lookbook prints",
+    alt: "A creative team planning a campaign over printed editorial photos and a moodboard",
     desc: "Campaigns, content, and launches that look expensive because they are styled right.",
     deliverables: [
       "Campaign direction",
@@ -52,7 +52,7 @@ const CORE = [
     title: "Retail Strategies",
     tag: "Stores that sell",
     image: retailImg,
-    alt: "A stylist merchandising a boutique rail beside mannequins in black and gold",
+    alt: "A stylist arranging a boutique rail of black garments beside jackets with gold embroidery",
     desc: "Stores that sell. Assortment, merchandising, pricing, and floor flow built around how people actually shop.",
     deliverables: [
       "Assortment planning",
