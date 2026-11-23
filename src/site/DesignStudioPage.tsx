@@ -183,7 +183,7 @@ export function DesignStudioPage() {
                 </li>
               ))}
             </ul>
-            <p className="lac-hand mt-10 max-w-md text-[1.7rem] leading-snug">
+            <p className="lac-hand mt-10 max-w-md text-[1.35rem] leading-snug">
               Nothing here is a template. Every piece starts as a feeling — then becomes cloth.
             </p>
           </div>
@@ -198,7 +198,7 @@ export function DesignStudioPage() {
               />
               <figcaption className="flex flex-wrap items-end justify-between gap-4 px-1 pt-5">
                 <span>
-                  <span className="la-serif block text-[1.5rem] font-semibold">
+                  <span className="la-serif block text-[1.2rem] font-semibold">
                     The moodboard wall
                   </span>
                   <span className="text-[0.95rem] text-black/60">
@@ -213,7 +213,7 @@ export function DesignStudioPage() {
             </p>
             <div className="lac-note lac-note-studio">
               <p className="la-eyebrow text-[0.7rem]">Studio note</p>
-              <p className="lac-hand mt-1 text-[1.6rem] leading-tight">
+              <p className="lac-hand mt-1 text-[1.3rem] leading-tight">
                 Pin it. Live with it. Let it change.
               </p>
             </div>
@@ -238,7 +238,7 @@ export function DesignStudioPage() {
                 design it — in your brand's voice.
               </p>
             </div>
-            <p className="lac-hand text-[1.5rem] text-black/70">design concepts ↓</p>
+            <p className="lac-hand text-[1.2rem] text-black/70">design concepts ↓</p>
           </div>
           <ul className="lac-collage mt-14">
             {COLLAGE.map((piece, index) => (
@@ -247,13 +247,13 @@ export function DesignStudioPage() {
                 <img src={piece.src} alt={piece.alt} loading="lazy" />
                 <div className="flex items-baseline justify-between gap-3 px-1 pt-3">
                   <h3 className="la-serif text-[1.35rem]">{piece.title}</h3>
-                  <span className="lac-hand text-[1.25rem] text-black/60">{piece.note}</span>
+                  <span className="lac-hand text-[1rem] text-black/60">{piece.note}</span>
                 </div>
               </li>
             ))}
             <li className="lac-note lac-collage-note">
               <p className="la-eyebrow text-[0.7rem]">Also in the studio</p>
-              <p className="lac-hand mt-2 text-[1.5rem] leading-snug">
+              <p className="lac-hand mt-2 text-[1.2rem] leading-snug">
                 prints & scarves · knitwear · kids & family · bridal party · event capsules
               </p>
             </li>
@@ -336,7 +336,7 @@ export function DesignStudioPage() {
                       ))}
                     </div>
                   ) : null}
-                  <p className="lac-hand mt-6 text-[1.6rem] text-[#8a6412]">{stage.note}</p>
+                  <p className="lac-hand mt-6 text-[1.3rem] text-[#8a6412]">{stage.note}</p>
                 </div>
                 {stage.image ? (
                   <figure className={`lac-polaroid lac-stage-media lac-tilt-${index % 4}`}>
@@ -346,7 +346,7 @@ export function DesignStudioPage() {
                 ) : (
                   <div className="lac-note lac-stage-media lac-stage-note">
                     <p className="la-eyebrow text-[0.7rem]">Before we cut</p>
-                    <p className="lac-hand mt-2 text-[1.8rem] leading-snug">
+                    <p className="lac-hand mt-2 text-[1.4rem] leading-snug">
                       sample in 3D → check fit &amp; proportion → tech pack your maker can build
                       from
                     </p>
