@@ -15,13 +15,18 @@ const FIELD_LABELS: Record<string, string> = {
 
 export function BookPage() {
   const [service, setService] = useState<ServiceId>("styling");
+  const [focus, setFocus] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
   // Pre-select the service a visitor clicked through from (?service=consulting).
   useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get("service");
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("service");
     if (isServiceId(requested)) setService(requested);
+    // A focus chosen on another page (e.g. Consulting → "Marketing") starts the message.
+    const chosen = params.get("focus")?.trim().slice(0, 80);
+    if (chosen) setFocus(chosen);
   }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -151,6 +156,8 @@ export function BookPage() {
                 <label className="la-field">
                   Tell us about it
                   <textarea
+                    key={focus}
+                    defaultValue={focus ? `Focus: ${focus}\n\n` : undefined}
                     name="message"
                     required
                     maxLength={5000}
