@@ -26,9 +26,7 @@ function Offers({ items, cta }: { items: Offer[]; cta: ReactNode }) {
       <ul className="grid gap-4 md:grid-cols-2">
         {items.map((offer) => (
           <li key={offer.title} className="glass rounded-[1.6rem] px-6 py-6">
-            <h3 className="font-display text-[1.4rem] leading-tight font-semibold">
-              {offer.title}
-            </h3>
+            <h3 className="la-serif text-[1.5rem] leading-tight">{offer.title}</h3>
             <p className="mt-2.5 text-[1rem] leading-relaxed text-black/70">{offer.text}</p>
           </li>
         ))}
@@ -57,7 +55,7 @@ function ProductMark({
   );
 }
 
-const HEADLINE = "font-display font-bold tracking-[-0.035em]";
+const HEADLINE = "la-serif";
 
 function Phone({ src, alt }: { src: string; alt: string }) {
   return (

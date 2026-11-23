@@ -6,7 +6,16 @@
   --cream: #f3ede3;
   --cream-deep: #ebe3d6;
   --serif: "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif;
+  /* One heading font across the whole site: anything using font-display gets the serif. */
+  --font-display: var(--serif);
   background: var(--cream);
+}
+
+/* Every heading on every page uses the site serif. */
+.la-company :is(h1, h2, h3, h4) {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
 }
 
 .la-company .la-serif {
@@ -328,16 +337,18 @@
 }
 
 /* ——— Design Studio: moodboard, notes, collage, process ——— */
+/* Studio notes: the site serif in italic, so every page shares one type family. */
 .la-company .lac-hand {
-  font-family: "Caveat", "Bradley Hand", "Segoe Print", cursive;
-  font-weight: 500;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
   letter-spacing: 0;
 }
 .la-company .lac-display {
   font-size: clamp(3.4rem, 8vw, 6.6rem);
-  line-height: 0.98;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.015em;
 }
 .la-company .lac-display em {
   display: block;
