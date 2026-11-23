@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isStudioSubscription } from "@/lib/studio-checkout.server";
 import type Stripe from "stripe";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { type StripeEnv, createStripeClient, verifyWebhook } from "@/lib/stripe.server";
@@ -20,6 +21,8 @@ function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
 }
 
 async function upsertSubscription(subscription: Stripe.Subscription, env: StripeEnv) {
+  // Design Studio memberships are sold to businesses on the website, not tied to a Bee account.
+  if (isStudioSubscription(subscription.metadata)) return;
   const userId = subscription.metadata?.userId;
   if (!userId) {
     console.error("No userId in subscription metadata", subscription.id);

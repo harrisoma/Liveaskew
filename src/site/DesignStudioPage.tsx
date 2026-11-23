@@ -1,4 +1,5 @@
-import { ArrowDown, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDown, Check, ChevronDown } from "lucide-react";
 import moodboard from "@/assets/site/studio/moodboard.webp";
 import blazer from "@/assets/site/studio/blazer.webp";
 import gown from "@/assets/site/studio/gown.webp";
@@ -11,7 +12,11 @@ import sketch from "@/assets/site/studio/sketch.webp";
 import swatches from "@/assets/site/studio/swatches.webp";
 import fitting from "@/assets/site/studio/fitting.webp";
 import { SiteFrame } from "./chrome";
+import { OFFERS } from "./offers";
+import { StudioCheckoutButton } from "./StudioCheckout";
 import { BookingBand, Eyebrow } from "./ui";
+
+const STUDIO = OFFERS.find((offer) => offer.id === "design-studio")!;
 
 /**
  * Design tools shown on the page. Official logos live in public/images/brands and are
@@ -153,8 +158,19 @@ const STAGES: {
 ];
 
 export function DesignStudioPage() {
+  const [joined, setJoined] = useState(false);
+  useEffect(() => {
+    setJoined(new URLSearchParams(window.location.search).get("checkout") === "success");
+  }, []);
+
   return (
     <SiteFrame current="/design-studio">
+      {joined ? (
+        <div className="lac-banner" role="status">
+          Welcome to the Design Studio. Your membership is active — we'll be in touch shortly to
+          start your first project.
+        </div>
+      ) : null}
       {/* Hero */}
       <section className="lac-hero lac-studio-hero px-5 pt-36 pb-24 md:px-8 md:pt-44">
         <p className="lac-outline-word" aria-hidden>
@@ -363,6 +379,43 @@ export function DesignStudioPage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* Membership */}
+      <section
+        id="membership"
+        className="la-section la-panel scroll-mt-24"
+        aria-labelledby="studio-price"
+      >
+        <div className="lac-call mx-auto grid max-w-[1320px] items-center gap-10 p-8 md:p-12 lg:grid-cols-[1fr_1fr]">
+          <div>
+            <Eyebrow>Design Studio membership</Eyebrow>
+            <h2
+              id="studio-price"
+              className="la-serif mt-4 text-[2.4rem] leading-[1.06] md:text-[3.2rem]"
+            >
+              Your design partner, month to month.
+            </h2>
+            <p className="mt-5 flex items-baseline gap-2">
+              <span className="la-serif text-[3.4rem] leading-none">{STUDIO.price}</span>
+              <span className="text-[1rem] text-black/60">{STUDIO.priceNote}</span>
+            </p>
+            <div className="mt-8 flex flex-wrap items-start gap-3">
+              <StudioCheckoutButton />
+              <a href={STUDIO.href} className="la-btn lac-btn-outline">
+                Talk to us first
+              </a>
+            </div>
+          </div>
+          <ul className="lac-checks text-[1.0625rem]">
+            {STUDIO.includes.map((item) => (
+              <li key={item}>
+                <Check size={18} aria-hidden />
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -7,9 +7,10 @@ export const NAV = [
   { href: "/apps", label: "Apps", short: "Apps" },
   { href: "/design-studio", label: "Design Studio", short: "Studio" },
   { href: "/consulting", label: "Business Consulting", short: "Consulting" },
+  { href: "/pricing", label: "Pricing", short: "Pricing" },
 ] as const;
 
-export type NavHref = (typeof NAV)[number]["href"] | "/book" | "/privacy";
+export type NavHref = (typeof NAV)[number]["href"] | "/book" | "/privacy" | "/start";
 
 export const CONTACT_EMAIL = "hello@liveaskew.co";
 
@@ -49,11 +50,11 @@ export function SiteFrame({ current, children }: { current: NavHref; children: R
             ))}
           </nav>
           <a
-            href="/book"
+            href="/start"
             className="la-cta"
-            aria-current={current === "/book" ? "page" : undefined}
+            aria-current={current === "/start" ? "page" : undefined}
           >
-            Book a Consultation <span aria-hidden>→</span>
+            Get Started <span aria-hidden>→</span>
           </a>
         </div>
         <nav className="la-nav la-nav-mobile glass mx-auto mt-2 lg:hidden" aria-label="Main">
@@ -85,8 +86,8 @@ export function SiteFooter() {
               A professional styling company. We style people and brands, then back it with apps,
               consulting, and a design studio.
             </p>
-            <a href="/book" className="glass-btn mt-6">
-              Book a Consultation
+            <a href="/start" className="glass-btn mt-6">
+              Get Started
             </a>
           </div>
           <nav aria-label="Explore LiveAskew">
