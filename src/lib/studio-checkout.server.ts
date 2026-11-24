@@ -3,10 +3,13 @@
  * separate from Bee app memberships: no Bee account, and the payments webhook ignores it
  * (subscriptions carry product=design_studio and no userId).
  *
- * In Stripe (sandbox and live) create one recurring monthly price of $199 with the lookup key
- * below. Until it exists, checkout answers price_missing and the site falls back to /book.
+ * Billed through the Onixus Stripe account, kept separate from Onixus's own customers:
+ * product prod_liveaskew_design_studio (statement descriptor LIVEASKEW STUDIO), a $199/month
+ * price with the lookup key below, and client=liveaskew on every session and subscription.
+ * Until the price exists, checkout answers price_missing and the site falls back to /book.
  */
-export const STUDIO_LOOKUP_KEY = "design_studio_monthly";
+export const STUDIO_LOOKUP_KEY = "liveaskew_design_studio_monthly";
+export const STUDIO_CLIENT = "liveaskew";
 export const STUDIO_PRODUCT = "design_studio";
 export const STUDIO_PRICE_MONTHLY = 199;
 
