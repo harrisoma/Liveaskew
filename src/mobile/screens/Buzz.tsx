@@ -311,7 +311,7 @@ export function BuzzScreen({
       )}
 
       {onOpenHoney && (
-        <button className="hive-text-action" onClick={onOpenHoney}>
+        <button className="la-buzz-calendar-link" onClick={onOpenHoney}>
           View Honey calendar
         </button>
       )}
