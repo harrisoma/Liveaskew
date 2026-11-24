@@ -12,7 +12,7 @@ Signal uses organization/member/post receipts and an immutable content fingerpri
 
 ## Activation blockers
 
-- Staging lacks `ONIXUS_GATEWAY_CLIENTS` and required Meta/LinkedIn/Threads/X publisher configuration. Existing production Signal has those configuration names, but their effective values/readiness were not verified and no production Signal resources were changed.
+- Staging lacks `ONIXUS_GATEWAY_CLIENTS` and required Meta/LinkedIn/Threads/X publisher configuration. Existing production Signal has those configuration names; their effective values/readiness were not verified. The owner approved production deployment of the bridge, with Buzz activation explicitly remaining off until member OAuth is verified.
 - LiveAskew has no Meta, LinkedIn, Threads or X OAuth app credentials configured. The current Buzz connection flow therefore cannot connect members yet. Using existing central Signal OAuth apps requires a delegated member OAuth start/callback/finalization flow; the company-scoped Signal client endpoint is not a substitute. Alternatively, provider apps must be configured for LiveAskew's existing member OAuth callbacks. Do not route members to company accounts.
 - The deployed LiveAskew gateway key is sensitive and is not readable through Vercel's environment API; no token was rotated or copied.
 - No authenticated end-to-end connection or live social post has been verified. Do not enable the bridge or advertise working social connections based on mock tests alone.
