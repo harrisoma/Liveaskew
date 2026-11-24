@@ -1536,7 +1536,12 @@ export function MobileApp() {
               onDeleteAccount={async () => {
                 const err = await deleteMyAccount();
                 if (err) return err;
-                await signOut();
+                try {
+                  await signOut();
+                } catch {
+                  /* The server account is deleted; always clear private local data. */
+                }
+                sessionStorage.removeItem("la_hive_invite");
                 setAdminAccess(false);
                 setCustomerView(false);
                 window.localStorage.removeItem("la_mobile_v2");
