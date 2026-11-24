@@ -1,3 +1,5 @@
+import { BuzzAccountPanel } from "./BuzzAccounts";
+import { Sparkles, Bookmark } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExternalLink, ImagePlus, Send, X as Close } from "lucide-react";
 import {
@@ -32,6 +34,7 @@ export function BuzzScreen({
   onCaption,
   onSchedule,
   onPublishNow,
+  onOpenHoney,
 }: {
   looks: GuideLook[];
   posts: HoneyItem[];
@@ -54,15 +57,17 @@ export function BuzzScreen({
     now: boolean;
   }) => void;
   onPublishNow: (post: HoneyItem) => void;
+  onOpenHoney?: () => void;
 }) {
   const saved = looks.filter((l) => l.saved);
-  const [lookId, setLookId] = useState<string | null>(null);
+  const [lookId, setLookId] = useState<string | null>(saved[0]?.id ?? null);
   const [network, setNetwork] = useState<NetworkSpec>(NETWORKS[0]);
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("09:00");
   const [caption, setCaption] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [writing, setWriting] = useState(false);
+  const [captionError, setCaptionError] = useState<string | null>(null);
   const look = saved.find((l) => l.id === lookId) ?? null;
 
   // A try-on render is the natural photo for a look.
@@ -79,219 +84,237 @@ export function BuzzScreen({
   );
 
   return (
-    <Screen kicker="Buzz" title="Share your looks">
+    <Screen
+      title="A look worth sharing"
+      detail={<span className="la-community-label">Buzz · Your personal publishing space</span>}
+    >
       {notice && (
         <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
           {notice}
         </p>
       )}
 
-      <p className="la-kicker">Accounts</p>
-      {accounts ? (
-        <ul className="mt-2 space-y-2">
-          {NETWORKS.map((n) => {
-            const conn = connected.get(n.id);
-            const available = accounts.available.includes(n.id);
-            return (
-              <li
-                key={n.id}
-                className="neo-raised-sm flex items-center justify-between gap-2 px-3 py-2 text-sm"
-              >
-                <span>
-                  <span className="font-semibold">{n.label}</span>
-                  {conn && <span className="opacity-70"> · {conn.accountName || "connected"}</span>}
-                </span>
-                {conn ? (
-                  <button
-                    type="button"
-                    className="font-semibold"
-                    onClick={() => onDisconnect(n.id)}
-                  >
-                    Disconnect
-                  </button>
-                ) : available ? (
-                  <button
-                    type="button"
-                    className="font-semibold text-[var(--gold)]"
-                    onClick={() => onConnect(n.id)}
-                  >
-                    Connect
-                  </button>
-                ) : (
-                  <span className="opacity-60">Coming soon</span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="mt-2 neo-inset px-3 py-2 text-sm leading-relaxed">
-          Sign in to connect Instagram, Facebook, LinkedIn, X, and Threads. You can still plan posts
-          — they wait on your Honey calendar.
+      <div className="la-buzz-intro">
+        <p>
+          From your Style Guide to your social feed. Choose a look, write with Bee, and make it
+          yours before you share.
         </p>
-      )}
+        <span>Nothing posts without your approval.</span>
+      </div>
+      <details className="la-buzz-account-details" open={saved.length === 0 ? true : undefined}>
+        <summary>
+          Manage social accounts <span>{connected.size} connected</span>
+        </summary>
+        <BuzzAccountPanel accounts={accounts} onConnect={onConnect} onDisconnect={onDisconnect} />
+      </details>
 
       {saved.length === 0 ? (
-        <div className="mt-6 neo-inset px-4 py-8 text-sm leading-relaxed">
-          Save a look in Bee first, then come back here to show it off.
-        </div>
+        <section className="la-buzz-empty">
+          <Bookmark size={28} aria-hidden />
+          <h2>Your next post starts with a look.</h2>
+          <p>
+            Save a look in Bee, then come here to pick a photo, create a caption, and choose when to
+            share.
+          </p>
+          <span>Your saved looks will appear here.</span>
+        </section>
       ) : (
-        <div className="mt-6 space-y-3">
-          <p className="la-kicker">1 · Look</p>
-          <div className="grid grid-cols-1 gap-2">
-            {saved.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                aria-pressed={l.id === lookId}
-                className="neo-choice flex-col items-start"
-                onClick={() => setLookId(l.id)}
-              >
-                <span className="font-semibold">{l.title}</span>
-                <span className="text-sm font-normal opacity-70">
-                  {l.formula.slice(0, 3).join(", ")}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <p className="la-kicker pt-2">2 · Where and when</p>
-          <div className="flex flex-wrap gap-2">
-            {NETWORKS.map((n) => (
-              <button
-                key={n.id}
-                type="button"
-                aria-pressed={n.id === network.id}
-                onClick={() => setNetwork(n)}
-                className={`rounded-[12px] px-3 py-2 text-sm font-semibold ${n.id === network.id ? "neo-inset" : "neo-raised-sm"}`}
-              >
-                {n.label}
-              </button>
-            ))}
-          </div>
-          {accounts && !isConnected && (
-            <p className="text-sm opacity-80">
-              {network.label} isn't connected — the post will wait on Honey until you connect it.
-            </p>
-          )}
-          <div className="grid grid-cols-2 gap-3">
-            <NeoField
-              type="date"
-              aria-label="Post date"
-              value={date}
-              min={today}
-              onChange={(e) => setDate(e.target.value)}
-            />
-            <NeoField
-              type="time"
-              aria-label="Post time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
-          </div>
-
-          <p className="la-kicker pt-2">
-            3 · Photo {network.requiresImage ? "(needed)" : "(optional)"}
-          </p>
-          {photo ? (
-            <div className="relative">
-              <img
-                src={photo}
-                alt="Photo for this post"
-                className="h-48 w-full rounded-[16px] object-cover"
-              />
-              <button
-                type="button"
-                aria-label="Remove photo"
-                className="neo-icon-btn absolute top-2 right-2"
-                onClick={() => setPhoto(null)}
-              >
-                <Close size={16} aria-hidden />
-              </button>
+        <div className="la-buzz-compose">
+          <section className="la-buzz-look-picker">
+            <h2>Choose a saved look</h2>
+            <div className="grid grid-cols-1 gap-2">
+              {saved.map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  aria-pressed={l.id === lookId}
+                  className="la-buzz-look-option"
+                  onClick={() => setLookId(l.id)}
+                >
+                  {l.tryOnUrl && l.tryOnUrl !== "self" && <img src={l.tryOnUrl} alt="" />}
+                  <span>
+                    <strong>{l.title}</strong>
+                    <small>{l.occasion}</small>
+                  </span>
+                </button>
+              ))}
             </div>
-          ) : (
-            <NeoButton
-              onClick={async () => {
-                const picked = await onPickPhoto();
-                if (picked) setPhoto(picked);
-              }}
-            >
-              <ImagePlus size={14} aria-hidden className="mr-1 inline" />
-              Add a photo
-            </NeoButton>
-          )}
 
-          <p className="la-kicker pt-2">4 · Caption</p>
-          <textarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            rows={4}
-            placeholder="Write it yourself, or let Bee have a go."
-            className="neo-input resize-none"
-          />
-          <p
-            className={`text-right text-sm ${chars > network.maxChars ? "font-semibold" : "opacity-60"}`}
-          >
-            {chars} / {network.maxChars}
-          </p>
-          <NeoButton
-            disabled={!look || writing}
-            onClick={async () => {
-              if (!look) return;
-              setWriting(true);
-              setCaption(await onCaption(look, network.label));
-              setWriting(false);
-            }}
-          >
-            {writing ? "Bee is writing…" : "Bee, write it for me"}
-          </NeoButton>
-          {problem && caption.trim() && <p className="text-sm">{problem}</p>}
-          <div className="grid grid-cols-2 gap-2">
+            <p className="la-community-note">
+              Choose a look from your Style Guide. Bee uses it as the starting point for your
+              caption.
+            </p>
+          </section>
+          <section className="la-buzz-editor">
+            <h2>Make it yours</h2>
+            <p className="la-kicker pt-2">Where and when</p>
+            <p className="la-community-note">Scheduled posts appear on your Honey calendar.</p>
+            <div className="flex flex-wrap gap-2">
+              {NETWORKS.map((n) => (
+                <button
+                  key={n.id}
+                  type="button"
+                  aria-pressed={n.id === network.id}
+                  onClick={() => setNetwork(n)}
+                  className={`rounded-[12px] px-3 py-2 text-sm font-semibold ${n.id === network.id ? "neo-inset" : "neo-raised-sm"}`}
+                >
+                  <img
+                    src={`/social/${n.id}.svg`}
+                    alt=""
+                    width="18"
+                    height="18"
+                    className="inline-block mr-2 align-middle"
+                  />
+                  {n.label}
+                </button>
+              ))}
+            </div>
+            {accounts && !isConnected && (
+              <p className="text-sm opacity-80">
+                {network.label} isn't connected — the post will wait on Honey until you connect it.
+              </p>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <NeoField
+                type="date"
+                aria-label="Post date"
+                value={date}
+                min={today}
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <NeoField
+                type="time"
+                aria-label="Post time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+              />
+            </div>
+
+            <p className="la-kicker pt-2">
+              Your photo {network.requiresImage ? "(needed)" : "(optional)"}
+            </p>
+            {photo ? (
+              <div className="relative">
+                <img src={photo} alt="Photo for this post" className="la-buzz-post-photo" />
+                <button
+                  type="button"
+                  aria-label="Remove photo"
+                  className="neo-icon-btn absolute top-2 right-2"
+                  onClick={() => setPhoto(null)}
+                >
+                  <Close size={16} aria-hidden />
+                </button>
+              </div>
+            ) : (
+              <NeoButton
+                onClick={async () => {
+                  const picked = await onPickPhoto();
+                  if (picked) setPhoto(picked);
+                }}
+              >
+                <ImagePlus size={14} aria-hidden className="mr-1 inline" />
+                Add a photo
+              </NeoButton>
+            )}
+
+            <p className="la-kicker pt-2">Your caption</p>
+            <p className="la-community-note">
+              Bee draws on your style interview, Style Guide, and this look. Review and edit before
+              posting.
+            </p>
+            <textarea
+              aria-label="Post caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              rows={4}
+              placeholder="Write it yourself, or let Bee have a go."
+              className="neo-input resize-none"
+            />
+            <p
+              className={`text-right text-sm ${chars > network.maxChars ? "font-semibold" : "opacity-60"}`}
+            >
+              {chars} / {network.maxChars}
+            </p>
             <NeoButton
-              variant="ink"
-              disabled={!look || !!problem || !date || !time}
-              onClick={() => {
+              disabled={!look || writing}
+              onClick={async () => {
                 if (!look) return;
-                onSchedule({
-                  look,
-                  network,
-                  date,
-                  time,
-                  caption: caption.trim(),
-                  photo,
-                  now: false,
-                });
-                setCaption("");
-                setLookId(null);
+                setWriting(true);
+                setCaptionError(null);
+                try {
+                  setCaption(await onCaption(look, network.label));
+                } catch (error) {
+                  setCaptionError(
+                    error instanceof Error
+                      ? error.message
+                      : "Bee couldn’t write a caption. Please try again.",
+                  );
+                } finally {
+                  setWriting(false);
+                }
               }}
             >
-              <Send size={14} aria-hidden className="mr-1 inline" />
-              Schedule
+              <Sparkles size={15} aria-hidden className="mr-2 inline" />
+              {writing ? "Bee is writing…" : "Write with Bee"}
             </NeoButton>
-            <NeoButton
-              variant="gold"
-              disabled={!look || !!problem || !isConnected}
-              onClick={() => {
-                if (!look) return;
-                onSchedule({
-                  look,
-                  network,
-                  date: today,
-                  time,
-                  caption: caption.trim(),
-                  photo,
-                  now: true,
-                });
-                setCaption("");
-                setLookId(null);
-              }}
-            >
-              Post now
-            </NeoButton>
-          </div>
+            {captionError && (
+              <p role="alert" className="text-sm">
+                {captionError}
+              </p>
+            )}
+            {problem && caption.trim() && <p className="text-sm">{problem}</p>}
+            <div className="grid grid-cols-2 gap-2">
+              <NeoButton
+                variant="ink"
+                disabled={!look || !!problem || !date || !time}
+                onClick={() => {
+                  if (!look) return;
+                  onSchedule({
+                    look,
+                    network,
+                    date,
+                    time,
+                    caption: caption.trim(),
+                    photo,
+                    now: false,
+                  });
+                  setCaption("");
+                  setLookId(null);
+                }}
+              >
+                <Send size={14} aria-hidden className="mr-1 inline" />
+                Schedule
+              </NeoButton>
+              <NeoButton
+                variant="gold"
+                disabled={!look || !!problem || !isConnected}
+                onClick={() => {
+                  if (!look) return;
+                  onSchedule({
+                    look,
+                    network,
+                    date: today,
+                    time,
+                    caption: caption.trim(),
+                    photo,
+                    now: true,
+                  });
+                  setCaption("");
+                  setLookId(null);
+                }}
+              >
+                Post now
+              </NeoButton>
+            </div>
+          </section>
         </div>
       )}
 
+      {onOpenHoney && (
+        <button className="la-buzz-calendar-link" onClick={onOpenHoney}>
+          View Honey calendar
+        </button>
+      )}
       {upcoming.length > 0 && (
         <div className="mt-6">
           <p className="la-kicker">Your posts</p>
@@ -305,6 +328,15 @@ export function BuzzScreen({
               return (
                 <li key={p.id} className="neo-raised-sm px-3 py-2 text-sm">
                   <p>
+                    {spec && (
+                      <img
+                        src={`/social/${spec.id}.svg`}
+                        alt=""
+                        width="18"
+                        height="18"
+                        className="inline-block mr-2 align-middle"
+                      />
+                    )}
                     <span className="font-semibold">{p.network}</span> · {dayLabel(p.date, today)}{" "}
                     {p.time} · {p.postStatus ? STATUS_LABEL[p.postStatus] : "Planned"}
                   </p>

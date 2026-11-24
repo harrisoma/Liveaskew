@@ -1,5 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Flag, MoreHorizontal, Paperclip, ShieldOff, Trash2, X } from "lucide-react";
+import { HiveCommunity } from "./HiveCommunity";
+import { communityApi } from "../lib/hive-groups";
+import { HiveJoin } from "./HiveJoin";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  Flag,
+  MoreHorizontal,
+  Paperclip,
+  ShieldOff,
+  Trash2,
+  X,
+  MessageCircle,
+  ChevronRight,
+} from "lucide-react";
 import { NeoButton, NeoField, Screen, Skeleton } from "../components/ui";
 import {
   blockMember,
@@ -48,6 +61,8 @@ export function HiveScreen({
   const [session, setSession] = useState<HiveSession | null>(null);
   const [rooms, setRooms] = useState<HiveRoom[]>([]);
   const [room, setRoom] = useState<HiveRoom | null>(null);
+  const memberId = session?.state === "ready" ? session.userId : null;
+  const api = useMemo(() => (memberId ? communityApi(memberId) : null), [memberId]);
 
   useEffect(() => {
     let live = true;
@@ -71,7 +86,7 @@ export function HiveScreen({
 
   if (!session) {
     return (
-      <Screen kicker="The Hive" title="Talk about your looks">
+      <Screen kicker="The Hive" title="Your community, your conversations">
         <Skeleton className="h-20" />
         <Skeleton className="mt-3 h-20" />
       </Screen>
@@ -81,7 +96,7 @@ export function HiveScreen({
   if (session.state !== "ready") {
     const saved = looks.filter((l) => l.saved);
     return (
-      <Screen kicker="The Hive" title="Talk about your looks">
+      <Screen kicker="The Hive" title="Your community, your conversations">
         <div className="neo-inset px-4 py-4 text-sm leading-relaxed">
           {session.state === "offline"
             ? "The Hive is where members swap looks and talk things through. It opens once you're signed in to LiveAskew."
@@ -132,70 +147,34 @@ export function HiveScreen({
   }
 
   return (
-    <Screen kicker="The Hive" title="Rooms">
+    <div className="hive-live-screen">
       {shareLook && (
-        <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
-          Pick a room to share “{shareLook.title}”.
+        <p className="hive-sharing-notice">
+          Choose a group or open the main network to share “{shareLook.title}”.
         </p>
       )}
-      <p className="mb-4 text-sm leading-relaxed">
-        You're here as <strong>{session.displayName}</strong>. Talk about the clothes and the day —
-        never anyone's body.
-      </p>
-      {rooms.length === 0 ? (
-        <div className="neo-inset px-4 py-8 text-sm">No rooms open yet.</div>
-      ) : (
-        <ul className="space-y-3">
-          {rooms.map((r) => (
-            <li key={r.id}>
-              <button
-                type="button"
-                className="neo-choice flex-col items-start"
-                onClick={() => setRoom(r)}
-              >
-                <span className="la-display text-lg">{r.name}</span>
-                <span className="mt-1 text-sm font-normal opacity-70">{r.blurb}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+      {api && (
+        <HiveCommunity
+          userId={session.userId}
+          displayName={session.displayName}
+          api={api}
+          onOpenRoom={setRoom}
+        />
       )}
-    </Screen>
+    </div>
   );
 }
 
 function NameStep({ userId, onSaved }: { userId: string; onSaved: (name: string) => void }) {
-  const [name, setName] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   return (
-    <Screen kicker="The Hive" title="Your Hive name">
-      <p className="mb-4 text-sm leading-relaxed">
-        Pick the name other members will see next to your posts. Your email and number always stay
-        private.
-      </p>
-      <form
-        className="space-y-3"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setBusy(true);
-          const err = await saveDisplayName(userId, name);
-          setBusy(false);
-          if (err) setError(err);
-          else onSaved(name.trim().replace(/\s+/g, " "));
+    <Screen>
+      <HiveJoin
+        onSave={async (name) => {
+          const error = await saveDisplayName(userId, name);
+          if (!error) onSaved(name);
+          return error;
         }}
-      >
-        <NeoField
-          placeholder="First name or a nickname"
-          maxLength={40}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        {error && <p className="text-sm">{error}</p>}
-        <NeoButton type="submit" variant="ink" disabled={busy || name.trim().length < 2}>
-          Join the Hive
-        </NeoButton>
-      </form>
+      />
     </Screen>
   );
 }

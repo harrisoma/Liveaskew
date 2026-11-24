@@ -1,3 +1,5 @@
+import { inviteToken } from "./lib/hive-invites";
+import { writeBeeCaption } from "./lib/buzz-caption";
 import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
 import { WardrobeReset } from "./screens/WardrobeReset";
 import { syncWardrobe } from "./lib/wardrobe-sync";
@@ -98,7 +100,17 @@ export function MobileApp() {
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
   const snapRef = useRef(snap);
   snapRef.current = snap;
-  const [tab, setTab] = useState<Tab>("today");
+  const [tab, setTab] = useState<Tab>(() => {
+    if (typeof window === "undefined") return "today";
+    return inviteToken(window.location.href) ||
+      inviteToken(sessionStorage.getItem("la_hive_invite") ?? "")
+      ? "hive"
+      : "today";
+  });
+  useEffect(() => {
+    const token = inviteToken(window.location.href);
+    if (token) sessionStorage.setItem("la_hive_invite", token);
+  }, []);
   const [beeView, setBeeView] = useState<BeeView>("guide");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -1371,18 +1383,7 @@ export function MobileApp() {
                 }
               }}
               onPickPhoto={() => pickStylingPhoto()}
-              onCaption={(look, network) =>
-                askBee({
-                  messages: [
-                    {
-                      id: nid("m"),
-                      role: "user",
-                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.${network === "X" ? " Keep it under 260 characters." : network === "Threads" ? " Keep it under 480 characters." : ""}`,
-                    },
-                  ],
-                  profile: snap.onboarding,
-                })
-              }
+              onCaption={(look, network) => writeBeeCaption(snap, look, network)}
               onSchedule={async ({ look, network, date, time, caption, photo, now }) => {
                 setBuzzNotice(null);
                 let mediaUrl: string | null = null;
@@ -1413,6 +1414,7 @@ export function MobileApp() {
                 void haptic("success");
                 const saved = await pushHoney([item]);
                 if (!now) {
+                  if (saved) setBuzzNotice(`Scheduled on Honey for ${date} at ${time}.`);
                   if (!saved) {
                     setBuzzNotice(
                       "Saved on this phone. It'll post once you're signed in and the account is connected.",
@@ -1428,6 +1430,7 @@ export function MobileApp() {
                 }
                 await runPublishNow(item);
               }}
+              onOpenHoney={() => setTab("honey")}
               onPublishNow={(post) => void runPublishNow(post)}
             />
           )}

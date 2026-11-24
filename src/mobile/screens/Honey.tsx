@@ -1,3 +1,4 @@
+import { networkByLabel } from "@/lib/buzz";
 import { CalendarConnect } from "../components/CalendarConnect";
 import { calendarDays, shiftCalendar } from "../lib/calendar-grid";
 import { useEffect, useState } from "react";
@@ -222,7 +223,18 @@ export function HoneyScreen({
                     <li key={item.id} className="neo-raised p-4 text-sm">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="font-semibold">{item.title}</p>
+                          <p className="font-semibold">
+                            {item.kind === "post" && networkByLabel(item.network) && (
+                              <img
+                                src={`/social/${networkByLabel(item.network)!.id}.svg`}
+                                alt=""
+                                width="20"
+                                height="20"
+                                className="inline-block mr-2 align-middle"
+                              />
+                            )}
+                            {item.title}
+                          </p>
                           <p className="mt-1 opacity-70">
                             {[
                               item.time ?? "All day",

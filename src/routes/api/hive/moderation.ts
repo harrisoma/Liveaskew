@@ -21,6 +21,10 @@ export const Route = createFileRoute("/api/hive/moderation")({
         if (new URL(request.url).searchParams.get("access") === "1") {
           return Response.json({ admin: true }, { headers: { "Cache-Control": "no-store" } });
         }
+        if (new URL(request.url).searchParams.get("overview") === "1") {
+          const { adminOverview } = await import("@/lib/admin-overview.server");
+          return Response.json(await adminOverview(), { headers: { "Cache-Control": "no-store" } });
+        }
         return Response.json({ items: await moderationQueue() });
       },
       POST: async ({ request }) => {
