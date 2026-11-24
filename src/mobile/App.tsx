@@ -1,3 +1,4 @@
+import { AccountSetupGuide, type SetupAction } from "./screens/AccountSetupGuide";
 import { inviteToken } from "./lib/hive-invites";
 import { writeBeeCaption } from "./lib/buzz-caption";
 import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
@@ -102,6 +103,7 @@ export function MobileApp() {
   snapRef.current = snap;
   const [tab, setTab] = useState<Tab>(() => {
     if (typeof window === "undefined") return "today";
+    if (new URLSearchParams(window.location.search).get("screen") === "you") return "you";
     return inviteToken(window.location.href) ||
       inviteToken(sessionStorage.getItem("la_hive_invite") ?? "")
       ? "hive"
@@ -644,7 +646,7 @@ export function MobileApp() {
             <button
               type="button"
               className="neo-icon-btn"
-              aria-label="You — profile, membership, privacy"
+              aria-label="Settings — account, membership, privacy"
               aria-current={tab === "you" ? "page" : undefined}
               onClick={() => {
                 setTab("you");
@@ -792,7 +794,7 @@ export function MobileApp() {
               ...s,
               memberSetup,
               phone: memberSetup.phone || null,
-              phase: "interview",
+              phase: s.interview.completed ? "app" : "interview",
               messages: s.messages.length
                 ? s.messages
                 : [{ id: nid("m"), role: "assistant", content: interviewOpener() }],
@@ -1490,6 +1492,23 @@ export function MobileApp() {
           {tab === "you" && youView === "profile" && (
             <Profile
               snap={snap}
+              socialCount={buzzAccounts?.connections.length ?? 0}
+              onSetup={(step) => {
+                if (step === "details") patch((s) => ({ ...s, phase: "profile" }));
+                if (step === "style") {
+                  if (!snap.interview.completed) patch((s) => ({ ...s, phase: "interview" }));
+                  else {
+                    setTab("bee");
+                    setBeeView("chat");
+                  }
+                }
+                if (step === "guide") {
+                  setTab("bee");
+                  setBeeView("guide");
+                }
+                if (step === "social") setTab("buzz");
+                if (step === "privacy") setYouView("privacy");
+              }}
               onSelfie={async () => {
                 const data = await pickStylingPhoto();
                 if (data) {
@@ -2156,6 +2175,8 @@ function Tiers({
 
 function Profile({
   snap,
+  socialCount,
+  onSetup,
   onSelfie,
   onNotify,
   onPrivacy,
@@ -2166,6 +2187,8 @@ function Profile({
   onDeleteAccount,
 }: {
   snap: AppSnapshot;
+  socialCount: number;
+  onSetup: (step: SetupAction) => void;
   onSelfie: () => void;
   onNotify: (key: "beeReady" | "tierUpgrade", value: boolean) => void;
   onPrivacy: () => void;
@@ -2180,7 +2203,18 @@ function Profile({
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   return (
-    <Screen kicker="You" title="All about you">
+    <Screen kicker="You" title="Settings">
+      <p className="mb-4 text-sm">
+        Your account, personal style, membership and privacy—all in one place.
+      </p>
+      <AccountSetupGuide
+        detailsReady={Boolean(snap.memberSetup?.name)}
+        styleReady={snap.interview.completed}
+        guideReady={snap.looks.length > 0}
+        socialCount={socialCount}
+        onOpen={onSetup}
+      />
+      <h2 className="mt-6 mb-3 text-xl font-semibold">Your photo and notifications</h2>
       <div className="neo-raised p-4">
         {snap.selfie ? (
           <img
@@ -2212,7 +2246,11 @@ function Profile({
       <div className="mt-5 neo-raised p-4 text-sm leading-relaxed">
         <p className="la-kicker">Account</p>
         <p className="mt-2">
-          {snap.authProvider === "apple" ? "Apple" : "Google"}
+          {snap.authProvider === "apple"
+            ? "Apple"
+            : snap.authProvider === "google"
+              ? "Google"
+              : "Email"}
           {snap.email ? ` · ${snap.email}` : ""}
           {snap.phone ? ` · ${snap.phone}` : ""}
         </p>
@@ -2231,6 +2269,9 @@ function Profile({
       <NeoButton className="mt-3" onClick={onPrivacy}>
         Privacy policy
       </NeoButton>
+      <a className="mt-3 block text-sm underline" href="mailto:hello@liveaskew.co">
+        Contact LiveAskew support
+      </a>
       <NeoButton className="mt-3" onClick={onReset}>
         Sign out
       </NeoButton>
@@ -2244,8 +2285,9 @@ function Profile({
             Delete your LiveAskew account?
           </p>
           <p className="mt-2">
-            We'll be sorry to see you go. This removes your profile, looks, photos, Honey calendar,
-            Hive posts and connected social accounts, and cancels any membership. It can't be
+            This removes your profile, looks, photos, Honey calendar, Hive posts, groups you own
+            (including their conversations), and social connections. Linked Stripe memberships are
+            canceled. Published social posts and required payment records may remain. This cannot be
             undone.
           </p>
           {deleteError && <p className="mt-2 font-semibold">{deleteError}</p>}
@@ -2256,9 +2298,16 @@ function Profile({
               onClick={async () => {
                 setDeleting(true);
                 setDeleteError(null);
-                const err = await onDeleteAccount();
-                setDeleting(false);
-                if (err) setDeleteError(err);
+                try {
+                  const err = await onDeleteAccount();
+                  if (err) setDeleteError(err);
+                } catch {
+                  setDeleteError(
+                    "Deletion could not finish. Your account may be partially cleared; please retry or contact support.",
+                  );
+                } finally {
+                  setDeleting(false);
+                }
               }}
             >
               {deleting ? "Deleting…" : "Delete forever"}

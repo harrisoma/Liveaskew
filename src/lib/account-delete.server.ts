@@ -58,11 +58,12 @@ async function removeFolder(bucket: string, userId: string): Promise<void> {
 /** Cancel any live Stripe subscription. Safe to repeat: already-cancelled ones are skipped. */
 async function cancelSubscriptions(userId: string): Promise<void> {
   const db = await admin();
-  const { data } = await db
+  const { data, error } = await db
     .from("subscriptions")
     .select("stripe_subscription_id, environment, status")
     .eq("user_id", userId)
-    .in("status", ["active", "trialing", "past_due"]);
+    .not("status", "in", "(canceled,incomplete_expired)");
+  if (error) throw new Error("subscription_cancel_failed");
   if (!data?.length) return;
   const { createStripeClient } = await import("@/lib/stripe.server");
   for (const sub of data) {
@@ -72,10 +73,11 @@ async function cancelSubscriptions(userId: string): Promise<void> {
       if (current.status !== "canceled" && current.status !== "incomplete_expired") {
         await stripe.subscriptions.cancel(sub.stripe_subscription_id);
       }
-      await db
+      const { error: updateError } = await db
         .from("subscriptions")
         .update({ status: "canceled", updated_at: new Date().toISOString() })
         .eq("stripe_subscription_id", sub.stripe_subscription_id);
+      if (updateError) throw new Error("subscription_cancel_failed");
     } catch (err) {
       console.error("[account] subscription cancel failed", sub.stripe_subscription_id, err);
       throw new Error("subscription_cancel_failed");
