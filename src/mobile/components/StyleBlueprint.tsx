@@ -4,7 +4,7 @@ import type { ShoppingProfile } from "@/lib/shopping-profile";
 import type { LiveProduct, ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useRef, useState } from "react";
 import { BookOpen, Printer, ArrowRight, SlidersHorizontal } from "lucide-react";
-import { apiFetch } from "../lib/api";
+import { apiFetch, apiJson } from "../lib/api";
 import type { GuideLook, WardrobeItem } from "../lib/storage";
 import {
   blueprintSchema,
@@ -262,7 +262,7 @@ function RetailItem({
           variantId: product.variantId,
         }),
       });
-      const data = await res.json();
+      const data = await apiJson(res);
       if (!res.ok)
         throw Error(
           data.error === "retailer_unavailable"
@@ -326,7 +326,7 @@ export function StyleBlueprint({
     try {
       const res = await apiFetch("/api/bee/style-guide/shopping-profile");
       if (!res.ok) throw Error();
-      const data = await res.json();
+      const data = await apiJson(res);
       setSavedProfile(data.profile);
       setEditingInterview(true);
     } catch {
@@ -358,7 +358,7 @@ export function StyleBlueprint({
     try {
       const res = await apiFetch("/api/bee/style-guide/products");
       if (!res.ok) throw Error();
-      const matches = await res.json();
+      const matches = await apiJson(res);
       if (requestId === productRequest.current) setProducts(matches);
     } catch {
       if (requestId !== productRequest.current) return;
@@ -376,7 +376,7 @@ export function StyleBlueprint({
       try {
         const res = await apiFetch("/api/bee/style-guide");
         if (!res.ok) throw Error();
-        const data = await res.json();
+        const data = await apiJson(res);
         if (active && data.guide) setGuide(blueprintSchema.parse(data.guide.document));
       } catch {
         if (active) setError("Your saved guide could not load. Try again when you’re connected.");
@@ -404,7 +404,7 @@ export function StyleBlueprint({
             .map((w) => ({ label: w.label, verdict: w.verdict, reason: w.reason || undefined })),
         }),
       });
-      const data = await res.json();
+      const data = await apiJson(res);
       if (!res.ok)
         throw Error(
           res.status === 409
