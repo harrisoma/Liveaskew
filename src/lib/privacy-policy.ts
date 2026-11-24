@@ -37,7 +37,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: "Buzz: social posting",
     paragraphs: [
-      "When you connect Instagram, Facebook, LinkedIn, X, or Threads, that network gives us a sign-in token for your account. We keep it encrypted, only our server can read it, and it is used only to publish the posts you schedule. Disconnect any network in Buzz at any time.",
+      "When you connect Instagram, Facebook, LinkedIn, X, or Threads, that network gives us a sign-in token for your account. We keep it encrypted, only our server can read it, and it is used only to publish the posts you schedule. When Signal publishing is enabled, our server sends the scheduled caption, photo URL and refreshed account token over HTTPS to Onixus Signal for native delivery. Signal stores delivery receipts tied to your member/post IDs, not your social token or caption. Those receipts are removed as part of account deletion. Disconnect any network in Buzz at any time.",
       "Captions, post times, and the photo for each post. Post photos are stored at a public web address so the network can fetch them; anyone with that exact address can open the photo.",
       "When you ask Bee to write a caption, selected style preferences and the chosen look are sent through our AI service. You can edit the result before scheduling; your private interview is not posted to social networks.",
       "Once published, a post is governed by that network's own privacy policy.",

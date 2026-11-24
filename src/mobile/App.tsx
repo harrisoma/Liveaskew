@@ -506,13 +506,22 @@ export function MobileApp() {
               ...h,
               postStatus: result.post_status ?? (result.ok ? "posted" : "failed"),
               postError:
-                result.post_error ?? (result.ok ? null : "That one didn't post. Try again?"),
+                result.post_error ??
+                (result.ok || result.post_status === "publishing"
+                  ? null
+                  : "That one didn't post. Try again?"),
               postUrl: result.post_url ?? h.postUrl ?? null,
             }
           : h,
       ),
     }));
-    setBuzzNotice(result.ok ? `It's live on ${post.network}!` : null);
+    setBuzzNotice(
+      result.ok
+        ? `It's live on ${post.network}!`
+        : result.post_status === "publishing"
+          ? "Delivery is being verified. Your post remains on Honey."
+          : null,
+    );
     void haptic(result.ok ? "success" : "impact");
   }
 

@@ -1,12 +1,8 @@
+import { usesSignalPublisher, publishWithSignal, signalPostStatus } from "./signal.server";
 import { networkById, networkByLabel, type ConnectionSummary, type NetworkId } from "./index";
 import { openToken, sealToken } from "./crypto.server";
 import { isOwnBuzzMedia } from "./media.server";
-import {
-  publishPost,
-  refreshIfNeeded,
-  type ConnectedAccount,
-  type LiveConnection,
-} from "./providers.server";
+import { refreshIfNeeded, type ConnectedAccount, type LiveConnection } from "./providers.server";
 
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -83,10 +79,12 @@ export type DuePost = {
  * Publish one post that this caller has already claimed (post_status = 'publishing'),
  * then record posted / failed on the Honey row.
  */
-export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; error?: string }> {
+export async function publishClaimed(
+  post: DuePost,
+): Promise<{ ok: boolean; pending?: boolean; error?: string }> {
   const db = await admin();
   const finish = async (fields: {
-    post_status: "posted" | "failed";
+    post_status: "posted" | "failed" | "publishing";
     post_error?: string | null;
     post_url?: string | null;
   }) => {
@@ -99,6 +97,13 @@ export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; erro
       })
       .eq("id", post.id);
   };
+
+  if (!usesSignalPublisher()) {
+    const error =
+      "Publishing is unavailable until your account connection is verified. Your post has not been sent.";
+    await finish({ post_status: "failed", post_error: error });
+    return { ok: false, error };
+  }
 
   const spec = networkByLabel(post.network);
   if (!spec) {
@@ -134,16 +139,38 @@ export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; erro
     return { ok: false, error };
   }
 
-  const result = await publishPost(conn, {
-    text: post.caption ?? "",
-    imageUrl: post.media_url,
-  });
-  if (result.ok) {
-    await finish({ post_status: "posted", post_error: null, post_url: result.url });
-    return { ok: true };
+  {
+    try {
+      const receipt = await publishWithSignal(post, conn);
+      if (receipt.state === "posted" && receipt.post_url) {
+        await finish({ post_status: "posted", post_url: receipt.post_url, post_error: null });
+        return { ok: true };
+      }
+      if (receipt.state === "failed") {
+        await finish({
+          post_status: "failed",
+          post_error:
+            "The network rejected this post. Check the content and account before retrying.",
+        });
+        return { ok: false };
+      }
+      await finish({
+        post_status: "publishing",
+        post_error:
+          receipt.state === "uncertain"
+            ? "Delivery is uncertain. Check the network before creating another post."
+            : null,
+      });
+      return { ok: false, pending: true };
+    } catch {
+      // A transport failure is not proof the provider rejected the post.
+      await finish({
+        post_status: "publishing",
+        post_error: "Delivery is being checked. Do not create a duplicate post.",
+      });
+      return { ok: false, pending: true };
+    }
   }
-  await finish({ post_status: "failed", post_error: result.error });
-  return { ok: false, error: result.error };
 }
 
 /** Move scheduled → publishing for a bounded set, so two runs never post the same thing twice. */
@@ -153,6 +180,7 @@ export async function claimPost(filter: {
   dueBefore?: string;
   limit?: number;
 }): Promise<DuePost[]> {
+  if (!usesSignalPublisher()) return [];
   const db = await admin();
   let pick = db
     .from("calendar_events")
@@ -180,23 +208,42 @@ export async function claimPost(filter: {
   return data ?? [];
 }
 
-/**
- * A run that died mid-publish leaves rows in 'publishing'. We cannot know whether the
- * network accepted it, so mark it failed with a clear note instead of posting twice.
- */
-export async function releaseStuckPosts(olderThanMinutes = 15): Promise<number> {
+/** Read existing receipts only: reconciliation never submits a new social post. */
+export async function reconcileSignalPosts(): Promise<number> {
+  if (!usesSignalPublisher()) return 0;
   const db = await admin();
-  const cutoff = new Date(Date.now() - olderThanMinutes * 60_000).toISOString();
-  const { data } = await db
+  const { data, error } = await db
     .from("calendar_events")
-    .update({
-      post_status: "failed",
-      post_error: "This post may not have gone out. Check the network, then tap Retry if needed.",
-      updated_at: new Date().toISOString(),
-    })
+    .select("id,user_id")
     .eq("kind", "post")
     .eq("post_status", "publishing")
-    .lt("updated_at", cutoff)
-    .select("id");
-  return data?.length ?? 0;
+    .limit(25);
+  if (error) throw Error("receipt_lookup_failed");
+  let updated = 0;
+  for (const row of data ?? []) {
+    try {
+      const receipt = await signalPostStatus(row.user_id, row.id);
+      if (receipt.state !== "posted" && receipt.state !== "failed") continue;
+      if (receipt.state === "posted" && !receipt.post_url) continue;
+      const { error: saveError } = await db
+        .from("calendar_events")
+        .update({
+          post_status: receipt.state,
+          post_url: receipt.post_url ?? null,
+          post_error:
+            receipt.state === "failed"
+              ? "The network rejected this post. Review it before retrying."
+              : null,
+          posted_at: receipt.state === "posted" ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", row.id)
+        .eq("user_id", row.user_id)
+        .eq("post_status", "publishing");
+      if (!saveError) updated++;
+    } catch {
+      /* Keep uncertain delivery pending; never automatically publish a second copy. */
+    }
+  }
+  return updated;
 }
