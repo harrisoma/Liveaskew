@@ -1,4 +1,4 @@
-export const PRIVACY_UPDATED = "October 18, 2026";
+export const PRIVACY_UPDATED = "November 24, 2026";
 
 export const PRIVACY_TITLE = "Privacy Policy | LiveAskew (Bee, Honey, Buzz and The Hive)";
 
@@ -15,7 +15,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: "Your account",
     paragraphs: [
-      "Email from Google or Apple sign-in, and a phone number if you verify by text (Apple can hide your real email).",
+      "Your name and email from email, Google or Apple sign-in, plus an optional phone number and social handles you choose to save (Apple can hide your real email). Saving a handle does not connect a social account.",
       "Your membership tier and billing status. Payments are processed by Stripe; LiveAskew never sees or stores card numbers.",
     ],
   },
@@ -39,13 +39,14 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     paragraphs: [
       "When you connect Instagram, Facebook, LinkedIn, X, or Threads, that network gives us a sign-in token for your account. We keep it encrypted, only our server can read it, and it is used only to publish the posts you schedule. Disconnect any network in Buzz at any time.",
       "Captions, post times, and the photo for each post. Post photos are stored at a public web address so the network can fetch them; anyone with that exact address can open the photo.",
+      "When you ask Bee to write a caption, selected style preferences and the chosen look are sent through our AI service. You can edit the result before scheduling; your private interview is not posted to social networks.",
       "Once published, a post is governed by that network's own privacy policy.",
     ],
   },
   {
     title: "The Hive: community",
     paragraphs: [
-      "The Hive name you choose, the messages you post, and any look you share into a room. Other signed-in members can read them. Your email and phone number are never shown.",
+      "The Hive name you choose, the messages you post, and any look you share into a room. Main-network posts and public-group messages are visible to signed-in members; private-group messages are limited to group members and authorized moderation. Group names, descriptions, membership and invitation records are also stored. Your email and phone number are never shown.",
       "Reports and blocks you make. Reports are read by LiveAskew moderators; three reports hide a message until it is reviewed, and moderators may remove messages or stop an account from posting.",
     ],
   },
@@ -79,9 +80,9 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: "Your controls",
     paragraphs: [
-      "Delete your account any time in You → Delete account. This cancels any membership and permanently removes your profile, looks, photos, calendar, Hive messages, and connected social accounts. Copies on your device are cleared at the same time.",
+      "Delete your account in Settings → Delete account. After confirmation, we cancel linked Stripe subscriptions, remove account photos, then delete your account and associated profile, looks, calendar, Hive messages and social connections. Groups you own and their conversations are also removed. If a step fails, your account remains so you can retry; earlier cleanup steps may already have completed. Copies on the current device are cleared after successful deletion. Other devices may retain offline copies until you sign out or clear their app data.",
       "Turn notifications off in You, disconnect social accounts in Buzz, and delete your own Hive messages from the message menu.",
-      "Questions or requests: hello@liveaskew.co.",
+      "To request deletion outside the app, use the Delete your LiveAskew account section at https://www.liveaskew.com/privacy#delete-account, or email hello@liveaskew.co from your account email. We verify ownership before acting; never send a password. Financial records required for accounting may remain with the payment processor. Published social posts must be removed on their respective networks.",
     ],
   },
   {

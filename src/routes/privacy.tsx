@@ -30,6 +30,36 @@ function PrivacyPage() {
         <h1 className="la-serif mt-3 text-4xl md:text-6xl">Privacy policy</h1>
         <p className="mt-6 text-[1.25rem] leading-relaxed text-black/65">{PRIVACY_INTRO}</p>
 
+        <section
+          id="delete-account"
+          className="mt-10 rounded-2xl border border-black/15 p-6 scroll-mt-24"
+          aria-labelledby="delete-account-title"
+        >
+          <h2 id="delete-account-title" className="text-2xl font-semibold">
+            Delete your LiveAskew account
+          </h2>
+          <p className="mt-3">
+            Sign in to LiveAskew, open Settings, then choose Delete account and confirm. This
+            removes your account data and cancels linked Stripe memberships. Groups you own and
+            their conversations are removed too.
+          </p>
+          <a className="mt-4 inline-block underline" href="/app?screen=you">
+            Open account settings
+          </a>
+          <p className="mt-4">
+            Cannot sign in?{" "}
+            <a
+              className="underline"
+              href="mailto:hello@liveaskew.co?subject=Delete%20my%20LiveAskew%20account"
+            >
+              Request deletion by email
+            </a>{" "}
+            from the email on your account. We verify ownership before deleting; do not send a
+            password. Processor records required for accounting and posts already published to
+            social networks may remain.
+          </p>
+        </section>
+
         <div className="mt-14 space-y-12">
           {PRIVACY_SECTIONS.map((section) => (
             <section key={section.title} className="border-t border-black/10 pt-10">

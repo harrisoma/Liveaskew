@@ -20,6 +20,7 @@ export function MemberSetupScreen({
   onComplete: (value: MemberSetup) => void;
 }) {
   const [profile, setProfile] = useState(initial ?? blankMemberSetup);
+  const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -36,12 +37,43 @@ export function MemberSetupScreen({
         Your account is verified{email ? ` as ${email}` : ""}. Tell Bee what to call you, then we’ll
         explore your style.
       </p>
+      <nav aria-label="Your details setup" className="mb-5">
+        <ol className="grid grid-cols-3 gap-2 text-sm">
+          {["Your name", "Contact & socials", "Membership"].map((label, index) => (
+            <li
+              key={label}
+              aria-current={step === index ? "step" : undefined}
+              className={step === index ? "font-semibold" : "opacity-60"}
+            >
+              {index + 1}. {label}
+            </li>
+          ))}
+        </ol>
+        <p className="mt-2 text-sm">
+          Step {step + 1} of 3 · Progress stays on this device until you save.
+        </p>
+      </nav>
       <form
         ref={formRef}
         className="space-y-4"
         onSubmit={async (event) => {
           event.preventDefault();
           if (busy) return;
+          if (step < 2) {
+            if (!profile.name.trim()) {
+              setError("Enter your name.");
+              return;
+            }
+            if (step === 1) {
+              const result = memberSetupSchema.shape.phone.safeParse(profile.phone);
+              if (!result.success) {
+                setPhoneError(result.error.issues[0].message);
+                return;
+              }
+            }
+            setStep(step + 1);
+            return;
+          }
           const parsed = memberSetupSchema.safeParse(profile);
           if (!parsed.success) {
             const issue = parsed.error.issues[0];
@@ -53,8 +85,14 @@ export function MemberSetupScreen({
           }
           setBusy(true);
           setError("");
-          const saved = await saveMemberSetup(parsed.data);
-          setBusy(false);
+          let saved = false;
+          try {
+            saved = await saveMemberSetup(parsed.data);
+          } catch {
+            saved = false;
+          } finally {
+            setBusy(false);
+          }
           if (!saved) {
             setError(
               "Your details could not be saved. Try again—you do not need to verify your account again.",
@@ -65,89 +103,112 @@ export function MemberSetupScreen({
         }}
       >
         <fieldset disabled={busy} className="space-y-4">
-          <label className="block">
-            Your name
-            <NeoField
-              autoComplete="name"
-              required
-              maxLength={100}
-              value={profile.name}
-              onChange={(e) => update({ ...profile, name: e.target.value })}
-            />
-          </label>
-          <label className="block">
-            Phone number (optional)
-            <NeoField
-              name="phone"
-              type="tel"
-              aria-describedby={phoneError ? "phone-help phone-error" : "phone-help"}
-              aria-invalid={Boolean(phoneError)}
-              autoComplete="tel"
-              placeholder="(305) 555-0123"
-              maxLength={40}
-              value={profile.phone}
-              onChange={(e) => update({ ...profile, phone: e.target.value })}
-            />
-          </label>
-          <p id="phone-help" className="text-sm opacity-70">
-            US/Canada by default (+1). For another country, start with + and the country code.
-            Spaces and dashes are fine. You can leave this blank.
-          </p>
-          {phoneError && (
-            <p id="phone-error" role="alert" className="text-sm">
-              {phoneError}
-            </p>
+          {step === 0 && (
+            <>
+              <label className="block">
+                Your name
+                <NeoField
+                  autoComplete="name"
+                  required
+                  maxLength={100}
+                  value={profile.name}
+                  onChange={(e) => update({ ...profile, name: e.target.value })}
+                />
+              </label>
+            </>
           )}
-          <details className="neo-inset p-4">
-            <summary>Add social handles (optional)</summary>
-            <p className="my-3 text-sm">
-              This saves your handles. It does not connect accounts or authorize posting.
-            </p>
-            {(Object.keys(blankMemberSetup.socials) as Array<keyof MemberSetup["socials"]>).map(
-              (network) => (
-                <label key={network} className="mb-3 block">
-                  {network}
-                  <NeoField
-                    maxLength={160}
-                    value={profile.socials[network]}
-                    onChange={(e) =>
-                      update({
-                        ...profile,
-                        socials: { ...profile.socials, [network]: e.target.value },
-                      })
-                    }
-                  />
-                </label>
-              ),
-            )}
-          </details>
-          <label className="block">
-            Which membership interests you?
-            <select
-              className="neo-inset mt-2 w-full p-3"
-              value={profile.selectedPlan}
-              onChange={(e) => update({ ...profile, selectedPlan: e.target.value })}
-            >
-              {TIERS.filter((tier) => !tier.inquiry).map((tier) => (
-                <option key={tier.slug} value={tier.slug}>
-                  {tier.name} · ${tier.priceMonthly}/month
-                </option>
-              ))}
-            </select>
-          </label>
-          <p className="text-sm">
-            This saves your preference only. No charge or subscription starts here. You can review
-            and change your membership under You.
-          </p>
-          <p className="text-sm">
-            Your details are used for your account.{" "}
-            <a href="/privacy" className="underline">
-              Privacy policy
-            </a>
-          </p>
+          {step === 1 && (
+            <>
+              <label className="block">
+                Phone number (optional)
+                <NeoField
+                  name="phone"
+                  type="tel"
+                  aria-describedby={phoneError ? "phone-help phone-error" : "phone-help"}
+                  aria-invalid={Boolean(phoneError)}
+                  autoComplete="tel"
+                  placeholder="(305) 555-0123"
+                  maxLength={40}
+                  value={profile.phone}
+                  onChange={(e) => update({ ...profile, phone: e.target.value })}
+                />
+              </label>
+              <p id="phone-help" className="text-sm opacity-70">
+                US/Canada by default (+1). For another country, start with + and the country code.
+                Spaces and dashes are fine. You can leave this blank.
+              </p>
+              {phoneError && (
+                <p id="phone-error" role="alert" className="text-sm">
+                  {phoneError}
+                </p>
+              )}
+              <details className="neo-inset p-4">
+                <summary>Add social handles (optional)</summary>
+                <p className="my-3 text-sm">
+                  This saves your handles. It does not connect accounts or authorize posting.
+                </p>
+                {(Object.keys(blankMemberSetup.socials) as Array<keyof MemberSetup["socials"]>).map(
+                  (network) => (
+                    <label key={network} className="mb-3 block">
+                      {network}
+                      <NeoField
+                        maxLength={160}
+                        value={profile.socials[network]}
+                        onChange={(e) =>
+                          update({
+                            ...profile,
+                            socials: { ...profile.socials, [network]: e.target.value },
+                          })
+                        }
+                      />
+                    </label>
+                  ),
+                )}
+              </details>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <label className="block">
+                Which membership interests you?
+                <select
+                  className="neo-inset mt-2 w-full p-3"
+                  value={profile.selectedPlan}
+                  onChange={(e) => update({ ...profile, selectedPlan: e.target.value })}
+                >
+                  {TIERS.filter((tier) => !tier.inquiry).map((tier) => (
+                    <option key={tier.slug} value={tier.slug}>
+                      {tier.name} · ${tier.priceMonthly}/month
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p className="text-sm">
+                This saves your preference only. No charge or subscription starts here. You can
+                review and change your membership under You.
+              </p>
+              <p className="text-sm">
+                Your details are used for your account.{" "}
+                <a href="/privacy" className="underline">
+                  Privacy policy
+                </a>
+              </p>
+            </>
+          )}
           {error && <p role="alert">{error}</p>}
+          {step > 0 && (
+            <NeoButton
+              onClick={() => {
+                setStep(step - 1);
+                setError("");
+                setPhoneError("");
+              }}
+            >
+              Back
+            </NeoButton>
+          )}
           <NeoButton type="submit" variant="gold" disabled={busy}>
-            {busy ? "Saving your details…" : "Continue to my style interview"}
+            {busy ? "Saving your details…" : step < 2 ? "Continue" : "Save account details"}
           </NeoButton>
         </fieldset>
       </form>

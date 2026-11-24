@@ -76,7 +76,7 @@ export async function deleteMyAccount(): Promise<string | null> {
     if (res.ok) return null;
     const json = (await res.json().catch(() => ({}))) as { error?: string };
     return json.error === "subscription_cancel_failed"
-      ? "We could not cancel your membership automatically, so nothing was deleted. Try again, or contact us."
+      ? "We could not finish checking or canceling your membership. Your account was kept; some membership changes may already have completed. Please retry or contact support."
       : json.error === "storage_cleanup_failed"
         ? "Some of your photos could not be removed yet, so your account was kept. Try again in a moment."
         : json.error === "unauthorized"
