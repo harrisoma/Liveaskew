@@ -1,5 +1,7 @@
+import { HiveCommunity } from "./HiveCommunity";
+import { communityApi } from "../lib/hive-groups";
 import { HiveJoin } from "./HiveJoin";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Flag,
@@ -59,6 +61,8 @@ export function HiveScreen({
   const [session, setSession] = useState<HiveSession | null>(null);
   const [rooms, setRooms] = useState<HiveRoom[]>([]);
   const [room, setRoom] = useState<HiveRoom | null>(null);
+  const memberId = session?.state === "ready" ? session.userId : null;
+  const api = useMemo(() => (memberId ? communityApi(memberId) : null), [memberId]);
 
   useEffect(() => {
     let live = true;
@@ -82,7 +86,7 @@ export function HiveScreen({
 
   if (!session) {
     return (
-      <Screen kicker="The Hive" title="Talk about your looks">
+      <Screen kicker="The Hive" title="Your community, your conversations">
         <Skeleton className="h-20" />
         <Skeleton className="mt-3 h-20" />
       </Screen>
@@ -92,7 +96,7 @@ export function HiveScreen({
   if (session.state !== "ready") {
     const saved = looks.filter((l) => l.saved);
     return (
-      <Screen kicker="The Hive" title="Talk about your looks">
+      <Screen kicker="The Hive" title="Your community, your conversations">
         <div className="neo-inset px-4 py-4 text-sm leading-relaxed">
           {session.state === "offline"
             ? "The Hive is where members swap looks and talk things through. It opens once you're signed in to LiveAskew."
@@ -143,38 +147,21 @@ export function HiveScreen({
   }
 
   return (
-    <Screen
-      title="Find your conversation"
-      detail={<span className="la-community-label">The Hive · Your member community</span>}
-    >
+    <div className="hive-live-screen">
       {shareLook && (
-        <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
-          Pick a room to share “{shareLook.title}”.
+        <p className="hive-sharing-notice">
+          Choose a group or open the main network to share “{shareLook.title}”.
         </p>
       )}
-      <p className="mb-4 text-sm leading-relaxed">
-        You're here as <strong>{session.displayName}</strong>. Talk about the clothes and the day —
-        never anyone's body.
-      </p>
-      {rooms.length === 0 ? (
-        <div className="neo-inset px-4 py-8 text-sm">No rooms open yet.</div>
-      ) : (
-        <ul className="la-hive-room-grid">
-          {rooms.map((r) => (
-            <li key={r.id}>
-              <button type="button" className="la-hive-room-card" onClick={() => setRoom(r)}>
-                <MessageCircle size={24} aria-hidden />
-                <strong>{r.name}</strong>
-                <span>{r.blurb}</span>
-                <span className="la-hive-room-action">
-                  Join the conversation <ChevronRight size={15} aria-hidden />
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+      {api && (
+        <HiveCommunity
+          userId={session.userId}
+          displayName={session.displayName}
+          api={api}
+          onOpenRoom={setRoom}
+        />
       )}
-    </Screen>
+    </div>
   );
 }
 

@@ -1,3 +1,4 @@
+import { inviteToken } from "./lib/hive-invites";
 import { writeBeeCaption } from "./lib/buzz-caption";
 import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
 import { WardrobeReset } from "./screens/WardrobeReset";
@@ -99,7 +100,17 @@ export function MobileApp() {
   const [snap, setSnap] = useState<AppSnapshot>(emptySnapshot);
   const snapRef = useRef(snap);
   snapRef.current = snap;
-  const [tab, setTab] = useState<Tab>("today");
+  const [tab, setTab] = useState<Tab>(() => {
+    if (typeof window === "undefined") return "today";
+    return inviteToken(window.location.href) ||
+      inviteToken(sessionStorage.getItem("la_hive_invite") ?? "")
+      ? "hive"
+      : "today";
+  });
+  useEffect(() => {
+    const token = inviteToken(window.location.href);
+    if (token) sessionStorage.setItem("la_hive_invite", token);
+  }, []);
   const [beeView, setBeeView] = useState<BeeView>("guide");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);

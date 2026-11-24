@@ -1,0 +1,596 @@
+.hive-live-screen {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.hive-community {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 36px 48px;
+  color: var(--label);
+  --hive-muted: #60645e;
+}
+.hive-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.hive-title {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.hive-title img {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+}
+.hive-title h1 {
+  font-size: 32px;
+  letter-spacing: -1px;
+  margin: 0;
+  font-weight: 650;
+}
+.hive-title p {
+  font-size: 13px;
+  color: var(--hive-muted);
+  margin: 7px 0 0;
+}
+.hive-primary,
+.hive-secondary {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  background: #edc56b;
+  color: #242015;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 16px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.hive-primary:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.hive-secondary {
+  background: var(--fill);
+  color: var(--label);
+}
+.hive-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) 220px;
+  gap: 26px;
+  align-items: start;
+}
+.hive-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: sticky;
+  top: 0;
+}
+.hive-navigation > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 13px 12px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--hive-muted);
+  background: none;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+}
+.hive-navigation > button[aria-current="page"] {
+  background: #edc56b26;
+  color: var(--gold);
+}
+.hive-navigation button > span {
+  margin-left: auto;
+  font-size: 11px;
+}
+.hive-nav-groups {
+  border-top: 1px solid var(--separator);
+  margin-top: 22px;
+  padding: 20px 10px;
+}
+.hive-nav-groups > strong {
+  font-size: 12px;
+  color: var(--hive-muted);
+}
+.hive-nav-groups p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--hive-muted);
+}
+.hive-nav-groups button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--label);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px 0;
+  cursor: pointer;
+}
+.hive-content {
+  min-width: 0;
+}
+.hive-section-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin: 0 0 16px;
+}
+.hive-section-title h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+}
+.hive-section-title > span {
+  font-size: 11px;
+  color: var(--hive-muted);
+}
+.hive-compose,
+.hive-post,
+.hive-group,
+.hive-invite-card {
+  background: var(--card);
+  border: 1px solid var(--separator);
+  border-radius: 16px;
+  padding: 22px;
+}
+.hive-compose-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.hive-avatar {
+  display: grid;
+  place-items: center;
+  background: #edc56b36;
+  color: var(--gold);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.hive-compose-member strong {
+  font-size: 13px;
+}
+.hive-compose-member > span:last-child {
+  font-size: 11px;
+  color: var(--hive-muted);
+  margin-left: auto;
+}
+.hive-compose textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 105px;
+  border: 0;
+  background: none;
+  color: var(--label);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 16px;
+  padding: 0;
+}
+.hive-compose footer {
+  border-top: 1px solid var(--separator);
+  padding-top: 15px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+.hive-compose small {
+  font-size: 11px;
+  color: var(--hive-muted);
+}
+.hive-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+.hive-post header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hive-post header strong {
+  font-size: 13px;
+}
+.hive-post header small {
+  display: block;
+  font-size: 10px;
+  color: var(--hive-muted);
+  margin-top: 4px;
+}
+.hive-post-scope {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--hive-muted);
+}
+.hive-post > p {
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 20px 0;
+}
+.hive-text-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  border: 0;
+  background: none;
+  min-height: 40px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.hive-about {
+  padding: 22px 0 0 22px;
+  border-left: 1px solid var(--separator);
+}
+.hive-about > img {
+  width: 44px;
+  height: 44px;
+}
+.hive-about h2 {
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+  margin: 18px 0 10px;
+}
+.hive-about > p {
+  font-size: 12px;
+  color: var(--hive-muted);
+  line-height: 1.85;
+}
+.hive-about > div {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--hive-muted);
+  line-height: 1.7;
+}
+.hive-about svg {
+  flex-shrink: 0;
+  color: var(--gold);
+  margin-top: 3px;
+}
+.hive-about strong {
+  display: block;
+  color: var(--label);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.hive-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.hive-group {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.hive-group-privacy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-size: 11px;
+}
+.hive-group h3 {
+  margin: 18px 0 8px;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.hive-group p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--hive-muted);
+  margin: 0 0 18px;
+  overflow-wrap: anywhere;
+}
+.hive-group footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.hive-discover-title {
+  font-size: 16px;
+  margin: 30px 0 16px;
+}
+.hive-invite-card {
+  margin-bottom: 20px;
+}
+.hive-invite-card > svg {
+  color: var(--gold);
+}
+.hive-invite-card h3 {
+  font-size: 21px;
+  margin: 16px 0 12px;
+}
+.hive-invite-card p,
+.hive-muted {
+  font-size: 13px;
+  color: var(--hive-muted);
+  line-height: 1.8;
+}
+.hive-invite-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+.hive-invite-card label,
+.hive-dialog label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.hive-invite-card input,
+.hive-dialog input:not([type="radio"]),
+.hive-dialog textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 14px;
+  padding: 13px;
+  border: 1px solid var(--separator);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--label);
+}
+.hive-invite-card > button {
+  margin-top: 16px;
+}
+.hive-empty {
+  text-align: center;
+  border: 1px dashed var(--separator);
+  border-radius: 16px;
+  padding: 32px 24px;
+  margin: 20px 0;
+}
+.hive-empty > svg {
+  margin: 0 auto;
+  color: var(--gold);
+}
+.hive-empty h3 {
+  font-size: 19px;
+  margin: 18px 0 10px;
+}
+.hive-empty p {
+  font-size: 13px;
+  color: var(--hive-muted);
+  line-height: 1.8;
+}
+.hive-error {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+.hive-error button {
+  border: 0;
+  background: none;
+  color: var(--gold);
+  padding: 10px;
+  cursor: pointer;
+}
+.hive-safety-actions {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid var(--separator);
+  margin-top: 10px;
+  padding-top: 6px;
+}
+.hive-safety-actions button {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--hive-muted);
+  font-size: 10px;
+  min-height: 36px;
+  cursor: pointer;
+}
+.hive-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #0008;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+.hive-dialog {
+  background: var(--card);
+  color: var(--label);
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  padding: 28px;
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+}
+.hive-dialog h2 {
+  font-size: 26px;
+  letter-spacing: -0.7px;
+  margin: 0 0 10px;
+}
+.hive-dialog > p {
+  font-size: 13px;
+  color: var(--hive-muted);
+  line-height: 1.7;
+}
+.hive-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+.hive-dialog fieldset {
+  border: 1px solid var(--separator);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  margin: 6px 0;
+}
+.hive-dialog legend {
+  font-size: 12px;
+  font-weight: 600;
+}
+.hive-dialog fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+}
+.hive-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+.hive-community button:focus-visible,
+.hive-community input:focus-visible,
+.hive-community textarea:focus-visible {
+  outline: 3px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+.hive-sharing-notice {
+  padding: 16px 30px;
+  margin: 0;
+  color: var(--gold);
+  font-size: 13px;
+}
+@media (max-width: 1180px) {
+  .hive-layout {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+  .hive-about {
+    display: none;
+  }
+  .hive-community {
+    padding: 28px;
+  }
+}
+@media (max-width: 650px) {
+  .hive-community {
+    padding: 22px 18px;
+  }
+  .hive-heading {
+    align-items: flex-start;
+  }
+  .hive-title {
+    gap: 10px;
+  }
+  .hive-title img {
+    width: 44px;
+    height: 44px;
+  }
+  .hive-title h1 {
+    font-size: 26px;
+  }
+  .hive-title p {
+    font-size: 11px;
+    max-width: 150px;
+  }
+  .hive-heading > .hive-primary {
+    font-size: 11px;
+    padding: 10px;
+  }
+  .hive-layout {
+    display: block;
+  }
+  .hive-navigation {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 24px;
+    gap: 4px;
+  }
+  .hive-navigation > button {
+    font-size: 11px;
+    padding: 10px 5px;
+    gap: 5px;
+    justify-content: center;
+  }
+  .hive-navigation > button svg {
+    width: 15px;
+  }
+  .hive-nav-groups {
+    display: none;
+  }
+  .hive-section-title {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .hive-compose,
+  .hive-post {
+    padding: 18px;
+  }
+  .hive-compose-member > span:last-child {
+    width: 100%;
+    margin-left: 46px;
+  }
+  .hive-groups {
+    grid-template-columns: 1fr;
+  }
+  .hive-post-scope {
+    display: none;
+  }
+  .hive-dialog {
+    padding: 24px;
+  }
+  .hive-invite-card {
+    padding: 20px;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .hive-community {
+    --hive-muted: #b8bcb4;
+  }
+}
+/* Hive uses its own navigation rather than the styling marketing sidebar. */
+.la-web-shell:has(.hive-community),
+.la-web-shell:has(.la-hive-join) {
+  display: block;
+}
+.la-web-shell:has(.hive-community) > .la-web-aside,
+.la-web-shell:has(.la-hive-join) > .la-web-aside {
+  display: none;
+}

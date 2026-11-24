@@ -1,0 +1,33 @@
+name: Hive group privacy
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/*hive*"
+      - "scripts/tests/hive-groups*"
+      - ".github/workflows/hive-groups.yml"
+  push:
+    branches: ["design/admin-workspace-preview"]
+jobs:
+  group-isolation:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: disposable-test-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate group RLS in a disposable database
+        env:
+          PGPASSWORD: disposable-test-password
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 \
+            -f scripts/tests/hive-groups-bootstrap.sql \
+            -f supabase/migrations/20260929140000_hive_rooms.sql \
+            -f supabase/migrations/20260929180000_hive_moderation.sql \
+            -f supabase/migrations/20260930200000_hive_trigger_grants.sql \
+            -f supabase/migrations/20261124230000_hive_member_groups.sql \
+            -f scripts/tests/hive-groups-isolation.sql

@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { MessageCircle, ShieldCheck, Heart, ArrowRight } from "lucide-react";
-import crest from "@/assets/brand/crest-bee.webp";
+import crest from "@/assets/brand/crest-hive.webp";
 import "./community.css";
 export function HiveJoin({ onSave }: { onSave: (name: string) => Promise<string | null> }) {
   const [name, setName] = useState("");
@@ -15,20 +15,23 @@ export function HiveJoin({ onSave }: { onSave: (name: string) => Promise<string 
         <h1>
           Your people.
           <br />
-          Your kind of style.
+          Your own circles.
         </h1>
-        <p>A little inspiration. An honest second opinion. A place to share what feels like you.</p>
+        <p>
+          Everyday life, shared interests, and private conversations. Find your people in the main
+          network or make a group of your own.
+        </p>
         <ul>
           <li>
             <MessageCircle size={18} aria-hidden />
             <span>
-              <strong>Talk it through</strong>Swap ideas in small community rooms.
+              <strong>Talk it through</strong>Talk with the whole Hive or create your own group.
             </span>
           </li>
           <li>
             <Heart size={18} aria-hidden />
             <span>
-              <strong>Keep it kind</strong>Talk about the outfit, never someone’s body.
+              <strong>Keep it kind</strong>Respect each other, whatever the topic.
             </span>
           </li>
           <li>
