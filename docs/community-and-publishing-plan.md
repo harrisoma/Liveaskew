@@ -49,7 +49,7 @@ No bridge credentials, OAuth configuration, tokens, deployments, or live posts w
 Recommendation: finish Hive's existing small community first. Evaluate a forum platform only if
 requirements expand to searchable long-form topics, extensive groups and forum administration.
 
-## Hive member-network correction (awaiting design approval)
+## Hive member-network release
 
 Hive now has a main member feed, member-created public or private groups, a My Groups view,
 public group discovery/joining, leaving groups, owner-issued friend invitations, and private
@@ -58,8 +58,10 @@ Bee in the join flow and community home; the styling marketing sidebar is hidden
 Invitations are single-use, expire after seven days, require a signed-in Hive profile, and survive
 web sign-in through session storage. Native invitations use the HTTPS app host.
 
-Migration `20261124230000_hive_member_groups.sql` is NOT applied to any hosted project by this
-branch. It must be applied with the approved feature release, before the new UI goes live.
+Migration `20261124230000_hive_member_groups.sql` was applied transactionally and recorded in
+LiveAskew (`jpxswrcwpsdgbwndjmow`) on 2026-11-24 following owner approval to merge.
+Verification: membership/invitation RLS enabled; six existing rooms preserved; Main Network added;
+no existing messages changed.
 The disposable PostgreSQL test verifies outsider read/write denial, owner-only invitation
 creation, joining public groups, accepting a private invitation, one-use tokens, leave revocation,
 and main-network posting. A dedicated CI job repeats those checks without production credentials.
