@@ -1,12 +1,15 @@
+import { apiFetch } from "../lib/api";
+import type { AdminOverview } from "./AdminHome";
+import { AdminHome } from "./AdminHome";
 import { SoundControl } from "../components/InteractionFeedback";
 import { HoneyScreen } from "./Honey";
 import { WardrobeReset } from "./WardrobeReset";
 import { isoDay, type HoneyItem } from "@/lib/honey";
 import type { WardrobeItem } from "../lib/storage";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { TodayScreen } from "./Today";
 import { ModerationScreen } from "./Moderation";
-import { NeoButton, Screen } from "../components/ui";
+import { NeoButton } from "../components/ui";
 import { fetchModerationQueue, type ModerationItem } from "../lib/moderation";
 import type { ChatMsg } from "../lib/storage";
 
@@ -28,6 +31,25 @@ export function AdminWorkspace({
   onOpenCustomer: () => void;
   renderChat: (props: PreviewChatProps) => ReactNode;
 }) {
+  const [overview, setOverview] = useState<AdminOverview | null>(null);
+  const [overviewLoading, setOverviewLoading] = useState(true);
+  const [overviewError, setOverviewError] = useState(false);
+  async function refreshOverview() {
+    setOverviewLoading(true);
+    try {
+      const response = await apiFetch("/api/hive/moderation?overview=1");
+      if (!response.ok) throw new Error("overview_unavailable");
+      setOverview(await response.json());
+      setOverviewError(false);
+    } catch {
+      setOverviewError(true);
+    } finally {
+      setOverviewLoading(false);
+    }
+  }
+  useEffect(() => {
+    void refreshOverview();
+  }, []);
   const [view, setView] = useState<"home" | "today" | "bee" | "honey" | "wardrobe" | "moderation">(
     "home",
   );
@@ -78,7 +100,7 @@ export function AdminWorkspace({
   }
   const preview = view === "today" || view === "bee" || view === "honey" || view === "wardrobe";
   return (
-    <div className="la-app flex flex-col">
+    <div className="la-app la-admin-workspace flex flex-col">
       <header className="la-topbar">
         <span className="la-wordmark">
           Live<b>Askew</b>
@@ -175,50 +197,21 @@ export function AdminWorkspace({
         </p>
       )}
       {view === "home" && (
-        <Screen kicker="Administration" title="Welcome back">
-          <p className="text-sm">
-            Signed in{email ? ` as ${email}` : ""}. Your administrator access is verified by the
-            server.
-          </p>
-          <section className="mt-6 neo-inset p-4" aria-label="Your customer experience">
-            <h2 className="text-lg font-semibold">Use LiveAskew as yourself</h2>
-            <p className="mt-2 mb-4 text-sm leading-relaxed">
-              Complete your style setup, talk to Bee, and use your own Style Guide with this
-              account. Your preferences and activity are saved. Normal trial and membership rules
-              apply.
-            </p>
-            <NeoButton variant="gold" onClick={onOpenCustomer}>
-              Switch to customer view
-            </NeoButton>
-            <p className="mt-3 text-xs opacity-70">
-              Return here with Back to Admin. Switching views does not start a trial or
-              subscription.
-            </p>
-          </section>
-          <section className="mt-5 space-y-3" aria-label="Admin tools">
-            <NeoButton disabled={busy} onClick={() => void openModeration()}>
-              {busy ? "Loading reports…" : "Review Hive reports"}
-            </NeoButton>
-            <NeoButton
-              onClick={() => {
-                setNotice("");
-                setView("today");
-              }}
-            >
-              Preview sample screens
-            </NeoButton>
-            <a className="neo-btn" href="/" target="_blank" rel="noreferrer">
-              View marketing website
-            </a>
-          </section>
-          <p className="mt-6 text-sm opacity-70">
-            The preview uses sample content. Live moderation actions affect the Hive. Customer
-            onboarding is not required for these admin tools.
-          </p>
-          <NeoButton className="mt-6" onClick={() => void onSignOut()}>
-            Sign out
-          </NeoButton>
-        </Screen>
+        <AdminHome
+          overview={overview}
+          loading={overviewLoading}
+          loadError={overviewError}
+          onRefresh={() => void refreshOverview()}
+          email={email}
+          busy={busy}
+          onOpenCustomer={onOpenCustomer}
+          onReports={() => void openModeration()}
+          onPreview={() => {
+            setNotice("");
+            setView("today");
+          }}
+          onSignOut={() => void onSignOut()}
+        />
       )}
       {view === "today" && (
         <TodayScreen

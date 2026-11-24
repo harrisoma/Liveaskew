@@ -1,3 +1,4 @@
+import { HiveJoin } from "./HiveJoin";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Flag, MoreHorizontal, Paperclip, ShieldOff, Trash2, X } from "lucide-react";
 import { NeoButton, NeoField, Screen, Skeleton } from "../components/ui";
@@ -165,37 +166,15 @@ export function HiveScreen({
 }
 
 function NameStep({ userId, onSaved }: { userId: string; onSaved: (name: string) => void }) {
-  const [name, setName] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   return (
-    <Screen kicker="The Hive" title="Your Hive name">
-      <p className="mb-4 text-sm leading-relaxed">
-        Pick the name other members will see next to your posts. Your email and number always stay
-        private.
-      </p>
-      <form
-        className="space-y-3"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setBusy(true);
-          const err = await saveDisplayName(userId, name);
-          setBusy(false);
-          if (err) setError(err);
-          else onSaved(name.trim().replace(/\s+/g, " "));
+    <Screen>
+      <HiveJoin
+        onSave={async (name) => {
+          const error = await saveDisplayName(userId, name);
+          if (!error) onSaved(name);
+          return error;
         }}
-      >
-        <NeoField
-          placeholder="First name or a nickname"
-          maxLength={40}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        {error && <p className="text-sm">{error}</p>}
-        <NeoButton type="submit" variant="ink" disabled={busy || name.trim().length < 2}>
-          Join the Hive
-        </NeoButton>
-      </form>
+      />
     </Screen>
   );
 }

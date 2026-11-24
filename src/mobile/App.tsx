@@ -1,3 +1,4 @@
+import { writeBeeCaption } from "./lib/buzz-caption";
 import { SoundControl, useInteractionFeedback } from "./components/InteractionFeedback";
 import { WardrobeReset } from "./screens/WardrobeReset";
 import { syncWardrobe } from "./lib/wardrobe-sync";
@@ -1371,18 +1372,7 @@ export function MobileApp() {
                 }
               }}
               onPickPhoto={() => pickStylingPhoto()}
-              onCaption={(look, network) =>
-                askBee({
-                  messages: [
-                    {
-                      id: nid("m"),
-                      role: "user",
-                      content: `Write a ${network} caption for my look "${look.title}" (${look.formula.join(", ")}). Two or three short sentences in my voice, then at most four hashtags. Reply with the caption only.${network === "X" ? " Keep it under 260 characters." : network === "Threads" ? " Keep it under 480 characters." : ""}`,
-                    },
-                  ],
-                  profile: snap.onboarding,
-                })
-              }
+              onCaption={(look, network) => writeBeeCaption(snap, look, network)}
               onSchedule={async ({ look, network, date, time, caption, photo, now }) => {
                 setBuzzNotice(null);
                 let mediaUrl: string | null = null;

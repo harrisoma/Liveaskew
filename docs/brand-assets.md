@@ -26,3 +26,9 @@ Added November 23, 2026. Shown in the Design Studio toolkit and process steps.
 
 Still needed from the provider's press or brand page (shown as name only until added): **Procreate**, **CLO 3D**.
 Replace any of the above with the provider's own download if it differs.
+
+## Buzz social account picker
+
+Instagram, Facebook and LinkedIn SVGs reused unchanged from the existing Onixus
+`radiant-connect-dash/public/connectors` asset library. X and Threads retain the existing
+`public/social` marks and attribution. Names remain visible next to each logo.
