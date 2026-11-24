@@ -8,8 +8,9 @@ import {
 } from "./studio-checkout.server";
 
 describe("Design Studio checkout", () => {
-  it("is $199 a month on its own lookup key, never an app tier", () => {
+  it("is $199 a month on its own LiveAskew lookup key, never an app tier", () => {
     expect(STUDIO_PRICE_MONTHLY).toBe(199);
+    expect(STUDIO_LOOKUP_KEY).toBe("liveaskew_design_studio_monthly");
     expect(tierFromPriceId(STUDIO_LOOKUP_KEY)).toBeNull();
   });
 
