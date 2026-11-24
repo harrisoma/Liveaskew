@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { billingConfigured, billingEnvironment } from "@/lib/billing.server";
-import { STUDIO_LOOKUP_KEY, STUDIO_PRODUCT, studioReturnUrls } from "@/lib/studio-checkout.server";
+import {
+  STUDIO_CLIENT,
+  STUDIO_LOOKUP_KEY,
+  STUDIO_PRODUCT,
+  studioReturnUrls,
+} from "@/lib/studio-checkout.server";
 
 // Small per-IP budget: each call creates a Stripe Checkout Session.
 const windows = new Map<string, { count: number; end: number }>();
@@ -39,14 +44,16 @@ export const Route = createFileRoute("/api/public/studio-checkout")({
           const price = prices.data[0];
           if (!price) return Response.json({ error: "price_missing" }, { status: 503 });
 
-          const metadata = { product: STUDIO_PRODUCT, client: "liveaskew" };
+          // Tag everything so LiveAskew customers stay separate inside the shared Stripe account.
+          const metadata = { product: STUDIO_PRODUCT, client: STUDIO_CLIENT };
           const session = await stripe.checkout.sessions.create({
             mode: "subscription",
             line_items: [{ price: price.id, quantity: 1 }],
             ...studioReturnUrls(origin),
             billing_address_collection: "auto",
             allow_promotion_codes: true,
-            subscription_data: { metadata },
+            client_reference_id: STUDIO_CLIENT,
+            subscription_data: { metadata, description: "LiveAskew Design Studio membership" },
             metadata,
           });
           if (!session.url) return Response.json({ error: "no_checkout_url" }, { status: 502 });

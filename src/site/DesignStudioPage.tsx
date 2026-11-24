@@ -405,6 +405,10 @@ export function DesignStudioPage() {
               <span className="la-serif text-[3.4rem] leading-none">{STUDIO.price}</span>
               <span className="text-[1rem] text-black/60">{STUDIO.priceNote}</span>
             </p>
+            <p className="lac-powered mt-5">
+              <img src="/images/brands/onixus-workspace.png" alt="" width={22} height={22} />
+              Powered by Onixus
+            </p>
             <div className="mt-8 flex flex-wrap items-start gap-3">
               <StudioCheckoutButton />
               <a href={STUDIO.href} className="la-btn lac-btn-outline">
