@@ -1,6 +1,16 @@
 import { HiveJoin } from "./HiveJoin";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Flag, MoreHorizontal, Paperclip, ShieldOff, Trash2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Flag,
+  MoreHorizontal,
+  Paperclip,
+  ShieldOff,
+  Trash2,
+  X,
+  MessageCircle,
+  ChevronRight,
+} from "lucide-react";
 import { NeoButton, NeoField, Screen, Skeleton } from "../components/ui";
 import {
   blockMember,
@@ -133,7 +143,10 @@ export function HiveScreen({
   }
 
   return (
-    <Screen kicker="The Hive" title="Rooms">
+    <Screen
+      title="Find your conversation"
+      detail={<span className="la-community-label">The Hive · Your member community</span>}
+    >
       {shareLook && (
         <p className="mb-4 neo-inset px-3 py-2 text-sm" role="status">
           Pick a room to share “{shareLook.title}”.
@@ -146,16 +159,16 @@ export function HiveScreen({
       {rooms.length === 0 ? (
         <div className="neo-inset px-4 py-8 text-sm">No rooms open yet.</div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="la-hive-room-grid">
           {rooms.map((r) => (
             <li key={r.id}>
-              <button
-                type="button"
-                className="neo-choice flex-col items-start"
-                onClick={() => setRoom(r)}
-              >
-                <span className="la-display text-lg">{r.name}</span>
-                <span className="mt-1 text-sm font-normal opacity-70">{r.blurb}</span>
+              <button type="button" className="la-hive-room-card" onClick={() => setRoom(r)}>
+                <MessageCircle size={24} aria-hidden />
+                <strong>{r.name}</strong>
+                <span>{r.blurb}</span>
+                <span className="la-hive-room-action">
+                  Join the conversation <ChevronRight size={15} aria-hidden />
+                </span>
               </button>
             </li>
           ))}
