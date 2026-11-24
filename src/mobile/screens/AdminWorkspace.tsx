@@ -6,7 +6,7 @@ import { HoneyScreen } from "./Honey";
 import { WardrobeReset } from "./WardrobeReset";
 import { isoDay, type HoneyItem } from "@/lib/honey";
 import type { WardrobeItem } from "../lib/storage";
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { TodayScreen } from "./Today";
 import { ModerationScreen } from "./Moderation";
 import { NeoButton } from "../components/ui";
@@ -34,7 +34,7 @@ export function AdminWorkspace({
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [overviewLoading, setOverviewLoading] = useState(true);
   const [overviewError, setOverviewError] = useState(false);
-  async function refreshOverview() {
+  const refreshOverview = useCallback(async () => {
     setOverviewLoading(true);
     try {
       const response = await apiFetch("/api/hive/moderation?overview=1");
@@ -46,10 +46,10 @@ export function AdminWorkspace({
     } finally {
       setOverviewLoading(false);
     }
-  }
+  }, []);
   useEffect(() => {
     void refreshOverview();
-  }, []);
+  }, [refreshOverview]);
   const [view, setView] = useState<"home" | "today" | "bee" | "honey" | "wardrobe" | "moderation">(
     "home",
   );
