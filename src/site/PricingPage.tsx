@@ -67,6 +67,12 @@ export function PricingPage() {
                 <span className="text-[0.9rem] text-black/60">{offer.priceNote}</span>
               </p>
               <p className="mt-4 text-[0.98rem] leading-relaxed text-black/70">{offer.summary}</p>
+              {offer.id === "design-studio" ? (
+                <p className="lac-powered mt-3">
+                  <img src="/images/brands/onixus-workspace.png" alt="" width={20} height={20} />
+                  Powered by Onixus
+                </p>
+              ) : null}
               <ul className="lac-checks mt-6">
                 {offer.includes.map((item) => (
                   <li key={item}>

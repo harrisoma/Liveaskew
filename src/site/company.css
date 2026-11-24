@@ -968,3 +968,17 @@
   color: #fff;
   font-size: 0.85rem;
 }
+
+.la-company .lac-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+.la-company .lac-powered img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
