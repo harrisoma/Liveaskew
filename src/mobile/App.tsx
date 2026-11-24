@@ -1391,7 +1391,7 @@ export function MobileApp() {
                   mediaUrl = await uploadPostImage(photo);
                   if (!mediaUrl && network.requiresImage) {
                     setBuzzNotice("Sign in to post photos. That one couldn't upload yet.");
-                    return;
+                    return false;
                   }
                 }
                 const at = now ? new Date() : null;
@@ -1420,15 +1420,16 @@ export function MobileApp() {
                       "Saved on this phone. It'll post once you're signed in and the account is connected.",
                     );
                   }
-                  return;
+                  return true;
                 }
                 if (!saved) {
                   setBuzzNotice(
                     "Bee couldn't post that just now, but don't worry, it's still scheduled on Honey.",
                   );
-                  return;
+                  return true;
                 }
                 await runPublishNow(item);
+                return true;
               }}
               onOpenHoney={() => setTab("honey")}
               onPublishNow={(post) => void runPublishNow(post)}

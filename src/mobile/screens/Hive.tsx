@@ -2,18 +2,8 @@ import { HiveCommunity } from "./HiveCommunity";
 import { communityApi } from "../lib/hive-groups";
 import { HiveJoin } from "./HiveJoin";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Flag,
-  MoreHorizontal,
-  Paperclip,
-  ShieldOff,
-  Trash2,
-  X,
-  MessageCircle,
-  ChevronRight,
-} from "lucide-react";
-import { NeoButton, NeoField, Screen, Skeleton } from "../components/ui";
+import { ArrowLeft, Flag, MoreHorizontal, Paperclip, ShieldOff, Trash2, X } from "lucide-react";
+import { NeoButton, Screen, Skeleton } from "../components/ui";
 import {
   blockMember,
   deleteMessage,

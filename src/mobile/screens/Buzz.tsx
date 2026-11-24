@@ -55,7 +55,7 @@ export function BuzzScreen({
     caption: string;
     photo: string | null;
     now: boolean;
-  }) => void;
+  }) => boolean | Promise<boolean>;
   onPublishNow: (post: HoneyItem) => void;
   onOpenHoney?: () => void;
 }) {
@@ -67,6 +67,7 @@ export function BuzzScreen({
   const [caption, setCaption] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [writing, setWriting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [captionError, setCaptionError] = useState<string | null>(null);
   const look = saved.find((l) => l.id === lookId) ?? null;
 
@@ -74,6 +75,31 @@ export function BuzzScreen({
   useEffect(() => {
     setPhoto(look?.tryOnUrl && look.tryOnUrl !== "self" ? look.tryOnUrl : null);
   }, [look?.id, look?.tryOnUrl]);
+
+  async function submitPost(now: boolean) {
+    if (!look || submitting) return;
+    setSubmitting(true);
+    setCaptionError(null);
+    try {
+      const saved = await onSchedule({
+        look,
+        network,
+        date: now ? today : date,
+        time,
+        caption: caption.trim(),
+        photo,
+        now,
+      });
+      if (saved) {
+        setCaption("");
+        setLookId(null);
+      }
+    } catch {
+      setCaptionError("Your post couldn’t save. Your caption is still here—please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   const connected = new Map((accounts?.connections ?? []).map((c) => [c.network, c]));
   const isConnected = connected.has(network.id);
@@ -236,7 +262,7 @@ export function BuzzScreen({
               {chars} / {network.maxChars}
             </p>
             <NeoButton
-              disabled={!look || writing}
+              disabled={!look || writing || submitting}
               onClick={async () => {
                 if (!look) return;
                 setWriting(true);
@@ -266,42 +292,16 @@ export function BuzzScreen({
             <div className="grid grid-cols-2 gap-2">
               <NeoButton
                 variant="ink"
-                disabled={!look || !!problem || !date || !time}
-                onClick={() => {
-                  if (!look) return;
-                  onSchedule({
-                    look,
-                    network,
-                    date,
-                    time,
-                    caption: caption.trim(),
-                    photo,
-                    now: false,
-                  });
-                  setCaption("");
-                  setLookId(null);
-                }}
+                disabled={submitting || writing || !look || !!problem || !date || !time}
+                onClick={() => void submitPost(false)}
               >
                 <Send size={14} aria-hidden className="mr-1 inline" />
-                Schedule
+                {submitting ? "Saving…" : "Schedule"}
               </NeoButton>
               <NeoButton
                 variant="gold"
-                disabled={!look || !!problem || !isConnected}
-                onClick={() => {
-                  if (!look) return;
-                  onSchedule({
-                    look,
-                    network,
-                    date: today,
-                    time,
-                    caption: caption.trim(),
-                    photo,
-                    now: true,
-                  });
-                  setCaption("");
-                  setLookId(null);
-                }}
+                disabled={submitting || writing || !look || !!problem || !isConnected}
+                onClick={() => void submitPost(true)}
               >
                 Post now
               </NeoButton>
