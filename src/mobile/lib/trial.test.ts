@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 import { canGenerateLook, trialActive, trialDaysLeft, trialLabel, TRIAL_DAYS } from "./trial";
 
 describe("trial", () => {
-  const day = 24 * 60 * 60 * 1000;
-
   it("counts remaining days including today", () => {
     const started = new Date("2026-09-01T12:00:00Z").toISOString();
     const now = Date.parse("2026-09-05T12:00:00Z");
