@@ -1,5 +1,5 @@
 import { BuzzAccountPanel } from "./BuzzAccounts";
-import { Sparkles, Bookmark } from "lucide-react";
+import { Sparkles, Bookmark, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ExternalLink, ImagePlus, Send, X as Close } from "lucide-react";
 import {
@@ -61,7 +61,9 @@ export function BuzzScreen({
 }) {
   const saved = looks.filter((l) => l.saved);
   const [lookId, setLookId] = useState<string | null>(saved[0]?.id ?? null);
-  const [network, setNetwork] = useState<NetworkSpec>(NETWORKS[0]);
+  const [networkIds, setNetworkIds] = useState<NetworkId[]>([NETWORKS[0].id]);
+  const selectedNetworks = NETWORKS.filter((n) => networkIds.includes(n.id));
+  const network = [...selectedNetworks].sort((a, b) => a.maxChars - b.maxChars)[0] ?? NETWORKS[0];
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("09:00");
   const [caption, setCaption] = useState("");
@@ -80,30 +82,49 @@ export function BuzzScreen({
     if (!look || submitting) return;
     setSubmitting(true);
     setCaptionError(null);
+    const failed: NetworkId[] = [];
     try {
-      const saved = await onSchedule({
-        look,
-        network,
-        date: now ? today : date,
-        time,
-        caption: caption.trim(),
-        photo,
-        now,
-      });
-      if (saved) {
+      for (const target of selectedNetworks) {
+        try {
+          const saved = await onSchedule({
+            look,
+            network: target,
+            date: now ? today : date,
+            time,
+            caption: caption.trim(),
+            photo,
+            now,
+          });
+          if (!saved) failed.push(target.id);
+        } catch {
+          failed.push(target.id);
+        }
+      }
+      if (failed.length) {
+        setNetworkIds(failed);
+        setCaptionError(
+          `Couldn’t save for ${NETWORKS.filter((n) => failed.includes(n.id))
+            .map((n) => n.label)
+            .join(", ")}. Your caption is still here. Retry saves only these platforms.`,
+        );
+      } else {
         setCaption("");
         setLookId(null);
       }
-    } catch {
-      setCaptionError("Your post couldn’t save. Your caption is still here—please try again.");
     } finally {
       setSubmitting(false);
     }
   }
 
   const connected = new Map((accounts?.connections ?? []).map((c) => [c.network, c]));
-  const isConnected = connected.has(network.id);
-  const problem = look ? postProblem(network, caption, photo) : null;
+  const isConnected =
+    selectedNetworks.length > 0 && selectedNetworks.every((n) => connected.has(n.id));
+  const disconnected = selectedNetworks.filter((n) => !connected.has(n.id));
+  const problem = !selectedNetworks.length
+    ? "Choose at least one platform."
+    : look
+      ? (selectedNetworks.map((n) => postProblem(n, caption, photo)).find(Boolean) ?? null)
+      : null;
   const chars = [...caption.trim()].length;
   const upcoming = sortHoney(posts).filter(
     (p) => p.date >= today || p.postStatus === "failed" || p.postStatus === "publishing",
@@ -171,18 +192,38 @@ export function BuzzScreen({
               caption.
             </p>
           </section>
-          <section className="la-buzz-editor">
+          <fieldset disabled={submitting} className="la-buzz-editor" style={{ minWidth: 0 }}>
             <h2>Make it yours</h2>
             <p className="la-kicker pt-2">Where and when</p>
-            <p className="la-community-note">Scheduled posts appear on your Honey calendar.</p>
+            <p className="la-community-note">
+              Select one or more platforms. Each scheduled post appears on your Honey calendar.
+            </p>
+            <button
+              type="button"
+              className="text-sm underline"
+              onClick={() =>
+                setNetworkIds(
+                  networkIds.length === NETWORKS.length ? [] : NETWORKS.map((n) => n.id),
+                )
+              }
+            >
+              {networkIds.length === NETWORKS.length ? "Clear platforms" : "Select all platforms"}
+            </button>
             <div className="flex flex-wrap gap-2">
               {NETWORKS.map((n) => (
                 <button
                   key={n.id}
                   type="button"
-                  aria-pressed={n.id === network.id}
-                  onClick={() => setNetwork(n)}
-                  className={`rounded-[12px] px-3 py-2 text-sm font-semibold ${n.id === network.id ? "neo-inset" : "neo-raised-sm"}`}
+                  role="checkbox"
+                  aria-checked={networkIds.includes(n.id)}
+                  onClick={() =>
+                    setNetworkIds((current) =>
+                      current.includes(n.id)
+                        ? current.filter((id) => id !== n.id)
+                        : [...current, n.id],
+                    )
+                  }
+                  className={`rounded-[12px] px-3 py-2 text-sm font-semibold ${networkIds.includes(n.id) ? "neo-inset" : "neo-raised-sm"}`}
                 >
                   <img
                     src={`/social/${n.id}.svg`}
@@ -192,12 +233,16 @@ export function BuzzScreen({
                     className="inline-block mr-2 align-middle"
                   />
                   {n.label}
+                  {networkIds.includes(n.id) && (
+                    <Check size={14} aria-hidden className="inline-block ml-2" />
+                  )}
                 </button>
               ))}
             </div>
-            {accounts && !isConnected && (
+            {accounts && disconnected.length > 0 && (
               <p className="text-sm opacity-80">
-                {network.label} isn't connected — the post will wait on Honey until you connect it.
+                {disconnected.map((n) => n.label).join(", ")} not connected — these posts wait on
+                Honey until connected.
               </p>
             )}
             <div className="grid grid-cols-2 gap-3">
@@ -217,7 +262,7 @@ export function BuzzScreen({
             </div>
 
             <p className="la-kicker pt-2">
-              Your photo {network.requiresImage ? "(needed)" : "(optional)"}
+              Your photo {selectedNetworks.some((n) => n.requiresImage) ? "(needed)" : "(optional)"}
             </p>
             {photo ? (
               <div className="relative">
@@ -306,7 +351,7 @@ export function BuzzScreen({
                 Post now
               </NeoButton>
             </div>
-          </section>
+          </fieldset>
         </div>
       )}
 
