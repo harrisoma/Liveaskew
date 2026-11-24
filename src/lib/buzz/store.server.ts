@@ -98,6 +98,13 @@ export async function publishClaimed(
       .eq("id", post.id);
   };
 
+  if (!usesSignalPublisher()) {
+    const error =
+      "Publishing is unavailable until your account connection is verified. Your post has not been sent.";
+    await finish({ post_status: "failed", post_error: error });
+    return { ok: false, error };
+  }
+
   const spec = networkByLabel(post.network);
   if (!spec) {
     await finish({ post_status: "failed", post_error: "Pick a network for this post." });
@@ -132,7 +139,7 @@ export async function publishClaimed(
     return { ok: false, error };
   }
 
-  if (usesSignalPublisher()) {
+  {
     try {
       const receipt = await publishWithSignal(post, conn);
       if (receipt.state === "posted" && receipt.post_url) {
@@ -164,11 +171,6 @@ export async function publishClaimed(
       return { ok: false, pending: true };
     }
   }
-
-  const error =
-    "Publishing is unavailable until your account connection is verified. Your post has not been sent.";
-  await finish({ post_status: "failed", post_error: error });
-  return { ok: false, error };
 }
 
 /** Move scheduled → publishing for a bounded set, so two runs never post the same thing twice. */
