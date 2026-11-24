@@ -1,11 +1,5 @@
-import { usesSignalPublisher } from "@/lib/buzz/signal.server";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  claimPost,
-  publishClaimed,
-  releaseStuckPosts,
-  reconcileSignalPosts,
-} from "@/lib/buzz/store.server";
+import { claimPost, publishClaimed, reconcileSignalPosts } from "@/lib/buzz/store.server";
 
 function cronAuthorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET?.trim();
@@ -21,7 +15,7 @@ async function run(request: Request): Promise<Response> {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
   const reconciled = await reconcileSignalPosts();
-  const released = usesSignalPublisher() ? 0 : await releaseStuckPosts();
+
   const due = await claimPost({ dueBefore: new Date().toISOString(), limit: 25 });
   let posted = 0;
   let failed = 0;
@@ -39,7 +33,6 @@ async function run(request: Request): Promise<Response> {
     failed,
     pending,
     reconciled,
-    released,
   });
 }
 

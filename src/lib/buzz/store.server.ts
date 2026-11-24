@@ -2,12 +2,7 @@ import { usesSignalPublisher, publishWithSignal, signalPostStatus } from "./sign
 import { networkById, networkByLabel, type ConnectionSummary, type NetworkId } from "./index";
 import { openToken, sealToken } from "./crypto.server";
 import { isOwnBuzzMedia } from "./media.server";
-import {
-  publishPost,
-  refreshIfNeeded,
-  type ConnectedAccount,
-  type LiveConnection,
-} from "./providers.server";
+import { refreshIfNeeded, type ConnectedAccount, type LiveConnection } from "./providers.server";
 
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -170,16 +165,10 @@ export async function publishClaimed(
     }
   }
 
-  const result = await publishPost(conn, {
-    text: post.caption ?? "",
-    imageUrl: post.media_url,
-  });
-  if (result.ok) {
-    await finish({ post_status: "posted", post_error: null, post_url: result.url });
-    return { ok: true };
-  }
-  await finish({ post_status: "failed", post_error: result.error });
-  return { ok: false, error: result.error };
+  const error =
+    "Publishing is unavailable until your account connection is verified. Your post has not been sent.";
+  await finish({ post_status: "failed", post_error: error });
+  return { ok: false, error };
 }
 
 /** Move scheduled → publishing for a bounded set, so two runs never post the same thing twice. */
@@ -189,6 +178,7 @@ export async function claimPost(filter: {
   dueBefore?: string;
   limit?: number;
 }): Promise<DuePost[]> {
+  if (!usesSignalPublisher()) return [];
   const db = await admin();
   let pick = db
     .from("calendar_events")
@@ -214,27 +204,6 @@ export async function claimPost(filter: {
     .select("id, user_id, network, caption, media_url");
   if (error) throw new Error(error.message);
   return data ?? [];
-}
-
-/**
- * A run that died mid-publish leaves rows in 'publishing'. We cannot know whether the
- * network accepted it, so mark it failed with a clear note instead of posting twice.
- */
-export async function releaseStuckPosts(olderThanMinutes = 15): Promise<number> {
-  const db = await admin();
-  const cutoff = new Date(Date.now() - olderThanMinutes * 60_000).toISOString();
-  const { data } = await db
-    .from("calendar_events")
-    .update({
-      post_status: "failed",
-      post_error: "This post may not have gone out. Check the network, then tap Retry if needed.",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("kind", "post")
-    .eq("post_status", "publishing")
-    .lt("updated_at", cutoff)
-    .select("id");
-  return data?.length ?? 0;
 }
 
 /** Read existing receipts only: reconciliation never submits a new social post. */
