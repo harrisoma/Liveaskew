@@ -1414,6 +1414,7 @@ export function MobileApp() {
                 void haptic("success");
                 const saved = await pushHoney([item]);
                 if (!now) {
+                  if (saved) setBuzzNotice(`Scheduled on Honey for ${date} at ${time}.`);
                   if (!saved) {
                     setBuzzNotice(
                       "Saved on this phone. It'll post once you're signed in and the account is connected.",
@@ -1429,6 +1430,7 @@ export function MobileApp() {
                 }
                 await runPublishNow(item);
               }}
+              onOpenHoney={() => setTab("honey")}
               onPublishNow={(post) => void runPublishNow(post)}
             />
           )}

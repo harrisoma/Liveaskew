@@ -34,6 +34,7 @@ export function BuzzScreen({
   onCaption,
   onSchedule,
   onPublishNow,
+  onOpenHoney,
 }: {
   looks: GuideLook[];
   posts: HoneyItem[];
@@ -56,6 +57,7 @@ export function BuzzScreen({
     now: boolean;
   }) => void;
   onPublishNow: (post: HoneyItem) => void;
+  onOpenHoney?: () => void;
 }) {
   const saved = looks.filter((l) => l.saved);
   const [lookId, setLookId] = useState<string | null>(saved[0]?.id ?? null);
@@ -146,6 +148,7 @@ export function BuzzScreen({
           <section className="la-buzz-editor">
             <h2>Make it yours</h2>
             <p className="la-kicker pt-2">Where and when</p>
+            <p className="la-community-note">Scheduled posts appear on your Honey calendar.</p>
             <div className="flex flex-wrap gap-2">
               {NETWORKS.map((n) => (
                 <button
@@ -155,6 +158,13 @@ export function BuzzScreen({
                   onClick={() => setNetwork(n)}
                   className={`rounded-[12px] px-3 py-2 text-sm font-semibold ${n.id === network.id ? "neo-inset" : "neo-raised-sm"}`}
                 >
+                  <img
+                    src={`/social/${n.id}.svg`}
+                    alt=""
+                    width="18"
+                    height="18"
+                    className="inline-block mr-2 align-middle"
+                  />
                   {n.label}
                 </button>
               ))}
@@ -300,6 +310,11 @@ export function BuzzScreen({
         </div>
       )}
 
+      {onOpenHoney && (
+        <button className="hive-text-action" onClick={onOpenHoney}>
+          View Honey calendar
+        </button>
+      )}
       {upcoming.length > 0 && (
         <div className="mt-6">
           <p className="la-kicker">Your posts</p>
@@ -313,6 +328,15 @@ export function BuzzScreen({
               return (
                 <li key={p.id} className="neo-raised-sm px-3 py-2 text-sm">
                   <p>
+                    {spec && (
+                      <img
+                        src={`/social/${spec.id}.svg`}
+                        alt=""
+                        width="18"
+                        height="18"
+                        className="inline-block mr-2 align-middle"
+                      />
+                    )}
                     <span className="font-semibold">{p.network}</span> · {dayLabel(p.date, today)}{" "}
                     {p.time} · {p.postStatus ? STATUS_LABEL[p.postStatus] : "Planned"}
                   </p>
