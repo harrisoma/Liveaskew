@@ -100,6 +100,10 @@ export async function deleteAccount(userId: string): Promise<void> {
       throw new Error("storage_cleanup_failed");
     }
   }
+  if (process.env.BUZZ_PUBLISHER === "signal") {
+    const { deleteSignalMemberReceipts } = await import("./buzz/signal.server");
+    await deleteSignalMemberReceipts(userId);
+  }
   const db = await admin();
   const { error } = await db.auth.admin.deleteUser(userId);
   if (error) throw new Error(error.message);

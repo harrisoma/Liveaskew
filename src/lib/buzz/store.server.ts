@@ -1,3 +1,4 @@
+import { usesSignalPublisher, publishWithSignal, signalPostStatus } from "./signal.server";
 import { networkById, networkByLabel, type ConnectionSummary, type NetworkId } from "./index";
 import { openToken, sealToken } from "./crypto.server";
 import { isOwnBuzzMedia } from "./media.server";
@@ -83,10 +84,12 @@ export type DuePost = {
  * Publish one post that this caller has already claimed (post_status = 'publishing'),
  * then record posted / failed on the Honey row.
  */
-export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; error?: string }> {
+export async function publishClaimed(
+  post: DuePost,
+): Promise<{ ok: boolean; pending?: boolean; error?: string }> {
   const db = await admin();
   const finish = async (fields: {
-    post_status: "posted" | "failed";
+    post_status: "posted" | "failed" | "publishing";
     post_error?: string | null;
     post_url?: string | null;
   }) => {
@@ -132,6 +135,39 @@ export async function publishClaimed(post: DuePost): Promise<{ ok: boolean; erro
     const error = "That photo can't be posted. Add it again from Buzz.";
     await finish({ post_status: "failed", post_error: error });
     return { ok: false, error };
+  }
+
+  if (usesSignalPublisher()) {
+    try {
+      const receipt = await publishWithSignal(post, conn);
+      if (receipt.state === "posted" && receipt.post_url) {
+        await finish({ post_status: "posted", post_url: receipt.post_url, post_error: null });
+        return { ok: true };
+      }
+      if (receipt.state === "failed") {
+        await finish({
+          post_status: "failed",
+          post_error:
+            "The network rejected this post. Check the content and account before retrying.",
+        });
+        return { ok: false };
+      }
+      await finish({
+        post_status: "publishing",
+        post_error:
+          receipt.state === "uncertain"
+            ? "Delivery is uncertain. Check the network before creating another post."
+            : null,
+      });
+      return { ok: false, pending: true };
+    } catch {
+      // A transport failure is not proof the provider rejected the post.
+      await finish({
+        post_status: "publishing",
+        post_error: "Delivery is being checked. Do not create a duplicate post.",
+      });
+      return { ok: false, pending: true };
+    }
   }
 
   const result = await publishPost(conn, {
@@ -199,4 +235,44 @@ export async function releaseStuckPosts(olderThanMinutes = 15): Promise<number> 
     .lt("updated_at", cutoff)
     .select("id");
   return data?.length ?? 0;
+}
+
+/** Read existing receipts only: reconciliation never submits a new social post. */
+export async function reconcileSignalPosts(): Promise<number> {
+  if (!usesSignalPublisher()) return 0;
+  const db = await admin();
+  const { data, error } = await db
+    .from("calendar_events")
+    .select("id,user_id")
+    .eq("kind", "post")
+    .eq("post_status", "publishing")
+    .limit(25);
+  if (error) throw Error("receipt_lookup_failed");
+  let updated = 0;
+  for (const row of data ?? []) {
+    try {
+      const receipt = await signalPostStatus(row.user_id, row.id);
+      if (receipt.state !== "posted" && receipt.state !== "failed") continue;
+      if (receipt.state === "posted" && !receipt.post_url) continue;
+      const { error: saveError } = await db
+        .from("calendar_events")
+        .update({
+          post_status: receipt.state,
+          post_url: receipt.post_url ?? null,
+          post_error:
+            receipt.state === "failed"
+              ? "The network rejected this post. Review it before retrying."
+              : null,
+          posted_at: receipt.state === "posted" ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", row.id)
+        .eq("user_id", row.user_id)
+        .eq("post_status", "publishing");
+      if (!saveError) updated++;
+    } catch {
+      /* Keep uncertain delivery pending; never automatically publish a second copy. */
+    }
+  }
+  return updated;
 }
