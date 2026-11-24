@@ -26,3 +26,20 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
   if (bearer) headers.set("Authorization", `Bearer ${bearer}`);
   return fetch(apiUrl(path), { ...init, headers });
 }
+
+/** Reject HTML fallbacks and malformed API bodies without exposing parser output to members. */
+export async function apiJson(response: Response) {
+  const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+  if (!contentType.includes("application/json") && !contentType.includes("+json")) {
+    throw new Error(
+      "Bee could not reach the service. Your saved guide is unchanged. Please try again shortly.",
+    );
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new Error(
+      "Bee received an incomplete response. Your saved guide is unchanged. Please try again shortly.",
+    );
+  }
+}
