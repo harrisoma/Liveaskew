@@ -322,8 +322,8 @@ export function MobileApp() {
     .map((l) => l.id)
     .join("|");
   useEffect(() => {
-    if (!ready || !snap.verified || snap.phase !== "app" || weeklyIds.split("|").length !== 8)
-      return;
+    const weekCount = weeklyIds ? weeklyIds.split("|").length : 0;
+    if (!ready || !snap.verified || snap.phase !== "app" || ![7, 8].includes(weekCount)) return;
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
     async function refresh() {
@@ -337,6 +337,7 @@ export function MobileApp() {
         const matches = guide && guide.lookIds.join("|") === weeklyIds;
         if (
           (!guide || !matches || guide.status === "expired") &&
+          weekCount === 8 &&
           current.selfie &&
           looks.some((l) => !l.tryOnUrl || l.tryOnUrl === "self")
         ) {
@@ -363,7 +364,7 @@ export function MobileApp() {
             guide.error === "membership_required" && guide.status === "queued"
               ? "Your guide is saved. Previews will resume automatically when your membership is active."
               : guide.status === "ready"
-                ? "All eight outfit images passed their visual checks."
+                ? `All ${guide.total} outfit images passed their visual checks.`
                 : guide.status === "attention"
                   ? guide.error === "visual_review_failed" ||
                     guide.error === "visual_review_inconsistent"
@@ -376,7 +377,7 @@ export function MobileApp() {
                         : "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
                   : guide.status === "expired"
                     ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
-                    : `${guide.completed} of 8 images generated; ${guide.reviewed ?? 0} passed visual checks. Bee is continuing automatically; you can leave this page.`,
+                    : `${guide.completed} of ${guide.total} images generated; ${guide.reviewed ?? 0} passed visual checks. Bee is continuing automatically; you can leave this page.`,
           );
           setRenderingId(["queued", "running"].includes(guide.status) ? guide.id : null);
           if (["ready", "attention", "expired"].includes(guide.status)) return;
