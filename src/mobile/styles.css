@@ -2899,3 +2899,10 @@ button.neo-raised-sm:active:not(:disabled) {
     grid-template-columns: 1fr;
   }
 }
+.personal-style-guide {
+  width: 100%;
+  min-width: 0;
+}
+.personal-style-guide .personal-edit-photo .lookbook-sample-image {
+  max-width: none;
+}
