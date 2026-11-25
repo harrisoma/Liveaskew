@@ -598,7 +598,16 @@ export function MobileApp() {
     return (
       <AdminWorkspace
         email={snap.email}
-        onOpenCustomer={() => setCustomerView(true)}
+        onOpenCustomer={(destination) => {
+          if (destination === "guide") {
+            setTab("bee");
+            setBeeView("guide");
+          } else if (destination) {
+            setTab(destination);
+            if (destination === "bee") setBeeView("chat");
+          }
+          setCustomerView(true);
+        }}
         onSignOut={async () => {
           await signOut();
           setAdminAccess(false);
