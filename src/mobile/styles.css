@@ -3567,6 +3567,12 @@ button.neo-raised-sm:active:not(:disabled) {
 .la-app .personal-style-guide .guide-delivery-checklist {
   border-color: var(--separator);
 }
+.la-app .personal-style-guide {
+  --bg: #070706;
+  --gold: #e5bd72;
+  background: var(--bg);
+  color: var(--label);
+}
 .la-app button:focus-visible,
 .la-app a:focus-visible {
   outline: 2px solid #f1ca81;
