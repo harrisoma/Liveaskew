@@ -1,3 +1,4 @@
+import { PersonalEdit } from "./PersonalEdit";
 import { GuideLookbook, type GuideActions } from "./GuideLookbook";
 import { ShoppingBrief } from "./ShoppingBrief";
 import type { ShoppingProfile } from "@/lib/shopping-profile";
@@ -49,12 +50,14 @@ export function StyleBlueprintDocument({
           <Notes items={guide.intent} />
         </div>
       </details>
-      <section id="studio-capsule">
+      <section id="studio-capsule" className="wardrobe-edit">
         <div className="studio-heading">
-          <h2>Your wardrobe, working together</h2>
+          <p className="personal-section-label">The Wardrobe Edit</p>
+          <h2>Pieces with a purpose.</h2>
           <p>
             Start with what you own. These coordinated pieces give you a foundation to mix, repeat,
-            and make your own. Photos show retailer matches; color swatches are styling suggestions.
+            and make your own. Product photos appear only for retailer matches. Other pieces are
+            styling recommendations, not verified possessions.
           </p>
         </div>
         <div className="studio-filters" role="group" aria-label="Filter wardrobe pieces">
@@ -89,9 +92,17 @@ export function StyleBlueprintDocument({
                   <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
                 </div>
               ) : (
-                <div className="studio-piece-swatch">
-                  <span style={{ background: p.hex }} aria-hidden="true" />
-                  <span>{p.color}</span>
+                <div className="studio-piece-description">
+                  <span className="studio-piece-number">{String(i + 1).padStart(2, "0")}</span>
+                  <span>
+                    {p.role === "layer"
+                      ? "Layering"
+                      : p.role === "shoe"
+                        ? "Footwear"
+                        : p.role === "accessory"
+                          ? "Finishing detail"
+                          : "Clothing"}
+                  </span>
                 </div>
               )}
               <span>
@@ -101,7 +112,7 @@ export function StyleBlueprintDocument({
               {productFor(i) && <RetailItem product={productFor(i)!} liveAccount={liveAccount} />}
               {!productFor(i) && <span className="studio-suggestion">Styling suggestion</span>}
               <details className="studio-piece-notes">
-                <summary>Why it works</summary>
+                <summary>Stylist’s note</summary>
                 <p>{p.reason}</p>
               </details>
             </article>
@@ -148,13 +159,14 @@ export function StyleBlueprintDocument({
         </div>
       </details>
       <details id="studio-formulas" className="studio-reference">
-        <summary>More ways to combine your pieces</summary>
+        <summary>Outfit combinations to explore</summary>
         <div className="studio-reference-body">
           <div className="studio-heading">
             <h2>Less deciding. More getting dressed.</h2>
             <p>
-              A few pieces, a complete look. Tap any piece to find it in your wardrobe above. Your
-              personalized outfit images are in Looks.
+              Starting formulas from your capsule, not reviewed outfit previews. Ask Bee to refine
+              the proportions and details for your occasion. Your styled personal previews are in
+              the Outfit Playbook.
             </p>
           </div>
           <div className="studio-formulas">
@@ -301,6 +313,8 @@ function RetailItem({
   );
 }
 export function StyleBlueprint({
+  memberName,
+  portrait,
   wardrobe,
   looks,
   onLooks,
@@ -309,6 +323,8 @@ export function StyleBlueprint({
   onRestyle,
   onPlanLook,
 }: GuideActions & {
+  memberName?: string;
+  portrait?: string | null;
   wardrobe: WardrobeItem[];
   looks: GuideLook[];
   onLooks: () => void;
@@ -423,7 +439,7 @@ export function StyleBlueprint({
     }
   }
   return (
-    <div className="studio-scroll">
+    <div className="studio-scroll personal-style-guide">
       <div className="studio-toolbar">
         <span>
           <BookOpen size={17} /> Your Style Guide
@@ -455,6 +471,9 @@ export function StyleBlueprint({
           </button>
         </div>
       </div>
+      {guide && (
+        <PersonalEdit guide={guide} looks={looks} memberName={memberName} portrait={portrait} />
+      )}
       <GuideLookbook
         looks={looks}
         onSaveLook={onSaveLook}

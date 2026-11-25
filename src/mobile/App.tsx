@@ -1016,6 +1016,8 @@ export function MobileApp() {
           )}
           {tab === "bee" && beeView === "guide" && (
             <StyleBlueprint
+              memberName={snap.memberSetup?.name}
+              portrait={snap.selfie}
               wardrobe={snap.wardrobe}
               notice={guideError}
               looks={snap.looks}

@@ -2640,3 +2640,233 @@ button.neo-raised-sm:active:not(:disabled) {
     transform: none;
   }
 }
+
+/* LiveAskew's presentation stays constant; every garment and styling note remains personal. */
+.personal-edit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 64px);
+  padding: 36px 0 48px;
+  border-block: 1px solid var(--separator);
+  margin: 12px 0 40px;
+}
+.personal-edit-copy {
+  align-self: center;
+  min-width: 0;
+}
+.personal-signature {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 40px;
+}
+.personal-signature > span {
+  color: var(--gold);
+}
+.personal-signature small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--label-2);
+}
+.personal-section-label {
+  color: var(--gold);
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+.personal-edit h1 {
+  font-size: clamp(34px, 4.3vw, 60px);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  margin: 0 0 18px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.personal-aesthetic {
+  font-size: 20px;
+  margin: 0 0 16px;
+}
+.personal-intro {
+  max-width: 52ch;
+  color: var(--label-2);
+  line-height: 1.7;
+}
+.personal-intentions {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.personal-intentions li {
+  padding: 12px 0;
+  border-top: 1px solid var(--separator);
+  line-height: 1.6;
+}
+.personal-chapters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 28px;
+}
+.personal-chapters a {
+  color: var(--label);
+  text-decoration-color: var(--gold);
+  text-underline-offset: 6px;
+  font-size: 13px;
+  padding: 12px 0;
+}
+.personal-edit-photo {
+  margin: 0;
+  min-width: 0;
+}
+.personal-edit-photo img {
+  width: 100%;
+  max-height: 650px;
+  aspect-ratio: 3/4;
+  object-fit: contain;
+  display: block;
+  background: var(--fill);
+  border-radius: 12px;
+}
+.personal-edit-photo figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.personal-edit-photo figcaption span {
+  color: var(--label-2);
+}
+.personal-edit-notes {
+  padding: 28px;
+  background: var(--card);
+  border-radius: 12px;
+  align-self: center;
+}
+.personal-edit-notes li {
+  margin-block: 12px;
+  line-height: 1.6;
+}
+.guide-lookbook {
+  scroll-margin-top: 80px;
+}
+.lookbook-heading h2 {
+  font-size: clamp(26px, 3vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  max-width: 23ch;
+  margin: 0;
+}
+.lookbook-stage {
+  border-radius: 12px;
+}
+.lookbook-picker {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+.lookbook-picker button,
+.lookbook-actions button {
+  border-radius: 12px;
+}
+.lookbook-stylist-notes {
+  margin: 24px 0;
+}
+.lookbook-stylist-notes dl {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 10px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.lookbook-stylist-notes dt {
+  color: var(--gold);
+}
+.lookbook-stylist-notes dd {
+  margin: 0;
+  color: var(--label-2);
+}
+.wardrobe-edit {
+  scroll-margin-top: 80px;
+  margin-top: 44px;
+}
+.studio-piece-description {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 60px;
+  padding: 14px 0;
+  color: var(--label-2);
+}
+.studio-piece-number {
+  color: var(--gold);
+  font-size: 28px;
+  font-weight: 500;
+}
+.wardrobe-edit .studio-capsule {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.wardrobe-edit .studio-capsule > article {
+  border-radius: 12px;
+  padding: 18px;
+}
+.wardrobe-edit .studio-piece img {
+  aspect-ratio: 4/5;
+  object-fit: contain;
+}
+@media (max-width: 700px) {
+  .personal-edit {
+    grid-template-columns: 1fr;
+    padding-top: 20px;
+    gap: 24px;
+  }
+  .personal-signature {
+    margin-bottom: 24px;
+  }
+  .personal-edit-photo img {
+    max-height: 520px;
+  }
+  .wardrobe-edit .studio-capsule {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lookbook-stylist-notes dl {
+    grid-template-columns: 48px 1fr;
+  }
+}
+@media (max-width: 400px) {
+  .wardrobe-edit .studio-capsule {
+    grid-template-columns: 1fr;
+  }
+}
+@media print {
+  .personal-chapters {
+    display: none;
+  }
+  .personal-edit {
+    break-inside: avoid;
+  }
+  .personal-edit-photo img {
+    max-height: 460px;
+  }
+}
+.personal-edit-photo .lookbook-sample-image {
+  background-position: left center;
+  background-size: 300% 100%;
+  aspect-ratio: 3/4;
+  border-radius: 12px;
+}
+@media print {
+  .lookbook-stylist-notes {
+    break-inside: avoid;
+  }
+}
+.personal-style-guide {
+  --bg: #fff;
+  background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  .personal-style-guide {
+    --bg: #000;
+  }
+}

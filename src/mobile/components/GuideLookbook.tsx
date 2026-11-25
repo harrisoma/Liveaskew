@@ -51,11 +51,15 @@ export function GuideLookbook({
     }
   }
   return (
-    <section className="guide-lookbook" aria-label="Your outfit lookbook">
+    <section className="guide-lookbook" id="outfit-playbook" aria-label="Your outfit lookbook">
       <header className="lookbook-heading">
         <div>
-          <p>Styled by Bee</p>
-          <h1>{sample ? "A little inspiration for your week." : "Your week, styled."}</h1>
+          <p className="personal-section-label">The Outfit Playbook</p>
+          <h2>
+            {sample
+              ? "A little inspiration for your week."
+              : "The look. The details. The way you wear it."}
+          </h2>
         </div>
         <p>
           {sample
@@ -121,14 +125,14 @@ export function GuideLookbook({
           <p className="lookbook-occasion">{look.occasion}</p>
           <h2>{look.title}</h2>
           <p className="lookbook-reason">{look.feel}</p>
-          <h3>The outfit</h3>
+          <h3>Build the look</h3>
           <ul className="lookbook-pieces">
             {look.formula.map((piece) => (
               <li key={piece}>{piece}</li>
             ))}
           </ul>
-          <details className="lookbook-rationale">
-            <summary>Why Bee chose it</summary>
+          <section className="lookbook-stylist-notes" aria-label="How to wear this look">
+            <h3>How to wear it</h3>
             <dl>
               <dt>Fit</dt>
               <dd>{look.fit}</dd>
@@ -137,7 +141,7 @@ export function GuideLookbook({
               <dt>Fabric</dt>
               <dd>{look.fabric}</dd>
             </dl>
-          </details>
+          </section>
           {sample ? (
             <a className="studio-primary lookbook-start" href="/app">
               Create my own looks <ArrowRight size={16} />

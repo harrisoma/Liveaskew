@@ -1,3 +1,4 @@
+import { PersonalEdit } from "./components/PersonalEdit";
 import type { ProductMatches } from "@/lib/shopping-profile";
 import { useEffect, useState } from "react";
 import { StyleBlueprintDocument } from "@/mobile/components/StyleBlueprint";
@@ -20,11 +21,12 @@ export function StyleGuidePreview() {
     };
   }, []);
   return (
-    <main className="studio-scroll studio-preview">
+    <main className="studio-scroll studio-preview personal-style-guide">
       <div className="studio-toolbar">
         <span>LiveAskew · Sample lookbook</span>
         <a href="/app">Open my guide</a>
       </div>
+      <PersonalEdit guide={studioSample} looks={sampleGuideLooks} sample />
       <GuideLookbook looks={sampleGuideLooks} sample />
       <details className="studio-document studio-reference">
         <summary>About this sample</summary>
