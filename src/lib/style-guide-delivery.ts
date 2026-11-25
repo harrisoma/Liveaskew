@@ -44,6 +44,16 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
         .filter((look) => look.tryOnUrl && look.tryOnUrl !== "self" && !look.renderError)
         .map((look) => look.tryOnUrl),
     ).size === STYLE_GUIDE_LOOK_COUNT;
+  const weekPieces = new Set(
+    week.flatMap((look) => look.formula.map((piece) => piece.toLowerCase().trim())),
+  ).size;
+  const coordinatedWeek = weekPieces >= 12 && weekPieces <= 15;
+  const capsuleNames = new Set(
+    guide?.capsule.map((piece) => piece.name.toLowerCase().trim()) ?? [],
+  );
+  const wardrobeMatches = week.every((look) =>
+    look.formula.every((piece) => capsuleNames.has(piece.toLowerCase().trim())),
+  );
   const variations = guide?.stylingVariations?.length ?? 0;
   const capsule = guide?.capsule.length ?? 0;
   const ready = Boolean(
@@ -53,6 +63,8 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     uniqueFormulas &&
     uniqueTitles &&
     completeNotes &&
+    coordinatedWeek &&
+    wardrobeMatches &&
     images === STYLE_GUIDE_LOOK_COUNT &&
     distinctImages &&
     capsule >= 12 &&
@@ -67,12 +79,16 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
       uniqueDays &&
       uniqueFormulas &&
       uniqueTitles &&
-      completeNotes
+      completeNotes &&
+      coordinatedWeek
     )
       ? ["Seven distinct, fully styled weekly outfits"]
       : []),
     ...(!(images === STYLE_GUIDE_LOOK_COUNT && distinctImages)
       ? ["Seven loaded, distinct personal outfit images"]
+      : []),
+    ...(!wardrobeMatches
+      ? ["Wardrobe pieces matching all seven outfit formulas; update your guide from the interview"]
       : []),
     ...(!(capsule >= 12 && capsule <= 15) ? ["A coordinated 12–15-piece wardrobe"] : []),
     ...(!(variations >= STYLE_GUIDE_MIN_VARIATIONS && variations <= STYLE_GUIDE_MAX_VARIATIONS)

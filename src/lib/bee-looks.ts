@@ -50,7 +50,12 @@ export function completeWeeklyGuide(looks: GeneratedLook[]): boolean {
       .sort()
       .join("|"),
   );
+  const wardrobe = new Set(
+    looks.flatMap((look) => look.formula.map((piece) => piece.toLowerCase().trim())),
+  );
   return (
+    wardrobe.size >= 12 &&
+    wardrobe.size <= 15 &&
     looks.length === 7 &&
     new Set(formulas).size === 7 &&
     new Set(looks.map((look) => look.title.toLowerCase().trim())).size === 7

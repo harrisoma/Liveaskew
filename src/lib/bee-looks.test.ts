@@ -30,7 +30,12 @@ describe("completeWeeklyGuide", () => {
   const week = Array.from({ length: 7 }, (_, i) => ({
     ...look,
     title: `Day ${i + 1}`,
-    formula: [`Day ${i + 1} blouse`, "Charcoal wool trouser", "Leather loafer"],
+    formula: [
+      `Day ${i + 1} blouse`,
+      i % 2 ? "Navy skirt" : "Charcoal wool trouser",
+      "Leather loafer",
+      i % 2 ? "Gold hoops" : "Tan tote",
+    ],
   }));
   it("requires all seven different looks", () => {
     expect(completeWeeklyGuide(week)).toBe(true);
@@ -47,5 +52,20 @@ describe("completeWeeklyGuide", () => {
     expect(completeWeeklyGuide([...week.slice(0, 6), { ...week[6], title: week[0].title }])).toBe(
       false,
     );
+  });
+  it("requires a reusable 12–15-piece wardrobe across the week", () => {
+    expect(
+      completeWeeklyGuide(
+        week.map((look, i) => ({
+          ...look,
+          formula: [`Top ${i}`, `Bottom ${i}`, `Shoe ${i}`, `Bag ${i}`],
+        })),
+      ),
+    ).toBe(false);
+    expect(
+      completeWeeklyGuide(
+        week.map((look, i) => ({ ...look, formula: [`Top ${i}`, "One skirt", "One shoe"] })),
+      ),
+    ).toBe(false);
   });
 });

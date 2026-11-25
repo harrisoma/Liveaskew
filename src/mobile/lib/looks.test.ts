@@ -5,7 +5,12 @@ vi.mock("./api", () => ({ apiFetch }));
 const week = Array.from({ length: 7 }, (_, i) => ({
   title: `Look ${i + 1}`,
   occasion: "Everyday",
-  formula: [`Blouse ${i + 1}`, "Midi skirt", "Flats"],
+  formula: [
+    `Blouse ${i + 1}`,
+    i % 2 ? "Midi skirt" : "Jeans",
+    "Flats",
+    i % 2 ? "Gold hoops" : "Tan bag",
+  ],
   fit: "Easy fit",
   feel: "Confident",
   fabric: "Soft cotton",

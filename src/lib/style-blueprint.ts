@@ -21,45 +21,58 @@ export const capsulePiece = z.object({
   hex: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   reason: line,
 });
-export const blueprintSchema = z.object({
-  stylingVariations: z
-    .array(
-      z.object({
-        title: line,
-        instruction: line,
-        pieceIds: z
-          .array(z.string().regex(/^piece-(?:[1-9]|1[0-2])$/))
-          .min(1)
-          .max(4),
+export const blueprintSchema = z
+  .object({
+    stylingVariations: z
+      .array(
+        z.object({
+          title: line,
+          instruction: line,
+          pieceIds: z
+            .array(z.string().regex(/^piece-(?:[1-9]|1[0-5])$/))
+            .min(1)
+            .max(4),
+        }),
+      )
+      .min(2)
+      .max(3)
+      .optional(),
+    title: line,
+    archetype: line,
+    intro: line,
+    intent: lines,
+    palette: z.object({
+      basis: line,
+      neutrals: z.array(color).min(2).max(4),
+      accents: z.array(color).min(2).max(4),
+      consider: lines,
+    }),
+    silhouette: z.object({ basis: line, cuts: lines, fabrics: lines, tailoring: lines }),
+    capsule: z.array(capsulePiece).min(12).max(15),
+    gaps: z
+      .array(z.object({ item: line, why: line, priority: z.enum(["first", "later"]) }))
+      .min(2)
+      .max(5),
+    finishing: z.object({
+      foundations: lines,
+      shoes: lines,
+      accessories: lines,
+      grooming: lines,
+      shoppingChecklist: lines,
+    }),
+  })
+  .superRefine((guide, ctx) => {
+    guide.stylingVariations?.forEach((variation, index) =>
+      variation.pieceIds.forEach((id) => {
+        if (Number(id.slice(6)) > guide.capsule.length)
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["stylingVariations", index, "pieceIds"],
+            message: "A styling variation must reference a piece in this wardrobe.",
+          });
       }),
-    )
-    .min(2)
-    .max(3)
-    .optional(),
-  title: line,
-  archetype: line,
-  intro: line,
-  intent: lines,
-  palette: z.object({
-    basis: line,
-    neutrals: z.array(color).min(2).max(4),
-    accents: z.array(color).min(2).max(4),
-    consider: lines,
-  }),
-  silhouette: z.object({ basis: line, cuts: lines, fabrics: lines, tailoring: lines }),
-  capsule: z.array(capsulePiece).length(12),
-  gaps: z
-    .array(z.object({ item: line, why: line, priority: z.enum(["first", "later"]) }))
-    .min(2)
-    .max(5),
-  finishing: z.object({
-    foundations: lines,
-    shoes: lines,
-    accessories: lines,
-    grooming: lines,
-    shoppingChecklist: lines,
-  }),
-});
+    );
+  });
 export type StyleBlueprint = z.infer<typeof blueprintSchema>;
 export type CapsulePiece = z.infer<typeof capsulePiece>;
 export function parseBlueprint(text: string): StyleBlueprint {
@@ -69,12 +82,13 @@ export function parseBlueprint(text: string): StyleBlueprint {
   const counts = (role: CapsulePiece["role"]) =>
     document.capsule.filter((p) => p.role === role).length;
   if (
-    counts("top") !== 3 ||
-    counts("bottom") + counts("dress") !== 4 ||
-    counts("bottom") < 1 ||
-    counts("layer") !== 1 ||
-    counts("shoe") !== 2 ||
-    counts("accessory") !== 2
+    counts("top") + counts("dress") < 1 ||
+    counts("bottom") + counts("dress") < 1 ||
+    counts("top") + counts("bottom") + counts("dress") + counts("layer") < 6 ||
+    counts("shoe") < 2 ||
+    counts("accessory") < 2 ||
+    new Set(document.capsule.map((piece) => piece.name.toLowerCase().trim())).size !==
+      document.capsule.length
   )
     throw Error("incomplete_capsule");
   return document;

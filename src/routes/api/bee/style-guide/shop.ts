@@ -12,7 +12,7 @@ import {
   retailerProductMatchesPiece,
 } from "@/lib/retail-products.server";
 const input = z.object({
-  pieceId: z.string().regex(/^piece-(?:[1-9]|1[0-2])$/),
+  pieceId: z.string().regex(/^piece-(?:[1-9]|1[0-5])$/),
   url: z.string().url().max(1000),
   variantId: z.string().regex(/^\d{1,20}$/),
 });

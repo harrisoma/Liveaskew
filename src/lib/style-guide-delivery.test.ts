@@ -58,4 +58,17 @@ describe("seven-look delivery standard", () => {
         .ready,
     ).toBe(false);
   });
+  it("requires the pictured outfit pieces to belong to the guide wardrobe", () => {
+    expect(
+      styleGuideDelivery(
+        {
+          ...studioSample,
+          capsule: studioSample.capsule.map((piece, i) =>
+            i === 0 ? { ...piece, name: "Unrelated item" } : piece,
+          ),
+        },
+        week,
+      ).ready,
+    ).toBe(false);
+  });
 });

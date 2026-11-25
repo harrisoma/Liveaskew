@@ -151,7 +151,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
   {
     title: "One dress. Your whole morning.",
     occasion: "Errands & coffee",
-    formula: ["Blue cotton midi shirtdress", "Ivory sneakers", "Chocolate crossbody bag"],
+    formula: ["Blue cotton midi shirtdress", "Ivory everyday sneakers", "Chocolate crossbody bag"],
     fit: "A relaxed skirt gives you room to walk and sit; the tie waist adjusts without a rigid waistband.",
     feel: "For a sample morning of errands and coffee: one easy outfit, hands free, comfortable on foot.",
     fabric:
@@ -163,7 +163,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
     formula: [
       "Ivory linen shirt",
       "Navy fluid midi skirt",
-      "Chocolate loafers",
+      "Chocolate leather loafers",
       "Small gold hoops",
     ],
     fit: "A loosely tucked shirt and fluid skirt create definition without a close fit through the hips.",
@@ -174,7 +174,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
   {
     title: "Room to move. Nothing to fuss with.",
     occasion: "An easy afternoon",
-    formula: ["Olive cotton midi dress", "Ivory sneakers", "Chocolate crossbody bag"],
+    formula: ["Olive cotton midi dress", "Ivory everyday sneakers", "Chocolate crossbody bag"],
     fit: "A gathered midi skirt gives sitting and walking room. Check the armholes for your preferred coverage.",
     feel: "For a sample afternoon outside: an uncomplicated dress, walkable shoes, and a bag that leaves your hands free.",
     fabric:
@@ -199,7 +199,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
     formula: [
       "Soft blue cotton tee",
       "Indigo relaxed jeans",
-      "Ivory sneakers",
+      "Ivory everyday sneakers",
       "Chocolate crossbody bag",
     ],
     fit: "Try a loose front tuck if comfortable; keep enough ease to sit and move.",
@@ -226,7 +226,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
     formula: [
       "Ivory linen shirt",
       "Olive cotton midi dress",
-      "Ivory sneakers",
+      "Ivory everyday sneakers",
       "Chocolate crossbody bag",
     ],
     fit: "Wear the shirt open, roll the sleeves and let the dress move freely underneath.",
