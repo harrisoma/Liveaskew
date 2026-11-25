@@ -1,18 +1,31 @@
+import { SampleOutfit } from "./SampleOutfit";
 import { SampleGarment } from "./SampleGarment";
 import { useState } from "react";
 import { ArrowRight, Bookmark, Check, CalendarDays, MessageCircle } from "lucide-react";
 import { lookPhoto, type GuideLook } from "../lib/storage";
 import { isoDay } from "@/lib/honey";
 
-function PersonalOutfitImage({ look }: { look: GuideLook }) {
+function PersonalOutfitImage({
+  look,
+  onImageReady,
+  onImageUnavailable,
+}: {
+  look: GuideLook;
+  onImageReady?: (look: GuideLook) => void;
+  onImageUnavailable?: (look: GuideLook) => void;
+}) {
   const [failed, setFailed] = useState<string | null>(null);
   const image = lookPhoto(look, null);
   return image && failed !== image ? (
     <img
       src={image}
       alt={look.formula.join(", ")}
-      loading="lazy"
-      onError={() => setFailed(image)}
+      loading="eager"
+      onLoad={() => onImageReady?.(look)}
+      onError={() => {
+        setFailed(image);
+        onImageUnavailable?.(look);
+      }}
     />
   ) : (
     <div className="gallery-image-pending">
@@ -32,14 +45,24 @@ export function GuideLookbook({
   onSaveLook,
   onRestyle,
   onPlanLook,
-}: GuideActions & { looks: GuideLook[]; sample?: boolean }) {
+  onImageReady,
+  onImageUnavailable,
+}: GuideActions & {
+  looks: GuideLook[];
+  sample?: boolean;
+  onImageReady?: (look: GuideLook) => void;
+  onImageUnavailable?: (look: GuideLook) => void;
+}) {
   const [selected, setSelected] = useState<string | null>(null);
   const [planning, setPlanning] = useState(false);
   const [date, setDate] = useState(() => isoDay(new Date()));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [failedImage, setFailedImage] = useState<string | null>(null);
-  const ordered = [...looks].sort((a, b) => (a.guideDay ?? 99) - (b.guideDay ?? 99));
+  const guideLooks = looks.some((look) => look.guideDay)
+    ? looks.filter((look) => look.guideDay && look.guideDay >= 1 && look.guideDay <= 7)
+    : looks;
+  const ordered = [...guideLooks].sort((a, b) => (a.guideDay ?? 99) - (b.guideDay ?? 99));
   const look = ordered.find((l) => l.id === selected) ?? ordered[0];
   if (!look)
     return (
@@ -81,7 +104,7 @@ export function GuideLookbook({
         </div>
         <p>
           {sample
-            ? "Three warm-weather looks. Explore each one."
+            ? "Seven complete outfits, built from one coordinated wardrobe."
             : "Choose a look. Make it yours. Get on with your day."}
         </p>
       </header>
@@ -99,14 +122,13 @@ export function GuideLookbook({
               }}
             >
               {sample ? (
-                <div
-                  className="lookbook-sample-image"
-                  role="img"
-                  aria-label={`AI outfit illustration: ${item.formula.join(", ")}`}
-                  style={{ backgroundPosition: `${i * 50}% center` }}
-                />
+                <SampleOutfit index={i} description={item.formula.join(", ")} />
               ) : (
-                <PersonalOutfitImage look={item} />
+                <PersonalOutfitImage
+                  look={item}
+                  onImageReady={onImageReady}
+                  onImageUnavailable={onImageUnavailable}
+                />
               )}
               <span className="gallery-occasion">{item.occasion}</span>
               <strong>{item.title}</strong>
@@ -118,17 +140,15 @@ export function GuideLookbook({
       <div className="lookbook-stage">
         <figure className="lookbook-visual">
           {sample ? (
-            <div
-              className="lookbook-sample-image"
-              role="img"
-              aria-label={`AI illustration: ${look.formula.join(", ")}`}
-              style={{ backgroundPosition: `${position * 50}% center` }}
-            />
+            <SampleOutfit index={position} description={look.formula.join(", ")} />
           ) : photo && failedImage !== photo ? (
             <img
               src={photo}
               alt={`${look.title}: ${look.formula.join(", ")}`}
-              onError={() => setFailedImage(photo)}
+              onError={() => {
+                setFailedImage(photo);
+                onImageUnavailable?.(look);
+              }}
             />
           ) : (
             <div className="lookbook-pending">
@@ -162,6 +182,10 @@ export function GuideLookbook({
                   [4, 9, 10],
                   [0, 3, 8, 11],
                   [6, 9, 10],
+                  [1, 5, 8, 11],
+                  [2, 5, 9, 10],
+                  [1, 3, 7, 8, 11],
+                  [0, 6, 9, 10],
                 ][position] ?? []
               ).map((pieceIndex, i) => (
                 <figure key={pieceIndex}>

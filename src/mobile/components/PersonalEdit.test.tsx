@@ -20,7 +20,7 @@ describe("Personal Edit", () => {
   it("labels sample imagery as illustrative", () => {
     const html = renderToStaticMarkup(<PersonalEdit guide={studioSample} looks={[]} sample />);
     expect(html).toContain("Fictional client");
-    expect(html).toContain("AI-created sample outfit illustration");
+    expect(html).toContain("AI outfit illustration:");
   });
   it("uses the member's own photo and name when an outfit is not ready", () => {
     const html = renderToStaticMarkup(

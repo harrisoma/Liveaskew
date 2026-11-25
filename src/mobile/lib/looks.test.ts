@@ -23,6 +23,16 @@ describe("first seven-day guide", () => {
     expect(body.count).toBe(7);
     expect(body).not.toHaveProperty("selfie");
   });
+  it("defaults a new guide to seven and an occasion to one", async () => {
+    apiFetch.mockResolvedValueOnce(Response.json({ looks: week }));
+    expect((await generateLooks({ interview: {} })).looks).toHaveLength(7);
+    expect(JSON.parse(apiFetch.mock.calls[0][1].body).count).toBe(7);
+    apiFetch.mockResolvedValueOnce(Response.json({ looks: [week[0]] }));
+    expect(
+      (await generateLooks({ interview: {}, occasion: { title: "Lunch" } })).looks,
+    ).toHaveLength(1);
+    expect(JSON.parse(apiFetch.mock.calls[1][1].body).count).toBe(1);
+  });
   it("does not replace an incomplete week or offline failure with sample looks", async () => {
     apiFetch.mockResolvedValueOnce(Response.json({ looks: week.slice(0, 3) }));
     expect(await generateLooks({ interview: {}, count: 7 })).toEqual({

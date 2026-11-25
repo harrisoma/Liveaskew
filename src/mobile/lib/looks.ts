@@ -27,13 +27,14 @@ export async function generateLooks(opts: {
   looks: GuideLook[];
   source: "bee" | "local" | "locked" | "limited" | "unavailable";
 }> {
+  const count = opts.count ?? (opts.occasion ? 1 : 7);
   try {
     const res = await apiFetch("/api/bee/looks", {
       method: "POST",
       body: JSON.stringify({
         interview: opts.interview,
         occasion: opts.occasion,
-        count: opts.count ?? 3,
+        count,
       }),
     });
     if (res.status === 402) return { looks: [], source: "locked" };
@@ -41,7 +42,7 @@ export async function generateLooks(opts: {
     if (res.ok) {
       const json = (await res.json()) as { looks?: GeneratedLook[] };
       const looks = (json.looks ?? []).map((l) => toGuideLook({ ...l, id: lookId(l.title) }));
-      if (opts.count === 7) {
+      if (count === 7) {
         if (!completeWeeklyGuide(json.looks ?? [])) return { looks: [], source: "unavailable" };
         return {
           looks: looks.map((look, index) => ({ ...look, guideDay: index + 1 })),
@@ -54,9 +55,8 @@ export async function generateLooks(opts: {
     /* offline — local guide */
   }
   // Never substitute an offline sample for a requested seven-day guide.
-  if (opts.count === 7) return { looks: [], source: "unavailable" };
+  if (count === 7) return { looks: [], source: "unavailable" };
   const local = looksFromInterview(opts.interview).map(toGuideLook);
-  const count = opts.count ?? local.length;
   return {
     looks: local
       .slice(0, count)

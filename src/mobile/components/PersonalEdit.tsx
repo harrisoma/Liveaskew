@@ -1,3 +1,4 @@
+import { SampleOutfit } from "./SampleOutfit";
 import { useState } from "react";
 import type { StyleBlueprint } from "@/lib/style-blueprint";
 import { lookPhoto, type GuideLook } from "../lib/storage";
@@ -39,6 +40,7 @@ export function PersonalEdit({
         <nav className="personal-chapters" aria-label="Your style guide chapters">
           <a href="#outfit-playbook">The Outfit Playbook</a>
           <a href="#studio-capsule">The Wardrobe Edit</a>
+          <a href="#styling-variations">Styling variations</a>
           <a href="#studio-silhouette">Fit & fabric</a>
           <a href="#studio-shopping">Shopping priorities</a>
           <a href="#studio-finishing">Finishing touches</a>
@@ -46,10 +48,9 @@ export function PersonalEdit({
       </div>
       {sample ? (
         <figure className="personal-edit-photo">
-          <div
-            className="lookbook-sample-image"
-            role="img"
-            aria-label="AI-created sample outfit illustration"
+          <SampleOutfit
+            index={0}
+            description="Blue cotton midi shirtdress, ivory sneakers and chocolate crossbody bag"
           />
           <figcaption>
             Illustrative style direction <span>Fictional client</span>

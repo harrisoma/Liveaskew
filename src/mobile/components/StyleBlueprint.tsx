@@ -1,3 +1,4 @@
+import { styleGuideDelivery } from "@/lib/style-guide-delivery";
 import { SampleGarment } from "./SampleGarment";
 import { PersonalEdit } from "./PersonalEdit";
 import { GuideLookbook, type GuideActions } from "./GuideLookbook";
@@ -132,6 +133,41 @@ export function StyleBlueprintDocument({
           ))}
         </div>
       </section>
+      {guide.stylingVariations && (
+        <section
+          className="styling-variations"
+          id="styling-variations"
+          aria-labelledby="styling-variations-title"
+        >
+          <p className="personal-section-label">Make it yours</p>
+          <h2 id="styling-variations-title">Small changes. A different feeling.</h2>
+          <div className="variation-grid">
+            {guide.stylingVariations.map((variation) => (
+              <article key={variation.title}>
+                <h3>{variation.title}</h3>
+                <div className="variation-pieces">
+                  {variation.pieceIds.map((id) => {
+                    const index = Number(id.slice(6)) - 1;
+                    const piece = guide.capsule[index];
+                    const product = productFor(index);
+                    return (
+                      <figure key={id}>
+                        {sampleIllustrations ? (
+                          <SampleGarment index={index} name={piece.name} />
+                        ) : product?.image ? (
+                          <img src={product.image} alt={product.title} loading="lazy" />
+                        ) : null}
+                        <figcaption>{piece.name}</figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+                <p>{variation.instruction}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       <section className="wardrobe-decisions" aria-label="Your wardrobe decisions">
         <div>
           <h3>Keep & repeat</h3>
@@ -377,12 +413,20 @@ export function StyleBlueprint({
   onLooks: () => void;
   notice?: string | null;
 }) {
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(() => new Set());
   const [guide, setGuide] = useState<Blueprint | null>(null),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null),
     [products, setProducts] = useState<ProductMatches | null>(null),
     [shoppingBusy, setShoppingBusy] = useState(false);
+  const delivery = styleGuideDelivery(
+    guide,
+    looks.map((look) => ({
+      ...look,
+      tryOnUrl: look.tryOnUrl && loadedImages.has(look.tryOnUrl) ? look.tryOnUrl : null,
+    })),
+  );
   const [editingInterview, setEditingInterview] = useState(false),
     [savedProfile, setSavedProfile] = useState<ShoppingProfile | null>(null);
   async function editInterview() {
@@ -518,11 +562,41 @@ export function StyleBlueprint({
           </button>
         </div>
       </div>
+      <p className="guide-delivery-status" role="status">
+        {delivery.ready ? "Your seven-look guide is ready" : "Your guide is in progress"} ·{" "}
+        {delivery.looks}/7 outfits · {delivery.images}/7 personal images · {delivery.variations}{" "}
+        styling variations
+      </p>
+      {!delivery.ready && (
+        <div className="guide-delivery-checklist">
+          <p>Still needed for your finished guide:</p>
+          <ul>
+            {delivery.missing.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {guide && (
         <PersonalEdit guide={guide} looks={looks} memberName={memberName} portrait={portrait} />
       )}
       <GuideLookbook
         looks={looks}
+        onImageReady={(look) => {
+          if (look.tryOnUrl)
+            setLoadedImages((current) =>
+              current.has(look.tryOnUrl!) ? current : new Set([...current, look.tryOnUrl!]),
+            );
+        }}
+        onImageUnavailable={(look) => {
+          if (look.tryOnUrl)
+            setLoadedImages((current) => {
+              if (!current.has(look.tryOnUrl!)) return current;
+              const next = new Set(current);
+              next.delete(look.tryOnUrl!);
+              return next;
+            });
+        }}
         onSaveLook={onSaveLook}
         onRestyle={onRestyle}
         onPlanLook={onPlanLook}

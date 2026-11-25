@@ -22,6 +22,20 @@ export const capsulePiece = z.object({
   reason: line,
 });
 export const blueprintSchema = z.object({
+  stylingVariations: z
+    .array(
+      z.object({
+        title: line,
+        instruction: line,
+        pieceIds: z
+          .array(z.string().regex(/^piece-(?:[1-9]|1[0-2])$/))
+          .min(1)
+          .max(4),
+      }),
+    )
+    .min(2)
+    .max(3)
+    .optional(),
   title: line,
   archetype: line,
   intro: line,
