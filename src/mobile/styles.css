@@ -3412,3 +3412,181 @@ button.neo-raised-sm:active:not(:disabled) {
 .guide-review-findings li {
   margin-block: 10px;
 }
+
+/* LiveAskew editorial app identity */
+.la-web-shell,
+.la-app {
+  color-scheme: dark;
+  --bg: #070706;
+  --card: #171613;
+  --fill: #24211b;
+  --fill-strong: #302a20;
+  --separator: rgba(224, 184, 108, 0.23);
+  --label: #fffdf8;
+  --label-2: #cec8bc;
+  --label-3: #9d978b;
+  --bar: rgba(10, 9, 8, 0.94);
+  --ink: #fffdf8;
+  --gold: #e5bd72;
+  --gold-bright: #e5bd72;
+  --on-gold: #171006;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.22);
+  --shadow-lift: 0 12px 32px rgba(0, 0, 0, 0.38);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --font-display: "LiveAskew Editorial", Georgia, serif;
+  background: var(--bg);
+  color: var(--label);
+}
+.la-app .la-display,
+.la-web-aside .la-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.la-app .la-kicker {
+  color: var(--gold);
+}
+.la-app .la-topbar {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--separator);
+  background: #090806;
+}
+.la-app .la-wordmark {
+  font-family: var(--font-body);
+  color: var(--label);
+}
+.la-app .neo-raised,
+.la-app .neo-raised-sm,
+.la-app .neo-choice {
+  border: 1px solid var(--separator);
+}
+.la-app .neo-icon-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--separator);
+  border-radius: 13px;
+}
+.la-app .neo-btn {
+  width: auto;
+  max-width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--separator);
+  border-radius: 13px;
+  font-size: 0.95rem;
+}
+.la-app .neo-btn.w-full {
+  width: 100%;
+}
+.la-app .neo-btn-gold {
+  border-color: var(--gold-bright);
+  color: var(--on-gold);
+}
+.la-app .neo-btn-ink {
+  background: var(--card);
+  color: var(--label);
+}
+.la-app .neo-input {
+  border: 1px solid var(--separator);
+}
+.la-app .la-segmented {
+  background: transparent;
+  gap: 0.45rem;
+  padding: 0;
+  overflow-x: auto;
+}
+.la-app .la-segmented button {
+  min-height: 48px;
+  border: 1px solid var(--separator);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--label-2);
+  white-space: nowrap;
+}
+.la-app .la-segmented button[aria-selected="true"] {
+  border-color: var(--gold);
+  background: #2c2416;
+  color: #fff7e8;
+}
+.la-app .la-tabbar {
+  border-top: 1px solid var(--separator);
+}
+.la-app .la-tabbar button {
+  border-radius: 12px;
+  min-height: 52px;
+}
+.la-app .la-tabbar button[aria-current="page"] {
+  color: var(--gold);
+  background: #211c13;
+}
+.la-app .la-hero {
+  border: 1px solid var(--separator);
+}
+.la-guide-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  text-align: left;
+  color: var(--label);
+  background: linear-gradient(120deg, #201b12, #100f0c 70%);
+  border: 1px solid rgba(229, 189, 114, 0.65);
+  border-radius: 16px;
+  cursor: pointer;
+}
+.la-guide-entry > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.la-guide-entry strong,
+.la-guide-entry small {
+  display: block;
+}
+.la-guide-entry strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+.la-guide-entry small {
+  margin-top: 0.2rem;
+  color: var(--label-2);
+  font-size: 0.8rem;
+}
+.la-guide-entry-icon {
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+}
+.la-guide-entry > svg {
+  color: var(--gold);
+}
+.la-app .personal-style-guide .studio-toolbar,
+.la-app .personal-style-guide .guide-delivery-checklist {
+  border-color: var(--separator);
+}
+.la-app button:focus-visible,
+.la-app a:focus-visible {
+  outline: 2px solid #f1ca81;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .la-guide-entry,
+  .la-app .la-segmented button,
+  .la-app .la-tabbar button {
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+  .la-guide-entry:active,
+  .la-app .la-segmented button:active {
+    transform: scale(0.98);
+  }
+  .la-guide-entry:hover {
+    border-color: #f5d69a;
+    background: #292116;
+  }
+}
