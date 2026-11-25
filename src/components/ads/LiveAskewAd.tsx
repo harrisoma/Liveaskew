@@ -50,7 +50,7 @@ export function LiveAskewAd({
           className="la-ad-copy"
           style={{ opacity: state.reveal, transform: `translateY(${(1 - state.reveal) * 12}px)` }}
         >
-          <h2>{state.phase === "cta" ? format.cta : format.hook}</h2>
+          <h2>{format.hook}</h2>
           <p>{format.detail}</p>
         </div>
         <div className="la-ad-footer">
