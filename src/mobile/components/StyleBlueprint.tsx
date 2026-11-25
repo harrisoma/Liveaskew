@@ -1,3 +1,6 @@
+import { STYLE_GUIDE_LOOK_COUNT } from "@/lib/style-guide-delivery";
+import { savedSetupWeek } from "../lib/setup-guide";
+import { queueWeeklyGuide } from "../lib/weekly-guide";
 import { styleGuideDelivery } from "@/lib/style-guide-delivery";
 import { SampleGarment } from "./SampleGarment";
 import { PersonalEdit } from "./PersonalEdit";
@@ -420,6 +423,26 @@ export function StyleBlueprint({
     [error, setError] = useState<string | null>(null),
     [products, setProducts] = useState<ProductMatches | null>(null),
     [shoppingBusy, setShoppingBusy] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
+  const [reviewNotice, setReviewNotice] = useState<string | null>(null);
+  async function reviewImages() {
+    const week = savedSetupWeek(looks);
+    if (!portrait || !week || reviewing) return;
+    setReviewing(true);
+    setReviewNotice(null);
+    try {
+      const result = await queueWeeklyGuide(week, portrait, { reviewOnly: true });
+      if (result.guide?.status === "attention") throw Error("attention");
+      setReviewNotice("Visual checks queued. Your saved images will be reused.");
+      window.dispatchEvent(new Event("liveaskew:guide-review"));
+    } catch {
+      setReviewNotice(
+        "Visual checks could not start. Your images are saved; check your connection and make sure all eight previews are synced.",
+      );
+    } finally {
+      setReviewing(false);
+    }
+  }
   const delivery = styleGuideDelivery(
     guide,
     looks.map((look) => ({
@@ -564,8 +587,9 @@ export function StyleBlueprint({
       </div>
       <p className="guide-delivery-status" role="status">
         {delivery.ready ? "Your eight-look guide is ready" : "Your guide is in progress"} ·{" "}
-        {delivery.looks}/7 outfits · {delivery.images}/7 personal images · {delivery.variations}{" "}
-        styling variations
+        {delivery.looks}/{STYLE_GUIDE_LOOK_COUNT} outfits · {delivery.images}/
+        {STYLE_GUIDE_LOOK_COUNT} personal images · {delivery.reviewed}/{STYLE_GUIDE_LOOK_COUNT}{" "}
+        visual checks passed · {delivery.variations} styling variations
       </p>
       {!delivery.ready && (
         <div className="guide-delivery-checklist">
@@ -575,6 +599,41 @@ export function StyleBlueprint({
               <li key={item}>{item}</li>
             ))}
           </ul>
+          {delivery.images === STYLE_GUIDE_LOOK_COUNT &&
+            delivery.reviewed < STYLE_GUIDE_LOOK_COUNT && (
+              <div className="guide-review-actions">
+                {portrait ? (
+                  <button
+                    className="studio-primary"
+                    disabled={reviewing}
+                    onClick={() => void reviewImages()}
+                  >
+                    {reviewing ? "Queuing checks…" : "Review my outfit images"}
+                  </button>
+                ) : (
+                  <p>Add your reference photo under You to review these saved images.</p>
+                )}
+                <p>Reviewing reuses your saved images. It does not request new image generation.</p>
+              </div>
+            )}
+          {reviewNotice && <p role="status">{reviewNotice}</p>}
+          {looks.some(
+            (look) =>
+              look.visualReview?.status === "failed" || look.visualReview?.status === "unavailable",
+          ) && (
+            <ul className="guide-review-findings">
+              {looks
+                .filter((look) => look.visualReview && look.visualReview.status !== "passed")
+                .map((look) => (
+                  <li key={look.id}>
+                    <strong>{look.title}</strong>:{" "}
+                    {look.visualReview!.status === "failed"
+                      ? look.visualReview!.issues.join(" ")
+                      : "Visual review unavailable. Your image is preserved; retry checks when connected."}
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
       )}
       {guide && (

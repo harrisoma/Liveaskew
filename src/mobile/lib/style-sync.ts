@@ -4,9 +4,10 @@ import { SELF_PHOTO, type GuideLook } from "./storage";
 
 /** What travels to the server for a look: never an inline photo or the selfie marker. */
 export function lookForSync(look: GuideLook): GuideLook {
+  const { visualReview: _review, ...editable } = look;
   const keepRender = look.tryOnUrl && /^https:\/\//.test(look.tryOnUrl);
   return {
-    ...look,
+    ...editable,
     tryOnUrl: keepRender ? look.tryOnUrl : null,
     tryOnKey: keepRender ? look.tryOnKey : null,
   };

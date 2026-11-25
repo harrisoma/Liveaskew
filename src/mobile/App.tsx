@@ -354,6 +354,7 @@ export function MobileApp() {
                     tryOnUrl: guide!.images[l.id],
                     tryOnKey: guide!.keys[l.id],
                     renderError: null,
+                    visualReview: guide!.reviews?.[l.id] ?? null,
                   }
                 : l,
             ),
@@ -362,12 +363,20 @@ export function MobileApp() {
             guide.error === "membership_required" && guide.status === "queued"
               ? "Your guide is saved. Previews will resume automatically when your membership is active."
               : guide.status === "ready"
-                ? "All eight outfit images are ready, including shoes and accessories."
+                ? "All eight outfit images passed their visual checks."
                 : guide.status === "attention"
-                  ? "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
+                  ? guide.error === "visual_review_failed" ||
+                    guide.error === "visual_review_inconsistent"
+                    ? "Your images are saved. Some need changes before approval; open your Style Guide for the review findings."
+                    : guide.error === "visual_review_required" ||
+                        guide.error === "visual_review_unavailable"
+                      ? "Your images are saved, but visual checks are incomplete. Open your Style Guide to review them without regenerating."
+                      : guide.error === "guide_changed"
+                        ? "Your outfit details changed. Your saved images need to be checked against the updated guide."
+                        : "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
                   : guide.status === "expired"
                     ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
-                    : `${guide.completed} of 8 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
+                    : `${guide.completed} of 8 images generated; ${guide.reviewed ?? 0} passed visual checks. Bee is continuing automatically; you can leave this page.`,
           );
           setRenderingId(["queued", "running"].includes(guide.status) ? guide.id : null);
           if (["ready", "attention", "expired"].includes(guide.status)) return;
@@ -384,10 +393,12 @@ export function MobileApp() {
       void refresh();
     };
     window.addEventListener("online", resume);
+    window.addEventListener("liveaskew:guide-review", resume);
     return () => {
       active = false;
       clearTimeout(timer);
       window.removeEventListener("online", resume);
+      window.removeEventListener("liveaskew:guide-review", resume);
     };
   }, [ready, snap.verified, snap.phase, snap.selfie, weeklyIds]);
 
@@ -432,6 +443,7 @@ export function MobileApp() {
     const next = {
       ...look,
       tryOnUrl: result.url || null,
+      visualReview: result.cached ? (look.visualReview ?? null) : null,
       tryOnKey: result.url ? key : null,
       renderError: error,
     };

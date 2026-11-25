@@ -9,3 +9,9 @@
 7. Before deploying eight-look generation, apply `20261124210000_eight_look_guides.sql` so new jobs accept eight look IDs while existing seven-look receipts remain valid.
 
 Desktop uses the available page width, with a wide content area and multi-column guide. Mobile retains its touch layout. There is no simulated phone frame on computers.
+
+## Visual review and recovery
+
+After eight image receipts exist, each leased worker invocation reviews one stored image against the temporary reference and its original garment brief. Generated images remain visible but unapproved. The guide becomes ready only after the current rubric passes for every image and deterministic duplicate/reference checks pass. Transient review failures retry review only; no second image-generation charge is made. Permanent visual failures preserve the image and expose reasons in the guide. Explicit review-only requests reject missing cached assets. Legacy completed guides are not automatically sent for a new paid review when opened.
+
+Review results are stored in the existing server-only `weekly_guides.results` JSON, with no schema migration or provider/secret change. Test rejection, provider outage, edited brief, duplicate images, reference expiry, membership pause and review-only requests before releasing. Live image-quality calibration remains separate from mocked provider tests.

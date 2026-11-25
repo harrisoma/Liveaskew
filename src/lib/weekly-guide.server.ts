@@ -1,12 +1,35 @@
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
 import { createHash, randomUUID } from "node:crypto";
 import { supabaseAdmin as db } from "@/integrations/supabase/client.server";
 import { imageBytes } from "./tryon-provider.server";
 import { renderOwnedLook } from "./tryon-job.server";
+import { reviewOutfitImage } from "./style-guide-review.server";
+import {
+  visualBrief,
+  consistentReviewImages,
+  visualReviewPassed,
+  visualReviewPassedForBrief,
+  type OutfitVisualReview,
+} from "./style-guide-visual-review";
+import { guardAi } from "./entitlement.server";
 import { cacheKey } from "@/mobile/lib/storage";
 import type { GuideLook } from "@/mobile/lib/storage";
 import type { Json } from "@/integrations/supabase/types";
 
-type Result = { path: string; key: string };
+export type GuideImageResult = {
+  path: string;
+  key: string;
+  brief?: string;
+  generation?: {
+    model: string | null;
+    requestId: string | null;
+    standardVersion: string | null;
+    costUsd: number | null;
+  };
+  review?: OutfitVisualReview;
+  reviewAttempts?: number;
+};
+type Result = GuideImageResult;
 export type WeeklyGuideRow = {
   id: string;
   user_id: string;
@@ -27,7 +50,12 @@ export type WeeklyGuideRow = {
 };
 const store = () => db.storage.from("try-ons");
 
-export async function startWeeklyGuide(user: string, ids: string[], photo: string) {
+export async function startWeeklyGuide(
+  user: string,
+  ids: string[],
+  photo: string,
+  options: { reviewOnly?: boolean } = {},
+) {
   const image = imageBytes(photo);
   if (ids.length !== 8 || new Set(ids).size !== 8) throw Error("eight_owned_looks_required");
   const { data: looks, error } = await db
@@ -62,8 +90,18 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     .maybeSingle();
   const restartable =
     existing?.status === "expired" ||
+    (existing?.status === "ready" &&
+      ids.some((id, i) => {
+        const previous = (existing.results as unknown as Record<string, Result>)[id];
+        return !visualReviewPassed(
+          previous?.review,
+          looks.find((l) => l.id === ids[i])!.look as unknown as GuideLook,
+        );
+      })) ||
     (existing?.status === "attention" &&
-      ["membership_required", "guide_photo_unavailable"].includes(existing.last_error ?? ""));
+      ["membership_required", "guide_photo_unavailable", "visual_review_unavailable"].includes(
+        existing.last_error ?? "",
+      ));
   if (existing && !restartable) return existing as unknown as WeeklyGuideRow;
   const { data: active } = await db
     .from("weekly_guides")
@@ -98,9 +136,29 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     const index = cacheKeys.indexOf(render.cache_key);
     if (render.image_path && index >= 0) {
       const lookId = ids[index];
-      results[lookId] = { path: render.image_path, key: cacheKey(photo, lookId) };
+      const old = (existing?.results as unknown as Record<string, Result> | undefined)?.[lookId];
+      const look = looks.find((l) => l.id === lookId)!.look as unknown as GuideLook;
+      const sameReview =
+        old?.path === render.image_path &&
+        old.review?.referenceHash === createHash("sha256").update(photo).digest("hex") &&
+        old.review.brief === visualBrief(look);
+      results[lookId] = {
+        path: render.image_path,
+        key: cacheKey(photo, lookId),
+        brief: visualBrief(look),
+        ...(sameReview
+          ? {
+              review: old.review,
+              reviewAttempts: old.review.status === "unavailable" ? 0 : old.reviewAttempts,
+            }
+          : {}),
+        ...(old?.path === render.image_path && old.generation
+          ? { generation: old.generation }
+          : {}),
+      };
     }
   }
+  if (options.reviewOnly && ids.some((id) => !results[id])) throw Error("review_images_missing");
   const id = existing?.id ?? randomUUID(),
     path = `${user}/guide-input/${id}-${randomUUID()}.${image.type.split("/")[1]}`;
   const uploaded = await store().upload(path, image.bytes, {
@@ -112,7 +170,7 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     photo_path: path,
     photo_type: image.type,
     results,
-    status: ids.every((id) => results[id]) ? "ready" : "queued",
+    status: "queued",
     attempts: 0,
     lease_token: null,
     lease_until: null,
@@ -147,7 +205,6 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     if (winner) return winner as unknown as WeeklyGuideRow;
     throw Error("guide_queue_unavailable");
   }
-  if (ids.every((id) => results[id])) await store().remove([path]);
   return saved.data as unknown as WeeklyGuideRow;
 }
 
@@ -163,20 +220,47 @@ export async function weeklyGuideStatus(user: string, id?: string) {
   if (error) throw Error("guide_queue_unavailable");
   if (!data) return null;
   const row = data as unknown as WeeklyGuideRow;
+  const { data: current, error: currentError } = await db
+    .from("member_looks")
+    .select("id,look")
+    .eq("user_id", user)
+    .in("id", row.look_ids);
+  if (currentError) throw Error("guide_queue_unavailable");
+  const currentBriefs = new Map(
+    (current ?? []).map((item) => [item.id, visualBrief(item.look as unknown as GuideLook)]),
+  );
+  const reviews = Object.fromEntries(
+    row.look_ids
+      .filter((id) => row.results[id]?.review && row.results[id].brief === currentBriefs.get(id))
+      .map((id) => [id, row.results[id].review!]),
+  );
+  const reviewed = row.look_ids.filter((id) =>
+    visualReviewPassedForBrief(reviews[id], currentBriefs.get(id) ?? ""),
+  ).length;
+  const changed = row.look_ids.some(
+    (id) => row.results[id]?.brief && row.results[id].brief !== currentBriefs.get(id),
+  );
+  const unreviewed =
+    row.status === "ready" &&
+    (reviewed !== row.look_ids.length ||
+      !consistentReviewImages(row.look_ids.map((id) => reviews[id])));
   const images: Record<string, string> = {};
   for (const [look, result] of Object.entries(row.results)) {
+    if (result.brief && result.brief !== currentBriefs.get(look)) continue;
     const signed = await store().createSignedUrl(result.path, 3600);
     if (!signed.error && signed.data?.signedUrl) images[look] = signed.data.signedUrl;
   }
   return {
     id: row.id,
-    status: row.status,
-    completed: Object.keys(row.results).length,
+    status: changed || unreviewed ? "attention" : row.status,
+    completed: row.look_ids.filter((id) => row.results[id]).length,
+    reviewed,
+    reviews,
     total: row.look_ids.length,
     images,
     keys: Object.fromEntries(Object.entries(row.results).map(([id, r]) => [id, r.key])),
     lookIds: row.look_ids,
-    error: row.last_error,
+    error: changed ? "guide_changed" : unreviewed ? "visual_review_required" : row.last_error,
   };
 }
 
@@ -204,8 +288,118 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
   const dataUrl = `data:${row.photo_type};base64,${Buffer.from(await photo.data.arrayBuffer()).toString("base64")}`;
   const lookId = row.look_ids.find((id) => !row.results[id]);
   if (!lookId) {
-    await update({ status: "ready", last_error: null, lease_until: null });
-    await store().remove([row.photo_path]);
+    const pending = row.look_ids.find((id) => {
+      const result = row.results[id];
+      return (
+        !result.review ||
+        result.review.standardVersion !== STYLE_GUIDE_STANDARD.version ||
+        (result.review.status === "unavailable" && (result.reviewAttempts ?? 0) < 3)
+      );
+    });
+    if (!pending) {
+      const approved =
+        row.look_ids.every((id) =>
+          visualReviewPassedForBrief(row.results[id].review, row.results[id].brief ?? ""),
+        ) && consistentReviewImages(row.look_ids.map((id) => row.results[id].review));
+      await update({
+        status: approved ? "ready" : "attention",
+        last_error: approved
+          ? null
+          : row.look_ids.some((id) => row.results[id].review?.status === "failed")
+            ? "visual_review_failed"
+            : row.look_ids.every((id) => row.results[id].review?.status === "passed")
+              ? "visual_review_inconsistent"
+              : "visual_review_unavailable",
+        lease_until: null,
+        lease_token: null,
+      });
+      await store().remove([row.photo_path]);
+      return;
+    }
+    const { data: owned, error: ownedError } = await db
+      .from("member_looks")
+      .select("look")
+      .eq("user_id", row.user_id)
+      .eq("id", pending)
+      .single();
+    const look = owned?.look as unknown as GuideLook;
+    if (
+      ownedError ||
+      !look ||
+      !row.results[pending].brief ||
+      row.results[pending].brief !== visualBrief(look)
+    ) {
+      await update({
+        status: "attention",
+        last_error: "guide_changed",
+        lease_until: null,
+        lease_token: null,
+      });
+      return;
+    }
+    const denied = await guardAi(row.user_id, "wardrobe");
+    if (denied) {
+      await update({
+        status: "queued",
+        last_error: denied.status === 402 ? "membership_required" : "visual_review_limited",
+        lease_until: null,
+        lease_token: null,
+        not_before: new Date(Date.now() + 300000).toISOString(),
+      });
+      return;
+    }
+    const image = await store().download(row.results[pending].path);
+    if (image.error || !image.data) throw Error("review_image_unavailable");
+    const bytes = new Uint8Array(await image.data.arrayBuffer());
+    const type =
+      image.data.type ||
+      (row.results[pending].path.endsWith(".jpg")
+        ? "image/jpeg"
+        : row.results[pending].path.endsWith(".webp")
+          ? "image/webp"
+          : "image/png");
+    const review = await reviewOutfitImage(dataUrl, bytes, type, look);
+    const attempts = (row.results[pending].reviewAttempts ?? 0) + 1;
+    const permanent = review.issues.some((issue) =>
+      ["review_image_invalid", "review_image_too_large", "review_service_not_configured"].includes(
+        issue,
+      ),
+    );
+    const results = {
+      ...row.results,
+      [pending]: { ...row.results[pending], review, reviewAttempts: permanent ? 3 : attempts },
+    };
+    const done = row.look_ids.every(
+      (id) =>
+        results[id].review &&
+        (results[id].review!.status !== "unavailable" || (results[id].reviewAttempts ?? 0) >= 3),
+    );
+    const approved =
+      row.look_ids.every((id) =>
+        visualReviewPassedForBrief(results[id].review, results[id].brief ?? ""),
+      ) && consistentReviewImages(row.look_ids.map((id) => results[id].review));
+    const status = done ? (approved ? "ready" : "attention") : "queued";
+    await update({
+      results,
+      status,
+      attempts: 0,
+      lease_until: null,
+      lease_token: null,
+      last_error:
+        status === "attention"
+          ? row.look_ids.some((id) => results[id].review?.status === "failed")
+            ? "visual_review_failed"
+            : row.look_ids.every((id) => results[id].review?.status === "passed")
+              ? "visual_review_inconsistent"
+              : "visual_review_unavailable"
+          : review.status === "unavailable"
+            ? "visual_review_retrying"
+            : null,
+      not_before: new Date(
+        Date.now() + (review.status === "unavailable" ? 60000 * attempts : 0),
+      ).toISOString(),
+    });
+    if (done) await store().remove([row.photo_path]);
     return;
   }
   const rendered = await renderOwnedLook(row.user_id, {
@@ -226,6 +420,15 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
       return;
     }
     const stored = look.look as unknown as GuideLook;
+    if (body.receipt?.brief !== visualBrief(stored)) {
+      await update({
+        status: "attention",
+        last_error: "guide_changed",
+        lease_until: null,
+        lease_token: null,
+      });
+      return;
+    }
     const renderKey =
       "v3_" +
       createHash("sha256")
@@ -251,7 +454,23 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
     if (!render?.image_path) throw Error("render_receipt_unavailable");
     const results = {
       ...row.results,
-      [lookId]: { path: render.image_path, key: cacheKey(dataUrl, lookId) },
+      [lookId]: {
+        path: render.image_path,
+        key: cacheKey(dataUrl, lookId),
+        brief: visualBrief(stored),
+        generation: {
+          costUsd:
+            typeof body.receipt?.cost_usd === "number" &&
+            Number.isFinite(body.receipt.cost_usd) &&
+            body.receipt.cost_usd >= 0
+              ? body.receipt.cost_usd
+              : null,
+          model: typeof body.receipt?.model === "string" ? body.receipt.model : null,
+          requestId: typeof body.receipt?.request_id === "string" ? body.receipt.request_id : null,
+          standardVersion:
+            typeof body.receipt?.visual_standard === "string" ? body.receipt.visual_standard : null,
+        },
+      },
     };
     const saved = await db
       .from("member_looks")
@@ -261,22 +480,21 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
           tryOnUrl: body.url,
           tryOnKey: cacheKey(dataUrl, lookId),
           renderError: null,
+          visualReview: null,
         } as unknown as Json,
       })
       .eq("user_id", row.user_id)
       .eq("id", lookId);
     if (saved.error) throw Error("guide_sync_unavailable");
-    const complete = row.look_ids.every((id) => results[id]);
     await update({
       results,
-      status: complete ? "ready" : "queued",
+      status: "queued",
       attempts: 0,
       lease_until: null,
       lease_token: null,
       not_before: new Date().toISOString(),
       last_error: null,
     });
-    if (complete) await store().remove([row.photo_path]);
     return;
   }
   if (rendered.status === 202) {

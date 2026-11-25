@@ -1,3 +1,4 @@
+import type { OutfitVisualReview } from "@/lib/style-guide-visual-review";
 import type { MemberSetup } from "./member-setup";
 import type { HoneyItem } from "@/lib/honey";
 import type { LookCard, OnboardingAnswers } from "./recommend";
@@ -27,6 +28,7 @@ export function lookPhoto(look: { tryOnUrl: string | null }, selfie: string | nu
 }
 
 export type GuideLook = LookCard & {
+  visualReview?: OutfitVisualReview | null;
   guideDay?: number;
   renderError?: string | null;
   saved: boolean;

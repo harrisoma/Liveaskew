@@ -1,13 +1,60 @@
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
+import {
+  VISUAL_REVIEW_CRITERIA,
+  visualBrief,
+  type OutfitVisualReview,
+} from "./style-guide-visual-review";
 import { describe, expect, it } from "vitest";
 import { styleGuideDelivery } from "./style-guide-delivery";
 import { studioSample, sampleGuideLooks } from "@/mobile/lib/studio-sample";
 const week = sampleGuideLooks.map((look, i) => ({
   ...look,
   tryOnUrl: `https://example.com/member-${i}.png`,
+  visualReview: {
+    status: "passed",
+    standardVersion: STYLE_GUIDE_STANDARD.version,
+    brief: visualBrief(look),
+    imageHash: (i + 1).toString(16).repeat(64),
+    referenceHash: "b".repeat(64),
+    checkedAt: "2026-11-24T00:00:00Z",
+    checks: Object.fromEntries(VISUAL_REVIEW_CRITERIA.map((key) => [key, "pass"])),
+    issues: [],
+    model: "vision",
+    requestId: null,
+    costUsd: null,
+  } as OutfitVisualReview,
 }));
 describe("eight-look delivery standard", () => {
   it("marks a full, distinct, illustrated eight-look guide with variations ready", () =>
     expect(styleGuideDelivery(studioSample, week).ready).toBe(true));
+  it("rejects duplicate image bytes and inconsistent references even if individual reviews say pass", () => {
+    expect(
+      styleGuideDelivery(
+        studioSample,
+        week.map((look) => ({
+          ...look,
+          visualReview: { ...look.visualReview, imageHash: "a".repeat(64) },
+        })),
+      ).ready,
+    ).toBe(false);
+    expect(
+      styleGuideDelivery(
+        studioSample,
+        week.map((look, i) => ({
+          ...look,
+          visualReview: { ...look.visualReview, referenceHash: (i + 1).toString(16).repeat(64) },
+        })),
+      ).ready,
+    ).toBe(false);
+  });
+  it("does not call eight loaded but unreviewed images finished", () => {
+    expect(
+      styleGuideDelivery(
+        studioSample,
+        week.map((look) => ({ ...look, visualReview: null })),
+      ).ready,
+    ).toBe(false);
+  });
   it("keeps three looks, missing images and original-photo placeholders incomplete", () => {
     expect(styleGuideDelivery(studioSample, week.slice(0, 3)).ready).toBe(false);
     expect(

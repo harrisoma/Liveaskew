@@ -1,3 +1,4 @@
+import { visualBrief } from "./style-guide-visual-review";
 import { createHash, randomUUID } from "node:crypto";
 import { supabaseAdmin as db } from "@/integrations/supabase/client.server";
 import { guardAi } from "./entitlement.server";
@@ -48,7 +49,12 @@ export async function renderOwnedLook(
       .from("try-ons")
       .createSignedUrl(existing.image_path, 3600);
     if (error || !data?.signedUrl) return out({ error: "render_store_unavailable" }, 503);
-    return out({ url: data.signedUrl, source: "cache", cached: true });
+    return out({
+      url: data.signedUrl,
+      source: "cache",
+      cached: true,
+      receipt: { brief: visualBrief(look) },
+    });
   }
   if (existing?.status === "running") {
     if (Date.now() - Date.parse(existing.updated_at) > 300000) {
@@ -122,8 +128,10 @@ export async function renderOwnedLook(
       source: "onixus",
       cached: false,
       receipt: {
+        brief: visualBrief(look),
         request_id: render.requestId,
         model: render.model,
+        cost_usd: render.costUsd,
         visual_standard: render.standardVersion,
         // Generation follows the brief; it is not evidence of a completed visual review.
         visual_review: "not_reviewed",
