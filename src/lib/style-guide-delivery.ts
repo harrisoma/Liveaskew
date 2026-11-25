@@ -1,8 +1,10 @@
 import type { StyleBlueprint } from "./style-blueprint";
 
-export const STYLE_GUIDE_LOOK_COUNT = 8;
-export const STYLE_GUIDE_MIN_VARIATIONS = 2;
-export const STYLE_GUIDE_MAX_VARIATIONS = 3;
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
+
+export const STYLE_GUIDE_LOOK_COUNT = STYLE_GUIDE_STANDARD.looks;
+export const STYLE_GUIDE_MIN_VARIATIONS = STYLE_GUIDE_STANDARD.variations.min;
+export const STYLE_GUIDE_MAX_VARIATIONS = STYLE_GUIDE_STANDARD.variations.max;
 
 type DeliveryLook = {
   guideDay?: number;
@@ -47,7 +49,9 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
   const weekPieces = new Set(
     week.flatMap((look) => look.formula.map((piece) => piece.toLowerCase().trim())),
   ).size;
-  const coordinatedWeek = weekPieces >= 12 && weekPieces <= 15;
+  const coordinatedWeek =
+    weekPieces >= STYLE_GUIDE_STANDARD.capsule.min &&
+    weekPieces <= STYLE_GUIDE_STANDARD.capsule.max;
   const capsuleNames = new Set(
     guide?.capsule.map((piece) => piece.name.toLowerCase().trim()) ?? [],
   );
@@ -67,8 +71,8 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     wardrobeMatches &&
     images === STYLE_GUIDE_LOOK_COUNT &&
     distinctImages &&
-    capsule >= 12 &&
-    capsule <= 15 &&
+    capsule >= STYLE_GUIDE_STANDARD.capsule.min &&
+    capsule <= STYLE_GUIDE_STANDARD.capsule.max &&
     variations >= STYLE_GUIDE_MIN_VARIATIONS &&
     variations <= STYLE_GUIDE_MAX_VARIATIONS,
   );
@@ -90,7 +94,11 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     ...(!wardrobeMatches
       ? ["Wardrobe pieces matching all eight outfit formulas; update your guide from the interview"]
       : []),
-    ...(!(capsule >= 12 && capsule <= 15) ? ["A coordinated 12–15-piece wardrobe"] : []),
+    ...(!(
+      capsule >= STYLE_GUIDE_STANDARD.capsule.min && capsule <= STYLE_GUIDE_STANDARD.capsule.max
+    )
+      ? ["A coordinated 12–15-piece wardrobe"]
+      : []),
     ...(!(variations >= STYLE_GUIDE_MIN_VARIATIONS && variations <= STYLE_GUIDE_MAX_VARIATIONS)
       ? ["Two or three styling variations; update your guide from the interview"]
       : []),

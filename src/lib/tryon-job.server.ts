@@ -121,7 +121,13 @@ export async function renderOwnedLook(
       url: data.signedUrl,
       source: "onixus",
       cached: false,
-      receipt: { request_id: render.requestId, model: render.model },
+      receipt: {
+        request_id: render.requestId,
+        model: render.model,
+        visual_standard: render.standardVersion,
+        // Generation follows the brief; it is not evidence of a completed visual review.
+        visual_review: "not_reviewed",
+      },
     });
   } catch (error) {
     const uncertain =
