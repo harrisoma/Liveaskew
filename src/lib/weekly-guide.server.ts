@@ -149,7 +149,7 @@ export async function startWeeklyGuide(
         ...(sameReview
           ? {
               review: old.review,
-              reviewAttempts: old.review.status === "unavailable" ? 0 : old.reviewAttempts,
+              reviewAttempts: old.review?.status === "unavailable" ? 0 : old.reviewAttempts,
             }
           : {}),
         ...(old?.path === render.image_path && old.generation
