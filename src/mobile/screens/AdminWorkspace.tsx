@@ -12,6 +12,7 @@ import { ModerationScreen } from "./Moderation";
 import { NeoButton } from "../components/ui";
 import { fetchModerationQueue, type ModerationItem } from "../lib/moderation";
 import type { ChatMsg } from "../lib/storage";
+import type { Tab } from "../components/TabBar";
 
 type PreviewChatProps = {
   messages: ChatMsg[];
@@ -28,7 +29,7 @@ export function AdminWorkspace({
 }: {
   email: string | null;
   onSignOut: () => Promise<void>;
-  onOpenCustomer: () => void;
+  onOpenCustomer: (destination?: Tab | "guide") => void;
   renderChat: (props: PreviewChatProps) => ReactNode;
 }) {
   const [overview, setOverview] = useState<AdminOverview | null>(null);
@@ -110,6 +111,22 @@ export function AdminWorkspace({
           <SoundControl />
         </div>
       </header>
+      <nav className="la-admin-member-nav" aria-label="Open my LiveAskew">
+        <span>Open my app</span>
+        {(
+          [
+            ["guide", "Style Guide"],
+            ["bee", "Bee"],
+            ["honey", "Honey"],
+            ["buzz", "Buzz"],
+            ["hive", "Hive"],
+          ] as const
+        ).map(([destination, label]) => (
+          <button key={destination} type="button" onClick={() => onOpenCustomer(destination)}>
+            {label}
+          </button>
+        ))}
+      </nav>
       {view !== "home" && (
         <div className="px-5 py-2">
           <NeoButton
@@ -204,7 +221,7 @@ export function AdminWorkspace({
           onRefresh={() => void refreshOverview()}
           email={email}
           busy={busy}
-          onOpenCustomer={onOpenCustomer}
+          onOpenCustomer={() => onOpenCustomer()}
           onReports={() => void openModeration()}
           onPreview={() => {
             setNotice("");
@@ -232,7 +249,7 @@ export function AdminWorkspace({
               );
           }}
           onOpenLook={() => setView("bee")}
-          onOpenGuide={() => setNotice("Open your customer view to see your personal Style Guide.")}
+          onOpenGuide={() => onOpenCustomer("guide")}
           onDressMe={() => setNotice("Outfit generation is disabled in this layout preview.")}
         />
       )}

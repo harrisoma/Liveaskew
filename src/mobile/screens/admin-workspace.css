@@ -395,3 +395,36 @@ button.la-overview-row:hover strong {
     height: 18px;
   }
 }
+
+/* Direct access to the signed-in administrator's member experience. */
+.la-admin-member-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  overflow-x: auto;
+  flex: none;
+  border-bottom: 1px solid var(--separator);
+}
+.la-admin-member-nav span {
+  flex: none;
+  color: var(--label-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
+.la-admin-member-nav button {
+  flex: none;
+  min-height: 42px;
+  padding: 0.55rem 0.8rem;
+  color: var(--label);
+  background: var(--card);
+  border: 1px solid var(--separator);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.la-admin-member-nav button:hover,
+.la-admin-member-nav button:focus-visible {
+  border-color: var(--gold);
+  color: var(--gold);
+}
