@@ -2966,9 +2966,7 @@ button.neo-raised-sm:active:not(:disabled) {
 .sample-garment-image {
   width: 100%;
   aspect-ratio: 1;
-  background-image: url("/images/style-guide/sample-capsule.png");
-  background-size: 400% 300%;
-  background-repeat: no-repeat;
+  display: block;
   background-color: #fff;
   border-radius: 8px;
 }
@@ -3126,4 +3124,11 @@ button.neo-raised-sm:active:not(:disabled) {
 .guide-delivery-checklist ul {
   margin: 8px 0 0;
   padding-left: 20px;
+}
+
+@media print {
+  .personal-edit,
+  .personal-edit * {
+    visibility: visible !important;
+  }
 }
