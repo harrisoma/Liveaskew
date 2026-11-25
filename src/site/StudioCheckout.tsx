@@ -3,8 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 /**
  * Starts the $199/month Design Studio subscription in Stripe Checkout.
- * If payments aren't switched on yet, it sends the visitor to the booking form instead,
- * so nobody hits a dead end.
+ * Checkout failures stay visible; consultation is an explicit alternative.
  */
 export function StudioCheckoutButton({
   label = "Start the Design Studio",
@@ -29,10 +28,9 @@ export function StudioCheckoutButton({
       if (json.error === "rate_limited") {
         setNote("Too many attempts. Try again in a few minutes.");
       } else {
-        window.location.assign(
-          "/book?service=design-studio&focus=Design%20Studio%20%E2%80%94%20%24199%2Fmonth",
+        setNote(
+          "Online checkout is unavailable. You have not been charged. Request a consultation instead.",
         );
-        return;
       }
     } catch {
       setNote("No connection. Try again in a moment.");
@@ -47,7 +45,10 @@ export function StudioCheckoutButton({
       </button>
       {note ? (
         <span role="alert" className="text-[0.85rem] text-[#a3261b]">
-          {note}
+          {note}{" "}
+          <a href="/book?service=design-studio" className="underline">
+            Request a consultation
+          </a>
         </span>
       ) : null}
     </span>

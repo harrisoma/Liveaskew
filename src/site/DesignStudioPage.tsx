@@ -171,8 +171,8 @@ export function DesignStudioPage() {
     <SiteFrame current="/design-studio">
       {joined ? (
         <div className="lac-banner" role="status">
-          Welcome to the Design Studio. Your membership is active, and we'll be in touch shortly to
-          start your first project.
+          You returned from checkout. This page does not confirm payment or activate membership.
+          Check your Stripe receipt, or contact us to confirm your Design Studio access.
         </div>
       ) : null}
       {/* Hero */}
@@ -411,10 +411,17 @@ export function DesignStudioPage() {
             </p>
             <div className="mt-8 flex flex-wrap items-start gap-3">
               <StudioCheckoutButton />
+              <a href="https://workspace.onixus.xyz/" className="la-btn lac-btn-outline">
+                Open Onixus Workspace
+              </a>
               <a href={STUDIO.href} className="la-btn lac-btn-outline">
                 Talk to us first
               </a>
             </div>
+            <p className="mt-4 text-sm text-black/60">
+              Existing clients can sign in to Workspace. New project access is arranged with the
+              studio.
+            </p>
           </div>
           <ul className="lac-checks text-[1.0625rem]">
             {STUDIO.includes.map((item) => (
