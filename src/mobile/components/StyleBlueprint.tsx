@@ -27,8 +27,10 @@ export function StyleBlueprintDocument({
   guide,
   products,
   liveAccount = false,
+  wardrobe = [],
 }: {
   guide: Blueprint;
+  wardrobe?: WardrobeItem[];
   products?: ProductMatches | null;
   liveAccount?: boolean;
 }) {
@@ -117,6 +119,40 @@ export function StyleBlueprintDocument({
               </details>
             </article>
           ))}
+        </div>
+      </section>
+      <section className="wardrobe-decisions" aria-label="Your wardrobe decisions">
+        <div>
+          <h3>Keep & repeat</h3>
+          {wardrobe.some((piece) => piece.verdict === "keep") ? (
+            <ul>
+              {wardrobe
+                .filter((piece) => piece.verdict === "keep")
+                .map((piece) => (
+                  <li key={piece.id}>
+                    <strong>{piece.label}</strong>
+                    {piece.reason && <p>{piece.reason}</p>}
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p>No wardrobe pieces marked Keep yet. Review what you own with Bee before shopping.</p>
+          )}
+        </div>
+        <div>
+          <h3>The tailor’s notes</h3>
+          <Notes items={guide.silhouette.tailoring} />
+        </div>
+        <div>
+          <h3>Add thoughtfully</h3>
+          <ul>
+            {guide.gaps.map((gap) => (
+              <li key={gap.item}>
+                <strong>{gap.item}</strong>
+                <p>{gap.why}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <details id="studio-palette" className="studio-reference">
@@ -539,7 +575,9 @@ export function StyleBlueprint({
           Checking your size, price and availability with retailers…
         </p>
       )}
-      {guide && <StyleBlueprintDocument guide={guide} products={products} liveAccount />}
+      {guide && (
+        <StyleBlueprintDocument guide={guide} products={products} wardrobe={wardrobe} liveAccount />
+      )}
     </div>
   );
 }

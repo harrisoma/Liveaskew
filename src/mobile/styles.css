@@ -2870,3 +2870,32 @@ button.neo-raised-sm:active:not(:disabled) {
     --bg: #000;
   }
 }
+.wardrobe-decisions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  padding: 28px 0;
+  margin: 28px 0;
+  border-block: 1px solid var(--separator);
+}
+.wardrobe-decisions h3 {
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.wardrobe-decisions ul {
+  padding-left: 18px;
+}
+.wardrobe-decisions li {
+  margin-bottom: 14px;
+}
+.wardrobe-decisions p {
+  font-size: 14px;
+  color: var(--label-2);
+  line-height: 1.65;
+  margin-top: 6px;
+}
+@media (max-width: 700px) {
+  .wardrobe-decisions {
+    grid-template-columns: 1fr;
+  }
+}
