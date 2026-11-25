@@ -232,6 +232,7 @@ export function AdminWorkspace({
               );
           }}
           onOpenLook={() => setView("bee")}
+          onOpenGuide={() => setNotice("Open your customer view to see your personal Style Guide.")}
           onDressMe={() => setNotice("Outfit generation is disabled in this layout preview.")}
         />
       )}

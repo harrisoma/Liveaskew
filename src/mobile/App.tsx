@@ -1008,6 +1008,10 @@ export function MobileApp() {
                 setTab("bee");
                 setBeeView("looks");
               }}
+              onOpenGuide={() => {
+                setTab("bee");
+                setBeeView("guide");
+              }}
               onDressMe={(item) => void dressMe(item)}
             />
           )}

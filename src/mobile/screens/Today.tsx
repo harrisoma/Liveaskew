@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import flatlay from "@/assets/brand/flatlay.webp";
 import hiveGathering from "@/assets/brand/hive-gathering.webp";
 import { dayLabel, sortHoney, type HoneyItem } from "@/lib/honey";
@@ -29,6 +29,7 @@ export function TodayScreen({
   buzzConnected,
   onOpen,
   onOpenLook,
+  onOpenGuide,
   onDressMe,
 }: {
   now: Date;
@@ -41,6 +42,7 @@ export function TodayScreen({
   buzzConnected: number | null;
   onOpen: (to: Destination) => void;
   onOpenLook: (look: GuideLook) => void;
+  onOpenGuide: () => void;
   onDressMe: (item: HoneyItem) => void;
 }) {
   const saved = looks.filter((l) => l.saved);
@@ -135,6 +137,17 @@ export function TodayScreen({
           </NeoButton>
         </div>
       </section>
+
+      <button className="la-guide-entry" type="button" onClick={onOpenGuide}>
+        <span className="la-guide-entry-icon">
+          <BookOpen size={21} aria-hidden />
+        </span>
+        <span>
+          <strong>Your Style Guide</strong>
+          <small>Your personal looks and styling notes</small>
+        </span>
+        <ArrowRight size={19} aria-hidden />
+      </button>
 
       {/* Next on Honey */}
       <section className="mt-6" aria-label="Next on Honey">
