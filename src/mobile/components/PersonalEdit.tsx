@@ -22,15 +22,21 @@ export function PersonalEdit({
   const photo = (lead ? lookPhoto(lead, null) : null) ?? portrait ?? null;
   return (
     <section className="personal-edit" id="personal-edit" aria-labelledby="personal-edit-title">
-      <div className="personal-edit-copy">
+      <header className="personal-edition">
         <p className="personal-signature">
-          Live<span>Askew</span> <small>Styled by Bee</small>
+          Live<span>Askew</span>
         </p>
+        <p className="personal-edition-note">
+          The personal style journal<span>Curated by Bee</span>
+        </p>
+      </header>
+      <div className="personal-edit-copy">
         <p className="personal-section-label">
           {memberName?.trim() ? `${memberName.trim()}’s Personal Edit` : "The Personal Edit"}
         </p>
         <h1 id="personal-edit-title">{guide.title}</h1>
         <p className="personal-aesthetic">{guide.archetype}</p>
+        <p className="personal-cover-line">Your wardrobe. Your point of view.</p>
         <p className="personal-intro">{guide.intro}</p>
         <ul className="personal-intentions">
           {guide.intent.map((note) => (

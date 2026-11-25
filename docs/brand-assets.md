@@ -32,3 +32,7 @@ Replace any of the above with the provider's own download if it differs.
 Instagram, Facebook and LinkedIn SVGs reused unchanged from the existing Onixus
 `radiant-connect-dash/public/connectors` asset library. X and Threads retain the existing
 `public/social` marks and attribution. Names remain visible next to each logo.
+
+## Editorial typography
+
+Bodoni Moda variable upright font: https://github.com/google/fonts/tree/main/ofl/bodonimoda . Stored unmodified at `public/fonts/bodoni-moda.ttf` under the bundled SIL OFL (`public/fonts/Bodoni-Moda-OFL.txt`). Used for style-guide display typography; no remote font service.

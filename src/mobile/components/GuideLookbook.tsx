@@ -97,9 +97,7 @@ export function GuideLookbook({
         <div>
           <p className="personal-section-label">The Outfit Playbook</p>
           <h2>
-            {sample
-              ? "A little inspiration for your week."
-              : "The look. The details. The way you wear it."}
+            {sample ? "The art of getting dressed." : "The look. The details. The way you wear it."}
           </h2>
         </div>
         <p>
@@ -130,6 +128,7 @@ export function GuideLookbook({
                   onImageUnavailable={onImageUnavailable}
                 />
               )}
+              <span className="gallery-folio">Look {String(i + 1).padStart(2, "0")}</span>
               <span className="gallery-occasion">{item.occasion}</span>
               <strong>{item.title}</strong>
               <span className="gallery-action">View styling details</span>
