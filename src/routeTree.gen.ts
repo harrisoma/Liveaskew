@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdFormatsRouteImport } from './routes/ad-formats'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AppsRouteImport } from './routes/apps'
 import { Route as BookRouteImport } from './routes/book'
@@ -68,6 +69,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdFormatsRoute = AdFormatsRouteImport.update({
+  id: '/ad-formats',
+  path: '/ad-formats',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -350,6 +356,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ad-formats': typeof AdFormatsRoute
   '/app': typeof AppRoute
   '/apps': typeof AppsRoute
   '/book': typeof BookRoute
@@ -407,6 +414,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ad-formats': typeof AdFormatsRoute
   '/app': typeof AppRoute
   '/apps': typeof AppsRoute
   '/book': typeof BookRoute
@@ -465,6 +473,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ad-formats': typeof AdFormatsRoute
   '/app': typeof AppRoute
   '/apps': typeof AppsRoute
   '/book': typeof BookRoute
@@ -524,6 +533,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ad-formats'
     | '/app'
     | '/apps'
     | '/book'
@@ -581,6 +591,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ad-formats'
     | '/app'
     | '/apps'
     | '/book'
@@ -638,6 +649,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ad-formats'
     | '/app'
     | '/apps'
     | '/book'
@@ -696,6 +708,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdFormatsRoute: typeof AdFormatsRoute
   AppRoute: typeof AppRoute
   AppsRoute: typeof AppsRoute
   BookRoute: typeof BookRoute
@@ -755,6 +768,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ad-formats': {
+      id: '/ad-formats'
+      path: '/ad-formats'
+      fullPath: '/ad-formats'
+      preLoaderRoute: typeof AdFormatsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -1170,6 +1190,7 @@ const ApiBeeStyleGuideRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdFormatsRoute: AdFormatsRoute,
   AppRoute: AppRoute,
   AppsRoute: AppsRoute,
   BookRoute: BookRoute,
@@ -1226,13 +1247,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
