@@ -47,3 +47,6 @@ android/build
 ios/App/Pods
 ios/App/App/public
 ios/DerivedData
+
+# Supabase CLI local state
+supabase/.temp/

@@ -53,3 +53,9 @@ describe("mergeLooks", () => {
     expect(merged[0]).toMatchObject({ saved: true, tryOnUrl: "self" });
   });
 });
+
+it("does not upload browser-supplied visual approval as server evidence", () => {
+  expect(
+    lookForSync(look("fake", { visualReview: { status: "passed" } as never })),
+  ).not.toHaveProperty("visualReview");
+});

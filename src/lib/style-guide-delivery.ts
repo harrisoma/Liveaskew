@@ -1,3 +1,8 @@
+import {
+  consistentReviewImages,
+  visualReviewPassed,
+  type OutfitVisualReview,
+} from "./style-guide-visual-review";
 import type { StyleBlueprint } from "./style-blueprint";
 
 import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
@@ -15,6 +20,7 @@ type DeliveryLook = {
   fabric: string;
   tryOnUrl: string | null;
   renderError?: string | null;
+  visualReview?: OutfitVisualReview | null;
 };
 /** Render jobs can be ready independently; the full client guide has a stricter delivery contract. */
 export function styleGuideDelivery(guide: StyleBlueprint | null, looks: DeliveryLook[]) {
@@ -37,6 +43,8 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     (look) =>
       look.formula.length >= 3 && [look.fit, look.feel, look.fabric].every((note) => note.trim()),
   );
+  const consistentImages = consistentReviewImages(week.map((look) => look.visualReview));
+  const reviewed = week.filter((look) => visualReviewPassed(look.visualReview, look)).length;
   const images = week.filter(
     (look) => look.tryOnUrl && look.tryOnUrl !== "self" && !look.renderError,
   ).length;
@@ -69,6 +77,8 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     completeNotes &&
     coordinatedWeek &&
     wardrobeMatches &&
+    reviewed === STYLE_GUIDE_LOOK_COUNT &&
+    consistentImages &&
     images === STYLE_GUIDE_LOOK_COUNT &&
     distinctImages &&
     capsule >= STYLE_GUIDE_STANDARD.capsule.min &&
@@ -77,6 +87,12 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
     variations <= STYLE_GUIDE_MAX_VARIATIONS,
   );
   const missing = [
+    ...(reviewed !== STYLE_GUIDE_LOOK_COUNT
+      ? ["Visual checks passed for all eight personal outfit images"]
+      : []),
+    ...(reviewed === STYLE_GUIDE_LOOK_COUNT && !consistentImages
+      ? ["Eight distinct outfit images made from the same reference photo"]
+      : []),
     ...(!guide ? ["Your personal styling notes"] : []),
     ...(!(
       week.length === STYLE_GUIDE_LOOK_COUNT &&
@@ -103,5 +119,5 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
       ? ["Two or three styling variations; update your guide from the interview"]
       : []),
   ];
-  return { ready, looks: week.length, images, variations, capsule, missing };
+  return { ready, looks: week.length, images, reviewed, variations, capsule, missing };
 }

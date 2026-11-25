@@ -78,7 +78,18 @@ export async function generateTryOn(
     bytes,
     type,
     standardVersion: STYLE_GUIDE_STANDARD.version,
-    model: typeof data.model === "string" ? data.model : "reference-image",
+    model:
+      typeof data.model === "string"
+        ? data.model
+        : typeof data.onixus?.routed_model === "string"
+          ? data.onixus.routed_model
+          : null,
+    costUsd:
+      typeof data.usage?.cost === "number" &&
+      Number.isFinite(data.usage.cost) &&
+      data.usage.cost >= 0
+        ? data.usage.cost
+        : null,
     requestId: response.headers.get("X-Onixus-Request-ID"),
   };
 }

@@ -1,3 +1,9 @@
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
+import {
+  visualBrief,
+  VISUAL_REVIEW_CRITERIA,
+  type OutfitVisualReview,
+} from "./style-guide-visual-review";
 import { createHash } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { advanceWeeklyGuide, startWeeklyGuide, type WeeklyGuideRow } from "./weekly-guide.server";
@@ -7,11 +13,15 @@ const mocks = vi.hoisted(() => ({
   remove: vi.fn(),
   download: vi.fn(),
   render: vi.fn(),
+  review: vi.fn(),
+  guard: vi.fn(),
 }));
 vi.mock("@/integrations/supabase/client.server", () => ({
   supabaseAdmin: { from: mocks.from, storage: { from: () => mocks } },
 }));
 vi.mock("./ai-gateway.server", () => ({ getOnixusAiHeaders: vi.fn(), getOnixusAiUrl: vi.fn() }));
+vi.mock("./style-guide-review.server", () => ({ reviewOutfitImage: mocks.review }));
+vi.mock("./entitlement.server", () => ({ guardAi: mocks.guard }));
 vi.mock("./tryon-job.server", () => ({ renderOwnedLook: mocks.render }));
 const photo = "data:image/png;base64,AAAA";
 const ids = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => "day-" + n);
@@ -46,7 +56,14 @@ class Query {
     return this;
   }
   result() {
-    if (this.table === "member_looks") return { data: looks, error: null };
+    if (this.table === "member_looks")
+      return {
+        data:
+          typeof this.filters.id === "string"
+            ? looks.find((look) => look.id === this.filters.id)
+            : looks,
+        error: null,
+      };
     if (this.table === "tryon_renders") return { data: [], error: null };
     if (this.filters.request_key && row.request_key !== this.filters.request_key)
       return { data: null, error: null };
@@ -105,6 +122,7 @@ beforeEach(() => {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
+  mocks.guard.mockResolvedValue(null);
   mocks.from.mockImplementation((table: string) => new Query(table));
   mocks.upload.mockResolvedValue({ error: null });
   mocks.remove.mockResolvedValue({ error: null });
@@ -145,6 +163,103 @@ describe("weekly guide recovery", () => {
     row.last_error = "render_needs_review";
     const unchanged = await startWeeklyGuide("member", ids, photo);
     expect(unchanged.status).toBe("attention");
+    expect(mocks.upload).not.toHaveBeenCalled();
+    expect(mocks.render).not.toHaveBeenCalled();
+  });
+});
+
+function approved(index: number): OutfitVisualReview {
+  return {
+    status: "passed",
+    standardVersion: STYLE_GUIDE_STANDARD.version,
+    brief: visualBrief(looks[index].look),
+    imageHash: (index + 1).toString(16).repeat(64),
+    referenceHash: createHash("sha256").update(photo).digest("hex"),
+    checkedAt: new Date().toISOString(),
+    checks: Object.fromEntries(VISUAL_REVIEW_CRITERIA.map((key) => [key, "pass"])),
+    issues: [],
+    model: "vision",
+    requestId: "review-id",
+    costUsd: null,
+  };
+}
+function generated() {
+  row.status = "running";
+  row.expires_at = new Date(Date.now() + 86400000).toISOString();
+  row.results = Object.fromEntries(
+    ids.map((id, i) => [
+      id,
+      { path: `member/${id}.png`, key: id, brief: visualBrief(looks[i].look) },
+    ]),
+  );
+}
+describe("durable guide quality gate", () => {
+  it("reviews saved assets instead of calling the image generator, and only finishes after all pass", async () => {
+    generated();
+    for (let i = 0; i < ids.length; i++) {
+      mocks.review.mockResolvedValueOnce(approved(i));
+      await advanceWeeklyGuide({ ...row });
+      expect(row.status).toBe(i === 7 ? "ready" : "queued");
+    }
+    expect(mocks.review).toHaveBeenCalledTimes(8);
+    expect(mocks.render).not.toHaveBeenCalled();
+    expect(row.results[ids[7]].review?.status).toBe("passed");
+    expect(mocks.remove).toHaveBeenCalledTimes(1);
+  });
+  it("preserves rejected artwork and the failure reason without regenerating it", async () => {
+    generated();
+    for (let i = 0; i < 7; i++) row.results[ids[i]].review = approved(i);
+    mocks.review.mockResolvedValueOnce({
+      ...approved(7),
+      status: "failed",
+      checks: { ...approved(7).checks, outfit_matches: "fail" },
+      issues: ["Requested shoes are missing."],
+    });
+    await advanceWeeklyGuide({ ...row });
+    expect(row.status).toBe("attention");
+    expect(row.last_error).toBe("visual_review_failed");
+    expect(row.results[ids[7]].path).toBe("member/day-8.png");
+    expect(mocks.render).not.toHaveBeenCalled();
+  });
+  it("retries unavailable review three times while retaining every generated image", async () => {
+    generated();
+    for (let i = 0; i < 7; i++) row.results[ids[i]].review = approved(i);
+    mocks.review.mockResolvedValue({
+      ...approved(7),
+      status: "unavailable",
+      checks: {},
+      issues: ["review_provider_unavailable"],
+    });
+    for (let i = 1; i <= 3; i++) {
+      await advanceWeeklyGuide({ ...row });
+      expect(row.results[ids[7]].reviewAttempts).toBe(i);
+      expect(row.status).toBe(i === 3 ? "attention" : "queued");
+    }
+    expect(row.last_error).toBe("visual_review_unavailable");
+    expect(mocks.render).not.toHaveBeenCalled();
+    expect(Object.keys(row.results)).toHaveLength(8);
+  });
+  it("does not approve duplicate image bytes even when individual critics passed", async () => {
+    generated();
+    for (let i = 0; i < 8; i++)
+      row.results[ids[i]].review = { ...approved(i), imageHash: "a".repeat(64) };
+    await advanceWeeklyGuide({ ...row });
+    expect(row.status).toBe("attention");
+    expect(row.last_error).toBe("visual_review_inconsistent");
+    expect(mocks.review).not.toHaveBeenCalled();
+    expect(mocks.render).not.toHaveBeenCalled();
+  });
+  it("refuses to review a generated image against an edited brief", async () => {
+    generated();
+    row.results[ids[0]].brief = "outdated";
+    await advanceWeeklyGuide({ ...row });
+    expect(row.last_error).toBe("guide_changed");
+    expect(mocks.review).not.toHaveBeenCalled();
+  });
+  it("a review-only request cannot create missing images", async () => {
+    await expect(startWeeklyGuide("member", ids, photo, { reviewOnly: true })).rejects.toThrow(
+      "review_images_missing",
+    );
     expect(mocks.upload).not.toHaveBeenCalled();
     expect(mocks.render).not.toHaveBeenCalled();
   });

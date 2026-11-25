@@ -5,6 +5,7 @@ import { startWeeklyGuide, weeklyGuideStatus } from "@/lib/weekly-guide.server";
 const input = z.object({
   lookIds: z.array(z.string().min(1).max(120)).length(8),
   selfieDataUrl: z.string().max(3500000),
+  reviewOnly: z.boolean().optional(),
 });
 export const Route = createFileRoute("/api/guide")({
   server: {
@@ -31,7 +32,9 @@ export const Route = createFileRoute("/api/guide")({
         const body = input.safeParse(await request.json().catch(() => null));
         if (!body.success) return Response.json({ error: "invalid_guide" }, { status: 400 });
         try {
-          const guide = await startWeeklyGuide(user, body.data.lookIds, body.data.selfieDataUrl);
+          const guide = await startWeeklyGuide(user, body.data.lookIds, body.data.selfieDataUrl, {
+            reviewOnly: body.data.reviewOnly,
+          });
           return Response.json(
             { guide: { id: guide.id, status: guide.status } },
             { status: 202, headers: { "Cache-Control": "no-store" } },
@@ -40,7 +43,12 @@ export const Route = createFileRoute("/api/guide")({
           return Response.json(
             { error: e instanceof Error ? e.message : "guide_queue_unavailable" },
             {
-              status: e instanceof Error && e.message === "eight_owned_looks_required" ? 404 : 503,
+              status:
+                e instanceof Error && e.message === "eight_owned_looks_required"
+                  ? 404
+                  : e instanceof Error && e.message === "review_images_missing"
+                    ? 409
+                    : 503,
             },
           );
         }

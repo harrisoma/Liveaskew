@@ -3392,3 +3392,23 @@ button.neo-raised-sm:active:not(:disabled) {
     row-gap: 24px;
   }
 }
+
+.guide-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-block: 16px;
+}
+.guide-review-actions p {
+  max-width: 52ch;
+  color: var(--label-2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.guide-review-findings {
+  line-height: 1.65;
+}
+.guide-review-findings li {
+  margin-block: 10px;
+}
