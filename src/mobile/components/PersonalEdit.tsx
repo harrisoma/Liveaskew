@@ -39,6 +39,9 @@ export function PersonalEdit({
         <nav className="personal-chapters" aria-label="Your style guide chapters">
           <a href="#outfit-playbook">The Outfit Playbook</a>
           <a href="#studio-capsule">The Wardrobe Edit</a>
+          <a href="#studio-silhouette">Fit & fabric</a>
+          <a href="#studio-shopping">Shopping priorities</a>
+          <a href="#studio-finishing">Finishing touches</a>
         </nav>
       </div>
       {sample ? (

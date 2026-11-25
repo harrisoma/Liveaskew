@@ -1,3 +1,4 @@
+import { SampleGarment } from "./SampleGarment";
 import { PersonalEdit } from "./PersonalEdit";
 import { GuideLookbook, type GuideActions } from "./GuideLookbook";
 import { ShoppingBrief } from "./ShoppingBrief";
@@ -28,8 +29,10 @@ export function StyleBlueprintDocument({
   products,
   liveAccount = false,
   wardrobe = [],
+  sampleIllustrations = false,
 }: {
   guide: Blueprint;
+  sampleIllustrations?: boolean;
   wardrobe?: WardrobeItem[];
   products?: ProductMatches | null;
   liveAccount?: boolean;
@@ -93,6 +96,8 @@ export function StyleBlueprintDocument({
                 <div className="studio-piece">
                   <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
                 </div>
+              ) : sampleIllustrations ? (
+                <SampleGarment index={i} name={p.name} />
               ) : (
                 <div className="studio-piece-description">
                   <span className="studio-piece-number">{String(i + 1).padStart(2, "0")}</span>
@@ -112,7 +117,13 @@ export function StyleBlueprintDocument({
               </span>
               <h3>{productFor(i)?.title ?? p.name}</h3>
               {productFor(i) && <RetailItem product={productFor(i)!} liveAccount={liveAccount} />}
-              {!productFor(i) && <span className="studio-suggestion">Styling suggestion</span>}
+              {!productFor(i) && (
+                <span className="studio-suggestion">
+                  {sampleIllustrations
+                    ? "AI illustration · not a retail product"
+                    : "Styling suggestion · image not yet available"}
+                </span>
+              )}
               <details className="studio-piece-notes">
                 <summary>Stylist’s note</summary>
                 <p>{p.reason}</p>

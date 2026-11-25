@@ -1,7 +1,25 @@
+import { SampleGarment } from "./SampleGarment";
 import { useState } from "react";
 import { ArrowRight, Bookmark, Check, CalendarDays, MessageCircle } from "lucide-react";
 import { lookPhoto, type GuideLook } from "../lib/storage";
 import { isoDay } from "@/lib/honey";
+
+function PersonalOutfitImage({ look }: { look: GuideLook }) {
+  const [failed, setFailed] = useState<string | null>(null);
+  const image = lookPhoto(look, null);
+  return image && failed !== image ? (
+    <img
+      src={image}
+      alt={look.formula.join(", ")}
+      loading="lazy"
+      onError={() => setFailed(image)}
+    />
+  ) : (
+    <div className="gallery-image-pending">
+      {image ? "Personal outfit image unavailable" : "Personal outfit image not ready"}
+    </div>
+  );
+}
 
 export type GuideActions = {
   onSaveLook?: (look: GuideLook) => Promise<void>;
@@ -67,24 +85,35 @@ export function GuideLookbook({
             : "Choose a look. Make it yours. Get on with your day."}
         </p>
       </header>
-      <div className="lookbook-picker" role="group" aria-label="Choose an outfit">
-        {ordered.map((item, i) => (
-          <button
-            key={item.id}
-            disabled={busy}
-            aria-pressed={look.id === item.id}
-            onClick={() => {
-              setSelected(item.id);
-              setMessage("");
-              setPlanning(false);
-            }}
-          >
-            <span>
-              {sample ? `Look ${i + 1}` : item.guideDay ? `Day ${item.guideDay}` : `Look ${i + 1}`}
-            </span>
-            {item.occasion}
-          </button>
-        ))}
+      <div className="lookbook-gallery" role="group" aria-label="Your styled outfit gallery">
+        {ordered.map((item, i) => {
+          return (
+            <button
+              key={item.id}
+              disabled={busy}
+              aria-pressed={look.id === item.id}
+              onClick={() => {
+                setSelected(item.id);
+                setMessage("");
+                setPlanning(false);
+              }}
+            >
+              {sample ? (
+                <div
+                  className="lookbook-sample-image"
+                  role="img"
+                  aria-label={`AI outfit illustration: ${item.formula.join(", ")}`}
+                  style={{ backgroundPosition: `${i * 50}% center` }}
+                />
+              ) : (
+                <PersonalOutfitImage look={item} />
+              )}
+              <span className="gallery-occasion">{item.occasion}</span>
+              <strong>{item.title}</strong>
+              <span className="gallery-action">View styling details</span>
+            </button>
+          );
+        })}
       </div>
       <div className="lookbook-stage">
         <figure className="lookbook-visual">
@@ -126,6 +155,22 @@ export function GuideLookbook({
           <h2>{look.title}</h2>
           <p className="lookbook-reason">{look.feel}</p>
           <h3>Build the look</h3>
+          {sample && (
+            <div className="lookbook-garment-board" aria-label="Garments in this sample outfit">
+              {(
+                [
+                  [4, 9, 10],
+                  [0, 3, 8, 11],
+                  [6, 9, 10],
+                ][position] ?? []
+              ).map((pieceIndex, i) => (
+                <figure key={pieceIndex}>
+                  <SampleGarment index={pieceIndex} name={look.formula[i]} />
+                  <figcaption>{look.formula[i]}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
           <ul className="lookbook-pieces">
             {look.formula.map((piece) => (
               <li key={piece}>{piece}</li>

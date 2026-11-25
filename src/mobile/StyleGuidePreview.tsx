@@ -36,7 +36,7 @@ export function StyleGuidePreview() {
           shoes US 6, up to USD 150 per item and USD 1,000 total before tax and shipping.
         </p>
       </details>
-      <StyleBlueprintDocument guide={studioSample} products={products} />
+      <StyleBlueprintDocument guide={studioSample} products={products} sampleIllustrations />
     </main>
   );
 }
