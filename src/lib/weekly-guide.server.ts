@@ -29,17 +29,17 @@ const store = () => db.storage.from("try-ons");
 
 export async function startWeeklyGuide(user: string, ids: string[], photo: string) {
   const image = imageBytes(photo);
-  if (ids.length !== 7 || new Set(ids).size !== 7) throw Error("seven_owned_looks_required");
+  if (ids.length !== 8 || new Set(ids).size !== 8) throw Error("eight_owned_looks_required");
   const { data: looks, error } = await db
     .from("member_looks")
     .select("id,look")
     .eq("user_id", user)
     .in("id", ids);
-  if (error || looks?.length !== 7) throw Error("seven_owned_looks_required");
+  if (error || looks?.length !== 8) throw Error("eight_owned_looks_required");
   for (const [index, id] of ids.entries()) {
     const look = looks.find((l) => l.id === id)?.look as unknown as GuideLook;
     if (look?.guideDay !== index + 1 || !Array.isArray(look.formula) || !look.formula.length)
-      throw Error("seven_owned_looks_required");
+      throw Error("eight_owned_looks_required");
   }
   const requestKey = createHash("sha256")
     .update(
@@ -112,7 +112,7 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     photo_path: path,
     photo_type: image.type,
     results,
-    status: Object.keys(results).length === 7 ? "ready" : "queued",
+    status: ids.every((id) => results[id]) ? "ready" : "queued",
     attempts: 0,
     lease_token: null,
     lease_until: null,
@@ -147,7 +147,7 @@ export async function startWeeklyGuide(user: string, ids: string[], photo: strin
     if (winner) return winner as unknown as WeeklyGuideRow;
     throw Error("guide_queue_unavailable");
   }
-  if (Object.keys(results).length === 7) await store().remove([path]);
+  if (ids.every((id) => results[id])) await store().remove([path]);
   return saved.data as unknown as WeeklyGuideRow;
 }
 
@@ -172,7 +172,7 @@ export async function weeklyGuideStatus(user: string, id?: string) {
     id: row.id,
     status: row.status,
     completed: Object.keys(row.results).length,
-    total: 7,
+    total: row.look_ids.length,
     images,
     keys: Object.fromEntries(Object.entries(row.results).map(([id, r]) => [id, r.key])),
     lookIds: row.look_ids,
@@ -266,7 +266,7 @@ export async function advanceWeeklyGuide(row: WeeklyGuideRow) {
       .eq("user_id", row.user_id)
       .eq("id", lookId);
     if (saved.error) throw Error("guide_sync_unavailable");
-    const complete = Object.keys(results).length === 7;
+    const complete = row.look_ids.every((id) => results[id]);
     await update({
       results,
       status: complete ? "ready" : "queued",

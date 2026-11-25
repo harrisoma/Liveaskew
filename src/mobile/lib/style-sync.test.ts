@@ -32,6 +32,18 @@ describe("lookForSync", () => {
 });
 
 describe("mergeLooks", () => {
+  it("preserves older saved looks without duplicating a rebuilt guide slot", () => {
+    const merged = mergeLooks(
+      [look("new", { guideDay: 1, createdAt: "2026-11-24T00:00:00Z" })],
+      [look("old", { guideDay: 1, saved: true, createdAt: "2026-11-20T00:00:00Z" })],
+    );
+    expect(merged).toHaveLength(2);
+    expect(merged.find((item) => item.id === "new")?.guideDay).toBe(1);
+    expect(merged.find((item) => item.id === "old")).toMatchObject({
+      saved: true,
+      guideDay: undefined,
+    });
+  });
   it("unions by id, keeps the device's render, and never un-saves", () => {
     const merged = mergeLooks(
       [look("2", { tryOnUrl: "self" })],

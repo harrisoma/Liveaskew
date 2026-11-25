@@ -96,7 +96,7 @@ export function reflectOnAnswer(step: number, _text: string): string {
   const line =
     INTERVIEW[step]?.id === "shopping" ? "Your sizes and shopping limits are saved." : "";
   if (!next) {
-    return `${line} Your interview is complete. Add your photo, then select Generate my Style Guide. I’ll create your editorial blueprint and start all seven outfit previews without another questionnaire.`;
+    return `${line} Your interview is complete. Add your photo, then select Generate my Style Guide. I’ll create your editorial blueprint and start all eight outfit previews without another questionnaire.`;
   }
   return next.prompt;
 }

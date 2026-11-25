@@ -1,3 +1,6 @@
+import { styleGuideDelivery } from "@/lib/style-guide-delivery";
+import { SampleGarment } from "./SampleGarment";
+import { PersonalEdit } from "./PersonalEdit";
 import { GuideLookbook, type GuideActions } from "./GuideLookbook";
 import { ShoppingBrief } from "./ShoppingBrief";
 import type { ShoppingProfile } from "@/lib/shopping-profile";
@@ -26,8 +29,12 @@ export function StyleBlueprintDocument({
   guide,
   products,
   liveAccount = false,
+  wardrobe = [],
+  sampleIllustrations = false,
 }: {
   guide: Blueprint;
+  sampleIllustrations?: boolean;
+  wardrobe?: WardrobeItem[];
   products?: ProductMatches | null;
   liveAccount?: boolean;
 }) {
@@ -49,12 +56,14 @@ export function StyleBlueprintDocument({
           <Notes items={guide.intent} />
         </div>
       </details>
-      <section id="studio-capsule">
+      <section id="studio-capsule" className="wardrobe-edit">
         <div className="studio-heading">
-          <h2>Your wardrobe, working together</h2>
+          <p className="personal-section-label">The Wardrobe Edit</p>
+          <h2>Pieces with a purpose.</h2>
           <p>
             Start with what you own. These coordinated pieces give you a foundation to mix, repeat,
-            and make your own. Photos show retailer matches; color swatches are styling suggestions.
+            and make your own. Product photos appear only for retailer matches. Other pieces are
+            styling recommendations, not verified possessions.
           </p>
         </div>
         <div className="studio-filters" role="group" aria-label="Filter wardrobe pieces">
@@ -88,10 +97,20 @@ export function StyleBlueprintDocument({
                 <div className="studio-piece">
                   <img src={productFor(i)!.image!} alt={productFor(i)!.title} loading="lazy" />
                 </div>
+              ) : sampleIllustrations ? (
+                <SampleGarment index={i} name={p.name} />
               ) : (
-                <div className="studio-piece-swatch">
-                  <span style={{ background: p.hex }} aria-hidden="true" />
-                  <span>{p.color}</span>
+                <div className="studio-piece-description">
+                  <span className="studio-piece-number">{String(i + 1).padStart(2, "0")}</span>
+                  <span>
+                    {p.role === "layer"
+                      ? "Layering"
+                      : p.role === "shoe"
+                        ? "Footwear"
+                        : p.role === "accessory"
+                          ? "Finishing detail"
+                          : "Clothing"}
+                  </span>
                 </div>
               )}
               <span>
@@ -99,13 +118,88 @@ export function StyleBlueprintDocument({
               </span>
               <h3>{productFor(i)?.title ?? p.name}</h3>
               {productFor(i) && <RetailItem product={productFor(i)!} liveAccount={liveAccount} />}
-              {!productFor(i) && <span className="studio-suggestion">Styling suggestion</span>}
+              {!productFor(i) && (
+                <span className="studio-suggestion">
+                  {sampleIllustrations
+                    ? "AI illustration · not a retail product"
+                    : "Styling suggestion · image not yet available"}
+                </span>
+              )}
               <details className="studio-piece-notes">
-                <summary>Why it works</summary>
+                <summary>Stylist’s note</summary>
                 <p>{p.reason}</p>
               </details>
             </article>
           ))}
+        </div>
+      </section>
+      {guide.stylingVariations && (
+        <section
+          className="styling-variations"
+          id="styling-variations"
+          aria-labelledby="styling-variations-title"
+        >
+          <p className="personal-section-label">Make it yours</p>
+          <h2 id="styling-variations-title">Small changes. A different feeling.</h2>
+          <div className="variation-grid">
+            {guide.stylingVariations.map((variation) => (
+              <article key={variation.title}>
+                <h3>{variation.title}</h3>
+                <div className="variation-pieces">
+                  {variation.pieceIds.map((id) => {
+                    const index = Number(id.slice(6)) - 1;
+                    const piece = guide.capsule[index];
+                    const product = productFor(index);
+                    return (
+                      <figure key={id}>
+                        {sampleIllustrations ? (
+                          <SampleGarment index={index} name={piece.name} />
+                        ) : product?.image ? (
+                          <img src={product.image} alt={product.title} loading="lazy" />
+                        ) : null}
+                        <figcaption>{piece.name}</figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+                <p>{variation.instruction}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+      <section className="wardrobe-decisions" aria-label="Your wardrobe decisions">
+        <div>
+          <h3>Keep & repeat</h3>
+          {wardrobe.some((piece) => piece.verdict === "keep") ? (
+            <ul>
+              {wardrobe
+                .filter((piece) => piece.verdict === "keep")
+                .map((piece) => (
+                  <li key={piece.id}>
+                    <strong>{piece.label}</strong>
+                    {piece.reason && <p>{piece.reason}</p>}
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p>No wardrobe pieces marked Keep yet. Review what you own with Bee before shopping.</p>
+          )}
+        </div>
+        <div>
+          <h3>The tailor’s notes</h3>
+          <Notes items={guide.silhouette.tailoring} />
+        </div>
+        <div>
+          <h3>Add thoughtfully</h3>
+          <ul>
+            {guide.gaps.map((gap) => (
+              <li key={gap.item}>
+                <strong>{gap.item}</strong>
+                <p>{gap.why}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <details id="studio-palette" className="studio-reference">
@@ -148,13 +242,14 @@ export function StyleBlueprintDocument({
         </div>
       </details>
       <details id="studio-formulas" className="studio-reference">
-        <summary>More ways to combine your pieces</summary>
+        <summary>Outfit combinations to explore</summary>
         <div className="studio-reference-body">
           <div className="studio-heading">
             <h2>Less deciding. More getting dressed.</h2>
             <p>
-              A few pieces, a complete look. Tap any piece to find it in your wardrobe above. Your
-              personalized outfit images are in Looks.
+              Starting formulas from your capsule, not reviewed outfit previews. Ask Bee to refine
+              the proportions and details for your occasion. Your styled personal previews are in
+              the Outfit Playbook.
             </p>
           </div>
           <div className="studio-formulas">
@@ -301,6 +396,8 @@ function RetailItem({
   );
 }
 export function StyleBlueprint({
+  memberName,
+  portrait,
   wardrobe,
   looks,
   onLooks,
@@ -309,17 +406,27 @@ export function StyleBlueprint({
   onRestyle,
   onPlanLook,
 }: GuideActions & {
+  memberName?: string;
+  portrait?: string | null;
   wardrobe: WardrobeItem[];
   looks: GuideLook[];
   onLooks: () => void;
   notice?: string | null;
 }) {
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(() => new Set());
   const [guide, setGuide] = useState<Blueprint | null>(null),
     [loading, setLoading] = useState(true),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<string | null>(null),
     [products, setProducts] = useState<ProductMatches | null>(null),
     [shoppingBusy, setShoppingBusy] = useState(false);
+  const delivery = styleGuideDelivery(
+    guide,
+    looks.map((look) => ({
+      ...look,
+      tryOnUrl: look.tryOnUrl && loadedImages.has(look.tryOnUrl) ? look.tryOnUrl : null,
+    })),
+  );
   const [editingInterview, setEditingInterview] = useState(false),
     [savedProfile, setSavedProfile] = useState<ShoppingProfile | null>(null);
   async function editInterview() {
@@ -423,7 +530,7 @@ export function StyleBlueprint({
     }
   }
   return (
-    <div className="studio-scroll">
+    <div className="studio-scroll personal-style-guide">
       <div className="studio-toolbar">
         <span>
           <BookOpen size={17} /> Your Style Guide
@@ -455,8 +562,41 @@ export function StyleBlueprint({
           </button>
         </div>
       </div>
+      <p className="guide-delivery-status" role="status">
+        {delivery.ready ? "Your eight-look guide is ready" : "Your guide is in progress"} ·{" "}
+        {delivery.looks}/7 outfits · {delivery.images}/7 personal images · {delivery.variations}{" "}
+        styling variations
+      </p>
+      {!delivery.ready && (
+        <div className="guide-delivery-checklist">
+          <p>Still needed for your finished guide:</p>
+          <ul>
+            {delivery.missing.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {guide && (
+        <PersonalEdit guide={guide} looks={looks} memberName={memberName} portrait={portrait} />
+      )}
       <GuideLookbook
         looks={looks}
+        onImageReady={(look) => {
+          if (look.tryOnUrl)
+            setLoadedImages((current) =>
+              current.has(look.tryOnUrl!) ? current : new Set([...current, look.tryOnUrl!]),
+            );
+        }}
+        onImageUnavailable={(look) => {
+          if (look.tryOnUrl)
+            setLoadedImages((current) => {
+              if (!current.has(look.tryOnUrl!)) return current;
+              const next = new Set(current);
+              next.delete(look.tryOnUrl!);
+              return next;
+            });
+        }}
         onSaveLook={onSaveLook}
         onRestyle={onRestyle}
         onPlanLook={onPlanLook}
@@ -520,7 +660,9 @@ export function StyleBlueprint({
           Checking your size, price and availability with retailers…
         </p>
       )}
-      {guide && <StyleBlueprintDocument guide={guide} products={products} liveAccount />}
+      {guide && (
+        <StyleBlueprintDocument guide={guide} products={products} wardrobe={wardrobe} liveAccount />
+      )}
     </div>
   );
 }

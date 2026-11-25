@@ -14,6 +14,26 @@ const pieces = [
   ["accessory", "Small gold hoops", "Gold", "#b4995b"],
 ] as const;
 export const studioSample: StyleBlueprint = {
+  stylingVariations: [
+    {
+      title: "A little more structure",
+      instruction:
+        "Add the sand jacket over the navy shell for an air-conditioned room; leave it open for easy movement.",
+      pieceIds: ["piece-8", "piece-2"],
+    },
+    {
+      title: "Change the pace",
+      instruction:
+        "Swap loafers for ivory sneakers when your day calls for more walking. Keep the same shirt and skirt.",
+      pieceIds: ["piece-10", "piece-1", "piece-4"],
+    },
+    {
+      title: "Light layers, your way",
+      instruction:
+        "Wear the ivory shirt open over the olive dress; roll the sleeves and keep your crossbody hands-free.",
+      pieceIds: ["piece-1", "piece-7", "piece-11"],
+    },
+  ],
   title: "Ease, with intention.",
   archetype: "Relaxed modern classics",
   intro:
@@ -131,7 +151,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
   {
     title: "One dress. Your whole morning.",
     occasion: "Errands & coffee",
-    formula: ["Blue cotton midi shirtdress", "Ivory sneakers", "Chocolate crossbody bag"],
+    formula: ["Blue cotton midi shirtdress", "Ivory everyday sneakers", "Chocolate crossbody bag"],
     fit: "A relaxed skirt gives you room to walk and sit; the tie waist adjusts without a rigid waistband.",
     feel: "For a sample morning of errands and coffee: one easy outfit, hands free, comfortable on foot.",
     fabric:
@@ -143,7 +163,7 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
     formula: [
       "Ivory linen shirt",
       "Navy fluid midi skirt",
-      "Chocolate loafers",
+      "Chocolate leather loafers",
       "Small gold hoops",
     ],
     fit: "A loosely tucked shirt and fluid skirt create definition without a close fit through the hips.",
@@ -154,11 +174,79 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
   {
     title: "Room to move. Nothing to fuss with.",
     occasion: "An easy afternoon",
-    formula: ["Olive cotton midi dress", "Ivory sneakers", "Chocolate crossbody bag"],
+    formula: ["Olive cotton midi dress", "Ivory everyday sneakers", "Chocolate crossbody bag"],
     fit: "A gathered midi skirt gives sitting and walking room. Check the armholes for your preferred coverage.",
     feel: "For a sample afternoon outside: an uncomplicated dress, walkable shoes, and a bag that leaves your hands free.",
     fabric:
       "Suggested breathable cotton suits warm weather. Test opacity in daylight and choose what feels comfortable.",
+  },
+  {
+    title: "A confident everyday uniform.",
+    occasion: "Casual workday",
+    formula: [
+      "Navy linen shell",
+      "Indigo relaxed jeans",
+      "Chocolate leather loafers",
+      "Small gold hoops",
+    ],
+    fit: "Keep the shell easy through the torso; a relaxed straight leg balances the simple neckline.",
+    feel: "A sample casual workday look; check your workplace dress expectations.",
+    fabric: "Linen and denim provide contrasting texture. Check softness and care labels.",
+  },
+  {
+    title: "The weekend, uncomplicated.",
+    occasion: "Weekend",
+    formula: [
+      "Soft blue cotton tee",
+      "Indigo relaxed jeans",
+      "Ivory everyday sneakers",
+      "Chocolate crossbody bag",
+    ],
+    fit: "Try a loose front tuck if comfortable; keep enough ease to sit and move.",
+    feel: "Comfortable, hands-free and ready for a relaxed sample weekend.",
+    fabric: "Soft cotton and worn-in denim keep the layers breathable and familiar.",
+  },
+  {
+    title: "An evening in navy.",
+    occasion: "Dinner & social",
+    formula: [
+      "Navy linen shell",
+      "Navy fluid midi skirt",
+      "Sand unstructured jacket",
+      "Chocolate leather loafers",
+      "Small gold hoops",
+    ],
+    fit: "Wear the jacket open so the fluid skirt stays visible; check the hem with your loafers.",
+    feel: "A considered sample dinner look, using pieces already in this capsule.",
+    fabric: "Linen, a softly draped skirt and a light jacket create texture without heavy layers.",
+  },
+  {
+    title: "Signature layers, made easy.",
+    occasion: "Your signature",
+    formula: [
+      "Ivory linen shirt",
+      "Olive cotton midi dress",
+      "Ivory everyday sneakers",
+      "Chocolate crossbody bag",
+    ],
+    fit: "Wear the shirt open, roll the sleeves and let the dress move freely underneath.",
+    feel: "An expressive sample layered look that repeats familiar favorites.",
+    fabric: "Cotton and linen stay light; remove the shirt if the afternoon gets warm.",
+  },
+  {
+    title: "An extra look, a new perspective.",
+    occasion: "Lunch & a gallery visit",
+    formula: [
+      "Ivory linen shirt",
+      "Indigo relaxed jeans",
+      "Sand unstructured jacket",
+      "Chocolate leather loafers",
+      "Small gold hoops",
+    ],
+    fit: "Tuck the shirt loosely and wear the jacket open; check shoulder movement and the jean hem with loafers.",
+    feel: "An eighth sample look for a slightly more composed outing, using familiar capsule pieces.",
+    fabric:
+      "Linen, soft denim and a light jacket provide texture; remove the jacket when the day warms up.",
   },
 ].map((look, i) => ({
   ...look,

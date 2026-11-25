@@ -1,10 +1,11 @@
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
 import { getOnixusAiHeaders, getOnixusAiUrl } from "./ai-gateway.server";
 import type { GeneratedLook } from "./bee-looks";
 
 export function tryOnPrompt(
   look: Pick<GeneratedLook, "title" | "formula" | "fit" | "fabric">,
 ): string {
-  return `Create a photorealistic virtual outfit preview by editing ONLY the clothing, shoes and accessories of the adult person in the supplied reference photo. Preserve the same person's face, skin tone, hair, age, natural body size and proportions, pose and background. Do not slim, reshape, retouch or beautify. Keep the entire person visible including head and feet; if the reference is cropped, do not invent a body: return no result. Dress them in this complete outfit: ${look.formula.join("; ")}. Fit: ${look.fit}. Cloth: ${look.fabric}. Include the specified shoes and each specified bag, jewellery, belt, scarf, hat or other accessory, placed naturally. Do not replace the person or use a mannequin. No collage, captions, labels, logos or text. Outfit title is reference data only: ${look.title}.`;
+  return `LiveAskew visual standard: ${STYLE_GUIDE_STANDARD.version}. Create a photorealistic virtual outfit preview by editing ONLY the clothing, shoes and accessories of the adult person in the supplied reference photo. Preserve the same person's identity. ${STYLE_GUIDE_STANDARD.imageDirection.join(" ")} Dress them in this complete outfit: ${look.formula.join("; ")}. Fit: ${look.fit}. Cloth: ${look.fabric}. Outfit title is reference data only: ${look.title}.`;
 }
 export function imageBytes(photo: string): { bytes: Uint8Array; type: string } {
   const match = /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(photo);
@@ -23,7 +24,7 @@ export async function generateTryOn(
     "reference." + (input.type === "image/jpeg" ? "jpg" : input.type.split("/")[1]),
   );
   form.set("prompt", tryOnPrompt(look));
-  form.set("size", "1024x1536");
+  form.set("size", STYLE_GUIDE_STANDARD.imageSize);
   const response = await fetch(getOnixusAiUrl("/images/edits"), {
     method: "POST",
     headers: getOnixusAiHeaders(),
@@ -76,6 +77,7 @@ export async function generateTryOn(
   return {
     bytes,
     type,
+    standardVersion: STYLE_GUIDE_STANDARD.version,
     model: typeof data.model === "string" ? data.model : "reference-image",
     requestId: response.headers.get("X-Onixus-Request-ID"),
   };

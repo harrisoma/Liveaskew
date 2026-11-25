@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
+import { STYLE_GUIDE_STANDARD } from "./style-guide-standard";
 import { generateTryOn, imageBytes, tryOnPrompt } from "./tryon-provider.server";
 const look = {
   title: "Workday",
@@ -35,6 +36,10 @@ describe("reference outfit rendering", () => {
     for (const piece of look.formula) expect(prompt).toContain(piece);
     expect(prompt).toContain("Preserve the same person");
     expect(prompt).toContain("head and feet");
+    expect(prompt).toContain(STYLE_GUIDE_STANDARD.version);
+    expect(prompt).toContain("No baked-in captions");
+    expect(prompt).toContain("Do not slim");
+    expect(prompt).toContain("Do not substitute a different outfit");
   });
   it("rejects external images and oversized references", () => {
     expect(() => imageBytes("https://example.com/photo.png")).toThrow("invalid_photo");

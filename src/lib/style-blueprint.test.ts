@@ -76,4 +76,25 @@ describe("wardrobe variety", () => {
       "incomplete_capsule",
     );
   });
+  it("supports a 15-piece capsule and refuses references to nonexistent pieces", () => {
+    const extra = Array.from({ length: 3 }, (_, i) => ({
+      ...studioSample.capsule[i],
+      name: `Extra garment ${i + 1}`,
+    }));
+    expect(
+      parseBlueprint(
+        JSON.stringify({ ...studioSample, capsule: [...studioSample.capsule, ...extra] }),
+      ).capsule,
+    ).toHaveLength(15);
+    expect(() =>
+      parseBlueprint(
+        JSON.stringify({
+          ...studioSample,
+          stylingVariations: studioSample.stylingVariations!.map((variation, i) =>
+            i === 0 ? { ...variation, pieceIds: ["piece-15"] } : variation,
+          ),
+        }),
+      ),
+    ).toThrow();
+  });
 });

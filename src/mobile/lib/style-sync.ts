@@ -20,7 +20,16 @@ export function mergeLooks(local: GuideLook[], remote: GuideLook[]): GuideLook[]
     const r = byId.get(l.id);
     byId.set(l.id, r ? { ...r, ...l, saved: l.saved || r.saved } : l);
   }
-  return [...byId.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const days = new Set<number>();
+  return [...byId.values()]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((look) => {
+      if (!look.guideDay) return look;
+      // Keep previous looks in the collection, without duplicating the current guide slots.
+      if (days.has(look.guideDay)) return { ...look, guideDay: undefined };
+      days.add(look.guideDay);
+      return look;
+    });
 }
 
 export { SELF_PHOTO };

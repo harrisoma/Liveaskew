@@ -42,7 +42,7 @@ export function parseLooks(text: string, max: number): GeneratedLook[] {
   return looks;
 }
 
-/** A weekly guide is complete only when it contains seven different outfit formulas. */
+/** A weekly guide is complete only when it contains eight different outfit formulas. */
 export function completeWeeklyGuide(looks: GeneratedLook[]): boolean {
   const formulas = looks.map((look) =>
     look.formula
@@ -50,9 +50,14 @@ export function completeWeeklyGuide(looks: GeneratedLook[]): boolean {
       .sort()
       .join("|"),
   );
+  const wardrobe = new Set(
+    looks.flatMap((look) => look.formula.map((piece) => piece.toLowerCase().trim())),
+  );
   return (
-    looks.length === 7 &&
-    new Set(formulas).size === 7 &&
-    new Set(looks.map((look) => look.title.toLowerCase().trim())).size === 7
+    wardrobe.size >= 12 &&
+    wardrobe.size <= 15 &&
+    looks.length === 8 &&
+    new Set(formulas).size === 8 &&
+    new Set(looks.map((look) => look.title.toLowerCase().trim())).size === 8
   );
 }
