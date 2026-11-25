@@ -1,4 +1,4 @@
-/** Seven fictional-client panels in a four-column/two-row sheet; cell eight is intentionally unused. */
+/** Eight fictional-client panels in a four-column/two-row sheet. */
 export function SampleOutfit({ index, description }: { index: number; description: string }) {
   return (
     <div

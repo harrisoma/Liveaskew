@@ -60,7 +60,7 @@ export function GuideLookbook({
   const [message, setMessage] = useState("");
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const guideLooks = looks.some((look) => look.guideDay)
-    ? looks.filter((look) => look.guideDay && look.guideDay >= 1 && look.guideDay <= 7)
+    ? looks.filter((look) => look.guideDay && look.guideDay >= 1 && look.guideDay <= 8)
     : looks;
   const ordered = [...guideLooks].sort((a, b) => (a.guideDay ?? 99) - (b.guideDay ?? 99));
   const look = ordered.find((l) => l.id === selected) ?? ordered[0];
@@ -104,7 +104,7 @@ export function GuideLookbook({
         </div>
         <p>
           {sample
-            ? "Seven complete outfits, built from one coordinated wardrobe."
+            ? "Eight complete outfits, built from one coordinated wardrobe."
             : "Choose a look. Make it yours. Get on with your day."}
         </p>
       </header>
@@ -186,6 +186,7 @@ export function GuideLookbook({
                   [2, 5, 9, 10],
                   [1, 3, 7, 8, 11],
                   [0, 6, 9, 10],
+                  [0, 5, 7, 8, 11],
                 ][position] ?? []
               ).map((pieceIndex, i) => (
                 <figure key={pieceIndex}>

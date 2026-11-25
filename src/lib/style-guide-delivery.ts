@@ -1,6 +1,6 @@
 import type { StyleBlueprint } from "./style-blueprint";
 
-export const STYLE_GUIDE_LOOK_COUNT = 7;
+export const STYLE_GUIDE_LOOK_COUNT = 8;
 export const STYLE_GUIDE_MIN_VARIATIONS = 2;
 export const STYLE_GUIDE_MAX_VARIATIONS = 3;
 
@@ -82,13 +82,13 @@ export function styleGuideDelivery(guide: StyleBlueprint | null, looks: Delivery
       completeNotes &&
       coordinatedWeek
     )
-      ? ["Seven distinct, fully styled weekly outfits"]
+      ? ["Eight distinct, fully styled weekly outfits"]
       : []),
     ...(!(images === STYLE_GUIDE_LOOK_COUNT && distinctImages)
-      ? ["Seven loaded, distinct personal outfit images"]
+      ? ["Eight loaded, distinct personal outfit images"]
       : []),
     ...(!wardrobeMatches
-      ? ["Wardrobe pieces matching all seven outfit formulas; update your guide from the interview"]
+      ? ["Wardrobe pieces matching all eight outfit formulas; update your guide from the interview"]
       : []),
     ...(!(capsule >= 12 && capsule <= 15) ? ["A coordinated 12–15-piece wardrobe"] : []),
     ...(!(variations >= STYLE_GUIDE_MIN_VARIATIONS && variations <= STYLE_GUIDE_MAX_VARIATIONS)

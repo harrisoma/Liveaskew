@@ -5,18 +5,18 @@ const { apiFetch } = vi.hoisted(() => ({ apiFetch: vi.fn() }));
 vi.mock("./api", () => ({ apiFetch }));
 afterEach(() => vi.clearAllMocks());
 describe("durable weekly preview client", () => {
-  it("queues one owned week in day order, rather than driving seven paid requests", async () => {
+  it("queues one owned week in day order, rather than driving eight paid requests", async () => {
     apiFetch.mockResolvedValue(
       Response.json({ guide: { id: "job", status: "queued" } }, { status: 202 }),
     );
-    const looks = [7, 2, 4, 1, 6, 3, 5].map(
+    const looks = [7, 2, 8, 4, 1, 6, 3, 5].map(
       (day) => ({ id: `look-${day}`, guideDay: day }) as GuideLook,
     );
     await queueWeeklyGuide(looks, "data:image/jpeg;base64,fixture");
     expect(apiFetch).toHaveBeenCalledTimes(1);
     expect(apiFetch.mock.calls[0][0]).toBe("/api/guide");
     expect(JSON.parse(apiFetch.mock.calls[0][1].body).lookIds).toEqual(
-      [1, 2, 3, 4, 5, 6, 7].map((n) => `look-${n}`),
+      [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `look-${n}`),
     );
   });
   it("reconnecting only reads durable progress and never starts another render", async () => {

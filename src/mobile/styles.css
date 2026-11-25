@@ -1590,7 +1590,7 @@ button.neo-raised-sm:active:not(:disabled) {
 .lookbook-sample-image {
   width: 100%;
   aspect-ratio: 1/2;
-  background-image: url("/images/style-guide/sample-week.png");
+  background-image: url("/images/style-guide/sample-eight-looks.png");
   background-size: 300% 100%;
   background-repeat: no-repeat;
 }
@@ -3056,7 +3056,7 @@ button.neo-raised-sm:active:not(:disabled) {
 }
 .lookbook-sample-image,
 .personal-edit-photo .lookbook-sample-image {
-  background-image: url("/images/style-guide/sample-week.png");
+  background-image: url("/images/style-guide/sample-eight-looks.png");
   background-size: 400% 200%;
 }
 .guide-delivery-status {

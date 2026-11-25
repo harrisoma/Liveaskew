@@ -563,7 +563,7 @@ export function StyleBlueprint({
         </div>
       </div>
       <p className="guide-delivery-status" role="status">
-        {delivery.ready ? "Your seven-look guide is ready" : "Your guide is in progress"} ·{" "}
+        {delivery.ready ? "Your eight-look guide is ready" : "Your guide is in progress"} ·{" "}
         {delivery.looks}/7 outfits · {delivery.images}/7 personal images · {delivery.variations}{" "}
         styling variations
       </p>

@@ -318,11 +318,11 @@ export function MobileApp() {
   const weeklyIds = snap.looks
     .filter((l) => l.guideDay)
     .sort((a, b) => a.guideDay! - b.guideDay!)
-    .slice(0, 7)
+    .slice(0, 8)
     .map((l) => l.id)
     .join("|");
   useEffect(() => {
-    if (!ready || !snap.verified || snap.phase !== "app" || weeklyIds.split("|").length !== 7)
+    if (!ready || !snap.verified || snap.phase !== "app" || weeklyIds.split("|").length !== 8)
       return;
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
@@ -362,12 +362,12 @@ export function MobileApp() {
             guide.error === "membership_required" && guide.status === "queued"
               ? "Your guide is saved. Previews will resume automatically when your membership is active."
               : guide.status === "ready"
-                ? "All seven outfit images are ready, including shoes and accessories."
+                ? "All eight outfit images are ready, including shoes and accessories."
                 : guide.status === "attention"
                   ? "Your guide is saved. Bee needs to review an image before another paid attempt. Contact support; you do not need to rebuild your guide."
                   : guide.status === "expired"
                     ? "Your guide is saved, but its temporary photo expired. Add your photo again under You to continue."
-                    : `${guide.completed} of 7 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
+                    : `${guide.completed} of 8 outfit images ready. Bee is finishing the rest automatically; you can leave this page.`,
           );
           setRenderingId(["queued", "running"].includes(guide.status) ? guide.id : null);
           if (["ready", "attention", "expired"].includes(guide.status)) return;
@@ -554,8 +554,8 @@ export function MobileApp() {
           id: nid("m"),
           role: "assistant",
           content: opts.trialEnded
-            ? "Your 14 free days have wrapped up. Pick a membership under You to build your seven-day Style Guide."
-            : "Your Style Guide uses your completed interview. Your seven looks have Fit, Feel and Fabric notes, and Bee is finishing all seven photo previews, including shoes and accessories. You've got 14 days of as many looks as you like, so have fun.",
+            ? "Your 14 free days have wrapped up. Pick a membership under You to build your eight-look Style Guide."
+            : "Your Style Guide uses your completed interview. Your eight looks have Fit, Feel and Fabric notes, and Bee is finishing all eight photo previews, including shoes and accessories. You've got 14 days of as many looks as you like, so have fun.",
         },
       ],
     }));
@@ -906,11 +906,11 @@ export function MobileApp() {
               }
               const savedWeek = savedSetupWeek(snap.looks);
               setBuildStatus(
-                savedWeek ? "Resuming your saved guide…" : "Creating your seven outfits…",
+                savedWeek ? "Resuming your saved guide…" : "Creating your eight outfits…",
               );
               const { looks, source } = savedWeek
                 ? { looks: savedWeek, source: "bee" }
-                : await generateLooks({ interview: snap.interview.answers, count: 7 });
+                : await generateLooks({ interview: snap.interview.answers, count: 8 });
               if (source === "locked") {
                 startTrial([], { trialEnded: true });
                 setGateOpen(true);
@@ -918,14 +918,14 @@ export function MobileApp() {
                 setGuideError(
                   "Bee has reached your hourly limit. Please try again in a few minutes.",
                 );
-              } else if (source !== "bee" || looks.length !== 7) {
+              } else if (source !== "bee" || looks.length !== 8) {
                 setGuideError(
-                  "Bee could not finish all seven days. Your interview and photo are still here. Try building your guide again.",
+                  "Bee could not finish all eight looks. Your interview and photo are still here. Try building your guide again.",
                 );
               } else {
                 // Keep generated outfits locally before any network step can fail.
                 patch((s) => ({ ...s, looks: mergeLooks(s.looks, looks) }));
-                setBuildStatus("Saving your seven outfits…");
+                setBuildStatus("Saving your eight outfits…");
                 const saved = await pushLooks(looks);
                 if (!saved) {
                   setGuideError(
@@ -938,7 +938,7 @@ export function MobileApp() {
                   await queueWeeklyGuide(looks, snap.selfie);
                 } catch {
                   setGuideError(
-                    "Your seven outfits are saved. Photo previews could not start. Select Generate my Style Guide to retry with these same outfits.",
+                    "Your eight outfits are saved. Photo previews could not start. Select Generate my Style Guide to retry with these same outfits.",
                   );
                   return;
                 }
@@ -962,7 +962,7 @@ export function MobileApp() {
                     "Your outfit previews are queued. Open Style Guide and select Generate my Style Guide to retry the editorial guide using your saved interview.",
                   );
                 setGuideNotice(
-                  "Your seven outfit previews are queued. Bee will finish them automatically, even if you close this page.",
+                  "Your eight outfit previews are queued. Bee will finish them automatically, even if you close this page.",
                 );
               }
             } catch {
@@ -1600,7 +1600,7 @@ function AuthScreen({
           <li>Sign in and complete the account check.</li>
           <li>Answer five short questions about your style.</li>
           <li>Take or upload a full-length photo.</li>
-          <li>Build your seven-day Style Guide.</li>
+          <li>Build your eight-look Style Guide.</li>
         </ol>
         <p className="mt-3">Try Bee for 14 days. No card required to get started.</p>
         <a href="/privacy" className="mt-2 inline-block underline underline-offset-4">
@@ -1848,9 +1848,9 @@ function SelfieScreen({
     >
       <p className="mb-4 text-sm leading-relaxed">
         Bee styles the body you have. AI previews can make mistakes in likeness, detail and fit.
-        Your editorial Style Guide and seven outfits use the interview you just completed. No more
+        Your editorial Style Guide and eight outfits use the interview you just completed. No more
         questions. Use a clear, full-length photo. Building previews sends your photo to Onixus AI
-        and its image provider for all seven looks. Your reference is stored privately for up to 24
+        and its image provider for all eight looks. Your reference is stored privately for up to 24
         hours so Bee can finish even when this page closes, then deleted.
       </p>
       {building && (

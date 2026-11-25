@@ -27,7 +27,7 @@ describe("parseLooks", () => {
 });
 
 describe("completeWeeklyGuide", () => {
-  const week = Array.from({ length: 7 }, (_, i) => ({
+  const week = Array.from({ length: 8 }, (_, i) => ({
     ...look,
     title: `Day ${i + 1}`,
     formula: [
@@ -37,19 +37,19 @@ describe("completeWeeklyGuide", () => {
       i % 2 ? "Gold hoops" : "Tan tote",
     ],
   }));
-  it("requires all seven different looks", () => {
+  it("requires all eight different looks", () => {
     expect(completeWeeklyGuide(week)).toBe(true);
-    expect(completeWeeklyGuide(week.slice(0, 6))).toBe(false);
-    expect(completeWeeklyGuide([...week.slice(0, 6), week[0]])).toBe(false);
+    expect(completeWeeklyGuide(week.slice(0, 7))).toBe(false);
+    expect(completeWeeklyGuide([...week.slice(0, 7), week[0]])).toBe(false);
   });
   it("rejects reordered duplicate outfit formulas and duplicate titles", () => {
     expect(
       completeWeeklyGuide([
-        ...week.slice(0, 6),
-        { ...week[6], formula: [...week[0].formula].reverse() },
+        ...week.slice(0, 7),
+        { ...week[7], formula: [...week[0].formula].reverse() },
       ]),
     ).toBe(false);
-    expect(completeWeeklyGuide([...week.slice(0, 6), { ...week[6], title: week[0].title }])).toBe(
+    expect(completeWeeklyGuide([...week.slice(0, 7), { ...week[7], title: week[0].title }])).toBe(
       false,
     );
   });

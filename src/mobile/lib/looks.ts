@@ -27,7 +27,7 @@ export async function generateLooks(opts: {
   looks: GuideLook[];
   source: "bee" | "local" | "locked" | "limited" | "unavailable";
 }> {
-  const count = opts.count ?? (opts.occasion ? 1 : 7);
+  const count = opts.count ?? (opts.occasion ? 1 : 8);
   try {
     const res = await apiFetch("/api/bee/looks", {
       method: "POST",
@@ -42,7 +42,7 @@ export async function generateLooks(opts: {
     if (res.ok) {
       const json = (await res.json()) as { looks?: GeneratedLook[] };
       const looks = (json.looks ?? []).map((l) => toGuideLook({ ...l, id: lookId(l.title) }));
-      if (count === 7) {
+      if (count === 8) {
         if (!completeWeeklyGuide(json.looks ?? [])) return { looks: [], source: "unavailable" };
         return {
           looks: looks.map((look, index) => ({ ...look, guideDay: index + 1 })),
@@ -54,8 +54,8 @@ export async function generateLooks(opts: {
   } catch {
     /* offline — local guide */
   }
-  // Never substitute an offline sample for a requested seven-day guide.
-  if (count === 7) return { looks: [], source: "unavailable" };
+  // Never substitute an offline sample for a requested eight-look guide.
+  if (count === 8) return { looks: [], source: "unavailable" };
   const local = looksFromInterview(opts.interview).map(toGuideLook);
   return {
     looks: local

@@ -11,9 +11,10 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/integrations/supabase/client.server", () => ({
   supabaseAdmin: { from: mocks.from, storage: { from: () => mocks } },
 }));
+vi.mock("./ai-gateway.server", () => ({ getOnixusAiHeaders: vi.fn(), getOnixusAiUrl: vi.fn() }));
 vi.mock("./tryon-job.server", () => ({ renderOwnedLook: mocks.render }));
 const photo = "data:image/png;base64,AAAA";
-const ids = [1, 2, 3, 4, 5, 6, 7].map((n) => "day-" + n);
+const ids = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => "day-" + n);
 const looks = ids.map((id, index) => ({
   id,
   look: {
@@ -110,6 +111,12 @@ beforeEach(() => {
   mocks.download.mockResolvedValue({ data: new Blob(["fixture"]), error: null });
 });
 describe("weekly guide recovery", () => {
+  it("rejects the old seven-look request before uploading a reference", async () => {
+    await expect(startWeeklyGuide("member", ids.slice(0, 7), photo)).rejects.toThrow(
+      "eight_owned_looks_required",
+    );
+    expect(mocks.upload).not.toHaveBeenCalled();
+  });
   it("re-adding an expired reference revives the same job, and repeating it does not upload or pay twice", async () => {
     const restored = await startWeeklyGuide("member", ids, photo);
     expect(restored.id).toBe("guide");

@@ -233,6 +233,21 @@ export const sampleGuideLooks: import("./storage").GuideLook[] = [
     feel: "An expressive sample layered look that repeats familiar favorites.",
     fabric: "Cotton and linen stay light; remove the shirt if the afternoon gets warm.",
   },
+  {
+    title: "An extra look, a new perspective.",
+    occasion: "Lunch & a gallery visit",
+    formula: [
+      "Ivory linen shirt",
+      "Indigo relaxed jeans",
+      "Sand unstructured jacket",
+      "Chocolate leather loafers",
+      "Small gold hoops",
+    ],
+    fit: "Tuck the shirt loosely and wear the jacket open; check shoulder movement and the jean hem with loafers.",
+    feel: "An eighth sample look for a slightly more composed outing, using familiar capsule pieces.",
+    fabric:
+      "Linen, soft denim and a light jacket provide texture; remove the jacket when the day warms up.",
+  },
 ].map((look, i) => ({
   ...look,
   id: `sample-look-${i + 1}`,

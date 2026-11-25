@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireApiUser } from "@/lib/api-auth.server";
 import { startWeeklyGuide, weeklyGuideStatus } from "@/lib/weekly-guide.server";
 const input = z.object({
-  lookIds: z.array(z.string().min(1).max(120)).length(7),
+  lookIds: z.array(z.string().min(1).max(120)).length(8),
   selfieDataUrl: z.string().max(3500000),
 });
 export const Route = createFileRoute("/api/guide")({
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/guide")({
           return Response.json(
             { error: e instanceof Error ? e.message : "guide_queue_unavailable" },
             {
-              status: e instanceof Error && e.message === "seven_owned_looks_required" ? 404 : 503,
+              status: e instanceof Error && e.message === "eight_owned_looks_required" ? 404 : 503,
             },
           );
         }
